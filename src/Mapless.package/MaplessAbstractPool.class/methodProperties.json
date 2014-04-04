@@ -1,0 +1,25 @@
+{
+	"class" : {
+		"initializeInstance" : "sebastiansastre 4/19/2012 15:57",
+		"instance" : "sebastiansastre 4/19/2012 15:57",
+		"reset" : "sebastiansastre 5/14/2012 15:51" },
+	"instance" : {
+		"busyClients" : "sebastiansastre 12/1/2012 21:40",
+		"clientsMutex" : "sebastiansastre 12/1/2012 21:40",
+		"currentClientDynamicVariable" : "sebastiansastre 12/2/2012 16:52",
+		"do:" : "sebastiansastre 12/3/2012 18:26",
+		"hasBusyClients" : "sebastiansastre 12/1/2012 21:51",
+		"hasClients" : "sebastiansastre 12/1/2012 21:51",
+		"hasIdleClients" : "sebastiansastre 12/1/2012 21:51",
+		"idleClients" : "sebastiansastre 12/1/2012 21:41",
+		"initializeBusyClients" : "sebastiansastre 12/1/2012 21:40",
+		"initializeClientsMutex" : "sebastiansastre 12/1/2012 21:40",
+		"initializeIdleClients" : "sebastiansastre 12/1/2012 21:40",
+		"makeClient" : "sebastiansastre 12/2/2012 16:57",
+		"printOn:" : "sebastiansastre 12/2/2012 16:41",
+		"remove:" : "sebastiansastre 12/2/2012 18:02",
+		"requestClient" : "sebastiansastre 5/27/2013 12:08",
+		"reset" : "sebastiansastre 12/2/2012 18:02",
+		"returnClient:" : "sebastiansastre 5/27/2013 16:22",
+		"returningUnusedClient" : "sebastiansastre 12/1/2012 21:49",
+		"withClientDo:" : "sebastiansastre 12/2/2012 16:55" } }

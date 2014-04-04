@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Redis",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "MaplessRedisDummyUser",
+	"pools" : [
+		 ],
+	"super" : "MaplessRedis",
+	"type" : "normal" }

@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Errors",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "MaplessModelGetterIsMissing",
+	"pools" : [
+		 ],
+	"super" : "MaplessError",
+	"type" : "normal" }

@@ -1,0 +1,4 @@
+accessing
+database
+
+	^ self subclassResponsibility 

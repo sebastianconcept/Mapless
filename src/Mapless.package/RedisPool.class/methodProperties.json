@@ -1,0 +1,11 @@
+{
+	"class" : {
+		 },
+	"instance" : {
+		"close:" : "sebastiansastre 5/29/2013 22:39",
+		"currentClientDynamicVariable" : "sebastiansastre 5/29/2013 22:07",
+		"ifUnavailablePurge:" : "sebastiansastre 5/29/2013 22:42",
+		"makeClient" : "sebastiansastre 5/29/2013 23:05",
+		"onLogout:" : "sebastiansastre 5/29/2013 22:43",
+		"purgeUnavailable" : "sebastiansastre 5/29/2013 22:06",
+		"remove:" : "sebastiansastre 5/29/2013 22:43" } }

@@ -1,0 +1,4 @@
+testing
+hasModel
+ 
+	^ model notNil

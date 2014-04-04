@@ -1,0 +1,22 @@
+{
+	"class" : {
+		"lastStoredRun" : "sebastiansastre 5/30/2013 18:31" },
+	"instance" : {
+		"do:" : "sebastiansastre 5/30/2013 18:32",
+		"setUp" : "sebastiansastre 5/30/2013 18:33",
+		"tearDown" : "sebastiansastre 5/30/2013 18:37",
+		"testComposedAccess" : "sebastiansastre 5/30/2013 18:39",
+		"testComposedDelete" : "sebastiansastre 5/30/2013 18:40",
+		"testComposedDestroy" : "sebastiansastre 5/30/2013 18:40",
+		"testComposedSave" : "sebastiansastre 5/30/2013 18:40",
+		"testComposedSaveAndLoad" : "sebastiansastre 6/15/2013 21:00",
+		"testComposition" : "sebastiansastre 5/30/2013 18:41",
+		"testDateAndTime" : "sebastiansastre 5/30/2013 18:42",
+		"testDelete" : "sebastiansastre 5/30/2013 18:42",
+		"testDestroy" : "sebastiansastre 5/30/2013 18:42",
+		"testMultipleComposedComposables" : "sebastiansastre 5/30/2013 18:43",
+		"testMultipleComposedSaveAndLoad" : "sebastiansastre 5/30/2013 18:43",
+		"testQueryUsers" : "sebastiansastre 5/30/2013 18:43",
+		"testSimpleSave" : "sebastiansastre 5/30/2013 18:43",
+		"testSimpleSaveAndLoad" : "sebastiansastre 5/30/2013 18:44",
+		"testSubModelsFromReifiedJSON" : "sebastiansastre 11/4/2013 22:24" } }

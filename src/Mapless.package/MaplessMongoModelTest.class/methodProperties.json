@@ -1,0 +1,13 @@
+{
+	"class" : {
+		 },
+	"instance" : {
+		"do:" : "sebastiansastre 2/8/2013 15:45",
+		"setUp" : "paulwilke 2/7/2013 18:05",
+		"tearDown" : "paulwilke 2/7/2013 19:49",
+		"testMergeComposed" : "sebastiansastre 11/11/2013 16:29",
+		"testMergeSimple" : "sebastiansastre 11/11/2013 16:11",
+		"testUnrefDestroy" : "sebastiansastre 5/29/2013 22:13",
+		"testUnrefDestroy2" : "sebastiansastre 5/29/2013 21:51",
+		"testUnreferenced" : "sebastiansastre 5/29/2013 22:13",
+		"testUnreferenced2" : "sebastiansastre 5/29/2013 21:51" } }

@@ -1,0 +1,16 @@
+{
+	"category" : "Mapless-Redis",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		"model",
+		"expires",
+		"hotOn" ],
+	"name" : "MaplessCacheSlot",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

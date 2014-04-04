@@ -1,0 +1,16 @@
+{
+	"category" : "Mapless-Core",
+	"classinstvars" : [
+		"instance" ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		"clientsMutex",
+		"busyClients",
+		"idleClients" ],
+	"name" : "MaplessAbstractPool",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }
