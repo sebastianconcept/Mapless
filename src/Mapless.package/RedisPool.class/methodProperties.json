@@ -2,10 +2,10 @@
 	"class" : {
 		 },
 	"instance" : {
-		"close:" : "sebastiansastre 5/29/2013 22:39",
-		"currentClientDynamicVariable" : "sebastiansastre 5/29/2013 22:07",
-		"ifUnavailablePurge:" : "sebastiansastre 5/29/2013 22:42",
+		"close:" : "SebastianSastre 4/4/2014 17:34:02",
+		"currentClientDynamicVariable" : "SebastianSastre 4/4/2014 17:34:02",
+		"ifUnavailablePurge:" : "SebastianSastre 4/4/2014 17:34:02",
 		"makeClient" : "sebastiansastre 5/29/2013 23:05",
-		"onLogout:" : "sebastiansastre 5/29/2013 22:43",
-		"purgeUnavailable" : "sebastiansastre 5/29/2013 22:06",
-		"remove:" : "sebastiansastre 5/29/2013 22:43" } }
+		"onLogout:" : "SebastianSastre 4/4/2014 17:34:02",
+		"purgeUnavailable" : "SebastianSastre 4/4/2014 17:34:02",
+		"remove:" : "SebastianSastre 4/4/2014 17:34:02" } }
