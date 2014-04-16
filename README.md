@@ -6,6 +6,12 @@ Mapless is a small framework for storing objects in a key->data fashion (i.e.: n
 ###Motivation
 I wanted to persist objects with extremely *low friction* and extremely *low maintenance* and great *scaling* and *availability* capabilities so Mapless is totally biased towards that. This framework is what I came up with after incorporating my experience with [Aggregate](https://github.com/sebastianconcept/Aggregate).
 
+*There is no spoon...*
+
+*There is no object-relational impedance...*
+
+*There is no instVars...*
+
 ###Loading it in your image 
 
 Take your open image and click for a **menu**, then **tools**, then **Configuration Browser** and search for **Mapless**.
