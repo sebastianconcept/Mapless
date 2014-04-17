@@ -4,7 +4,7 @@ Mapless
 *Obscenely simple persistence for Smalltalk.* Mapless is a small framework for storing objects in a key->data fashion (i.e.: noSQL databases) without requiring any kind of object-data map.  So far only MongoDB is supported. And Redis can be used for reactivity and cache joy.
 
 ###Motivation
-Sebastian: "I wanted to persist objects with extremely *low friction* and extremely *low maintenance* and great *scaling* and *availability* capabilities so Mapless is totally biased towards that. This framework is what I came up with after incorporating my experience with [Aggregate](https://github.com/sebastianconcept/Aggregate)."
+> "I wanted to persist objects with extremely *low friction* and extremely *low maintenance* and great *scaling* and *availability* capabilities so Mapless is totally biased towards that. This framework is what I came up with after incorporating my experience with [Aggregate](https://github.com/sebastianconcept/Aggregate)." ~ [Sebastian](http://about.me/sebastianconcept)
 
 *There is no spoon...*
 
@@ -71,6 +71,18 @@ Of course you do:
 
     odb do:[task alert description].  "<- 'You will miss the target!'"   
 
+####Persisting a different model
+
+So you now need to store a different kind of models, say List or User or anything, how you proceed? 
+
+This is what you do with Mapless:
+
+1. Create a subclass for them
+2. <del>Know what attributes they will need in advance</del>
+3. <del>Create its attributes' instVars</del>
+4. <del>Make accessors for them</del>
+5. <del>Elegantly map them so it all fits in the database</del>
+6. Profit
 
 ###How does it look? on Redis
 
