@@ -42,9 +42,9 @@ You can store  and retrieve your Mapless models on MongoDB like a breeze. Here i
 
 Just subclass MaplessModel. Here we use a RTask model:    task := RTask new description: 'Try Mapless'; beIncomplete.####Save it
 
-In Mapless you do things using a #do: clousure which Mapless uses to automatically discern which MongoDB database and collection has to be used. It also will know if it needs to do an insert or an update. As a bonus, you get the collection *and* the database created lazily. 
+In Mapless you do things using a #do: closure which Mapless uses to automatically discern which MongoDB database and collection has to be used. It also will know if it needs to do an insert or an update. As a bonus, you get the collection *and* the database created lazily. 
 
-Want to save something? Zero burocracy, just tell that to the model:
+Want to save something? Zero bureaucracy, just tell that to the model:
     odb do:[task save].At [flowing](http://flowingconcept.com) we call this the *low-friction* way to do it.####Fetching stuffGetting all models of a given class:
     odb do:[RTask findAll].Getting a specific model:
     odb do:[RTask findAt: 'c472099f-79b9-8ea2-d61f-e5df34b3ed06'].For getting efficiently a (sub)group of models, you write your own Mapless class side getters. They should act on the MongoDB indices with the parameters of your query. You'll get your models in a breeze:    odb do:[RTask findAtUsername: 'awesomeguy'].####Adding something to a modelYou can use Mapless models pretending they are [prototypical](http://en.wikipedia.org/wiki/Prototype-based_programming) like in [Self](http://en.wikipedia.org/wiki/Self_(programming_language)) or [Javascript](http://en.wikipedia.org/wiki/JavaScript) objects. No instVars. No setters. No getters. All just works:    odb do:[
@@ -63,7 +63,7 @@ Of course you do:
     		alert: anAlert;
     		save].This is what [we](http://flowingconcept.com) call *low-maintenance*.
 ####Navigating the object graph
-Mapless embraces an aggresive *lazy approach*. When you query for models you get them. But if they are composed by other (sub)Mapless, they are going to be references and *only* reify into the proper Mapless model *if* you send them a message and you can do this with arbitrary depth:
+Mapless embraces an aggressive *lazy approach*. When you query for models you get them. But if they are composed by other (sub)Mapless, they are going to be references and *only* reify into the proper Mapless model *if* you send them a message and you can do this with arbitrary depth:
 
     odb do:[task alert message].   
 
