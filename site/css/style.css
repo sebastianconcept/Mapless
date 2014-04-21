@@ -32,15 +32,10 @@ body h1 {
 }
 
 body h1 {
-  font-size: 120px;
+  font-size: 100px;
   color: #072701;
   margin: 10px 0 30px;
   text-align: center;
-}
-
-.logoWrap {
-  text-align: center;  
-  margin: 30px 0;
 }
 
 body h2 {
@@ -61,6 +56,14 @@ body h5 {
   font-size: 24px;  
   margin: 20px 0 10px;
   color: #072701;
+}
+
+.symbol {
+  float: left;
+}
+
+.symbol img {
+  height: 119px;
 }
 
 .appeal {
@@ -174,6 +177,23 @@ blockquote {
 .loadNow {
   text-align: center;
   font-weight: bold;
+}
+
+@media (max-width: 500px) {
+  .logoWrap {
+    text-align: center;  
+    margin: 60px auto;
+    text-align: center;
+  }  
+  .symbol {width: 100%; text-align: center;}
+}
+
+@media (min-width: 500px) {
+  .logoWrap {
+    text-align: center;  
+    margin: 60px auto;
+    width: 500px;
+  }
 }
 
 @media (max-width: 991px) {
