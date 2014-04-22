@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+    <head>
+  <title>Mapless, obscenely simple object persistence</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="author" content="Sebastian Sastre" />
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" type="text/css" href='/css/style.css' />
+  <link rel="stylesheet" type="text/css" href='/css/pygments.css' />
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+</head>
+
+    <body>
+    	<div class="container">
+    <div class="header">
+        <a href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png">
+        </a>
+        <div class="row">
+            <div class="logoWrap">
+                <div class="symbol">
+                    <img alt="Mapless logo" src="images/symbol.png">
+                </div>    
+                <div class="center-on-mobiles">
+                    <h1>mapless</h1>
+                </div>    
+        </div>
+        </div>    
+    </div>
+
+    <div class="content">
+        <section class="intro">
+          <h2 class="catchPhrase"><em>Obscenely</em> simple object persistence</h2>
+<div class="fluid">
+	<div class="row">
+		<div class="col-md-4">
+			<div class="appeal leftAppeal">
+			    <h3>Simple</h3>
+			    <p>Low maintenance for real. No instVars. No getters and no setters - just saved models with your data.</p>
+			    <a href="#adding">Add data to a model →</a>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="appeal middleAppeal">
+			    <h3>Composable</h3>
+			    <p>Do you need to compose models? But of course you do! No mapping required, just add those (sub)models and you're good to go!</p>
+			    <a href="#composable">Compose a Mapless model →</a>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="appeal rightAppeal">
+			    <h3>Reactive</h3>
+			    <p>Observe model events in one image and react with an observer from another image. All in a scalable way.</p>
+			    <a href="#reactive">React to model events →</a>
+			</div>
+		</div>
+	    
+	</div>
+</div>
+        </section>
+        <section class="start">
+                <div class="col-md-4 loadNow center-on-mobiles">
+                    <h4>Start saving objects <em>in seconds</em></h4>
+                </div>
+                <div class="col-md-7 ">
+                    <div class="quickstart">
+                        <p class="shellTitle">Load in Pharo</p>
+                        <div class="shell">
+<div class="highlight"><pre><code class="st"><span class="nc">Gofer</span> <span class="nf">it</span> 
+    <span class="nf">smalltalkhubUser:</span> <span class="s">&#39;Pharo&#39;</span>
+    <span class="nf">project:</span> <span class="s">&#39;MetaRepoForPharo30&#39;</span><span class="p">;</span> 
+    <span class="nf">package:</span> <span class="s">&#39;ConfigurationOfMapless&#39;</span><span class="p">;</span>
+    <span class="nf">load</span><span class="p">.</span>
+
+(<span class="nc">Smalltalk</span> <span class="nf">at:</span> <span class="ss">#ConfigurationOfMapless</span>) <span class="nf">load</span>
+</code></pre></div>
+</div>
+
+                    </div>
+                </div>            
+        </section>
+
+        <section class="howDoesItFeel">
+                <div class="col-md-5 ">
+                    <div class="elaborate">
+                        <h5>Need to save your models?</h5>
+                        <p>Great! this is what happens with Mapless:</p>
+                        <ol>
+                            <li>Create a subclass for them</li>
+                            <li><del>Know in advance what attributes they will need</del></li>
+                            <li><del>Create its attributes' instVars</del></li>
+                            <li><del>Make accessors for all of them</del></li>
+                            <li><del>Elegantly map them so it all fits in the database</del></li>
+                            <li><del>Maintain the mapping to prevent object-database mismatch</del></li>
+                            <li>Profit</li>
+                        </ol>
+                    </div>
+                </div>
+
+                 <div id="screencast" class="col-md-7">
+                    <div class="elaborate ">
+                        <h5 >Screencast</h5>
+                        <p><iframe width="420" height="315" src="//www.youtube.com/embed/BNXXDOPLxtE" frameborder="0" allowfullscreen></iframe></p>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="elaborate">
+                        <h5>How does it look like?</h5>
+                        <p>You can store  and retrieve your Mapless models on MongoDB in a breeze. Here is a couple of snippets of real code used while developing <a href="http://tasks.flowingconcept.com">tasks</a>.</p>
+                        <p>Getting a connection:</p>
+                    </div>
+                </div>
+
+                <div class="col-md-9 workspace">
+                    <div class="">
+                        <p class="shellTitle">Get a connection</p>
+                        <div class="shell">
+<div class="highlight"><pre><code class="st"><span class="c">&quot;Getting a connection to the &#39;Reactive&#39; database&quot;</span>
+<span class="nv">odb</span> <span class="o">:=</span> <span class="nc">MongoPool</span> <span class="nf">instance</span> <span class="nf">databaseAt:</span> <span class="s">&#39;Reactive&#39;</span><span class="p">.</span>
+</code></pre></div>
+</div>
+
+                    </div>
+                </div> 
+
+                <div class="col-md-12">
+                    <div class="elaborate extraTop">
+                        <p>Creating new instances of your models have nothing special. You treat them like any other object</p>
+                    </div>
+                </div>
+                <div class="col-md-9 workspace">
+                    <div class="">
+                        <p class="shellTitle">Create a new model</p>
+                        <div class="shell">
+<div class="highlight"><pre><code class="st"><span class="c">&quot;Creating a &#39;task&#39; object&quot;</span>
+<span class="nv">task</span> <span class="o">:=</span> <span class="nc">RTask</span> <span class="nb">new</span> <span class="nf">description:</span> <span class="s">&#39;Try Mapless&#39;</span><span class="p">;</span> <span class="nf">beIncomplete</span><span class="p">.</span>
+</code></pre></div>
+</div>
+
+                    </div>
+                </div> 
+
+                <div class="col-md-12">
+                    <div class="elaborate extraTop">
+                        <h5>Saving a model</h5>
+                        <p>In Mapless you do things inside the <code>#do:[ "your things here" ]</code> closure which Mapless uses to automatically discern which MongoDB database and collection has to be used. It will automatically know if the save operation has to be an insert or an update. And, as bonus, you also get the collection <em>and</em> the database created lazily.</p>
+                    </div>
+
+                </div>
+
+                <div class="col-md-9 workspace">
+                    <div class="">
+                        <p class="shellTitle">Saving a model</p>
+                        <div class="shell">
+<div class="highlight"><pre><code class="st"><span class="c">&quot;Saving the &#39;task&#39; object&quot;</span>
+<span class="nv">odb</span> <span class="nf">do:</span>[<span class="nv">task</span> <span class="nf">save</span>]<span class="p">.</span>
+</code></pre></div>
+</div>
+
+                    </div>
+                </div> 
+
+                <div class="col-md-12 ">
+                    <div class="elaborate">
+                        <p>At <a href="http://flowingconcept.com">flowing</a> we call this a <em>low-friction</em> save.</p>
+                    </div>
+                </div>
+                 <div class="col-md-12 ">
+                    <div class="elaborate">
+                        <h5 id="getting">Getting stored objects</h5>
+                        <p>Here you have some basic queries.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-9 workspace">
+                    <div class="">
+                        <p class="shellTitle">Fetching objects</p>
+                        <div class="shell">
+<div class="highlight"><pre><code class="st"><span class="c">&quot;Getting all models of a given Mapless class&quot;</span>
+<span class="nv">allTasks</span> <span class="o">:=</span> <span class="nv">odb</span> <span class="nf">do:</span>[<span class="nc">RTask</span> <span class="nf">findAll</span>]<span class="p">.</span>
+
+<span class="c">&quot;Getting a specific model using its id&quot;</span>
+<span class="nv">theTask</span> <span class="o">:=</span> <span class="nv">odb</span> <span class="nf">do:</span>[<span class="nc">RTask</span> <span class="nf">findAt:</span> <span class="s">&#39;c472099f-79b9-8ea2-d61f-e5df34b3ed06&#39;</span>]<span class="p">.</span>
+</code></pre></div>
+</div>
+
+                    </div>
+                </div> 
+
+                 <div class="col-md-12 ">
+                    <div class="elaborate extraTop">
+                        <h5 id="adding">Powerful queries</h5>
+                        <p>Mapless uses <a href="http://smalltalkhub.com/#!/~MongoTalkTeam/mongotalk">MongoTalk</a> to connect to the database so you have all its power at your fingertips. Need an efficient query? No problem, just make the index in mongoDB, a class method to query on it from your model class and you're ready for your next task.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-9 workspace">
+                    <div class="">
+                        <p class="shellTitle">Querying efficiently</p>
+                        <div class="shell">
+<div class="highlight"><pre><code class="st"><span class="c">&quot;Query objects using an indexed attribute&quot;</span>
+<span class="nv">hisTasks</span> <span class="o">:=</span> <span class="nv">odb</span> <span class="nf">do:</span>[<span class="nc">RTask</span> <span class="nf">findAtUsername:</span> <span class="s">&#39;awesomeguy&#39;</span>]<span class="p">.</span>
+</code></pre></div>
+</div>
+
+                    </div>
+                </div> 
+
+                 <div class="col-md-12 ">
+                    <div class="elaborate extraTop">
+                        <h5 id="adding">Adding stuff to models</h5>
+                        <p>Simply do it. Unless overriden, Mapless will catch all messages you send to your models with a DNU and is smart enough to allow you to add a date a string or other objects without declaring instVars or making any accessors.</p>
+                    </div>
+                </div>
+
+                <div id="simple" class="col-md-9 workspace">
+                    <div class="">
+                        <p class="shellTitle">Adding information in a model</p>
+                        <div class="shell">
+<div class="highlight"><pre><code class="st"><span class="c">&quot;Add stuff to a model, then save&quot;</span>
+<span class="nv">odb</span> <span class="nf">do:</span>[
+    <span class="nv">task</span> 
+        <span class="nf">deadline:</span> <span class="nc">Date</span> <span class="nf">tomorrow</span><span class="p">;</span> 
+        <span class="nf">notes:</span> <span class="s">&#39;Wonder how it feels to use this thing, hmm...&#39;</span><span class="p">;</span>
+        <span class="nf">save</span>]<span class="p">.</span>
+
+<span class="c">&quot;No, wait! we forgot to add this:&quot;</span>
+<span class="nv">odb</span> <span class="nf">do:</span>[
+    <span class="nv">task</span> 
+        <span class="nf">priority:</span> <span class="s">&#39;High&#39;</span><span class="p">;</span>
+        <span class="nf">save</span>]<span class="p">.</span>
+
+<span class="c">&quot;...and this:&quot;</span>
+<span class="nv">odb</span> <span class="nf">do:</span>[
+    <span class="nv">task</span> 
+        <span class="nf">tags:</span> <span class="ss">#(</span><span class="s">&#39;Cool&#39;</span> <span class="s">&#39;Stuff&#39;</span><span class="ss">)</span><span class="p">;</span>
+        <span class="nf">save</span>]<span class="p">.</span>
+</code></pre></div>
+</div>
+
+                    </div>
+               </div> 
+                <div class="col-md-12">
+                    <div class="elaborate">
+                        <p>At <a href="http://flowingconcept.com">flowing</a> we call this <em>low-maintenance</em> storage.</p>
+                    </div>
+                </div>
+
+                 <div id="composable" class="col-md-12 ">
+                    <div class="elaborate">
+                        <h5 id="adding">Composition</h5>
+                        <p>You add whatever you need to them, even other Mapless models.</p>
+                    </div>
+                </div>
+
+
+                <div  class="col-md-9 workspace">
+                    <div class="">
+                        <p class="shellTitle">Composing models</p>
+                        <div class="shell">
+<div class="highlight"><pre><code class="st"><span class="c">&quot;Create and save an alert for the task, then add it and save&quot;</span>
+<span class="nv">odb</span> <span class="nf">do:</span>[ <span class="o">|</span><span class="nv">anAlert</span><span class="nf">|</span>
+  <span class="nv">anAlert</span> <span class="o">:=</span> <span class="nc">RAlert</span> <span class="nb">new</span> 
+                <span class="nf">duration:</span> <span class="m">24</span> <span class="nf">hours</span><span class="p">;</span>
+                <span class="nf">message:</span> <span class="s">&#39;Get it done!&#39;</span><span class="p">;</span>
+                <span class="nf">save</span><span class="p">.</span>
+    <span class="nv">task</span> <span class="nf">alert:</span> <span class="nv">anAlert</span><span class="p">.</span>
+    <span class="nv">task</span> <span class="nf">save</span>]<span class="p">.</span>
+</code></pre></div>
+</div>
+
+                    </div>
+                </div> 
+
+                <div class="col-md-12 ">
+                    <div class="elaborate extraTop">
+                        <h5 id="adding">Graph navigation</h5>
+                        <p>Mapless embraces laziness. When you navigate the object graph, it will return references for every (sub)model known by the root you got. When you send a message to a (sub)model, the #DNU method will return it resolving as if it was always there.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-9 workspace">
+                    <div class="">
+                        <p class="shellTitle">Navigating model graphs</p>
+                        <div class="shell">
+<div class="highlight"><pre><code class="st"><span class="c">&quot;Lazy access to all model&#39;s parts&quot;</span>
+<span class="nv">odb</span> <span class="nf">do:</span>[<span class="nv">task</span> <span class="nf">alert</span> <span class="nf">message</span>]<span class="p">.</span>   
+
+<span class="nv">odb</span> <span class="nf">do:</span>[<span class="nv">task</span> <span class="nf">alert</span> <span class="nf">class</span> <span class="nf">=</span> <span class="nc">MaplessReference</span>]<span class="p">.</span>  
+<span class="c">&quot;=&gt; true&quot;</span>   
+
+<span class="nv">odb</span> <span class="nf">do:</span>[<span class="nv">task</span> <span class="nf">alert</span> <span class="nf">description</span>]<span class="p">.</span>  
+<span class="c">&quot;=&gt; &#39;Get it done!&#39;&quot;</span>   
+</code></pre></div>
+</div>
+
+                    </div>
+                </div> 
+
+
+                <div id="reactive" class="col-md-12 ">
+                    <div class="elaborate extraTop">
+                        <h5>Mapless powered by Redis</h5>
+                        <p>Redis is great for:</p>
+                        <ol>
+                            <li><strong>Caching</strong>. It will hold the data in RAM so you get great response times.</li>
+                            <li><strong>Reactivity</strong>. There is a set of Mapless that uses Redis <a href="http://redis.io/topics/pubsub">PUB/SUB</a> feature to observe/react models among N worker images enabling <a href="http://en.wikipedia.org/wiki/Scalability#Horizontal_and_vertical_scaling">horizontal scaling</a>.</li>
+                        </ol>
+                        <p>Here is a workspace for Redis-based Mapless models:</p>
+                    </div>
+                </div>
+
+                <div class="col-md-9 workspace">
+                    <div class="">
+                        <p class="shellTitle">Mapless on Redis</p>
+                        <div class="shell">
+<div class="highlight"><pre><code class="st"><span class="c">&quot;Get a connection to Redis&quot;</span>
+<span class="nv">redis</span> <span class="o">:=</span> <span class="nc">RedisPool</span> <span class="nf">instance</span><span class="p">.</span>
+
+<span class="c">&quot;Subclass MaplessRedis with your models.</span>
+<span class="c">As with Mongo, these Mapless have no need </span>
+<span class="c">to declare instVars nor setters nor getters&quot;</span>
+<span class="nc">MaplessRedis</span> <span class="nf">subclass:</span> <span class="ss">#DummyPerson</span>
+	<span class="nf">instanceVariableNames:</span> <span class="s">&#39;&#39;</span>
+	<span class="nf">classVariableNames:</span> <span class="s">&#39;&#39;</span>
+	<span class="nf">category:</span> <span class="s">&#39;YourApp&#39;</span>
+
+
+<span class="c">&quot;Make a new reactive model&quot;</span>
+<span class="nf">guy</span> <span class="o">:=</span> <span class="nc">DummyPerson</span> <span class="nb">new</span>
+            <span class="nf">firstName:</span> <span class="s">&#39;John&#39;</span><span class="p">;</span>
+            <span class="nf">lastName:</span> <span class="s">&#39;Q&#39;</span><span class="p">;</span>
+            <span class="nf">yourself</span><span class="p">.</span>               
+
+<span class="c">&quot;Save it&quot;</span>
+<span class="nv">redis</span> <span class="nf">do:</span>[<span class="o">:</span><span class="nv">r</span><span class="o">|</span> <span class="nv">guy</span> <span class="nf">save</span>]<span class="p">.</span>
+
+<span class="c">&quot;Find it&quot;</span>
+<span class="nv">redis</span> <span class="nf">do:</span>[<span class="o">:</span><span class="nv">r</span><span class="o">|</span> <span class="nc">DummyPerson</span> <span class="nf">findAt:</span> <span class="s">&#39;38skolpqv0y9lazmk772hmsed&#39;</span>]<span class="p">.</span>
+
+<span class="c">&quot;Navigate it&quot;</span>
+<span class="nv">redis</span> <span class="nf">do:</span>[<span class="o">:</span><span class="nv">r</span><span class="o">|</span> (<span class="nc">DummyPerson</span> <span class="nf">findAt:</span> <span class="s">&#39;38skolpqv0y9lazmk772hmsed&#39;</span>) <span class="nf">lastName</span>]<span class="p">.</span>
+<span class="c">&quot;=&gt; &#39;Q&#39;&quot;</span>
+</code></pre></div>
+</div>
+
+                    </div>
+                </div> 
+
+                 <div id="why" class="col-md-12 ">
+                    <div class="fluid extraTop">
+	<div class="row">
+	    <div class="col-md-7 h5NoTop">
+	        <h5 class="h5NoTop">Why Mapless?</h5>
+	        <div class="thumb">
+	            <a href="http://about.me/sebastianconcept">
+	                <img alt="Sebastian's face" src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn2/t1.0-1/p50x50/1920076_4000903876523_97483785_t.jpg">
+	            </a>
+	        </div>
+
+	        <blockquote>I wanted to persist objects with <i>low friction</i>, <i>low maintenance</i> but <i>high scaling</i> and <i>availability</i> capabilities so <a href="http://github.com/sebastianconcept/Mapless" target="_blank">Mapless</a> is totally biased towards that. This framework is what I came up with after incorporating my experience with <a href="https://github.com/sebastianconcept/Aggregate" target="_blank">Aggregate</a> in <a href="http://airflowing.com">airflowing</a>.
+	        </blockquote>
+	    </div>
+	    <ul class="col-md-5 thereIsNo">
+	      <li>There is no instVars...</li>
+	      <li>There is no accessors...</li>
+	      <li>There is no object-mapping impedance...</li>
+	      <li></br>Only persistence.</li>
+	    </ul>
+	</div>
+</div>
+                </div>
+
+                 <div id="why" class="col-md-12 ">
+                    <div class="elaborate elaborate">
+                        <h5 class="">Get involved!</h5>
+                            <p>Want to push this forward? Awesome!</p>
+                            <ol>
+                                <li>Clone the repo</li>
+                                <li>Add your contribution / feature / bugfix</li>
+                                <li>Send your pull request</li>
+                            </ol>
+                    </div>
+                </div>
+
+                 <div id="direction" class="col-md-12 ">
+                    <div class="elaborate">
+                        <h5>Direction?</h5>
+                        <ol>
+                            <li>We would love to see more and better tests and iterate the design of the reactive features so you can ultimately get an a model in one image being observed in regard to one event by something in another image and that something reacting upon that event. Broadcast and multicast of events would be also a nice feat and not too hard to do. Have design suggestions? Let's have a chat!</li>
+                            <li>We actually are starting to think <a href="http://amber-lang.net">Amber</a> and <a href="http://en.wikipedia.org/wiki/Web_storage">localStorage</a> but that's more hush hush at this point. Oh gee! <a href="https://www.youtube.com/watch?v=ZDC1N5wYsMg">we already</a> blown it!</li>
+                        </ol>
+                        <p>Want to discuss its design? Lets hangout</p>
+                    </div>
+                </div>
+
+                 <div class="col-md-12">
+                    <div class="elaborate ">
+                        <h5 class="">License</h5>
+                        <p>All Mapless software and the contents of this website are © 2014 by <a href="http://about.me/sebastianconcept">Sebastian Sastre</a> under the terms of <a href="https://github.com/sebastianconcept/Mapless/blob/master/LICENSE">MIT License</a></p>
+                </div>
+        </section>
+
+</div>
+<div>
+    <div class="foot">
+	<p>Proudly shared by <a href="http://flowingconcept.com" target="_blank">flowing</a></p>
+	<p>Made for creativity and wealth creation</p>
+	<p>April 2014</p>
+</div>
+</div>
+    </body>
+</html>
