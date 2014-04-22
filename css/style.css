@@ -4,7 +4,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: #194206 url("/images/bg.png") repeat-y center;
+  background: #194206 url("images/bg.png") repeat-y center;
   width: 100%;
 }
 
@@ -160,7 +160,7 @@ blockquote {
 }
 
 .start {
-  background: #2D4914 url("/images/noise.png") repeat;
+  background: #2D4914 url("images/noise.png") repeat;
   color: #fff;
   margin: 20px 0;
   box-shadow: inset 0 3px 10px rgba(0,0,0,.4);
