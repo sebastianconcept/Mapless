@@ -1,0 +1,22 @@
+<div class="shell">
+{% highlight st %}
+"Add stuff to a model, then save"
+odb do:[
+    task 
+        deadline: Date tomorrow; 
+        notes: 'Wonder how it feels to use this thing, hmm...';
+        save].
+
+"No, wait! we forgot to add this:"
+odb do:[
+    task 
+        priority: 'High';
+        save].
+
+"...and this:"
+odb do:[
+    task 
+        tags: #('Cool' 'Stuff');
+        save].
+{% endhighlight %}
+</div>
