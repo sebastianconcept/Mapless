@@ -1,0 +1,32 @@
+<div class="shell">
+{% highlight st %}
+"Get a connection to Redis"
+redis := RedisPool instance.
+
+"Subclass MaplessRedis with your models.
+As with Mongo, these Mapless have no need 
+to declare instVars nor setters nor getters"
+MaplessRedis subclass: #DummyPerson
+	instanceVariableNames: ''
+	classVariableNames: ''
+	category: 'YourApp'
+
+
+"Make a new reactive model"
+guy := DummyPerson new
+            firstName: 'John';
+            lastName: 'Q';
+            yourself.               
+
+"Save it"
+redis do:[:r| guy save].
+
+"Find it"
+redis do:[:r| DummyPerson findAt: '38skolpqv0y9lazmk772hmsed'].
+
+"Navigate it"
+redis do:[:r| (DummyPerson findAt: '38skolpqv0y9lazmk772hmsed') lastName].
+"=> 'Q'"
+
+{% endhighlight %}
+</div>

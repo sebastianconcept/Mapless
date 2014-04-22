@@ -1,0 +1,9 @@
+<div class="shell">
+{% highlight st %}
+"Getting all models of a given Mapless class"
+allTasks := odb do:[RTask findAll].
+
+"Getting a specific model using its id"
+theTask := odb do:[RTask findAt: 'c472099f-79b9-8ea2-d61f-e5df34b3ed06'].
+{% endhighlight %}
+</div>
