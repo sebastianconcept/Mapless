@@ -7,8 +7,6 @@ pharo-ui
 # Project specific temporaries / requisites / transient #
 #########################################################
 amber/
-TidalChat/
-tide/
 _site/
 
 # Smalltalk related binary files #
