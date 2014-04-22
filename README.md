@@ -4,15 +4,16 @@ Mapless
 *Obscenely simple persistence for Smalltalk.* Mapless is a small framework for storing objects in a key->data fashion (i.e.: noSQL databases) without requiring any kind of object-data map.  So far only MongoDB is supported. And Redis can be used for reactivity and cache joy.
 
 ###Motivation
-> "I wanted to persist objects with extremely *low friction* and extremely *low maintenance* and great *scaling* and *availability* capabilities so Mapless is totally biased towards that. This framework is what I came up with after incorporating my experience with [Aggregate](https://github.com/sebastianconcept/Aggregate)." ~ [Sebastian](http://about.me/sebastianconcept)
-
-*There is no spoon...*
-
-*There is no object-relational impedance...*
+> "I wanted to persist objects with *low friction* and *low maintenance* but *high scaling* and *availability* capabilities so Mapless is totally biased towards that. This framework is what I came up with after incorporating my experience with [Aggregate](https://github.com/sebastianconcept/Aggregate) in [airflowing](http://airflowing.com)." ~ [Sebastian](http://about.me/sebastianconcept)
 
 *There is no instVars...*
 
-*Only persistence*.
+*There is no accessors...*
+
+*There is no object-mapping impedance...*
+
+
+*Only persistence.*
 
 ###Loading it in your image 
 
@@ -53,7 +54,7 @@ Want to save something? Zero bureaucracy, just tell that to the model:
     		notes: 'Wonder how it feels to use this thing, hmm...';
     		save].####Need composition? 
 
-Of course you do:
+Of course you do! The only thing you need is to save the children first
     odb do:[ |anAlert|
       anAlert := RAlert new 
       				duration: 24 hours;
