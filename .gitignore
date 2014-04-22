@@ -9,7 +9,7 @@ pharo-ui
 amber/
 TidalChat/
 tide/
-site/_site/
+_site/
 
 # Smalltalk related binary files #
 ##################################
