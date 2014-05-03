@@ -76,14 +76,15 @@ Of course you do! The only thing you need is to save the children first
 
 So you now need to store a different kind of models, say List or User or anything, how you proceed? 
 
-This is what you do with Mapless:
+This is what happens to you with Mapless:
 
 1. Create a subclass for them
 2. <del>Know what attributes they will need in advance</del>
 3. <del>Create its attributes' instVars</del>
 4. <del>Make accessors for them</del>
 5. <del>Elegantly map them so it all fits in the database</del>
-6. Profit
+6. <del>Patiently re-map them every time you need to change its design</del>
+7. Profit
 
 ###How does it look? on Redis
 
@@ -110,7 +111,8 @@ This code is considered alpha. Check its tests. Contribute!
 ###Direction?
 
 1. We would love to see more and better tests and iterate the reactive features so you can ultimately get an a model in one image being observed in regard to one event by something in another image and that something reacting upon that event. Broadcast and multicast of events would be also a nice feat and not too hard to do. Have design suggestions? Let's have a chat!
-2. We actually are starting to think [Amber](http://amber-lang.net) and [localStorage](http://en.wikipedia.org/wiki/Web_storage) but that's more hush hush at this point. Oh gee! [we already](https://www.youtube.com/watch?v=ZDC1N5wYsMg) blown it!
+2. For MongoDB-based Mapless, a nice feature would be to have <code>UserModel ensureIndex: '{ key1: 1, key2: -1 }'</code>
+3. We actually are starting to think [Amber](http://amber-lang.net) and [localStorage](http://en.wikipedia.org/wiki/Web_storage) but that's more hush hush at this point. Oh gee! [we already](https://www.youtube.com/watch?v=ZDC1N5wYsMg) blown it!
 
 ###*Pharo Smalltalk
 Getting a fresh Pharo Smalltalk image and its virtual machine is as easy as running in your terminal:
