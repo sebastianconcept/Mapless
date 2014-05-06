@@ -217,6 +217,29 @@ title: Mapless, obscenely simple object persistence
 
                  <div id="involved" class="col-md-12 ">
                     <div class="elaborate">
+                        <h5 class="">Frequently Asked Questions</h5>
+                            <p><em>What saving 'Models' means? why not any object?</em> By Models Mapless means that you are not pretending to save transient stuff like contexts or sockets or filehandlers, etc. Any instance of a MongoMapless subclass will save in a breeze. Those instances are going to be serialized and stored as documents of its correspondant MongoDB collection.<p>
+                            <p><em>Is only for tree-like structures or does actually support an object graph?</em> Given that you follow its rules,like saving children first and thinking your models as noSQL friendly documents, yes, it does support an arbitrary object graph.<p>
+                            <p><em>Why would I want to use Mapless?</em> Because you might want to profit from some of these benefits:
+                            <ol>
+                                <li>JSON friendly models</li>
+                                <li>Having 1:1 interoperability of your models with Ruby and NodeJS and any JSON friendly object oriented app</li>
+                                <li>Dealing with Gigas or Teras order of magnitude databases</li>
+                                <li>High availability</li>
+                                <li>Easy replication of the whole database across the cloud</li>
+                                <li>Databases many people is familiar to use and <em>maintain</em></li>
+                                <li>Powerful queries and custom indices</li>
+                                <li>Freedom from <em>a prioristic</em> instVars declarations</li>
+                                <li>Freedom from mappings maintenance <em>when</em> the design changes</li>                                
+                                <li>Trans-image model caching (requires Redis)</li>
+                                <li>Trans-image model observation/reaction, horizontally scalling the <a href="http://en.wikipedia.org/wiki/Observer_pattern" target="_bank">Observer Pattern</a> (requires Redis)</li>
+                                <li>Friendly to mobile noSQL database use and sync (requires CouchDB)</li>
+                            </ol> All that with <em>very low-friction and low-maintenance</em> using one simple API<p>                    
+                    </div>
+                </div>
+
+                 <div id="involved" class="col-md-12 ">
+                    <div class="elaborate">
                         <h5 class="">Get involved!</h5>
                             <p>Want to push this forward? Awesome!</p>
                             <ol>
