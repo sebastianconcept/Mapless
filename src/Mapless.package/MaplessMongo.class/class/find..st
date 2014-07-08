@@ -7,6 +7,7 @@ find: someConditions
 				q where: someConditions].
 
 	^ result isNil
-		ifTrue: [ nil ]
-		ifFalse: [ self fromJSONObject: result asJsonObject ]
+		ifTrue: [ Array new ]
+		ifFalse: [ result collect: [ :each| 
+					self fromJSONObject: each asJsonObject ] ]
 		
