@@ -3,7 +3,7 @@ find: someConditions
 
 	| result |
 
-	result := self databaseCollection queryOne:[:q| 
+	result := self databaseCollection query:[:q| 
 				q where: someConditions].
 
 	^ result isNil
