@@ -1,7 +1,7 @@
 accessing
 findAt: aMongoOID
 
-	^ self find: (Dictionary new 
+	^ self findOne: (Dictionary new 
 					at: '_id' put: aMongoOID;
 					yourself)
 		
