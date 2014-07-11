@@ -1,4 +1,4 @@
 testing
 existsAt: aMongoOID
 
-	^ ( self findAt: aMongoOID ) notNil
+	^ ( self findId: aMongoOID ) notNil

@@ -26,7 +26,7 @@ testUnrefDestroy
 	self do:[person save].
 	self deny: person isUnsaved.
 	
-	self do:[ loaded := MaplessRedisDummyPerson findAt: person oid].
+	self do:[ loaded := MaplessRedisDummyPerson findId: person oid].
 	
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.

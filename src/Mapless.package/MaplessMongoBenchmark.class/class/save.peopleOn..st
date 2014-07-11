@@ -38,7 +38,7 @@ save: aQuantity peopleOn: aStream
 	MongoPool instance databaseAt: 'flow' do:[ 
 		delay := Time millisecondsToRun: [
 				guys do:[ :guy | 
-					MaplessMongoDummyUser findAt: guy oid]]].
+					MaplessMongoDummyUser findId: guy oid]]].
 	
 	readsPerSecond := ((1000 * aQuantity) / delay asFloat) truncated.
 	

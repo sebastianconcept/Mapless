@@ -38,7 +38,7 @@ testMultipleComposedComposables
 	self deny: (tags anySatisfy: [:tag| tag isUnsaved]).	
 
 	self do:[ 
-		loaded := MaplessRedisDummyTag findAt: tags first oid.
+		loaded := MaplessRedisDummyTag findId: tags first oid.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		self assert: loaded label = 'is this'.

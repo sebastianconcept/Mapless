@@ -20,8 +20,8 @@ testComposedAccess
 		user save ].
 	
 	self do:[
-		self assert: ( MaplessRedisDummyUser findAt: user oid ) completeName = 'john q'.
-		self assert: ( MaplessRedisDummyUser findAt: user oid ) person class = MaplessReference.
-		self assert: ( MaplessRedisDummyUser findAt: user oid ) person model class = MaplessRedisDummyPerson.
-		self assert: ( MaplessRedisDummyUser findAt: user oid ) person firstName = 'john'.
-		self assert: ( MaplessRedisDummyUser findAt: user oid ) person lastName = 'q' ]
+		self assert: ( MaplessRedisDummyUser findId: user oid ) completeName = 'john q'.
+		self assert: ( MaplessRedisDummyUser findId: user oid ) person class = MaplessReference.
+		self assert: ( MaplessRedisDummyUser findId: user oid ) person model class = MaplessRedisDummyPerson.
+		self assert: ( MaplessRedisDummyUser findId: user oid ) person firstName = 'john'.
+		self assert: ( MaplessRedisDummyUser findId: user oid ) person lastName = 'q' ]

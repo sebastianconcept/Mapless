@@ -23,7 +23,7 @@ testMultipleComposedMixedSaveAndLoad
 	self deny: guy isUnsaved.	
 	self assert: (things allSatisfy: [:e| e isUnsaved not]).
 
-	self do:[ loaded := MaplessMongoDummyPerson findAt: guy oid.
+	self do:[ loaded := MaplessMongoDummyPerson findId: guy oid.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		self assert: loaded firstName = 'john'.
