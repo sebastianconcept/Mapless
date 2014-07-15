@@ -1,7 +1,4 @@
 accessing
-findId: aMongoOID
+findId: anId
 
-	^ self findOne: (Dictionary new 
-					at: '_id' put: aMongoOID;
-					yourself)
-		
+	^ self findAt: anId

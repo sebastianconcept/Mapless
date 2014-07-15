@@ -14,7 +14,7 @@ testDateAndTime
 	self do:[ guy save ].
 	self deny: guy isUnsaved.
 
-	self do:[ loaded := MaplessMongoDummyPerson findId: guy id ].
+	self do:[ loaded := MaplessMongoDummyPerson findAt: guy id ].
 
 	self assert: loaded createdOn asDate asString = when asDate asString.
 	self assert: loaded createdOn asSeconds = when asSeconds.

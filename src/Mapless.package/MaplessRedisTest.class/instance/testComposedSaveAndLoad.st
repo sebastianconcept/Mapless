@@ -26,7 +26,7 @@ testComposedSaveAndLoad
 	self deny: user isUnsaved.	
 	self deny: guy isUnsaved.	
 
-	self do:[ loaded := MaplessRedisDummyUser findId: user oid.
+	self do:[ loaded := MaplessRedisDummyUser findAt: user oid.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		loaded keysAndValuesDo:[:k :v|

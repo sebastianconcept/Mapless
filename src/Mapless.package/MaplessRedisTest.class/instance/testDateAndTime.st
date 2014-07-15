@@ -14,7 +14,7 @@ testDateAndTime
 	self do:[ guy save ].
 	self deny: guy isUnsaved.
 
-	self do:[ loaded := MaplessRedisDummyPerson findId: guy id ].
+	self do:[ loaded := MaplessRedisDummyPerson findAt: guy id ].
 
 	self assert: loaded createdOn asDate = when asDate.
 	self assert: loaded createdOn asTime = when asTime .

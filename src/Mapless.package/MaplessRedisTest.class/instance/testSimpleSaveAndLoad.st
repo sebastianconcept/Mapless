@@ -11,7 +11,7 @@ testSimpleSaveAndLoad
 	self do:[guy save].
 	self deny: guy isUnsaved.
 
-	self do:[ loaded := MaplessRedisDummyPerson findId: guy oid ].
+	self do:[ loaded := MaplessRedisDummyPerson findAt: guy oid ].
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
 	loaded data keysAndValuesDo: [:k :v|

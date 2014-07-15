@@ -26,7 +26,7 @@ testComposedSaveAndLoad
 	self deny: user isUnsaved.	
 	self deny: guy isUnsaved.	
 
-	self do:[ loaded := MaplessMongoDummyUser findId: user oid.
+	self do:[ loaded := MaplessMongoDummyUser findAt: user oid.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		self assert: loaded createdOn asUnixTime = user createdOn asUnixTime.

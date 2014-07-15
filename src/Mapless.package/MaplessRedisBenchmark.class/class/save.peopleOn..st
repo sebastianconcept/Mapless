@@ -37,7 +37,7 @@ save: aQuantity peopleOn: aStream
 	RedisPool instance do:[ :client |
 		delay := Time millisecondsToRun: [
 				guys do:[ :guy | 
-					MaplessRedisDummyUser findId: guy oid]]].
+					MaplessRedisDummyUser findAt: guy oid]]].
 	
 	readsPerSecond := ((1000 * aQuantity) / delay asFloat) truncated.
 			

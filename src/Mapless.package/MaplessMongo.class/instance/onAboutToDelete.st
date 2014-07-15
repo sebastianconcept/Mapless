@@ -1,2 +1,4 @@
 reactions
 onAboutToDelete
+
+	"no-op"

@@ -1,4 +1,4 @@
 reactions
 onAboutToSave
 
-	self modifiedOn: DateAndTime now
+	"no-op"
