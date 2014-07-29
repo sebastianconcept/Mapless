@@ -10,5 +10,5 @@
 	"name" : "MaplessMongoDummyPerson",
 	"pools" : [
 		 ],
-	"super" : "MaplessMongo",
+	"super" : "MaplessMongoModel",
 	"type" : "normal" }

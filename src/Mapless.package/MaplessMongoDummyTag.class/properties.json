@@ -10,5 +10,5 @@
 	"name" : "MaplessMongoDummyTag",
 	"pools" : [
 		 ],
-	"super" : "MaplessMongo",
+	"super" : "MaplessMongoModel",
 	"type" : "normal" }
