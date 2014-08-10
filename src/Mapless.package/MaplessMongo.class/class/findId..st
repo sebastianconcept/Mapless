@@ -1,4 +1,6 @@
 accessing
 findId: anId
 
-	^ self findAt: anId
+	^ self find: (Dictionary new
+					at: 'id' put: anId;
+					yourself)
