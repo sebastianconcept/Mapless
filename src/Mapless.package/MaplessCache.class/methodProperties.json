@@ -1,17 +1,17 @@
 {
 	"class" : {
-		"defaultSlotDuration" : "SebastianSastre 5/3/2014 17:22:48",
-		"initializeInstance" : "SebastianSastre 5/3/2014 17:22:48",
-		"instance" : "SebastianSastre 5/3/2014 17:22:48",
-		"reset" : "SebastianSastre 5/3/2014 17:22:48" },
+		"defaultSlotDuration" : "SebastianSastre 7/7/2014 17:48:35",
+		"initializeInstance" : "SebastianSastre 7/7/2014 17:48:35",
+		"instance" : "SebastianSastre 7/7/2014 17:48:35",
+		"reset" : "SebastianSastre 7/7/2014 17:48:35" },
 	"instance" : {
-		"at:" : "SebastianSastre 5/3/2014 17:22:48",
-		"at:ifAbsent:" : "SebastianSastre 5/3/2014 17:22:48",
-		"at:put:" : "SebastianSastre 5/3/2014 17:22:48",
-		"initializeModels" : "SebastianSastre 5/3/2014 17:22:48",
-		"isExpired:for:" : "SebastianSastre 5/3/2014 17:22:48",
-		"models" : "SebastianSastre 5/3/2014 17:22:48",
-		"newSlotFor:" : "SebastianSastre 5/3/2014 17:22:48",
-		"purge" : "SebastianSastre 5/3/2014 17:22:48",
-		"purgeOlderThan:" : "SebastianSastre 5/3/2014 17:22:48",
-		"reset" : "SebastianSastre 5/3/2014 17:22:48" } }
+		"at:" : "SebastianSastre 7/7/2014 17:48:35",
+		"at:ifAbsent:" : "SebastianSastre 7/7/2014 17:48:35",
+		"at:put:" : "SebastianSastre 7/7/2014 17:48:35",
+		"initializeModels" : "SebastianSastre 7/7/2014 17:48:35",
+		"isExpired:for:" : "SebastianSastre 7/7/2014 17:48:35",
+		"models" : "SebastianSastre 7/7/2014 17:48:35",
+		"newSlotFor:" : "SebastianSastre 7/7/2014 17:48:35",
+		"purge" : "SebastianSastre 7/7/2014 17:48:35",
+		"purgeOlderThan:" : "SebastianSastre 7/7/2014 17:48:35",
+		"reset" : "SebastianSastre 7/7/2014 17:48:35" } }
