@@ -1,4 +1,2 @@
 reactions
 onAboutToDestroy
-
-	"no-op"
