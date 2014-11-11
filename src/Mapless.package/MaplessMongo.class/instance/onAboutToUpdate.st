@@ -1,4 +1,2 @@
 reactions
 onAboutToUpdate
-
-	"no-op"
