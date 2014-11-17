@@ -7,8 +7,8 @@ findAll
 
 	constraints := Dictionary new.
 	
-	result := self databaseCollection query:[:q| 
-				q where: constraints].
+	result := self databaseCollection query:[ :q | 
+				q where: constraints ].
 			
 	^ (result isNil and:[
 	result isEmpty])

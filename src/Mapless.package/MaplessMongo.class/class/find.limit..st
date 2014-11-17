@@ -3,10 +3,11 @@ find: someConditions limit: toHowManyResults
 
 	| result |
 
-	result := self databaseCollection queryOne:[:q| 
-				q limit: toHowManyResults; where: someConditions].
+	result := self databaseCollection query: [ :q | 
+				q limit: toHowManyResults; where: someConditions ].
 
-	^ result isNil
-		ifTrue: [ nil ]
-		ifFalse: [ self fromJSONObject: result asJsonObject ]
+	^ (result isNil and:[
+	result isEmpty])
+		ifTrue: [ #() ]
+		ifFalse: [ self fromJSONObjects: result ]
 		
