@@ -1,5 +1,15 @@
 #!/bin/bash
 # gets a fresh Pharo 3.0 image and loads Mapless
 
-clean
-build
+echo "Downloading Pharo 3.0 and a VM ..."
+rm -rf pharo
+rm -rf pharo-ui
+rm -rf *.log
+rm -rf pharo-vm
+rm -rf package-cache
+wget -O- get.pharo.org/30+vm | bash
+
+echo "Opening Pharo to load Mapless ..."
+./pharo-ui Pharo.image MaplessBuilder.st
+
+echo "Ready!"
