@@ -1,4 +1,4 @@
 actions
-makeId
+getNewId
 
 	^ UUID new asString36

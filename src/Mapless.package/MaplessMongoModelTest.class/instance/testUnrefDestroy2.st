@@ -27,7 +27,7 @@ testUnrefDestroy2
 	self do:[guy save].
 	self deny: guy isUnsaved.
 	
-	self do:[ loaded := MaplessMongoDummyPerson findAt: guy oid].
+	self do:[ loaded := MaplessMongoDummyPerson findId: guy id].
 	
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
@@ -39,9 +39,9 @@ testUnrefDestroy2
 
 	"By design, the destruction should be to the individual aggregate (and not its submodels).
 	It's programmers' responsability to decide when to destroy a sub aggregate"	
-	self assert: ( self do: [ reloaded := MaplessMongoDummyPerson existsAt: loaded oid]) not.	
-	self do:[self assert: ((friends collect: [:e| e oid]) allSatisfy: [:guyOid|
-					(MaplessMongoDummyPerson existsAt: guyOid)])]
+	self assert: ( self do: [ reloaded := MaplessMongoDummyPerson existsId: loaded id]) not.	
+	self do:[self assert: ((friends collect: [:e| e id]) allSatisfy: [:guyId|
+					(MaplessMongoDummyPerson existsId: guyId)])]
 
 				
 	

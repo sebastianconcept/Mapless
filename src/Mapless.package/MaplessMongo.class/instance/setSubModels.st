@@ -4,4 +4,4 @@ setSubModels
 	to the JSON data this instance."
 
 	self data keysAndValuesDo: [ :k :v |
-		self setSubModelsAt: k with: v]
+		self setSubModelsAt: k with: v ]

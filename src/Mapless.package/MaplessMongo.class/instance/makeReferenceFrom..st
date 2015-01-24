@@ -7,7 +7,7 @@ makeReferenceFrom: aJSONString
 	jsonObject := [ Json readFrom: aJSONString readStream ] ifError: [ :x| nil ].
 
 	^ (jsonObject notNil and:[
-	jsonObject oid notNil and:[
+	(jsonObject at: self class idAttribute) notNil and:[
 	jsonObject modelClass notNil]]) 
 		ifTrue:[ MaplessReference fromJSONObject: jsonObject ]
 		ifFalse:[ nil ] 
