@@ -7,6 +7,6 @@ getMongoModel
 				at: modelClass asSymbol 
 				ifAbsent:[ self error: 'This image does not have ',modelClass asString,' class' ].
 	
-	^ class findAt: oid 
+	^ class findId: id 
 	
 	

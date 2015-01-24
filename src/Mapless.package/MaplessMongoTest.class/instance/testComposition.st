@@ -18,8 +18,8 @@ testComposition
 	self assert: guy isUnsaved.	
 	self assert: ((user data at: 'person') class = MaplessMongoDummyPerson ).
 	self assert: ((user data at: 'person') modelClass = #MaplessMongoDummyPerson).
-	self assert: user oid isNil.
-	self assert: (user data at: 'person') oid isNil.
+	self assert: user id isNil.
+	self assert: (user data at: 'person') id isNil.
 	self assert: (user completeName = 'john q').
 	
 	
