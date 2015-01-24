@@ -1,4 +1,4 @@
 reactions
 onAboutToInsert
 
-	self ensureOID
+	self ensureId

@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Installs libraries and modules that can be installed from remote sources and
+# compiles local files that can be rebuilt from sources
+
+bower install
+npm install
+amber config
+grunt devel
+grunt
+

@@ -5,8 +5,8 @@ insert
 		
 	self onAboutToInsert.
 
-	[bsonFriendly := self asMongoDocument] ifCurtailed:[
-		self data removeKey: '_id' ifAbsent: [ nil ] ] .
+	[ bsonFriendly := self asMongoDocument ] ifCurtailed: [
+		self data removeKey: self class idAttribute ifAbsent: [ nil ] ] .
 
 	self class databaseCollection add: bsonFriendly.
 	

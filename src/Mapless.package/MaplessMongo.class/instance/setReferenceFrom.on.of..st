@@ -4,11 +4,11 @@ setReferenceFrom: aString on: aKey of: aJSONObject
 
 	| jsonObject |
 
-	jsonObject := [ Json readFrom: aString readStream ] ifError: [ :x| nil ].
+	jsonObject := [ Json readFrom: aString readStream ] ifError: [ :x | nil ].
 
 	(jsonObject notNil and:[
-	jsonObject oid notNil and:[
-	jsonObject modelClass notNil]]) ifTrue:[ 
+	(jsonObject at: self class idAttribute) notNil and: [
+	jsonObject modelClass notNil]]) ifTrue: [ 
 		 aJSONObject 
 			at: aKey 
 			put: ( MaplessReference fromJSONObject: jsonObject ) ] 

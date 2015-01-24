@@ -4,7 +4,7 @@ destroy
 
 	| bsonFriendly filter |
 	
-	filter := JsonObject new at: '_id' put: (data at: '_id'); yourself. 
+	filter := JsonObject new at: self class idAttribute put: self id; yourself. 
 
 	self onAboutToDestroy.
 		

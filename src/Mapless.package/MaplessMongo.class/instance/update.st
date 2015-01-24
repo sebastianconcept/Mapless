@@ -9,7 +9,7 @@ update
 
 	self class databaseCollection 
 		replace:  (Dictionary new 
-					at: '_id' put: self oid;
+					at: self class idAttribute put: self id;
 					yourself)
 		with: bsonFriendly.
 		
