@@ -9,7 +9,7 @@ setModelsFrom: someJsonStrings on: aKey of: aJsonObject
 		put: (someJsonStrings collect: [:json| 
 				modelClass := Smalltalk 
 								at: (json at: 'modelClass') asSymbol
-								ifAbsent: [ self error: 'Cannot find that class' ].
+								ifAbsent:[self error: 'Cannot find that class'].
 				newSubModel := modelClass fromJSON: json.
 				newSubModel setSubModels.
 				newSubModel])

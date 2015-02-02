@@ -2,5 +2,5 @@ accessing
 = anObject
 
 	^ super = anObject or:[
-	self id = anObject id and:[
+	self oid = anObject oid and:[
 	self modelClass = anObject modelClass ] ]

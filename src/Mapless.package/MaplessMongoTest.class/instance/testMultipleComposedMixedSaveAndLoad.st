@@ -23,7 +23,7 @@ testMultipleComposedMixedSaveAndLoad
 	self deny: guy isUnsaved.	
 	self assert: (things allSatisfy: [:e| e isUnsaved not]).
 
-	self do:[ loaded := MaplessMongoDummyPerson findId: guy id.
+	self do:[ loaded := MaplessMongoDummyPerson findAt: guy oid.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		self assert: loaded firstName = 'john'.
@@ -31,7 +31,7 @@ testMultipleComposedMixedSaveAndLoad
 		self assert: loaded things notEmpty.
 		
 		loaded things do:[:each|
-			self assert: (things anySatisfy: [ :t | t id = each id ] ) ].
+			self assert: (things anySatisfy:[:t| t id = each id])].
 		loaded unreferenced.
 		self assert: loaded things first class = MaplessMongoDummyTag.
 		self assert: loaded things second class = MaplessMongoDummyTag.

@@ -4,4 +4,4 @@ setReferencesFrom: someJsonStrings on: aKey of: aJsonObject
 
 	 aJsonObject 
 		at: aKey 
-		put: (someJsonStrings collect: [ :json | self makeReferenceFrom: json ])
+		put: (someJsonStrings collect: [:json| self makeReferenceFrom: json])

@@ -25,9 +25,9 @@ testComposedDestroy
 	self do:[ users do:[ :user | user person destroy ] ].
 	
 	self do:[
-		self assert: ( users allSatisfy: [ :user | ( MaplessMongoDummyPerson existsId: user person id ) not] ).	
-		self assert: ( users allSatisfy: [ :user | MaplessMongoDummyUser existsId: user id ] ) ].	
+		self assert: ( users allSatisfy: [ :user | ( MaplessMongoDummyPerson existsAt: user person oid ) not] ).	
+		self assert: ( users allSatisfy: [ :user | MaplessMongoDummyUser existsAt: user oid ] ) ].	
 
 	self do:[ users do:[ :user | user destroy ] ].
 
-	self assert: ( self do: [ users allSatisfy: [ :user | (MaplessMongoDummyUser existsId: user id) not ] ] ).	
+	self assert: ( self do: [ users allSatisfy: [ :user | (MaplessMongoDummyUser existsAt: user oid) not ] ] ).	

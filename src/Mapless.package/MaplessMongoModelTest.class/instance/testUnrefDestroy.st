@@ -26,7 +26,7 @@ testUnrefDestroy
 	self do:[person save].
 	self deny: person isUnsaved.
 	
-	self do:[ loaded := MaplessMongoDummyPerson findId: person id].
+	self do:[ loaded := MaplessMongoDummyPerson findAt: person oid].
 	
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
@@ -43,5 +43,5 @@ testUnrefDestroy
 	self do: [ reified destroy].
 	"self do: [ loaded destroy].
 	"
-	self assert: ( self do: [ reloaded := MaplessMongoDummyPerson existsId: reified id]) not.	
+	self assert: ( self do: [ reloaded := MaplessMongoDummyPerson existsAt: reified oid]) not.	
 

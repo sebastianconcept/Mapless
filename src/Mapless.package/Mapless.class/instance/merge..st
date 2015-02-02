@@ -7,9 +7,9 @@ merge: aMapless
 	
 	(aMapless data keys asOrderedCollection 
 		removeAllFoundIn: aMapless class keysToExclude;
-		yourself) do: [ :aKey | | part |
+		yourself) do:[:aKey| |part|
 			part := aMapless perform: aKey asSymbol.
-			(part isKindOf: Mapless) ifTrue: [ |subMaplessOrNil|
+			(part isKindOf: Mapless) ifTrue:[ |subMaplessOrNil|
 				subMaplessOrNil := self perform: aKey asSymbol.
-				subMaplessOrNil ifNotNil: [ subMaplessOrNil merge: part ] ].
-			self data at: aKey ifAbsentPut: [ part ] ]
+				subMaplessOrNil ifNotNil:[subMaplessOrNil merge: part]].
+			self data at: aKey ifAbsentPut:[part]]

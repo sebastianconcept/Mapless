@@ -27,7 +27,7 @@ testUnreferenced2
 	self do:[guy save].
 	self deny: guy isUnsaved.
 	
-	self do:[ loaded := MaplessMongoDummyPerson findId: guy id].
+	self do:[ loaded := MaplessMongoDummyPerson findAt: guy oid].
 	
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.

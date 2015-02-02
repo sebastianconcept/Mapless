@@ -2,6 +2,6 @@ actions
 fromJSONObject: aJsonObject
 
 	^ self new
-		id: (aJsonObject at: MaplessMongo idAttribute);
+		oid: aJsonObject oid;
 		modelClass: aJsonObject modelClass;
 		yourself 

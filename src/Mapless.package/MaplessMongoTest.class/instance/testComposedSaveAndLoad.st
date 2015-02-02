@@ -26,15 +26,15 @@ testComposedSaveAndLoad
 	self deny: user isUnsaved.	
 	self deny: guy isUnsaved.	
 
-	self do:[ loaded := MaplessMongoDummyUser findId: user id.
+	self do:[ loaded := MaplessMongoDummyUser findAt: user oid.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
-		self assert: loaded createdOn notNil.
-		self assert: loaded modifiedOn notNil.
+		self assert: loaded createdOn asUnixTime = user createdOn asUnixTime.
+		self assert: loaded modifiedOn asUnixTime = user modifiedOn asUnixTime.
 		loaded createdOn: nil; modifiedOn: nil.
 		user createdOn: nil; modifiedOn: nil.
-		loaded data keysAndValuesDo: [ :k :v |
-			self assert: v = ( user data at: k ) ].
+		loaded data keysAndValuesDo:[:k :v|
+			self assert: v = (user data at: k)].
 		self assert: loaded username = 'johnq'.
 		self assert: loaded person firstName = 'john'.
 		self assert: loaded person lastName = 'q'.

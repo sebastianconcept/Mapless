@@ -1,7 +1,7 @@
 initialization
-initializeOn: aMongoMapless
+initializeOn: aFlowMongoModel
 
-	id := aMongoMapless id.
-	modelClass := aMongoMapless class name asString.
+	oid := aFlowMongoModel oid.
+	modelClass := aFlowMongoModel class name asString.
 	
-	model := aMongoMapless 
+	model := aFlowMongoModel 

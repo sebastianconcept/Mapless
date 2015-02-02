@@ -3,7 +3,7 @@ unreferenced
 	"Returns this model without references to submodels.
 	It will reify any proxy (reference to another sub model) found"
 	
-	self data keysAndValuesDo: [ :k :v |
+	self data keysAndValuesDo: [:k :v |
 	
 		v class = MaplessReference ifTrue:[ |subModel|
 			subModel := v model.

@@ -9,4 +9,4 @@ testing
 	the contained information with the one in aModel."
 	
 	^ (aModel class = self class) and:[
-	self id = aModel id ]
+	self id = aModel id]

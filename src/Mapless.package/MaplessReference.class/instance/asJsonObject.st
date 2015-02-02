@@ -1,15 +1,15 @@
 actions
 asJsonObject 
 
-	"The only valid scenario when this won't have an id 
+	"The only valid scenario when this won't have an oid 
 	is when it wraps an unsaved submodel"
-	id ifNil: [ id := model id ].
+	oid ifNil:[ oid := model oid ].
 
-	"a nil id at this point should never happen"	
-	id ifNil: [ ^ MaplessUnsavedSubmodel signal: 'This sub model is unsaved. You need to save all sub models before saving a composed model' ].
-	self assert: id notNil.
+	"a nil oid at this point should never happen"	
+	oid ifNil:[^ MaplessUnsavedSubmodel signal: 'This sub model is unsaved. You need to save all sub models before saving a composed model'].
+	self assert: oid notNil.
 
 	^ JsonObject new
 		at: 'modelClass' put: modelClass;
-		at: model class idAttribute put: id;
+		at: 'oid' put: oid;
 		yourself
