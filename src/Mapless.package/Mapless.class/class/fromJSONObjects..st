@@ -1,4 +1,4 @@
-accessing
+actions
 fromJSONObjects: someJsonObjects
 
 	^ someJsonObjects collect:[:e|

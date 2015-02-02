@@ -4,11 +4,11 @@ testComposedAccess
 
 	| user guy |
 	
-	user := MaplessRedisDummyUser new
+	user := MaplessDummyUser new
 				userame: 'johnq';
 				yourself.
 	
-	guy := MaplessRedisDummyPerson new
+	guy := MaplessDummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -20,8 +20,8 @@ testComposedAccess
 		user save ].
 	
 	self do:[
-		self assert: ( MaplessRedisDummyUser findAt: user oid ) completeName = 'john q'.
-		self assert: ( MaplessRedisDummyUser findAt: user oid ) person class = MaplessReference.
-		self assert: ( MaplessRedisDummyUser findAt: user oid ) person model class = MaplessRedisDummyPerson.
-		self assert: ( MaplessRedisDummyUser findAt: user oid ) person firstName = 'john'.
-		self assert: ( MaplessRedisDummyUser findAt: user oid ) person lastName = 'q' ]
+		self assert: ( MaplessDummyUser findId: user oid ) completeName = 'john q'.
+		self assert: ( MaplessDummyUser findId: user oid ) person class = MaplessReference.
+		self assert: ( MaplessDummyUser findId: user oid ) person model class = MaplessDummyPerson.
+		self assert: ( MaplessDummyUser findId: user oid ) person firstName = 'john'.
+		self assert: ( MaplessDummyUser findId: user oid ) person lastName = 'q' ]

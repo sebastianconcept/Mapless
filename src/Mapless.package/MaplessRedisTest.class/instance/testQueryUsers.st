@@ -3,12 +3,13 @@ testQueryUsers
 
 	| users |
 	
+	self do: [ 
 	users := OrderedCollection new.
 
 	Character alphabet do: [ :char |
-		users add: (MaplessRedisDummyUser new 
+		users add: (MaplessDummyUser new 
 					username: char asString;
-					person: (MaplessRedisDummyPerson new
+					person: (MaplessDummyPerson new
 								firstName: char asString;
 								yourself);
 					yourself)].
@@ -21,4 +22,5 @@ testQueryUsers
 
 	self do:[ 
 		self assert: (Character alphabet allSatisfy: [ :char | 
-						( MaplessRedisDummyUser findUsername: char asString ) notNil ] ) ]
+						( MaplessDummyUser findUsername: char asString ) notNil ] ) ]
+				]

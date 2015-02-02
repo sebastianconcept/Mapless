@@ -1,4 +1,4 @@
 actions
 do: aBlock 
 
-	^ pool databaseAt: 'Mapless-Tests' do: aBlock 
+	^repository do: aBlock 
