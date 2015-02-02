@@ -3,24 +3,25 @@ testMultipleComposedComposables
 
 	| tags tagsOfTags tagsOfTagsOfTags loaded |
 
+	self do: [ 	
 	tags := OrderedCollection new.
 	tagsOfTags := OrderedCollection new.
 	tagsOfTagsOfTags := OrderedCollection new.
 
 	tags 
-		add: (MaplessMongoDummyTag new label: 'is this'; yourself);	
-		add: (MaplessMongoDummyTag new label: 'multiply'; yourself);	
-		add: (MaplessMongoDummyTag new label: 'composable?'; yourself);	
+		add: (MaplessDummyTag new label: 'is this'; yourself);	
+		add: (MaplessDummyTag new label: 'multiply'; yourself);	
+		add: (MaplessDummyTag new label: 'composable?'; yourself);	
 		yourself.
 
 	tagsOfTags 
-		add: (MaplessMongoDummyTag new label: 'like'; yourself);	
-		add: (MaplessMongoDummyTag new label: 'really?'; yourself);	
+		add: (MaplessDummyTag new label: 'like'; yourself);	
+		add: (MaplessDummyTag new label: 'really?'; yourself);	
 		yourself.
 
 	tagsOfTagsOfTags  
-		add: (MaplessMongoDummyTag new label: 'wow'; yourself);	
-		add: (MaplessMongoDummyTag new label: 'nice'; yourself);	
+		add: (MaplessDummyTag new label: 'wow'; yourself);	
+		add: (MaplessDummyTag new label: 'nice'; yourself);	
 		yourself.
 
 	self do:[ tagsOfTagsOfTags do:[ :tag | tag save] ].
@@ -38,7 +39,7 @@ testMultipleComposedComposables
 	self deny: (tags anySatisfy: [:tag| tag isUnsaved]).	
 
 	self do:[ 
-		loaded := MaplessMongoDummyTag findAt: tags first oid.
+		loaded := MaplessDummyTag findId: tags first id.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		self assert: loaded label = 'is this'.
@@ -54,3 +55,4 @@ testMultipleComposedComposables
 		self assert: loaded tags first tags first label = 'wow'.
 		self assert: loaded tags first tags second label = 'nice'.
 		]
+	]

@@ -3,11 +3,12 @@ testComposition
 
 	| user guy |
 	
-	user := MaplessMongoDummyUser new
+	self do: [ 
+	user := MaplessDummyUser new
 				userame: 'johnq';
 				yourself.
 	
-	guy := MaplessMongoDummyPerson new
+	guy := MaplessDummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -16,11 +17,11 @@ testComposition
 		
 	self assert: user isUnsaved.
 	self assert: guy isUnsaved.	
-	self assert: ((user data at: 'person') class = MaplessMongoDummyPerson ).
-	self assert: ((user data at: 'person') modelClass = #MaplessMongoDummyPerson).
-	self assert: user oid isNil.
-	self assert: (user data at: 'person') oid isNil.
-	self assert: (user completeName = 'john q').
+	self assert: ((user data at: 'person') class = MaplessDummyPerson ).
+	self assert: ((user data at: 'person') modelClass = #MaplessDummyPerson).
+	self assert: user id isNil.
+	self assert: (user data at: 'person') id isNil.
+	self assert: (user completeName = 'john q')]
 	
 	
 	

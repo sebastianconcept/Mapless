@@ -3,11 +3,13 @@ testSimpleSave
 
 	| guy |
 	
-	guy := MaplessMongoDummyPerson new
+	self do: [ 
+	guy := MaplessDummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
 	
 	self assert: guy isUnsaved.	
 	self do:[ guy save ].
-	self deny: guy isUnsaved.
+	self deny: guy isUnsaved
+		 ]

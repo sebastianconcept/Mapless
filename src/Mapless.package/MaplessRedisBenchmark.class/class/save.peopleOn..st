@@ -1,11 +1,12 @@
 actions
 save: aQuantity peopleOn: aStream 
 
-	| guys firstNames lastNames delay savesPerSecond readsPerSecond |
+	| guys firstNames lastNames delay savesPerSecond readsPerSecond redisRepository  |
 
 	firstNames := OrderedCollection new.
 	lastNames := OrderedCollection new.
 	guys := OrderedCollection new.
+	redisRepository := MaplessRedisRepository on: RedisPool instance requestClient.
 	
 	1 to: aQuantity do:[ :i |
 		firstNames add: Character alphabet shuffled anyOne asString ].
@@ -14,12 +15,12 @@ save: aQuantity peopleOn: aStream
 		lastNames add: Character alphabet shuffled anyOne asString ].
 
 	1 to: aQuantity do:[ :i | 
-		guys add: (MaplessRedisDummyPerson new
+		guys add: (MaplessDummyPerson new
 					firstName: (firstNames at: i);
 					lastName: (lastNames at: i);
 					yourself)].
 
-	RedisPool instance do:[ :client |
+	redisRepository do: [ 
 		delay := Time millisecondsToRun: [
 			1 to: aQuantity do:[ :i | 
 				(guys at: i) save]]].
@@ -29,22 +30,22 @@ save: aQuantity peopleOn: aStream
 	aStream cr;
 		nextPutAll: 'Saved ';
 		nextPutAll: aQuantity asString;
-		nextPutAll: ' instances of MaplessRedisDummyPerson in: ';
+		nextPutAll: ' instances of MaplessDummyPerson in: ';
 		nextPutAll: delay milliseconds asString;
 		nextPutAll: ' ms ';
 		nextPutAll: '(~',savesPerSecond asString,' saves per second)'.
 		
-	RedisPool instance do:[ :client |
+	redisRepository do:[
 		delay := Time millisecondsToRun: [
 				guys do:[ :guy | 
-					MaplessRedisDummyUser findAt: guy oid]]].
+					MaplessDummyUser findAt: guy oid]]].
 	
 	readsPerSecond := ((1000 * aQuantity) / delay asFloat) truncated.
 			
 	aStream cr;
 		nextPutAll: 'Read ';
 		nextPutAll: aQuantity asString;
-		nextPutAll: ' instances of MaplessRedisDummyPerson in: ';
+		nextPutAll: ' instances of MaplessDummyPerson in: ';
 		nextPutAll: delay milliseconds asString;
 		nextPutAll: ' ms ';
 		nextPutAll: '(~',readsPerSecond asString,' reads per second)';

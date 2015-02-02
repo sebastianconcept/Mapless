@@ -1,4 +1,4 @@
-accessing
+actions
 fromJSON: aJSONString
 
 	^ self new 

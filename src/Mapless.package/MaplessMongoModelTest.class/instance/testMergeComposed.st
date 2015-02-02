@@ -3,21 +3,22 @@ testMergeComposed
 
 	| user guy newerUser newerGuy |
 
-	user := MaplessMongoDummyUser new
+	self do: [ 
+	user := MaplessDummyUser new
 			username: 'johnq';
 			yourself.
 
-	guy := MaplessMongoDummyPerson new
+	guy := MaplessDummyPerson new
 			firstName: 'John';
 			yourself.
 
 	user person: guy.
 	
-	newerUser := MaplessMongoDummyUser new
+	newerUser := MaplessDummyUser new
 			email: 'johnq@email';
 			yourself.
 
-	newerGuy := MaplessMongoDummyPerson new
+	newerGuy := MaplessDummyPerson new
 			firstName: 'JohM';
 			lastName: 'Q';
 			yourself.
@@ -31,4 +32,4 @@ testMergeComposed
 	self assert: user email notNil.
 	self assert: user email = newerUser email.
 	self assert: user person firstName = 'John'.	
-	self assert: user person lastName = 'Q'.	
+	self assert: user person lastName = 'Q']	

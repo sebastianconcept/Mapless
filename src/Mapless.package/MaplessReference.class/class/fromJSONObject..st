@@ -2,6 +2,6 @@ actions
 fromJSONObject: aJsonObject
 
 	^ self new
-		oid: aJsonObject oid;
+		id: (aJsonObject at: Mapless idAttribute);
 		modelClass: aJsonObject modelClass;
 		yourself 

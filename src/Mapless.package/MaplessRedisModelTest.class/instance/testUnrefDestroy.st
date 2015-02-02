@@ -4,16 +4,17 @@ testUnrefDestroy
 	"Tests MaplessMongoModel>>#unreferenced"
 	| person tagsCollection loaded reified reloaded |
 	
+	self do: [ 
 	tagsCollection := OrderedCollection new
-		 add: (MaplessRedisDummyTag new
+		 add: (MaplessDummyTag new
 			isCustomer: true;
 			yourself);
-		add: (MaplessRedisDummyTag new
+		add: (MaplessDummyTag new
 			isComplicated: false;
 			yourself); 
 		yourself.
 			
-	person := MaplessRedisDummyPerson new
+	person := MaplessDummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -23,10 +24,10 @@ testUnrefDestroy
 	"save tagsCollection"	
 	tagsCollection do: [:e | self do:[ e save]].
 	
-	self do:[person save].
+	person save.
 	self deny: person isUnsaved.
 	
-	self do:[ loaded := MaplessRedisDummyPerson findAt: person oid].
+	loaded := MaplessDummyPerson findAt: person oid.
 	
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
@@ -40,8 +41,8 @@ testUnrefDestroy
 	self assert: reified data tags first isCustomer.
 	self assert: (reified data tags second isComplicated = false).
 	
-	self do: [ reified destroy].
+	reified destroy.
 	"self do: [ loaded destroy].
 	"
-	self assert: ( self do: [ reloaded := MaplessRedisDummyPerson existsAt: reified oid]) not.	
+	self assert: (reloaded := MaplessDummyPerson existsAt: reified oid) not ]
 
