@@ -3,21 +3,22 @@ testUnreferenced2
 
 	| friends guy stuff loaded reified | 
 	
+	self do: [ 
 	friends := OrderedCollection new
-				add: (MaplessMongoDummyPerson new
+				add: (MaplessDummyPerson new
 						firstName: 'Frodo';
 						yourself);
-				add: (MaplessMongoDummyPerson new
+				add: (MaplessDummyPerson new
 						firstName: 'Gandalf';
 						yourself);
-				add: (MaplessMongoDummyPerson new
+				add: (MaplessDummyPerson new
 						firstName: 'Boromir';
 						yourself);
 				yourself.
 				
 	stuff := #('Ice cream' 'waffles' 'french fries') asOrderedCollection.
 	
-	guy := MaplessMongoDummyPerson new
+	guy := MaplessDummyPerson new
 				firstName: 'dude';
 				favorites: stuff;
 				friends: friends;
@@ -27,7 +28,7 @@ testUnreferenced2
 	self do:[guy save].
 	self deny: guy isUnsaved.
 	
-	self do:[ loaded := MaplessMongoDummyPerson findAt: guy oid].
+	self do:[ loaded := MaplessDummyPerson findId: guy id].
 	
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
@@ -35,6 +36,6 @@ testUnreferenced2
 	self do: [ reified := loaded unreferenced ].
 
 	self assert: reified data friends class = OrderedCollection.
-	self assert: reified data favorites = stuff.
+	self assert: reified data favorites = stuff]
 				
 	

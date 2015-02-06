@@ -3,4 +3,5 @@ tearDown
 	super tearDown.
 
 	pool reset.
-	pool := nil
+	pool := nil.
+	repository := nil

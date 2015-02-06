@@ -7,7 +7,9 @@ createdOn
 	expects := DateAndTime.
 
 	object := self at: selector asString.
-	object ifNil:[^nil].
+	(object isNil or: [
+	object isDictionary and: [
+	object isEmpty ]]) ifTrue:[^nil].
 
 	(object isKindOf: expects) ifTrue:[^object].
 

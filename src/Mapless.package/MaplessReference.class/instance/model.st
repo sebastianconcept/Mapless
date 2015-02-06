@@ -1,3 +1,3 @@
 accessing
 model
-	^ model ifNil:[ self initializeModel ]
+	^ model ifNil: [ self initializeModel ]
