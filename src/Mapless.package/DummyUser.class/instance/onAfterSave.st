@@ -3,4 +3,4 @@ onAfterSave
 
 	super onAfterSave.
 	
-	self afterSaved: true
+	self afterSave: true

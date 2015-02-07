@@ -7,11 +7,11 @@ testSaveHook
 			username: 'johnq';
 			yourself.
 
-	self assert: user beforeSaved isNil.
-	self assert: user afterSaved isNil.
+	self assert: user beforeSave isNil.
+	self assert: user afterSave isNil.
 	
 	self do: [ user save ].
 	
-	self assert: user beforeSaved.
-	self assert: user afterSaved.
+	self assert: user beforeSave.
+	self assert: user afterSave.
 	

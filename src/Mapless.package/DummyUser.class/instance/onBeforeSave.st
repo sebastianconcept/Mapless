@@ -3,4 +3,4 @@ onBeforeSave
 
 	super onBeforeSave.
 	
-	self beforeSaved: true
+	self beforeSave: true
