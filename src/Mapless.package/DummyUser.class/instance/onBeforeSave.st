@@ -1,6 +1,6 @@
 reactions
-onBeforeSaved
+onBeforeSave
 
-	super onBeforeSaved.
+	super onBeforeSave.
 	
 	self beforeSaved: true

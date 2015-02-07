@@ -1,6 +1,6 @@
 reactions
-onAfterSaved
+onAfterSave
 
-	super onAfterSaved.
+	super onAfterSave.
 	
 	self afterSaved: true
