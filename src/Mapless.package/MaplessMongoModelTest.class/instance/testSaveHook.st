@@ -3,7 +3,7 @@ testSaveHook
 
 	| user |
 
-	user := MaplessDummyUser new
+	user := DummyUser new
 			username: 'johnq';
 			yourself.
 

@@ -1,19 +1,19 @@
-testing
+tests
 testMultipleComposedMixedSaveAndLoad
 
 	| guy things loaded |
 	
 	self do: [ 
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
 
 	guy things: OrderedCollection new.
 	guy things 
-		add: (MaplessDummyTag new label: 'cool'; yourself);	
-		add: (MaplessDummyTag new label: 'stuff'; yourself);	
-		add: (MaplessDummyUser new info: 'also this'; yourself);	
+		add: (DummyTag new label: 'cool'; yourself);	
+		add: (DummyTag new label: 'stuff'; yourself);	
+		add: (DummyUser new info: 'also this'; yourself);	
 		yourself.
 
 	things := guy things.
@@ -24,7 +24,7 @@ testMultipleComposedMixedSaveAndLoad
 	self deny: guy isUnsaved.	
 	self assert: (things allSatisfy: [:e| e isUnsaved not]).
 
-	self do:[ loaded := MaplessDummyPerson findId: guy id.
+	self do:[ loaded := DummyPerson findId: guy id.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		self assert: loaded firstName = 'john'.
@@ -34,8 +34,8 @@ testMultipleComposedMixedSaveAndLoad
 		loaded things do:[:each|
 			self assert: (things anySatisfy: [ :t | t id = each id ] ) ].
 		loaded unreferenced.
-		self assert: loaded things first class = MaplessDummyTag.
-		self assert: loaded things second class = MaplessDummyTag.
-		self assert: loaded things third class = MaplessDummyUser.
+		self assert: loaded things first class = DummyTag.
+		self assert: loaded things second class = DummyTag.
+		self assert: loaded things third class = DummyUser.
 		]
 	 ]

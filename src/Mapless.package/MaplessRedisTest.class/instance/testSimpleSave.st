@@ -1,10 +1,10 @@
-testing
+tests
 testSimpleSave
 
 	| guy |
 	
 	self do: [ 
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.

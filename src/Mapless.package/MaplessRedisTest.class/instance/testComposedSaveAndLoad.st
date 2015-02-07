@@ -1,14 +1,14 @@
-testing
+tests
 testComposedSaveAndLoad
 
 	| user guy loaded |
 	
 	self do: [ 
-	user := MaplessDummyUser new
+	user := DummyUser new
 				username: 'johnq';
 				yourself.
 	
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -27,7 +27,7 @@ testComposedSaveAndLoad
 	self deny: user isUnsaved.	
 	self deny: guy isUnsaved.	
 
-	loaded := MaplessDummyUser findAt: user oid.
+	loaded := DummyUser findAt: user oid.
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
 	loaded keysAndValuesDo:[:k :v|
@@ -36,6 +36,6 @@ testComposedSaveAndLoad
 	self assert: loaded username = 'johnq'.
 	self assert: loaded person firstName = 'john'.
 	self assert: loaded person lastName = 'q'.
-	self assert: loaded person modelClass = MaplessDummyPerson asString.
-	self assert: loaded person model class = MaplessDummyPerson.
+	self assert: loaded person modelClass = DummyPerson asString.
+	self assert: loaded person model class = DummyPerson.
 		]

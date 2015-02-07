@@ -1,5 +1,6 @@
 accessing
 idAttribute
-	"Uses 'oid' as default because we're using Redis and that's what it uses as id."
+	"Uses 'oid' as default because we're using Redis here 
+	and that's what Redis uses as id."
 
-	^'oid'
+	^ 'oid'

@@ -1,4 +1,4 @@
-testing
+tests
 testDestroy
 
 	| people |
@@ -7,7 +7,7 @@ testDestroy
 	people := OrderedCollection new.
 
 	Character alphabet do: [ :char |
-		people add: (MaplessDummyPerson new
+		people add: (DummyPerson new
 						firstName: char asString;
 						yourself)].
 	
@@ -19,4 +19,4 @@ testDestroy
 	self assert: ( people allSatisfy: [ :guy | guy isDeleted not ] ).	
 	
 	people do:[ :guy | guy destroy ] .
-	self assert: ( people allSatisfy: [ :guy | ( MaplessDummyPerson existsAt: guy oid ) not ] )  ]
+	self assert: ( people allSatisfy: [ :guy | ( DummyPerson existsAt: guy oid ) not ] )  ]

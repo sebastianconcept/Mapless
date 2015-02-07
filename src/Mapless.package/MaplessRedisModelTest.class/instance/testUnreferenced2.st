@@ -5,20 +5,20 @@ testUnreferenced2
 	
 	self do: [ 
 	friends := OrderedCollection new
-				add: (MaplessDummyPerson new
+				add: (DummyPerson new
 						firstName: 'Frodo';
 						yourself);
-				add: (MaplessDummyPerson new
+				add: (DummyPerson new
 						firstName: 'Gandalf';
 						yourself);
-				add: (MaplessDummyPerson new
+				add: (DummyPerson new
 						firstName: 'Boromir';
 						yourself);
 				yourself.
 				
 	stuff := #('Ice cream' 'waffles' 'french fries') asOrderedCollection.
 	
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 				firstName: 'dude';
 				favorites: stuff;
 				friends: friends;
@@ -28,7 +28,7 @@ testUnreferenced2
 	guy save.
 	self deny: guy isUnsaved.
 	
-	loaded := MaplessDummyPerson findAt: guy oid.
+	loaded := DummyPerson findAt: guy oid.
 	
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.

@@ -1,5 +1,6 @@
 accessing
 idAttribute
-	"Uses '_id' as default because we're using MongoDB and that's what it uses as id."
+	"Uses '_id' as default because we're using MongoDB here 
+	and that's what Mongo uses as id."
 
-	^'_id'
+	^ '_id'

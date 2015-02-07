@@ -1,4 +1,4 @@
-testing
+tests
 testComposedDestroy
 
 	| users |
@@ -7,9 +7,9 @@ testComposedDestroy
 	users := OrderedCollection new.
 
 	Character alphabet do: [ :char |
-		users add: (MaplessDummyUser new 
+		users add: (DummyUser new 
 					userame: char asString;
-					person: (MaplessDummyPerson new
+					person: (DummyPerson new
 								firstName: char asString;
 								yourself);
 					yourself)].
@@ -26,11 +26,11 @@ testComposedDestroy
 	self do:[ users do:[ :user | user person destroy ] ].
 	
 	self do:[
-		self assert: ( users allSatisfy: [ :user | ( MaplessDummyPerson existsId: user person id ) not] ).	
-		self assert: ( users allSatisfy: [ :user | MaplessDummyUser existsId: user id ] ) ].	
+		self assert: ( users allSatisfy: [ :user | ( DummyPerson existsId: user person id ) not] ).	
+		self assert: ( users allSatisfy: [ :user | DummyUser existsId: user id ] ) ].	
 
 	self do:[ users do:[ :user | user destroy ] ].
 
-	self assert: ( self do: [ users allSatisfy: [ :user | (MaplessDummyUser existsId: user id) not ] ] ).	
+	self assert: ( self do: [ users allSatisfy: [ :user | (DummyUser existsId: user id) not ] ] ).	
 	
 	 ]

@@ -1,15 +1,17 @@
-testing
+tests
 testSimpleSave
 
 	| guy |
 	
-	self do: [ 
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
 	
-	self assert: guy isUnsaved.	
-	self do:[ guy save ].
-	self deny: guy isUnsaved
-		 ]
+	self do: [ 
+		self assert: guy isUnsaved.
+	
+		guy save.
+	
+		self deny: guy isUnsaved ]
+

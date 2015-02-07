@@ -1,4 +1,4 @@
-testing
+tests
 testDelete
 
 	| people |
@@ -7,7 +7,7 @@ testDelete
 	people := OrderedCollection new.
 
 	Character alphabet do: [ :char |
-		people add: (MaplessDummyPerson new
+		people add: (DummyPerson new
 						firstName: char asString;
 						yourself)].
 	

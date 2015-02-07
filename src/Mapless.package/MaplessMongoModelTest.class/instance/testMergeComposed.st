@@ -4,21 +4,21 @@ testMergeComposed
 	| user guy newerUser newerGuy |
 
 	self do: [ 
-	user := MaplessDummyUser new
+	user := DummyUser new
 			username: 'johnq';
 			yourself.
 
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 			firstName: 'John';
 			yourself.
 
 	user person: guy.
 	
-	newerUser := MaplessDummyUser new
+	newerUser := DummyUser new
 			email: 'johnq@email';
 			yourself.
 
-	newerGuy := MaplessDummyPerson new
+	newerGuy := DummyPerson new
 			firstName: 'JohM';
 			lastName: 'Q';
 			yourself.
