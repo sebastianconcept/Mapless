@@ -1,4 +1,4 @@
-testing
+tests
 testDateAndTime
 
 
@@ -6,7 +6,7 @@ testDateAndTime
 	
 	self do: [ 
 	when := DateAndTime now.
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			createdOn: when;
@@ -16,7 +16,7 @@ testDateAndTime
 	guy save .
 	self deny: guy isUnsaved.
 
-	loaded := MaplessDummyPerson findId: guy id .
+	loaded := DummyPerson findId: guy id .
 
 	self assert: loaded createdOn asDate asString = when asDate asString.
 	self assert: loaded createdOn asTime hour = when asTime hour.

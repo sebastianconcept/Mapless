@@ -5,28 +5,30 @@ testUnreferenced
 	
 	self do: [ 
 	tagsCollection := OrderedCollection new
-		 add: (MaplessDummyTag new
+		 add: (DummyTag new
 			isCustomer: true;
 			yourself);
-		add: (MaplessDummyTag new
+		add: (DummyTag new
 			isComplicated: false;
 			yourself); 
 		yourself.
 			
-	person := MaplessDummyPerson new
+	person := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
+			
 	"Save all tags in the collection"
 	person tags: tagsCollection.
+	
 	self assert: person isUnsaved.
 	"save tagsCollection"	
-	tagsCollection do: [:e | self do:[ e save]].
+	tagsCollection do: [:e | self do: [ e save ] ].
 	
-	self do:[person save].
+	self do:[ person save ].
 	self deny: person isUnsaved.
 	
-	self do:[ loaded := MaplessDummyPerson findId: person id].
+	self do:[ loaded := DummyPerson findId: person id].
 	
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.

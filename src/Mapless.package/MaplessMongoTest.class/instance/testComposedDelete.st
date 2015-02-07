@@ -1,4 +1,4 @@
-testing
+tests
 testComposedDelete
 
 	| users |
@@ -6,9 +6,9 @@ testComposedDelete
 	users := OrderedCollection new.
 	self do: [ 
 	Character alphabet do: [ :char |
-		users add: (MaplessDummyUser new 
+		users add: (DummyUser new 
 					userame: char asString;
-					person: (MaplessDummyPerson new
+					person: (DummyPerson new
 								firstName: char asString;
 								yourself);
 					yourself)].

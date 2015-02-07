@@ -4,12 +4,12 @@ destroy: aMapless
 
 	| bsonFriendly filter |
 	
-	filter := JsonObject new at: aMapless class idAttribute put: aMapless id; yourself. 
+	self onBeforeDestroy: aMapless.
 
-	aMapless onAboutToDestroy.
+	filter := JsonObject new at: aMapless class idAttribute put: aMapless id; yourself. 
 		
 	bsonFriendly := self asMongoDocumentFor: filter.
 		
 	(self databaseCollectionNamed: aMapless class name asString) remove: bsonFriendly.
 	
-	aMapless onDestroyed
+	self onAfterDestroy: aMapless

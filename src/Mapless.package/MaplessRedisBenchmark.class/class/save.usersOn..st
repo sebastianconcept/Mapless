@@ -15,11 +15,11 @@ save: aQuantity usersOn: aStream
 		lastNames add: Character alphabet shuffled anyOne asString ].
 
 	1 to: aQuantity do:[ :i | 
-		guy := MaplessDummyPerson new
+		guy := DummyPerson new
 				firstName: (firstNames at: i);
 				lastName: (lastNames at: i);
 				yourself.
-		user := MaplessDummyUser new
+		user := DummyUser new
 					username: guy firstName;
 					person: guy;
 					yourself.
@@ -45,7 +45,7 @@ save: aQuantity usersOn: aStream
 	redisRepository do:[ 
 		delay := Time millisecondsToRun: [
 				users do:[ :usr | 
-					user := MaplessDummyUser findAt: usr oid]]].
+					user := DummyUser findAt: usr oid]]].
 	
 	readsPerSecond := ((1000 * aQuantity) / delay asFloat) truncated.
 			

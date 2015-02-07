@@ -1,4 +1,4 @@
-testing
+tests
 testMultipleComposedComposables
 
 	| tags tagsOfTags tagsOfTagsOfTags loaded |
@@ -9,19 +9,19 @@ testMultipleComposedComposables
 	tagsOfTagsOfTags := OrderedCollection new.
 
 	tags 
-		add: (MaplessDummyTag new label: 'is this'; yourself);	
-		add: (MaplessDummyTag new label: 'multiply'; yourself);	
-		add: (MaplessDummyTag new label: 'composable?'; yourself);	
+		add: (DummyTag new label: 'is this'; yourself);	
+		add: (DummyTag new label: 'multiply'; yourself);	
+		add: (DummyTag new label: 'composable?'; yourself);	
 		yourself.
 
 	tagsOfTags 
-		add: (MaplessDummyTag new label: 'like'; yourself);	
-		add: (MaplessDummyTag new label: 'really?'; yourself);	
+		add: (DummyTag new label: 'like'; yourself);	
+		add: (DummyTag new label: 'really?'; yourself);	
 		yourself.
 
 	tagsOfTagsOfTags  
-		add: (MaplessDummyTag new label: 'wow'; yourself);	
-		add: (MaplessDummyTag new label: 'nice'; yourself);	
+		add: (DummyTag new label: 'wow'; yourself);	
+		add: (DummyTag new label: 'nice'; yourself);	
 		yourself.
 
 	self do:[ tagsOfTagsOfTags do:[ :tag | tag save] ].
@@ -39,7 +39,7 @@ testMultipleComposedComposables
 	self deny: (tags anySatisfy: [:tag| tag isUnsaved]).	
 
 	self do:[ 
-		loaded := MaplessDummyTag findAt: tags first oid.
+		loaded := DummyTag findAt: tags first oid.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		self assert: loaded label = 'is this'.

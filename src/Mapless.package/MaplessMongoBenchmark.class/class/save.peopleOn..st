@@ -15,7 +15,7 @@ save: aQuantity peopleOn: aStream
 		lastNames add: Character alphabet shuffled anyOne asString ].
 
 	1 to: aQuantity do:[ :i |
-		guys add: (MaplessDummyPerson new
+		guys add: (DummyPerson new
 					firstName: (firstNames at: i);
 					lastName: (lastNames at: i);	
 					yourself)].	
@@ -39,7 +39,7 @@ save: aQuantity peopleOn: aStream
 	mongoRepository do:[ 
 		delay := Time millisecondsToRun: [
 				guys do:[ :guy | 
-					MaplessDummyUser findId: guy id]]].
+					DummyUser findId: guy id]]].
 	
 	readsPerSecond := ((1000 * aQuantity) / delay asFloat) truncated.
 	

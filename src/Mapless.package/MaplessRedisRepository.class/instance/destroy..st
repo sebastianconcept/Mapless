@@ -2,10 +2,8 @@ actions
 destroy: aMapless
 	"Removes this instance from the persistent storage"
 
-	self onAboutToDestroy: aMapless.
-	
-	aMapless beDeleted.
+	self onBeforeDestroy: aMapless.
 		
 	self database remove: aMapless oid.
 	
-	self onDestroyed: aMapless
+	self onAfterDestroy: aMapless

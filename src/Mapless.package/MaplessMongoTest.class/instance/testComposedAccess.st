@@ -1,15 +1,15 @@
-testing
+tests
 testComposedAccess
 	"Test proxies and its on-demand-load and DNU mechanism"
 
 	| user guy |
 	
 	self do: [ 
-	user := MaplessDummyUser new
+	user := DummyUser new
 				userame: 'johnq';
 				yourself.
 	
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -21,9 +21,9 @@ testComposedAccess
 		user save ].
 	
 	self do:[
-		self assert: ( MaplessDummyUser findId: user id ) completeName = 'john q'.
-		self assert: ( MaplessDummyUser findId: user id ) person class = MaplessReference.
-		self assert: ( MaplessDummyUser findId: user id ) person model class = MaplessDummyPerson.
-		self assert: ( MaplessDummyUser findId: user id ) person firstName = 'john'.
-		self assert: ( MaplessDummyUser findId: user id ) person lastName = 'q' ]
+		self assert: ( DummyUser findId: user id ) completeName = 'john q'.
+		self assert: ( DummyUser findId: user id ) person class = MaplessReference.
+		self assert: ( DummyUser findId: user id ) person model class = DummyPerson.
+		self assert: ( DummyUser findId: user id ) person firstName = 'john'.
+		self assert: ( DummyUser findId: user id ) person lastName = 'q' ]
  ]

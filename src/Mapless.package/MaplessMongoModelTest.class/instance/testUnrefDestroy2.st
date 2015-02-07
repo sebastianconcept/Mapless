@@ -5,20 +5,20 @@ testUnrefDestroy2
 	
 	self do: [ 
 	friends := OrderedCollection new
-				add: (MaplessDummyPerson new
+				add: (DummyPerson new
 						firstName: 'Frodo';
 						yourself);
-				add: (MaplessDummyPerson new
+				add: (DummyPerson new
 						firstName: 'Gandalf';
 						yourself);
-				add: (MaplessDummyPerson new
+				add: (DummyPerson new
 						firstName: 'Boromir';
 						yourself);
 				yourself.
 				
 	stuff := #('Ice cream' 'waffles' 'french fries').
 	
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 				firstName: 'dude';
 				favorites: stuff;
 				friends: friends;
@@ -28,7 +28,7 @@ testUnrefDestroy2
 	self do:[guy save].
 	self deny: guy isUnsaved.
 	
-	self do:[ loaded := MaplessDummyPerson findId: guy id].
+	self do:[ loaded := DummyPerson findId: guy id].
 	
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
@@ -40,9 +40,9 @@ testUnrefDestroy2
 
 	"By design, the destruction should be to the individual aggregate (and not its submodels).
 	It's programmers' responsability to decide when to destroy a sub aggregate"	
-	self assert: ( self do: [ reloaded := MaplessDummyPerson existsId: loaded id]) not.	
+	self assert: ( self do: [ reloaded := DummyPerson existsId: loaded id]) not.	
 	self do:[self assert: ((friends collect: [:e| e id]) allSatisfy: [:guyId|
-					(MaplessDummyPerson existsId: guyId)])]
+					(DummyPerson existsId: guyId)])]
 			]
 
 				

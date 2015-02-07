@@ -1,14 +1,14 @@
-testing
+tests
 testComposedSave
 
 	| user guy |
 	
 	self do: [ 
-	user := MaplessDummyUser new
+	user := DummyUser new
 				userame: 'johnq';
 				yourself.
 	
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.

@@ -1,9 +1,9 @@
-testing
+tests
 testSimpleSaveAndLoad
 	| guy loaded |
 	
 	self do: [ 
-	guy := MaplessDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -12,7 +12,7 @@ testSimpleSaveAndLoad
 	self do:[guy save].
 	self deny: guy isUnsaved.
 
-	self do:[ loaded := MaplessDummyPerson findAt: guy oid ].
+	self do:[ loaded := DummyPerson findAt: guy oid ].
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
 	loaded data keysAndValuesDo: [:k :v|

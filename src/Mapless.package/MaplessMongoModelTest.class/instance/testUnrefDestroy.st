@@ -6,15 +6,15 @@ testUnrefDestroy
 	
 	self do: [ 
 	tagsCollection := OrderedCollection new
-		 add: (MaplessDummyTag new
+		 add: (DummyTag new
 			isCustomer: true;
 			yourself);
-		add: (MaplessDummyTag new
+		add: (DummyTag new
 			isComplicated: false;
 			yourself); 
 		yourself.
 			
-	person := MaplessDummyPerson new
+	person := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -29,7 +29,7 @@ testUnrefDestroy
 	self deny: person isUnsaved.
 	
 	
-	loaded := MaplessDummyPerson findId: person id.
+	loaded := DummyPerson findId: person id.
 
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
@@ -46,5 +46,5 @@ testUnrefDestroy
 	reified destroy.
 	"self do: [ loaded destroy].
 	"
-	self assert: ( reloaded := MaplessDummyPerson existsId: reified id) not]
+	self assert: ( reloaded := DummyPerson existsId: reified id) not]
 

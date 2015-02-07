@@ -2,10 +2,10 @@ actions
 update: aMapless
 
 	| bsonFriendly |
+
+	self onBeforeUpdate: aMapless.
 	
 	bsonFriendly := self asMongoDocumentFor: aMapless data.
-
-	self onAboutToUpdate: aMapless.
 
 	(self databaseCollectionNamed: aMapless class name asString)
 		replace:  (Dictionary new 
@@ -13,4 +13,4 @@ update: aMapless
 					yourself)
 		with: bsonFriendly.
 		
-	self onUpdated: aMapless
+	self onAfterUpdate: aMapless

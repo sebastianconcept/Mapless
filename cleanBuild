@@ -1,7 +1,5 @@
 #!/bin/bash
-#
-# Starts a complete build.
-# Frontend will be deleted and rebuilt.
+# gets a fresh Pharo 3.0 image and loads Mapless
 
-./clean
-./build
+clean
+build
