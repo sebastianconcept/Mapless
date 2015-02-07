@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Mongo-Tests",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "MaplessDummyTag",
+	"pools" : [
+		 ],
+	"super" : "Mapless",
+	"type" : "normal" }
