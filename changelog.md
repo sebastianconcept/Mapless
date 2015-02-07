@@ -5,6 +5,12 @@ February 7, 2015 - Release 0.2.4
 * Fixed hooks and added tests
 
 
+February 2, 2015 - Release 0.2.3
+===================================
+
+* Facundo's refactoring decouples Mapless models from the concrete repository supporting their persistence.
+
+
 January 24, 2015 - Release 0.2.2
 ===================================
 
