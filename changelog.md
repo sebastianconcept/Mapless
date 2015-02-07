@@ -1,3 +1,10 @@
+February 7, 2015 - Release 0.2.4
+===================================
+
+* Includes repository refactoring
+* Fixed hooks and added tests
+
+
 January 24, 2015 - Release 0.2.2
 ===================================
 
