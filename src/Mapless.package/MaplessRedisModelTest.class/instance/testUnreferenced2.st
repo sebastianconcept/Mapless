@@ -28,7 +28,7 @@ testUnreferenced2
 	guy save.
 	self deny: guy isUnsaved.
 	
-	loaded := DummyPerson findAt: guy oid.
+	loaded := DummyPerson findId: guy oid.
 	
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.

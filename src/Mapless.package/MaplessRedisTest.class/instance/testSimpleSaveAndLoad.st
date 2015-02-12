@@ -12,7 +12,7 @@ testSimpleSaveAndLoad
 	self do:[guy save].
 	self deny: guy isUnsaved.
 
-	self do:[ loaded := DummyPerson findAt: guy oid ].
+	self do:[ loaded := DummyPerson findId: guy oid ].
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
 	loaded data keysAndValuesDo: [:k :v|

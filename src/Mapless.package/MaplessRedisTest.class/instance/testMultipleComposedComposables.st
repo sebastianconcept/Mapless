@@ -39,7 +39,7 @@ testMultipleComposedComposables
 	self deny: (tags anySatisfy: [:tag| tag isUnsaved]).	
 
 	self do:[ 
-		loaded := DummyTag findAt: tags first oid.
+		loaded := DummyTag findId: tags first oid.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		self assert: loaded label = 'is this'.
