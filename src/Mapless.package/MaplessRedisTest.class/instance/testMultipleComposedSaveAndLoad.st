@@ -1,21 +1,22 @@
-testing
+tests
 testMultipleComposedSaveAndLoad
 
 	| user guy tags loaded |
 	
-	user := MaplessRedisDummyUser new
+	self do: [ 
+	user := DummyUser new
 				username: 'johnq';
 				yourself.
 	
-	guy := MaplessRedisDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
 
 	tags := OrderedCollection new.
 	tags 
-		add: (MaplessRedisDummyTag new label: 'cool'; yourself);	
-		add: (MaplessRedisDummyTag new label: 'stuff'; yourself);	
+		add: (DummyTag new label: 'cool'; yourself);	
+		add: (DummyTag new label: 'stuff'; yourself);	
 		yourself.
 		
 	user 
@@ -31,12 +32,13 @@ testMultipleComposedSaveAndLoad
 	self deny: guy isUnsaved.	
 	self assert: (tags allSatisfy: [:e| e isUnsaved not]).
 
-	self do:[ loaded := MaplessRedisDummyUser findAt: user oid.
+	self do:[ loaded := DummyUser findAt: user oid.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		self assert: loaded username = 'johnq'.
 		self assert: loaded tags isCollection.
 		self assert: loaded tags notEmpty.
 		self assert: loaded tags isCollection.
-		self assert: (loaded tags allSatisfy: [:e| tags includes: e]).
-		]
+		loaded tags do:[:tag|
+			self assert: (tags anySatisfy:[:t| t id = tag id])].
+		] ]

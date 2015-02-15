@@ -1,4 +1,4 @@
-testing
+tests
 testQueryUsers
 
 	| users |
@@ -6,19 +6,21 @@ testQueryUsers
 	users := OrderedCollection new.
 
 	Character alphabet do: [ :char |
-		users add: (MaplessRedisDummyUser new 
+		users add: (DummyUser new 
 					username: char asString;
-					person: (MaplessRedisDummyPerson new
+					person: (DummyPerson new
 								firstName: char asString;
 								yourself);
 					yourself)].
 	
-	self assert: ( users allSatisfy: [ :user | user isUnsaved ] ).	
-	self assert: ( users allSatisfy: [ :user | user person isUnsaved ] ).	
+	self do: [ 
+		self assert: ( users allSatisfy: [ :user | user isUnsaved ] ).	
+		self assert: ( users allSatisfy: [ :user | user person isUnsaved ] ) ].	
 
 	self do:[ users do:[ :user | user person save ] ].
 	self do:[ users do:[ :user | user save ] ].
 
 	self do:[ 
 		self assert: (Character alphabet allSatisfy: [ :char | 
-						( MaplessRedisDummyUser findUsername: char asString ) notNil ] ) ]
+						( DummyUser findUsername: char asString ) notNil ] ) ]
+			

@@ -11,3 +11,5 @@ initializeOn: aJsonObject
 
 	self createdOn ifNil: [
 		self createdOn: DateAndTime now ].
+
+	self setSubModelsAndReferences

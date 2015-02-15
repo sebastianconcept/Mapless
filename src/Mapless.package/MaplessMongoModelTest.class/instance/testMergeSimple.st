@@ -3,11 +3,11 @@ testMergeSimple
 
 	| user newerUser|
 
-	user := MaplessMongoDummyUser new
+	user := DummyUser new
 			username: 'johnq';
 			yourself.
 
-	newerUser := MaplessMongoDummyUser new
+	newerUser := DummyUser new
 			email: 'johnq@email';
 			yourself.
 

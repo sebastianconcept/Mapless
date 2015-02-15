@@ -1,14 +1,14 @@
-testing
+tests
 testComposedDelete
 
 	| users |
 	
 	users := OrderedCollection new.
-
+	self do: [ 
 	Character alphabet do: [ :char |
-		users add: (MaplessMongoDummyUser new 
+		users add: (DummyUser new 
 					userame: char asString;
-					person: (MaplessMongoDummyPerson new
+					person: (DummyPerson new
 								firstName: char asString;
 								yourself);
 					yourself)].
@@ -33,3 +33,4 @@ testComposedDelete
 
 	self assert: ( users allSatisfy: [ :user | user person isDeleted ] ).	
 	self assert: ( users allSatisfy: [ :user | user isDeleted ] ).	
+	]

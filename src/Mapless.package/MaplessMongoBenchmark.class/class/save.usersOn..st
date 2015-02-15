@@ -1,11 +1,13 @@
 actions
 save: aQuantity usersOn: aStream 
 
-	| guy user firstNames lastNames users delay savesPerSecond readsPerSecond |
+	| guy user firstNames lastNames users delay savesPerSecond readsPerSecond mongoRepository |
 
 	firstNames := OrderedCollection new.
 	lastNames := OrderedCollection new.
 	users := OrderedCollection new.
+	mongoRepository := MaplessMongoRepository on: (MongoPool instance databaseAt: 'flow').
+	
 	
 	1 to: aQuantity do:[ :i |
 		firstNames add: Character alphabet shuffled anyOne asString ].
@@ -14,17 +16,17 @@ save: aQuantity usersOn: aStream
 		lastNames add: Character alphabet shuffled anyOne asString ].
 
 	1 to: aQuantity do:[ :i | 
-		guy := MaplessMongoDummyPerson new
+		guy := DummyPerson new
 				firstName: (firstNames at: i);
 				lastName: (lastNames at: i);
 				yourself.
-		user := MaplessMongoDummyUser new
+		user := DummyUser new
 					username: guy firstName;
 					person: guy;
 					yourself.
 		users add: user].
 
-	MongoPool instance databaseAt: 'flow' do:[ 
+	mongoRepository do:[ 
 		delay := Time millisecondsToRun: [
 				users do:[ :usr | 
 					usr person save.
@@ -35,23 +37,23 @@ save: aQuantity usersOn: aStream
 	aStream cr;
 		nextPutAll: 'Saved ';
 		nextPutAll: aQuantity asString;
-		nextPutAll: ' instances of MaplessMongoDummyPerson and MaplessMongoDummyUser in: ';
+		nextPutAll: ' instances of MaplessDummyPerson and MaplessDummyUser in: ';
 		nextPutAll: delay milliseconds asString;
 		nextPutAll: ' ms ';
 		nextPutAll: '(~',savesPerSecond asString,' saves per second)';
 		flush.
 		
-	MongoPool instance databaseAt: 'flow' do:[ 
+	mongoRepository do:[ 
 		delay := Time millisecondsToRun: [
 				users do:[ :usr | 
-					user := MaplessMongoDummyUser findAt: usr id]]].
+					user := DummyUser findId: usr id]]].
 	
 	readsPerSecond := ((1000 * aQuantity) / delay asFloat) truncated.
 			
 	aStream cr;
 		nextPutAll: 'Read ';
 		nextPutAll: aQuantity asString;
-		nextPutAll: ' instances of MaplessMongoDummyPerson and MaplessMongoDummyUser in: ';
+		nextPutAll: ' instances of MaplessDummyPerson and MaplessDummyUser in: ';
 		nextPutAll: delay milliseconds asString;
 		nextPutAll: ' ms ';
 		nextPutAll: '(~',readsPerSecond asString,' reads per second)';

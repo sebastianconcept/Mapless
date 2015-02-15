@@ -1,14 +1,15 @@
-testing
+tests
 testComposedDelete
 
 	| users |
 	
+	self do: [ 
 	users := OrderedCollection new.
 
 	Character alphabet do: [ :char |
-		users add: (MaplessRedisDummyUser new 
+		users add: (DummyUser new 
 					userame: char asString;
-					person: (MaplessRedisDummyPerson new
+					person: (DummyPerson new
 								firstName: char asString;
 								yourself);
 					yourself)].
@@ -16,20 +17,21 @@ testComposedDelete
 	self assert: ( users allSatisfy: [ :user | user isUnsaved ] ).	
 	self assert: ( users allSatisfy: [ :user | user person isUnsaved ] ).	
 
-	self do:[ users do:[ :user | user person save ] ].
-	self do:[ users do:[ :user | user save ] ].
+	users do:[ :user | user person save ] .
+	users do:[ :user | user save ].
 
 	self assert: ( users allSatisfy: [ :user | user isUnsaved not ] ).	
 	self assert: ( users allSatisfy: [ :user | user person isUnsaved not ] ).	
 	self assert: ( users allSatisfy: [ :user | user isDeleted not ] ).	
 	self assert: ( users allSatisfy: [ :user | user person isDeleted not ] ).	
 
-	self do:[ users do:[ :user | user person delete ] ].
+	users do:[ :user | user person delete ].
 	
 	self assert: ( users allSatisfy: [ :user | user person isDeleted ] ).	
 	self assert: ( users allSatisfy: [ :user | user isDeleted not ] ).	
 
-	self do:[ users do:[ :user | user delete ] ].
+	users do:[ :user | user delete ].
 
 	self assert: ( users allSatisfy: [ :user | user person isDeleted ] ).	
-	self assert: ( users allSatisfy: [ :user | user isDeleted ] ).	
+	self assert: ( users allSatisfy: [ :user | user isDeleted ] )
+	]

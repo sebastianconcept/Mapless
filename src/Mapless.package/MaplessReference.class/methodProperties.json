@@ -1,11 +1,11 @@
 {
 	"class" : {
 		"for:" : "SebastianSastre 5/3/2014 17:22:48",
-		"fromJSONObject:" : "sebastiansastre 12/20/2014 19:14",
+		"fromJSONObject:" : "FV 1/29/2015 10:12",
 		"fromJSONString:" : "SebastianSastre 5/3/2014 17:22:48" },
 	"instance" : {
 		"=" : "sebastiansastre 12/20/2014 15:15",
-		"asJsonObject" : "sebastiansastre 12/20/2014 19:22",
+		"asJsonObject" : "FV 1/30/2015 10:28",
 		"doesNotUnderstand:" : "SebastianSastre 5/3/2014 17:22:48",
 		"getMongoModel" : "sebastiansastre 12/20/2014 15:17",
 		"hasModel" : "SebastianSastre 5/3/2014 17:22:48",

@@ -1,14 +1,15 @@
-testing
+tests
 testQueryUsers
 
 	| users |
 	
+	self do: [ 
 	users := OrderedCollection new.
 
 	Character alphabet do: [ :char |
-		users add: (MaplessMongoDummyUser new 
+		users add: (DummyUser new 
 					username: char asString;
-					person: (MaplessMongoDummyPerson new
+					person: (DummyPerson new
 								firstName: char asString;
 								yourself);
 					yourself)].
@@ -21,4 +22,5 @@ testQueryUsers
 
 	self do:[ 
 		self assert: (Character alphabet allSatisfy: [ :char | 
-						( MaplessMongoDummyUser findUsername: char asString ) notNil ] ) ]
+						( DummyUser findUsername: char asString ) notNil ] ) ]
+				]

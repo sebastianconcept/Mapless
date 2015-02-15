@@ -1,8 +1,9 @@
-testing
+tests
 testSimpleSaveAndLoad
 	| guy loaded |
 	
-	guy := MaplessRedisDummyPerson new
+	self do: [ 
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -11,10 +12,11 @@ testSimpleSaveAndLoad
 	self do:[guy save].
 	self deny: guy isUnsaved.
 
-	self do:[ loaded := MaplessRedisDummyPerson findAt: guy oid ].
+	self do:[ loaded := DummyPerson findAt: guy oid ].
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
 	loaded data keysAndValuesDo: [:k :v|
 		((loaded data at: k) isKindOf: DateAndTime) not ifTrue:[
-			self assert: (loaded data at: k) = (guy data at: k)]].
+			self assert: (loaded data at: k) = (guy data at: k)]]
+	]
 	

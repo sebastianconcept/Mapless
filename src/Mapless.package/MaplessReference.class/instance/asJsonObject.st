@@ -11,5 +11,5 @@ asJsonObject
 
 	^ JsonObject new
 		at: 'modelClass' put: modelClass;
-		at: model class idAttribute put: id;
+		at: MaplessCurrentRepository value idAttribute put: id;
 		yourself
