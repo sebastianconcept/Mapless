@@ -1,3 +1,9 @@
+February 18, 2015 - Release 0.2.5
+===================================
+
+* Mapless now normalizes the server id to the attribute `id` but each repository migth briefly move that to their own flavor. For example MongoDB uses `_id` and Redis uses `oid`
+
+
 February 7, 2015 - Release 0.2.4
 ===================================
 
