@@ -19,4 +19,4 @@ testDestroy
 	self assert: ( people allSatisfy: [ :guy | guy isDeleted not ] ).	
 	
 	people do:[ :guy | guy destroy ] .
-	self assert: ( people allSatisfy: [ :guy | ( DummyPerson existsAt: guy oid ) not ] )  ]
+	self assert: ( people allSatisfy: [ :guy | ( DummyPerson existsId: guy oid ) not ] )  ]

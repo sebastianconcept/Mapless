@@ -2,7 +2,7 @@ actions
 insert: aMapless
 	
 	| bsonFriendly |
-		
+
 	self onBeforeInsert: aMapless.
 
 	[ bsonFriendly := (self asMongoDocumentFor: aMapless data) ] ifCurtailed: [
