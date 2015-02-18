@@ -1,6 +1,6 @@
 accessing
 asJSONString
 	
-	self onAboutToJSON.
+	self onBeforeJSON.
 
 	^ super asJSONString

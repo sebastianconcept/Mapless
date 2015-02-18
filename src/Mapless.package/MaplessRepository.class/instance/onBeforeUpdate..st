@@ -1,4 +1,6 @@
 reactions
 onBeforeUpdate: aMapless
 
-	aMapless onBeforeUpdate
+	aMapless onBeforeUpdate.
+	
+	self denormalizeIdOf: aMapless 

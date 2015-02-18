@@ -1,4 +1,6 @@
 reactions
 onAfterUpdate: aMapless
 
-	aMapless onAfterUpdate
+	aMapless onAfterUpdate.
+	
+	self normalizeIdOf: aMapless 

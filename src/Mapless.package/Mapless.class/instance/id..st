@@ -2,5 +2,5 @@ accessing
 id: anId
 
 	^ self data 
-		at: self currentRepository idAttribute 
+		at: 'id'
 		put: anId
