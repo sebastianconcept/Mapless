@@ -27,7 +27,7 @@ testUnrefDestroy
 		person save.
 		self deny: person isUnsaved.
 	
-		loaded := DummyPerson findId: person oid.
+		loaded := DummyPerson findId: person id.
 	
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved ].
@@ -43,4 +43,4 @@ testUnrefDestroy
 	
 	self do: [ 
 		loaded destroy.
-		self assert: (reloaded := DummyPerson existsId: reified oid) ]
+		self assert: (reloaded := DummyPerson existsId: reified id) ]

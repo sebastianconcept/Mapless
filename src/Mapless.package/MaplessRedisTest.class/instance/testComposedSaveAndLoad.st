@@ -27,7 +27,7 @@ testComposedSaveAndLoad
 	self deny: user isUnsaved.	
 	self deny: guy isUnsaved.	
 
-	loaded := DummyUser findId: user oid.
+	loaded := DummyUser findId: user id.
 	self assert: loaded notNil.
 	self deny: loaded isUnsaved.
 	loaded keysAndValuesDo:[:k :v|
