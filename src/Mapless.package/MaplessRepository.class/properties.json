@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Repositories",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "sebastiansastre 2/18/2015 17:24",
+	"instvars" : [
+		"database" ],
+	"name" : "MaplessRepository",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

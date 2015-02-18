@@ -1,13 +1,14 @@
-testing
+tests
 testComposedSave
 
 	| user guy |
 	
-	user := MaplessMongoDummyUser new
+	self do: [ 
+	user := DummyUser new
 				userame: 'johnq';
 				yourself.
 	
-	guy := MaplessMongoDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -24,5 +25,6 @@ testComposedSave
 	self shouldnt: [ self do:[ user save ] ] raise: MaplessUnsavedSubmodel.
 	
 	self deny: user isUnsaved.	
-	self deny: guy isUnsaved.	
+	self deny: guy isUnsaved
+	 ]
 

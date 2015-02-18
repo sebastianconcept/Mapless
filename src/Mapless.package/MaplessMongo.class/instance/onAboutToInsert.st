@@ -1,4 +1,0 @@
-reactions
-onAboutToInsert
-
-	self ensureOID

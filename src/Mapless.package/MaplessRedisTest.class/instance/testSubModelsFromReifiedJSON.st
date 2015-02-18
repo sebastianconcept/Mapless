@@ -1,13 +1,15 @@
-testing
+tests
 testSubModelsFromReifiedJSON
 
 	| user guy json reified |
 	
-	user := MaplessRedisDummyUser new
+	
+	self do: [ 
+	user := DummyUser new
 				userame: 'johnq';
 				yourself.
 	
-	guy := MaplessRedisDummyPerson new
+	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -16,8 +18,9 @@ testSubModelsFromReifiedJSON
 		
 	json := user unreferenced asJSONString.
 
-	reified := MaplessMongoDummyUser fromJSON: json.
+	reified := DummyUser fromJSONString: json.
 
 	self assert: guy isUnsaved.	
-	self assert: reified person class = MaplessMongoDummyPerson.
+	self assert: reified person class = DummyPerson.
 	self assert: reified completeName = 'john q'.
+	]

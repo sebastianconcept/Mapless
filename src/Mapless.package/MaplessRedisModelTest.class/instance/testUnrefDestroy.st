@@ -5,31 +5,32 @@ testUnrefDestroy
 	| person tagsCollection loaded reified reloaded |
 	
 	tagsCollection := OrderedCollection new
-		 add: (MaplessRedisDummyTag new
+		 add: (DummyTag new
 			isCustomer: true;
 			yourself);
-		add: (MaplessRedisDummyTag new
+		add: (DummyTag new
 			isComplicated: false;
 			yourself); 
 		yourself.
 			
-	person := MaplessRedisDummyPerson new
+	person := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
 	"Save all tags in the collection"
 	person tags: tagsCollection.
-	self assert: person isUnsaved.
+	self do: [ self assert: person isUnsaved ].
 	"save tagsCollection"	
-	tagsCollection do: [:e | self do:[ e save]].
+	self do: [ tagsCollection do: [:e | self do:[ e save]] ].
 	
-	self do:[person save].
-	self deny: person isUnsaved.
+	self do: [ 
+		person save.
+		self deny: person isUnsaved.
 	
-	self do:[ loaded := MaplessRedisDummyPerson findAt: person oid].
+		loaded := DummyPerson findId: person id.
 	
-	self assert: loaded notNil.
-	self deny: loaded isUnsaved.
+		self assert: loaded notNil.
+		self deny: loaded isUnsaved ].
 	
 	self do: [ reified := loaded unreferenced ].
 
@@ -40,8 +41,6 @@ testUnrefDestroy
 	self assert: reified data tags first isCustomer.
 	self assert: (reified data tags second isComplicated = false).
 	
-	self do: [ reified destroy].
-	"self do: [ loaded destroy].
-	"
-	self assert: ( self do: [ reloaded := MaplessRedisDummyPerson existsAt: reified oid]) not.	
-
+	self do: [ 
+		loaded destroy.
+		self assert: (reloaded := DummyPerson existsId: reified id) ]

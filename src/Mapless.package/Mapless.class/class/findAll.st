@@ -1,4 +1,5 @@
 accessing
 findAll 
+	"Answer a collection with all receiver instances from the repository."
 
-	^ self database objectsAt: self
+	^self currentRepository instancesOf: self where: Dictionary new 

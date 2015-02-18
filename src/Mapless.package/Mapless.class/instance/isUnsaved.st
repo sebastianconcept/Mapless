@@ -1,4 +1,5 @@
 testing
 isUnsaved
-	"Answers true if this instance is not saved yet"
-	^ self subclassResponsibility 
+	"Answer true if this instance was not saved yet"
+
+	^ self currentRepository isUnsaved: self

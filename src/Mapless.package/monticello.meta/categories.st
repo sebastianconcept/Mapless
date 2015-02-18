@@ -8,3 +8,4 @@ SystemOrganization addCategory: 'Mapless-Mongo-Tests'!
 SystemOrganization addCategory: 'Mapless-Redis'!
 SystemOrganization addCategory: 'Mapless-Redis-Errors'!
 SystemOrganization addCategory: 'Mapless-Redis-Tests'!
+SystemOrganization addCategory: 'Mapless-Repositories'!

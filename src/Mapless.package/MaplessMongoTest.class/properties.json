@@ -6,7 +6,8 @@
 		 ],
 	"commentStamp" : "",
 	"instvars" : [
-		"pool" ],
+		"pool",
+		"repository" ],
 	"name" : "MaplessMongoTest",
 	"pools" : [
 		 ],

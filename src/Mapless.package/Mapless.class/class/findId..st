@@ -1,4 +1,4 @@
 accessing
 findId: anId
 
-	^ self subclassResponsibility 
+	^self currentRepository instanceOf: self atId: anId
