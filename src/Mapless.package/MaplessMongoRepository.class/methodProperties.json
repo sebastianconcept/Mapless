@@ -13,5 +13,6 @@
 		"instancesOf:where:" : "FV 1/30/2015 16:03",
 		"instancesOf:where:limit:" : "FV 1/30/2015 16:03",
 		"instancesOf:where:limit:offset:" : "sebastiansastre 2/18/2015 18:55",
-		"save:" : "sebastiansastre 2/18/2015 18:33",
+		"onBeforeInsert:" : "sebastiansastre 2/18/2015 21:19",
+		"save:" : "sebastiansastre 2/18/2015 21:19",
 		"update:" : "sebastiansastre 2/18/2015 18:00" } }
