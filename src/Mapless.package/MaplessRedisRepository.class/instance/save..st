@@ -1,11 +1,16 @@
 actions
 save: aMapless
 	"Storage this instance into the persistent collection"
-		
+
+	| bsonFriendly |
+			
 	self onBeforeSave: aMapless.
 
+	[bsonFriendly := self asMongoDocumentFor: aMapless data] ifCurtailed:[
+		aMapless data removeKey: self idAttribute ifAbsent: [ nil ] ] .
+
 	self database
-		set: aMapless oid 
-		value: (self asNoSQLValue: aMapless).
+		set: (self idOf: aMapless) 
+		value: (self asRedisValue: bsonFriendly).
 		
 	self onAfterSave: aMapless

@@ -4,6 +4,6 @@ destroy: aMapless
 
 	self onBeforeDestroy: aMapless.
 		
-	self database remove: aMapless oid.
+	self database remove: (self idOf: aMapless).
 	
 	self onAfterDestroy: aMapless

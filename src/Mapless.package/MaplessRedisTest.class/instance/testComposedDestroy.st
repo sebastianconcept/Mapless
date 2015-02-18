@@ -25,10 +25,10 @@ testComposedDestroy
 
 	users do:[ :user | user person destroy ] .
 	
-	self assert: ( users allSatisfy: [ :user | ( DummyPerson existsAt: user person oid ) not] ).	
-	self assert: ( users allSatisfy: [ :user | DummyUser existsAt: user oid ] ) .	
+	self assert: ( users allSatisfy: [ :user | ( DummyPerson existsId: user person oid ) not] ).	
+	self assert: ( users allSatisfy: [ :user | DummyUser existsId: user oid ] ) .	
 
 	users do:[ :user | user destroy ] .
 
-	self assert: ( users allSatisfy: [ :user | (DummyUser existsAt: user oid) not ]  )
+	self assert: ( users allSatisfy: [ :user | (DummyUser existsId: user oid) not ]  )
 	 ]

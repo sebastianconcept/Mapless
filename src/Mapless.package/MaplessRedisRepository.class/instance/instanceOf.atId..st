@@ -6,4 +6,4 @@ instanceOf: aMaplessClass atId: anId
 	result := self database get: anId.	
 	^ result isNil
 		ifTrue: [ nil ]
-		ifFalse: [ aMaplessClass fromJSONObject:  (self jsonObjectFromValue: result)]
+		ifFalse: [ self onAfterRead: (aMaplessClass fromJSONObject:  (self jsonObjectFromValue: result))]

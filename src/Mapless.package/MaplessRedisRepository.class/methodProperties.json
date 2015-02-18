@@ -1,16 +1,16 @@
 {
 	"class" : {
-		"databaseNamed:" : "FV 1/30/2015 12:38" },
+		"databaseNamed:" : "sebastiansastre 2/18/2015 17:25" },
 	"instance" : {
-		"asNoSQLValue:" : "FV 1/29/2015 14:53",
-		"delete:" : "sebastiansastre 2/6/2015 17:44",
-		"destroy:" : "sebastiansastre 2/6/2015 17:43",
+		"asRedisValue:" : "sebastiansastre 2/18/2015 19:28",
+		"delete:" : "sebastiansastre 2/18/2015 19:07",
+		"destroy:" : "sebastiansastre 2/18/2015 19:24",
 		"existsId:of:" : "FV 1/29/2015 15:34",
 		"idAttribute" : "sebastiansastre 2/7/2015 11:42",
-		"instanceOf:atId:" : "FV 1/30/2015 16:02",
+		"instanceOf:atId:" : "sebastiansastre 2/18/2015 19:24",
 		"instanceOf:where:" : "FV 1/30/2015 16:01",
 		"jsonObjectFromValue:" : "FV 1/29/2015 15:11",
-		"onBeforeSave:" : "sebastiansastre 2/6/2015 17:32",
-		"save:" : "sebastiansastre 2/6/2015 17:43",
+		"onBeforeSave:" : "sebastiansastre 2/18/2015 19:23",
+		"save:" : "sebastiansastre 2/18/2015 19:28",
 		"stringify:" : "FV 1/29/2015 14:53",
 		"unstringify:" : "FV 1/29/2015 15:11" } }

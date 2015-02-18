@@ -40,9 +40,9 @@ testUnrefDestroy2
 
 	"By design, the destruction should be to the individual aggregate (and not its submodels).
 	It's programmers' responsability to decide when to destroy a sub aggregate"	
-	self assert: ( self do: [ reloaded := DummyPerson existsAt: loaded oid]) not.	
+	self assert: ( self do: [ reloaded := DummyPerson existsId: loaded oid]) not.	
 	self do:[self assert: ((friends collect: [:e| e oid]) allSatisfy: [:guyOid|
-					(DummyPerson existsAt: guyOid)])]
+					(DummyPerson existsId: guyOid)])]
 			]
 
 				
