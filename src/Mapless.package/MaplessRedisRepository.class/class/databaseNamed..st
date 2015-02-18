@@ -1,4 +1,5 @@
-as yet unclassified
+actions
 databaseNamed: aDatabaseName
-
-	^RedisPool instance requestClient
+	"Returns the database found at aDatabaseName"
+	
+	^ RedisPool instance requestClient

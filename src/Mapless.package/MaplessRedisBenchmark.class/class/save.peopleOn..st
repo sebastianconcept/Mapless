@@ -38,7 +38,7 @@ save: aQuantity peopleOn: aStream
 	redisRepository do:[
 		delay := Time millisecondsToRun: [
 				guys do:[ :guy | 
-					DummyUser findAt: guy oid]]].
+					DummyUser findId: guy oid]]].
 	
 	readsPerSecond := ((1000 * aQuantity) / delay asFloat) truncated.
 			

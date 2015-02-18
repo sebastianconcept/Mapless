@@ -1,4 +1,5 @@
-as yet unclassified
+actions
 databaseNamed: aDatabaseName
-
-	^MongoPool instance databaseAt: aDatabaseName 
+	"Returns the database found at aDatabaseName"
+	
+	^ MongoPool instance databaseAt: aDatabaseName 

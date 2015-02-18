@@ -1,4 +1,6 @@
 reactions
 onBeforeSave: aMapless
 
-	aMapless onBeforeSave
+	aMapless onBeforeSave.
+	
+	self denormalizeIdOf: aMapless 

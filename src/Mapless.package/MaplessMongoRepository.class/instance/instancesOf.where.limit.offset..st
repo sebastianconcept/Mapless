@@ -11,4 +11,4 @@ instancesOf: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOf
 		q where: someConditions].
 	^(result isNil and:[result isEmpty])
 		ifTrue: [ #() ]
-		ifFalse: [ aMaplessClass fromJSONObjects: result ]
+		ifFalse: [ (aMaplessClass fromJSONObjects: result) collect: [ :each | self onAfterRead: each ] ]

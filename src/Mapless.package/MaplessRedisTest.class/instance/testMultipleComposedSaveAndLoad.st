@@ -32,7 +32,7 @@ testMultipleComposedSaveAndLoad
 	self deny: guy isUnsaved.	
 	self assert: (tags allSatisfy: [:e| e isUnsaved not]).
 
-	self do:[ loaded := DummyUser findAt: user oid.
+	self do:[ loaded := DummyUser findId: user id.
 		self assert: loaded notNil.
 		self deny: loaded isUnsaved.
 		self assert: loaded username = 'johnq'.
