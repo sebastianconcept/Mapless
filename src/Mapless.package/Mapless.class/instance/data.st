@@ -1,4 +1,4 @@
 accessing
 data
 
-	^ data ifNil:[self initializeData]
+	^ data ifNil: [ self initializeData ]

@@ -1,4 +1,7 @@
 reactions
 onAfterDestroy: aMapless
 
-	aMapless onAfterDestroy
+	aMapless onAfterDestroy.
+	
+	
+	self normalizeIdOf: aMapless 

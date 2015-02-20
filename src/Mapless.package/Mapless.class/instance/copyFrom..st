@@ -7,5 +7,5 @@ copyFrom: aMapless
 	
 	(aMapless data keys asOrderedCollection 
 		removeAllFoundIn: self class keysToExclude;
-		yourself) do:[:k|
-			self data at: k put: (aMapless at: k)]
+		yourself) do: [ :k |
+			self data at: k put: (aMapless at: k) ]

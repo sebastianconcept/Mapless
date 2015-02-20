@@ -6,7 +6,7 @@ save: aMapless
 			
 	self onBeforeSave: aMapless.
 
-	[bsonFriendly := self asMongoDocumentFor: aMapless data] ifCurtailed:[
+	[ bsonFriendly := self storableFor: aMapless data ] ifCurtailed:[
 		aMapless data removeKey: self idAttribute ifAbsent: [ nil ] ] .
 
 	self database
