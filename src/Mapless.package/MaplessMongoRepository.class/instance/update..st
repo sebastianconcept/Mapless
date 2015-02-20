@@ -5,7 +5,7 @@ update: aMapless
 
 	self onBeforeUpdate: aMapless.
 	
-	bsonFriendly := self asMongoDocumentFor: aMapless data.
+	bsonFriendly := self storableFor: aMapless data.
 
 	(self databaseCollectionNamed: aMapless class name asString)
 		replace:  (Dictionary new 

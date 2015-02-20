@@ -1,0 +1,15 @@
+{
+	"category" : "Mapless-Postgres-Tests",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		"pool",
+		"repository" ],
+	"name" : "MaplessPostgresTest",
+	"pools" : [
+		 ],
+	"super" : "TestCase",
+	"type" : "normal" }

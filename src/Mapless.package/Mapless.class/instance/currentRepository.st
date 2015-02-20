@@ -1,4 +1,4 @@
 accessing
 currentRepository
 
-	^self class currentRepository
+	^ self class currentRepository

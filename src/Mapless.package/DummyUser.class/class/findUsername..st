@@ -3,4 +3,4 @@ findUsername: anUsername
 
 	^self currentRepository 
 		instanceOf: self 
-		where: (Dictionary newFromPairs: {'username' . anUsername})
+		where: (JsonObject newFromPairs: {'username' . anUsername})

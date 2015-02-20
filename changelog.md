@@ -1,3 +1,16 @@
+February 20, 2015 - Release 0.2.6
+===================================
+
+* Introducing basic Postgres support (requires Postgres 9.4)
+* find: someConditions will make `someConditions` to be coupled with the backend. If you are using MongoDB, they are going to be the dictionary you would send to Mongo, if you are using Postgres, it would be the clause coming just after the where in: `SELECT * FROM maplessClassName WHERE `
+
+
+February 18, 2015 - Release 0.2.5
+===================================
+
+* Mapless now normalizes the server id to the attribute `id` but each repository migth briefly move that to their own flavor. For example MongoDB uses `_id` and Redis uses `oid`
+
+
 February 7, 2015 - Release 0.2.4
 ===================================
 

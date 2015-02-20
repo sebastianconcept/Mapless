@@ -2,16 +2,16 @@
 	"class" : {
 		"databaseNamed:" : "sebastiansastre 2/18/2015 17:25" },
 	"instance" : {
-		"delete:" : "sebastiansastre 2/6/2015 17:26",
-		"destroy:" : "sebastiansastre 2/6/2015 18:02",
+		"destroy:" : "sebastiansastre 2/19/2015 15:56",
 		"ensureCollection" : "FV 1/28/2015 17:29",
-		"existsId:of:" : "FV 1/30/2015 16:02",
-		"idAttribute" : "sebastiansastre 2/7/2015 11:42",
-		"insert:" : "sebastiansastre 2/18/2015 18:32",
+		"existsId:of:" : "sebastiansastre 2/19/2015 22:55",
+		"idAttribute" : "sebastiansastre 2/19/2015 15:53",
+		"insert:" : "sebastiansastre 2/19/2015 15:56",
 		"instanceOf:atId:" : "FV 1/30/2015 16:02",
 		"instanceOf:where:" : "sebastiansastre 2/18/2015 18:54",
 		"instancesOf:where:" : "FV 1/30/2015 16:03",
 		"instancesOf:where:limit:" : "FV 1/30/2015 16:03",
 		"instancesOf:where:limit:offset:" : "sebastiansastre 2/18/2015 18:55",
+		"onBeforeInsert:" : "sebastiansastre 2/18/2015 21:19",
 		"save:" : "sebastiansastre 2/18/2015 18:33",
-		"update:" : "sebastiansastre 2/18/2015 18:00" } }
+		"update:" : "sebastiansastre 2/19/2015 15:56" } }
