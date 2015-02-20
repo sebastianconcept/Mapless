@@ -3,10 +3,10 @@
 		"databaseNamed:" : "sebastiansastre 2/19/2015 16:00" },
 	"instance" : {
 		"addCollection:" : "sebastiansastre 2/19/2015 22:18",
-		"basicDestroy:" : "sebastiansastre 2/19/2015 22:29",
+		"basicDestroy:" : "sebastiansastre 2/19/2015 22:47",
 		"basicInsert:" : "sebastiansastre 2/19/2015 22:18",
 		"basicUpdate:" : "sebastiansastre 2/19/2015 22:38",
-		"destroy:" : "sebastiansastre 2/19/2015 22:30",
+		"destroy:" : "sebastiansastre 2/19/2015 22:46",
 		"ensureCollection" : "sebastiansastre 2/19/2015 21:50",
 		"existsId:of:" : "sebastiansastre 2/19/2015 15:54",
 		"hasCollectionNamed:" : "sebastiansastre 2/19/2015 18:08",
