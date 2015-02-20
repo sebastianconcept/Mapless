@@ -1,3 +1,9 @@
+February 19, 2015 - Release 0.2.6
+===================================
+
+* Introducing basic Postgres support (requires Postgres 9.4)
+
+
 February 18, 2015 - Release 0.2.5
 ===================================
 
