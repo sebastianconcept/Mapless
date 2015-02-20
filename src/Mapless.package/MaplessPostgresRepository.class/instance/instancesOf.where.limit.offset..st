@@ -3,8 +3,9 @@ instancesOf: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOf
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 				
 	^ database do: [ :pg | | result |
-		result := pg execute: 'SELECT VALUE FROM "',(aMaplessClass name),'" WHERE
-				"key" = ''',someConditions key,''';'.
+		result := pg execute: 'SELECT VALUE FROM "',
+			(aMaplessClass name),'" WHERE ',someConditions,';'.
+			
 		(result isNil or: [ 
 		result resultSets isEmpty ])
 			ifTrue: [ #() ]

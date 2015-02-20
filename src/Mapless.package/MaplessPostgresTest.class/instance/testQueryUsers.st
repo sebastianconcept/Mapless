@@ -22,4 +22,4 @@ testQueryUsers
 
 	self do:[ 
 		self assert: (Character alphabet allSatisfy: [ :char | 
-						( DummyUser findUsername: char asString ) notNil ] ) ]
+						( DummyUser find: ('username = ''',char asString,'''') ) notNil ] ) ]
