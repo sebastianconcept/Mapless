@@ -8,7 +8,7 @@ destroy: aMapless
 
 	filter := JsonObject new at: aMapless class idAttribute put: aMapless id; yourself. 
 		
-	bsonFriendly := self asMongoDocumentFor: filter.
+	bsonFriendly := self storableFor: filter.
 		
 	(self databaseCollectionNamed: aMapless class name asString) remove: bsonFriendly.
 	

@@ -1,5 +1,14 @@
 {
 	"class" : {
-		 },
+		"databaseNamed:" : "sebastiansastre 2/19/2015 16:00" },
 	"instance" : {
-		 } }
+		"addCollection:" : "sebastiansastre 2/19/2015 22:18",
+		"basicInsert:" : "sebastiansastre 2/19/2015 22:18",
+		"ensureCollection" : "sebastiansastre 2/19/2015 21:50",
+		"existsId:of:" : "sebastiansastre 2/19/2015 15:54",
+		"hasCollectionNamed:" : "sebastiansastre 2/19/2015 18:08",
+		"idAttribute" : "sebastiansastre 2/19/2015 21:42",
+		"insert:" : "sebastiansastre 2/19/2015 21:57",
+		"onBeforeInsert:" : "sebastiansastre 2/19/2015 15:52",
+		"save:" : "sebastiansastre 2/19/2015 15:52",
+		"update:" : "sebastiansastre 2/19/2015 15:56" } }

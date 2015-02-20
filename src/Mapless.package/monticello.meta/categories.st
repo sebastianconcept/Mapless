@@ -6,6 +6,7 @@ SystemOrganization addCategory: 'Mapless-Mongo'!
 SystemOrganization addCategory: 'Mapless-Mongo-Errors'!
 SystemOrganization addCategory: 'Mapless-Mongo-Tests'!
 SystemOrganization addCategory: 'Mapless-Postgres'!
+SystemOrganization addCategory: 'Mapless-Postgres-Tests'!
 SystemOrganization addCategory: 'Mapless-Redis'!
 SystemOrganization addCategory: 'Mapless-Redis-Errors'!
 SystemOrganization addCategory: 'Mapless-Redis-Tests'!
