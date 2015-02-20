@@ -1,4 +1,4 @@
 accessing
 persistenceStrategy
 
-	^self class currentRepository
+	^ self class currentRepository

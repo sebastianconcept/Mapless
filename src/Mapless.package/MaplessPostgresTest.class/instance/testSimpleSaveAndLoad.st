@@ -16,6 +16,9 @@ testSimpleSaveAndLoad
 	self assert: loaded notNil.
 	self do: [ self deny: loaded isUnsaved ].
 	
+	loaded modifiedOn: nil.
+	guy modifiedOn: nil.
+	
 	loaded data keysAndValuesDo: [ :k :v |
 		((loaded data at: k) isKindOf: DateAndTime) not ifTrue: [
 			self assert: (loaded data at: k) = (guy data at: k)]]
