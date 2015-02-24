@@ -1,4 +1,6 @@
 reactions
 onAfterInsert: aMapless
 
-	aMapless onAfterInsert
+	aMapless onAfterInsert.
+	
+	self normalizeIdOf: aMapless 

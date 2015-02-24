@@ -6,8 +6,8 @@ instanceOf: aMaplessClass where: someConditions
 
 
 	databaseCollection := self databaseCollectionNamed: aMaplessClass name asString.
-	result :=  databaseCollection queryOne:[ :q | q where: someConditions ].
+	result :=  databaseCollection queryOne: [ :q | q where: someConditions ].
 
 	^result isNil
 		ifTrue: [ nil ]
-		ifFalse: [ aMaplessClass fromJSONObject: result asJsonObject ]
+		ifFalse: [ self onAfterRead: (aMaplessClass fromJSONObject: result asJsonObject)  ]

@@ -4,4 +4,4 @@ databaseCollectionNamed: aCollectionName
 	
 	self ensureCollectionNamed: aCollectionName.
 	
-	^self database collectionAt: aCollectionName
+	^ self database collectionAt: aCollectionName

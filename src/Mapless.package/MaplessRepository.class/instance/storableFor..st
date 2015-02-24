@@ -1,16 +1,16 @@
 actions
-asMongoDocumentFor: aJsonObject
+storableFor: aJsonObject
 	"Returns a new JsonObject that's the BSON friendly version of aJsonObject
 	by visinting all the values. It will complain if sub models are not previously saved."
 	
-	| mongoDocument storablePart |
+	| storableDocument storablePart |
 		
-	mongoDocument := JsonObject new.
+	storableDocument := JsonObject new.
 
 	aJsonObject keysAndValuesDo: [ :k :v | 
 		storablePart := self asStorable: v.
-		mongoDocument 
+		storableDocument 
 			at: k
 			put: storablePart ].
 
-	^ mongoDocument 
+	^ storableDocument 

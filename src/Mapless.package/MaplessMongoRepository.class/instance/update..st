@@ -5,11 +5,11 @@ update: aMapless
 
 	self onBeforeUpdate: aMapless.
 	
-	bsonFriendly := self asMongoDocumentFor: aMapless data.
+	bsonFriendly := self storableFor: aMapless data.
 
 	(self databaseCollectionNamed: aMapless class name asString)
 		replace:  (Dictionary new 
-					at: aMapless class idAttribute put: aMapless id;
+					at: self idAttribute put: (self idOf: aMapless);
 					yourself)
 		with: bsonFriendly.
 		

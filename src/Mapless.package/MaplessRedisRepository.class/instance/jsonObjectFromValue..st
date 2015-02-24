@@ -1,4 +1,4 @@
 actions
-jsonObjectFromValue: aNoSQLValue 
+jsonObjectFromValue: aRedisValue 
 	
-	^ (BSON read: (self unstringify: aNoSQLValue) readStream) asJsonObject
+	^ (BSON read: (self unstringify: aRedisValue) readStream) asJsonObject

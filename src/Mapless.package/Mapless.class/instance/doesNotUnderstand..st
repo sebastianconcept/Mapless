@@ -4,8 +4,11 @@ doesNotUnderstand: aMessage
 	delegating to data (aJsonObject)"
 	
 	| key |
+	
 	key := aMessage selector.
-	key isUnary ifTrue: [^ self data at: key asString ].
+
+	key isUnary ifTrue: [ ^ self data at: key asString ].
+
 	^ (key isKeyword and: [ ( key occurrencesOf: $: ) = 1] )
 		ifTrue: [ key := key allButLast asSymbol.
 				self data at: key asString put: aMessage arguments first ]
