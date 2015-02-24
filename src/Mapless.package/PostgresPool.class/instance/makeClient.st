@@ -14,5 +14,5 @@ makeClient
 							userName: (ConfigurationFiles at: #Postgres at: #username)
 							password: (ConfigurationFiles at: #Postgres at: #password));
 		startup.
-	
+
 	^ connection
