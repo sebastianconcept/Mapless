@@ -23,17 +23,44 @@ Mapless can be used for Model persistence, trans-image observer pattern, object 
 
 Take your open image and click for a **menu**, then **tools**, then **Configuration Browser** and search for **Mapless**. Click **Install Stable Version**
 
-Or...
+However, it's recommended that you use Metacello to load your projects...
 
-Use this snippet to load it into your [Pharo](http://www.pharo-project.org/home)* image:
+Use this snippet to fetch the Baseline and load it in your [Pharo](http://www.pharo-project.org/home)* image:
 
-    Gofer it 
-		smalltalkhubUser: 'Pharo'
-		project: 'MetaRepoForPharo30'; 
-		package: 'ConfigurationOfMapless';
-		load.
+    Metacello new
+    	baseline: 'Mapless';
+    	repository: 'github://flow-stack/Mapless:master/repository';
+    	get.
+    	
+To load Mapless alone, with no backend database:
+
+    Metacello new
+    	baseline: 'Mapless';
+    	repository: 'github://flow-stack/Mapless:master/repository';
+    	load.
 	
-    #ConfigurationOfMapless asClass load
+There are many backend options you can load. Use the following snippet to load one or more backend database(s):
+
+	Metacello new
+    	baseline: 'Mapless';
+    	repository: 'github://flow-stack/Mapless:master/repository';
+    	load: #('Mongo' 'Redis' 'Postgres' 'GemStone').
+
+NOTE: If you are running on the GemStone platform, the GemStone classes are automatically loaded along with Mapless.
+
+To load the database classes and the corresponding tests, use the following snippet to load the database(s) of your choice:
+
+	Metacello new
+    	baseline: 'Mapless';
+    	repository: 'github://flow-stack/Mapless:master/repository';
+    	load: #('Mongo Tests' 'Redis Tests' 'Postgres Tests' 'GemStone Tests').
+
+To load everything for your platform, including the tests:
+
+	Metacello new
+    	baseline: 'Mapless';
+    	repository: 'github://flow-stack/Mapless:master/repository';
+    	load: #('all').
 
 ### How does it look?
 

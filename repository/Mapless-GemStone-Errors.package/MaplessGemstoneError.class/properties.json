@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-GemStone-Errors",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "MaplessGemstoneError",
+	"pools" : [
+		 ],
+	"super" : "MaplessError",
+	"type" : "normal" }
