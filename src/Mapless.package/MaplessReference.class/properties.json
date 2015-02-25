@@ -1,0 +1,16 @@
+{
+	"category" : "Mapless-Core",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		"modelClass",
+		"id",
+		"model" ],
+	"name" : "MaplessReference",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

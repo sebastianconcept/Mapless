@@ -1,0 +1,4 @@
+*mapless
+unreferenced
+
+	^ self

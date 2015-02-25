@@ -1,0 +1,17 @@
+{
+	"category" : "Mapless-Redis",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		"id",
+		"modelClass",
+		"message",
+		"modelId" ],
+	"name" : "RedisChangedModelJob",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

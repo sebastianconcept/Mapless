@@ -1,0 +1,4 @@
+*Mapless
+isValid
+
+	^ self isConnected

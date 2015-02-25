@@ -1,0 +1,4 @@
+testing
+isValid 
+
+	^ self isOpen 

@@ -1,0 +1,22 @@
+{
+	"class" : {
+		"databaseNamed:" : "sebastiansastre 2/19/2015 16:00" },
+	"instance" : {
+		"addCollection:" : "sebastiansastre 2/19/2015 22:59",
+		"basicDestroy:" : "sebastiansastre 2/19/2015 22:47",
+		"basicInsert:" : "sebastiansastre 2/19/2015 22:18",
+		"basicUpdate:" : "sebastiansastre 2/19/2015 22:38",
+		"destroy:" : "sebastiansastre 2/19/2015 22:46",
+		"ensureCollection" : "sebastiansastre 2/19/2015 21:50",
+		"existsId:of:" : "sebastiansastre 2/19/2015 15:54",
+		"hasCollectionNamed:" : "sebastiansastre 2/20/2015 15:20",
+		"idAttribute" : "sebastiansastre 2/19/2015 21:42",
+		"insert:" : "sebastiansastre 2/19/2015 21:57",
+		"instanceOf:atId:" : "sebastiansastre 2/20/2015 17:24",
+		"instanceOf:where:" : "sebastiansastre 2/19/2015 23:12",
+		"instancesOf:where:" : "sebastiansastre 2/19/2015 22:58",
+		"instancesOf:where:limit:" : "sebastiansastre 2/19/2015 22:58",
+		"instancesOf:where:limit:offset:" : "sebastiansastre 2/20/2015 17:23",
+		"onBeforeInsert:" : "sebastiansastre 2/19/2015 15:52",
+		"save:" : "sebastiansastre 2/19/2015 15:52",
+		"update:" : "sebastiansastre 2/19/2015 22:27" } }
