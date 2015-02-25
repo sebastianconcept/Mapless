@@ -1,0 +1,25 @@
+{
+	"class" : {
+		"initializeInstance" : "SebastianSastre 5/3/2014 17:22:48",
+		"instance" : "SebastianSastre 5/3/2014 17:22:48",
+		"reset" : "SebastianSastre 5/3/2014 17:22:48" },
+	"instance" : {
+		"busyClients" : "SebastianSastre 5/3/2014 17:22:48",
+		"clientsMutex" : "SebastianSastre 5/3/2014 17:22:48",
+		"currentClientDynamicVariable" : "SebastianSastre 5/3/2014 17:22:48",
+		"do:" : "SebastianSastre 5/3/2014 17:22:48",
+		"hasBusyClients" : "SebastianSastre 5/3/2014 17:22:48",
+		"hasClients" : "SebastianSastre 5/3/2014 17:22:48",
+		"hasIdleClients" : "SebastianSastre 5/3/2014 17:22:48",
+		"idleClients" : "SebastianSastre 5/3/2014 17:22:48",
+		"initializeBusyClients" : "SebastianSastre 5/3/2014 17:22:48",
+		"initializeClientsMutex" : "SebastianSastre 5/3/2014 17:22:48",
+		"initializeIdleClients" : "SebastianSastre 5/3/2014 17:22:48",
+		"makeClient" : "SebastianSastre 5/3/2014 17:22:48",
+		"printOn:" : "SebastianSastre 5/3/2014 17:22:48",
+		"remove:" : "SebastianSastre 5/3/2014 17:22:48",
+		"requestClient" : "SebastianSastre 5/3/2014 17:22:48",
+		"reset" : "SebastianSastre 5/3/2014 17:22:48",
+		"returnClient:" : "SebastianSastre 5/3/2014 17:22:48",
+		"returningUnusedClient" : "SebastianSastre 5/3/2014 17:22:48",
+		"withClientDo:" : "SebastianSastre 5/3/2014 17:22:48" } }

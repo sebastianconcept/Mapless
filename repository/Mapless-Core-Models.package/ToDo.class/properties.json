@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Core-Models",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "ToDo",
+	"pools" : [
+		 ],
+	"super" : "Mapless",
+	"type" : "normal" }

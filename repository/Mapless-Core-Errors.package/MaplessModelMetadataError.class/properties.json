@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Core-Errors",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "MaplessModelMetadataError",
+	"pools" : [
+		 ],
+	"super" : "MaplessError",
+	"type" : "normal" }

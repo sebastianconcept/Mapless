@@ -1,0 +1,4 @@
+accessing
+currentRepository
+
+	^MaplessCurrentRepository value
