@@ -1,0 +1,15 @@
+{
+	"category" : "Mapless-Core-Models",
+	"classinstvars" : [
+		"idAttribute" ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "sebastiansastre 3/15/2012 21:49",
+	"instvars" : [
+		"raw",
+		"data" ],
+	"name" : "Mapless",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

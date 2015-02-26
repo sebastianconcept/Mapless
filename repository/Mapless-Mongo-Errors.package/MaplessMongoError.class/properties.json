@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Mongo-Errors",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "MaplessMongoError",
+	"pools" : [
+		 ],
+	"super" : "MaplessError",
+	"type" : "normal" }

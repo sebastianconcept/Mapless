@@ -1,0 +1,4 @@
+reactions
+onAboutToInsert
+
+	self ensureOID

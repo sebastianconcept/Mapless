@@ -1,0 +1,15 @@
+{
+	"class" : {
+		"findUsername:" : "sebastiansastre 2/20/2015 13:34" },
+	"instance" : {
+		"completeName" : "FV 1/29/2015 11:07",
+		"onAfterDelete" : "sebastiansastre 2/7/2015 13:03",
+		"onAfterDestroy" : "sebastiansastre 2/7/2015 13:03",
+		"onAfterInsert" : "sebastiansastre 2/7/2015 13:01",
+		"onAfterSave" : "sebastiansastre 2/7/2015 13:00",
+		"onAfterUpdate" : "sebastiansastre 2/7/2015 13:02",
+		"onBeforeDelete" : "sebastiansastre 2/7/2015 13:02",
+		"onBeforeDestroy" : "sebastiansastre 2/7/2015 13:03",
+		"onBeforeInsert" : "sebastiansastre 2/7/2015 13:01",
+		"onBeforeSave" : "sebastiansastre 2/7/2015 13:00",
+		"onBeforeUpdate" : "sebastiansastre 2/7/2015 13:02" } }

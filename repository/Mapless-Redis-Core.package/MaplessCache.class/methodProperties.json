@@ -1,0 +1,17 @@
+{
+	"class" : {
+		"defaultSlotDuration" : "SebastianSastre 5/3/2014 17:22:48",
+		"initializeInstance" : "SebastianSastre 5/3/2014 17:22:48",
+		"instance" : "SebastianSastre 5/3/2014 17:22:48",
+		"reset" : "SebastianSastre 5/3/2014 17:22:48" },
+	"instance" : {
+		"at:" : "SebastianSastre 5/3/2014 17:22:48",
+		"at:ifAbsent:" : "SebastianSastre 5/3/2014 17:22:48",
+		"at:put:" : "SebastianSastre 5/3/2014 17:22:48",
+		"initializeModels" : "SebastianSastre 5/3/2014 17:22:48",
+		"isExpired:for:" : "SebastianSastre 5/3/2014 17:22:48",
+		"models" : "SebastianSastre 5/3/2014 17:22:48",
+		"newSlotFor:" : "SebastianSastre 5/3/2014 17:22:48",
+		"purge" : "SebastianSastre 5/3/2014 17:22:48",
+		"purgeOlderThan:" : "SebastianSastre 5/3/2014 17:22:48",
+		"reset" : "SebastianSastre 5/3/2014 17:22:48" } }

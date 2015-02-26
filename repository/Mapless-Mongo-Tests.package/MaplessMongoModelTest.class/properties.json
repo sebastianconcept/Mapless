@@ -1,0 +1,15 @@
+{
+	"category" : "Mapless-Mongo-Tests",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		"pool",
+		"mongoRepository" ],
+	"name" : "MaplessMongoModelTest",
+	"pools" : [
+		 ],
+	"super" : "TestCase",
+	"type" : "normal" }

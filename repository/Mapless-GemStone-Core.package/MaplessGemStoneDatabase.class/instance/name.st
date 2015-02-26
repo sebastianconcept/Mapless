@@ -1,0 +1,4 @@
+other
+name
+
+	^name
