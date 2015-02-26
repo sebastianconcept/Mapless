@@ -19,7 +19,7 @@ Mapless can be used for Model persistence, trans-image observer pattern, object 
 ### Motivation
 > "I wanted to persist objects with *low friction* and *low maintenance* but *high scaling* and *availability* capabilities so Mapless is totally biased towards that. This framework is what I came up with after incorporating my experience with [Aggregate](https://github.com/sebastianconcept/Aggregate) in [airflowing](http://airflowing.com)." ~ [Sebastian](http://about.me/sebastianconcept)
 
-### Loading in Pharo
+### Loading
 
 Take your open image and click for a **menu**, then **tools**, then **Configuration Browser** and search for **Mapless**. Click **Install Stable Version**
 
@@ -32,7 +32,7 @@ Use this snippet to fetch the Baseline and load it in your [Pharo](http://www.ph
     	repository: 'github://flow-stack/Mapless:master/repository';
     	get.
     	
-To load Mapless alone, with no backend database:
+To load Mapless alone, with no backend database (likely only for Mapless contributors):
 
     Metacello new
     	baseline: 'Mapless';
@@ -48,14 +48,14 @@ There are many backend options you can load. Use the following snippet to load o
 
 NOTE: If you are running on the GemStone platform, the GemStone classes are automatically loaded along with Mapless.
 
-To load the database classes and the corresponding tests, use the following snippet to load the database(s) of your choice:
+To load the both the database classes and the corresponding tests, use the following snippet:
 
 	Metacello new
     	baseline: 'Mapless';
     	repository: 'github://flow-stack/Mapless:master/repository';
     	load: #('Mongo Tests' 'Redis Tests' 'Postgres Tests' 'GemStone Tests').
 
-To load everything for your platform, including the tests:
+To load everything available for your platform, including the tests:
 
 	Metacello new
     	baseline: 'Mapless';
