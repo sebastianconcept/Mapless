@@ -1,0 +1,8 @@
+{
+	"class" : {
+		 },
+	"instance" : {
+		"baseline:" : "jupiter 2/25/2015 10:00",
+		"baselineCommon:" : "jupiter 2/25/2015 12:49",
+		"baselineGemStone:" : "jupiter 02/25/2015 16:46",
+		"baselinePharo:" : "jupiter 02/25/2015 15:37" } }

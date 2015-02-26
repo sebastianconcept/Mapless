@@ -1,0 +1,4 @@
+other
+new
+
+	^self current

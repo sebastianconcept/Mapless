@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-GemStone-Core",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		"Databases" ],
+	"commentStamp" : "jupiter 02/24/2015 22:38",
+	"instvars" : [
+		 ],
+	"name" : "MaplessGemStoneRepository",
+	"pools" : [
+		 ],
+	"super" : "MaplessRepository",
+	"type" : "normal" }
