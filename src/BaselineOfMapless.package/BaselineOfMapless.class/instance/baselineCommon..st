@@ -44,7 +44,7 @@ baselineCommon: spec
 						versionString: #stable;
 						repository: 'http://smalltalkhub.com/mc/Pharo/MetaRepoForPharo30/main' ].
 			spec
-				package: 'Mapless-Core' with: [ spec requires: #('JSON' 'JSONExtensions') ];
+				package: 'Mapless-Core' with: [ spec requires: #('JSON' 'JSONExtensions' 'ConfigurationFiles') ];
 				package: 'Mapless-Core-Models' with: [ spec requires: #('Mapless-Core') ];
 				package: 'Mapless-Core-Errors' with: [ spec requires: #('Mapless-Core') ];
 				package: 'Mapless-Core-Repository' with: [ spec requires: #('Mapless-Core') ];
