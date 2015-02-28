@@ -17,7 +17,7 @@ baselineCommon: spec
 						className: 'ConfigurationOfMongoTalk';
 						file: 'ConfigurationOfMongoTalk';
 						versionString: #bleedingEdge;
-						repository: 'http://smalltalkhub.com/mc/francois/MongoTalk/main'].
+						repository: 'http://smalltalkhub.com/mc/francois/MongoTalk/main' ].
 			spec
 				project: 'Xtreams'
 				with: [ 
@@ -44,10 +44,14 @@ baselineCommon: spec
 						versionString: #stable;
 						repository: 'http://smalltalkhub.com/mc/Pharo/MetaRepoForPharo30/main' ].
 			spec
-				package: 'Mapless-Core' with: [ spec requires: #('JSON' 'JSONExtensions' 'ConfigurationFiles') ];
-				package: 'Mapless-Core-Models' with: [ spec requires: #('Mapless-Core') ];
-				package: 'Mapless-Core-Errors' with: [ spec requires: #('Mapless-Core') ];
-				package: 'Mapless-Core-Repository' with: [ spec requires: #('Mapless-Core') ];
+				package: 'Mapless-Core'
+					with: [ 
+							spec
+								requires:
+									#('JSON' 'JSONExtensions' 'ConfigurationFiles' 'Mapless-Core-Errors') ];
+				package: 'Mapless-Core-Models' with: [ spec requires: #('Mapless-Core' 'Mapless-Core-Errors') ];
+				package: 'Mapless-Core-Errors';
+				package: 'Mapless-Core-Repository' with: [ spec requires: #('Mapless-Core') ]; 
 				package: 'Mapless-Tests-Core' with: [ spec requires: #('Mapless-Core') ];
 				package: 'Mapless-Mongo-Core' with: [ spec requires: #('Mapless-Core' 'Xtreams' 'MongoTalk') ];
 				package: 'Mapless-Mongo-Errors' with: [ spec requires: #('Mapless-Mongo-Core') ];
@@ -61,7 +65,7 @@ baselineCommon: spec
 			spec
 				group: 'default' with: #('Core');
 				group: 'all' with: #('Mongo Tests' 'Redis Tests' 'Postgres Tests');
-				group: 'Core' with: #('Mapless-Core' 'Mapless-Core-Models' 'Mapless-Core-Errors' 'Mapless-Core-Repository');
+				group: 'Core' with: #('Mapless-Core' 'Mapless-Core-Models' 'Mapless-Core-Repository');
 				group: 'Mongo' with: #('Core' 'Mapless-Mongo-Core' 'Mapless-Mongo-Errors' 'Mapless-Mongo-Tests');
 				group: 'Redis' with: #('Core' 'Mapless-Redis-Core' 'Mapless-Redis-Errors' 'Mapless-Redis-Tests');
 				group: 'Postgres' with: #('Core' 'Mapless-Postgres-Core' 'Mapless-Postgres-Tests');
