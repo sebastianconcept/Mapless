@@ -25,5 +25,5 @@ baselineGemStone: spec
 				group: 'GemStone' with: #('Mapless-GemStone-Core' 'Mapless-GemStone-Errors' 'Mapless-GemStone-Models');
 				group: 'GemStone Tests' with: #('GemStone' 'Mapless-GemStone-Tests');
 				group: 'Tests' with: #('GemStone Tests');
-				group: 'CI' with: #('GemStone Tests');
+				group: 'CI' with: #('Core' 'GemStone Tests');
 				yourself ]
