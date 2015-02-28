@@ -63,7 +63,7 @@ baselineCommon: spec
 				package: 'Mapless-Postgres-Tests' with: [ spec requires: #('Mapless-Tests-Core' 'Mapless-Postgres-Core') ];
 				package: 'JSONExtensions' with: [ spec requires: #('JSON' 'Collections-OrderPreservingDictionary') ].
 			spec
-				group: 'default' with: #('Core');
+				group: 'default' with: #('all');
 				group: 'all' with: #('Mongo Tests' 'Redis Tests' 'Postgres Tests');
 				group: 'Core' with: #('Mapless-Core' 'Mapless-Core-Models' 'Mapless-Core-Repository');
 				group: 'Mongo' with: #('Core' 'Mapless-Mongo-Core' 'Mapless-Mongo-Errors' 'Mapless-Mongo-Tests');
