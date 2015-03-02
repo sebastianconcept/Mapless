@@ -14,8 +14,8 @@ baselineCommon: spec
 				with: [ spec repository: 'http://smalltalkhub.com/mc/sebastianconcept/SASExtensions/main' ].
 
 			spec
-				package: 'BaselineOfConfigurationFiles'
-				with: [ spec repository: 'github://flow-stack/ConfigurationFiles:master/src' ].
+				baseline: 'ConfigurationFiles';
+				repository: 'github://flow-stack/ConfigurationFiles:master/src'.
 
 			spec
 				package: 'Mapless-Core'
