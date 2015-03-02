@@ -1,0 +1,19 @@
+{
+	"class" : {
+		"Databases" : "jupiter 02/24/2015 00:10",
+		"databaseNamed:" : "jupiter 02/24/2015 00:14" },
+	"instance" : {
+		"destroy:" : "jupiter 02/24/2015 22:38",
+		"ensureCollection" : "jupiter 02/24/2015 22:38",
+		"existsId:of:" : "jupiter 02/24/2015 22:38",
+		"idAttribute" : "jupiter 02/24/2015 22:38",
+		"idOf:" : "jupiter 02/24/2015 01:10",
+		"insert:" : "jupiter 02/24/2015 22:38",
+		"instanceOf:atId:" : "jupiter 02/24/2015 22:38",
+		"instanceOf:where:" : "jupiter 02/24/2015 22:38",
+		"instancesOf:where:" : "jupiter 02/24/2015 22:38",
+		"instancesOf:where:limit:" : "jupiter 02/24/2015 22:38",
+		"instancesOf:where:limit:offset:" : "jupiter 02/24/2015 22:38",
+		"onBeforeInsert:" : "jupiter 02/24/2015 22:38",
+		"save:" : "jupiter 02/24/2015 22:38",
+		"update:" : "jupiter 02/24/2015 01:08" } }

@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Redis-Core",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "RedisClient",
+	"pools" : [
+		 ],
+	"super" : "RedisConnection",
+	"type" : "normal" }

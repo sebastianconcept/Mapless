@@ -1,0 +1,4 @@
+*mapless-core
+unreferenced
+
+	^ self

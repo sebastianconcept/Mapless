@@ -1,0 +1,14 @@
+{
+	"category" : "ConfigurationFiles",
+	"classinstvars" : [
+		"configurations" ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "sebastiansastre 2/19/2015 10:07",
+	"instvars" : [
+		 ],
+	"name" : "ConfigurationFiles",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }
