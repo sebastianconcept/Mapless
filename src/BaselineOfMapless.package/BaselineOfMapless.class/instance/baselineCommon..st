@@ -6,11 +6,17 @@ baselineCommon: spec
 			spec
 				package: 'Collections-OrderPreservingDictionary'
 				with: [ spec repository: 'http://squeaksource.com/OrderPreservingDict' ].
+
 			spec package: 'JSON' with: [ spec repository: 'http://smalltalkhub.com/mc/PharoExtras/JSON/main' ].
+
 			spec
 				package: 'JSONExtensions'
 				with: [ spec repository: 'http://smalltalkhub.com/mc/sebastianconcept/SASExtensions/main' ].
-			spec package: 'ConfigurationFiles'.
+
+			spec 
+				package: 'ConfigurationFiles'
+				with: [ spec repository: 'http://smalltalkhub.com/mc/Pharo/MetaRepoForPharo30/main' ].
+
 			spec
 				package: 'Mapless-Core'
 					with: [ spec requires: #('JSON' 'JSONExtensions' 'ConfigurationFiles' 'Mapless-Core-Errors') ];
@@ -19,6 +25,7 @@ baselineCommon: spec
 				package: 'Mapless-Core-Repository' with: [ spec requires: #('Mapless-Core') ];
 				package: 'Mapless-Tests-Core' with: [ spec requires: #('Mapless-Core') ];
 				package: 'JSONExtensions' with: [ spec requires: #('JSON' 'Collections-OrderPreservingDictionary') ].
+
 			spec
 				group: 'default' with: #('all');
 				group: 'all' with: #('Core');
