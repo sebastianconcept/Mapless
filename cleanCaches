@@ -1,0 +1,6 @@
+#!/bin/bash
+# gets a fresh Pharo 3.0 image and loads Mapless
+
+rm -rf package-cache
+rm -rf github-cache
+

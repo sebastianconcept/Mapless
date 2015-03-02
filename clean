@@ -7,4 +7,4 @@ rm -rf pharo
 rm -rf pharo-ui
 rm -rf *.log
 rm -rf pharo-vm
-rm -rf package-cache
+./cleanCaches
