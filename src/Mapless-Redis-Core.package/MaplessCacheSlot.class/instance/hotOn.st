@@ -1,4 +1,0 @@
-accessing
-hotOn
-	
-	^ hotOn
