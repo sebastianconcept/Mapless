@@ -18,6 +18,7 @@ _site
 *.sources
 *.dmp
 package-cache/
+github-cache/
 *~
 
 # Compiled source #

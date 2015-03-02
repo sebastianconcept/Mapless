@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Example-Models",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "DummyPerson",
+	"pools" : [
+		 ],
+	"super" : "Mapless",
+	"type" : "normal" }
