@@ -13,7 +13,7 @@ baselineCommon: spec
 				package: 'JSONExtensions'
 				with: [ spec repository: 'http://smalltalkhub.com/mc/sebastianconcept/SASExtensions/main' ].
 
-			spec baseline: 'ConfigurationFiles' with: [ spec repository: 'github://flow-stack/ConfigurationFiles/src' ].
+			spec baseline: 'ConfigurationFiles' with: [ spec repository: 'github://flow-stack/ConfigurationFiles:master/src' ].
 
 			spec
 				package: 'Mapless-Core'
