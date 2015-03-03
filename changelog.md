@@ -1,3 +1,9 @@
+March 2, 2015 - Release 0.2.8
+===================================
+
+* Refactored the code into many packages (as opposed to one monolithic package) in order to simplify mainteinance and sync with GemStone and any other repositories. 
+
+
 February 20, 2015 - Release 0.2.6
 ===================================
 
