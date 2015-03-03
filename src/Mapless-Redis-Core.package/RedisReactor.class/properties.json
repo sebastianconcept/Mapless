@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Redis-Core",
+	"classinstvars" : [
+		"session" ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "RedisReactor",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

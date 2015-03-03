@@ -1,0 +1,15 @@
+{
+	"class" : {
+		"databaseNamed:" : "sebastiansastre 2/18/2015 17:25" },
+	"instance" : {
+		"asRedisValue:" : "sebastiansastre 2/18/2015 19:28",
+		"destroy:" : "sebastiansastre 2/18/2015 19:24",
+		"existsId:of:" : "FV 1/29/2015 15:34",
+		"idAttribute" : "sebastiansastre 2/19/2015 15:54",
+		"instanceOf:atId:" : "sebastiansastre 2/18/2015 19:24",
+		"instanceOf:where:" : "sebastiansastre 2/18/2015 19:33",
+		"jsonObjectFromValue:" : "sebastiansastre 2/18/2015 19:32",
+		"onBeforeSave:" : "sebastiansastre 2/18/2015 19:23",
+		"save:" : "sebastiansastre 2/19/2015 15:57",
+		"stringify:" : "FV 1/29/2015 14:53",
+		"unstringify:" : "FV 1/29/2015 15:11" } }
