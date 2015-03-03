@@ -3,8 +3,8 @@ setSubModelsAt: aKey with: anObject
 	| modelClass newSubModel |
 	
 	"one submodel"
-	(((anObject isKindOf: JsonObject) or:[
-	anObject isKindOf: OrderedJsonObject]) and:[
+	(((anObject maplessIsKindOf: JsonObject) or:[
+	anObject maplessIsKindOf: OrderedJsonObject]) and:[
 	anObject includesKey: 'modelClass']) ifTrue:[ 
 		modelClass := Smalltalk 
 						at: (anObject at: 'modelClass') asSymbol    
@@ -14,7 +14,7 @@ setSubModelsAt: aKey with: anObject
 		self data at: aKey put: newSubModel].
 	
 	"many submodels"
-	((anObject isKindOf: Collection) and:[
+	((anObject maplessIsKindOf: Collection) and:[
 	anObject anySatisfy:[:e| 
 		(self isReifiedJSON: e) and:[
 		e includesKey: 'modelClass' ]]]) ifTrue:[|newSubModels|

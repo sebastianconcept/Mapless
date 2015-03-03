@@ -9,7 +9,7 @@ asStorable: anObject
 				ifFalse:[anObject collect: [:e| self asStorable: e]]]
 		ifFalse: [ (anObject class = MaplessReference)
 					ifFalse: [ 
-						(anObject isKindOf: Mapless)
+						(anObject maplessIsKindOf: Mapless)
 							ifTrue:[ anObject asMaplessReference asJsonString ] 
 							ifFalse:[ anObject ]]
 					ifTrue: [
