@@ -9,7 +9,12 @@ baselinePharo: spec
 					spec
 						versionString: #bleedingEdge;
 						repository: 'http://smalltalkhub.com/mc/francois/MongoTalk/main' ].
-			spec configuration: 'Xtreams' with: [ spec repository: 'http://www.squeaksource.com/Xtreams' ].
+			spec
+				configuration: 'Xtreams'
+				with: [ 
+					spec
+						versionString: #stable;
+						repository: 'http://www.squeaksource.com/Xtreams' ].
 			spec package: 'Redis-Client' with: [ spec repository: 'http://smalltalkhub.com/mc/mlhales/RedisClient/main' ].
 			spec package: 'Redis-Queue' with: [ spec repository: 'http://smalltalkhub.com/mc/mlhales/RedisClient/main' ].
 			spec
