@@ -9,7 +9,10 @@ baselineCommon: spec
 			spec package: 'JSON' with: [ spec repository: 'http://smalltalkhub.com/mc/PharoExtras/JSON/main' ].
 			spec
 				package: 'JSONExtensions'
-				with: [ spec repository: 'http://smalltalkhub.com/mc/sebastianconcept/SASExtensions/main' ].
+				with: [ 
+					spec
+						requires: #('JSON' 'Collections-OrderPreservingDictionary');
+						repository: 'http://smalltalkhub.com/mc/sebastianconcept/SASExtensions/main' ].
 			spec baseline: 'ConfigurationFiles' with: [ spec repository: 'github://flow-stack/ConfigurationFiles/src' ].
 			spec
 				package: 'Mapless-Core-Base'
