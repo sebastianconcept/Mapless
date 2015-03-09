@@ -1,4 +1,0 @@
-*Mapless
-isValid
-
-	^ self isConnected

@@ -1,0 +1,14 @@
+{
+	"category" : "Mapless-Redis-Core",
+	"classinstvars" : [
+		"instance" ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		"models" ],
+	"name" : "MaplessCache",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

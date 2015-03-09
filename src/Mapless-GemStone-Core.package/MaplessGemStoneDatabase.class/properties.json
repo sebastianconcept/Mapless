@@ -1,0 +1,15 @@
+{
+	"category" : "Mapless-GemStone-Core",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		"name",
+		"collections" ],
+	"name" : "MaplessGemStoneDatabase",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

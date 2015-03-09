@@ -1,4 +1,0 @@
-*Mapless
-reset
-
-	self terminate

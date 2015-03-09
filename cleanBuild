@@ -1,5 +1,5 @@
 #!/bin/bash
 # gets a fresh Pharo 3.0 image and loads Mapless
 
-clean
-build
+./clean
+./build
