@@ -8,7 +8,7 @@ baselinePharo: spec
 				with: [ 
 					spec
 						versionString: #bleedingEdge;
-						repository: 'http://smalltalkhub.com/mc/francois/MongoTalk/main' ].
+						repository: 'http://smalltalkhub.com/mc/MongoTalkTeam/mongotalk/main' ].
 			spec
 				configuration: 'Xtreams'
 				with: [ 
