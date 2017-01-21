@@ -1,1 +1,0 @@
-Metacello new	baseline: 'Mapless';	repository: 'github://flow-stack/Mapless:master/src';	load: #( 'all' ).Smalltalk saveSession.

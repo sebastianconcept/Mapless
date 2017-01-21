@@ -1,0 +1,14 @@
+{
+	"category" : "ConfigurationOfMapless",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		"LastVersionLoad" ],
+	"commentStamp" : "",
+	"instvars" : [
+		"project" ],
+	"name" : "ConfigurationOfMapless",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

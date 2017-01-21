@@ -1,4 +1,0 @@
-other
-collections
-
-	^collections

@@ -1,0 +1,1 @@
+Gofer it	configurationOf: 'Mapless';	"url: 'http://smalltalkhub.com/mc/Pharo/MetaRepoForPharo50/main';"	url: 'http://smalltalkhub.com/mc/sebastianconcept/Mapless/main';	load.(#ConfigurationOfMapless asClass project version: #stable) load.Smalltalk saveSession.

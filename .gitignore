@@ -19,6 +19,7 @@ _site
 *.dmp
 package-cache/
 github-cache/
+*-cache/
 *~
 
 # Compiled source #

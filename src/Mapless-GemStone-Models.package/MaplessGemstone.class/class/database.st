@@ -1,4 +1,0 @@
-accessing
-database
-
-	^CurrentMaplessDatabase value

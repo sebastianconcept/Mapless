@@ -1,4 +1,0 @@
-other
-new
-
-	^self current

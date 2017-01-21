@@ -1,0 +1,4 @@
+*Mapless
+reset
+
+	self terminate
