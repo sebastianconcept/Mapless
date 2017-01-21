@@ -7,7 +7,7 @@ update: aMapless
 	
 	bsonFriendly := self storableFor: aMapless data.
 
-	(self databaseCollectionNamed: aMapless class name asString)
+	(self databaseCollectionNamed: aMapless class collectionName)
 		replace:  (Dictionary new 
 					at: self idAttribute put: (self idOf: aMapless);
 					yourself)

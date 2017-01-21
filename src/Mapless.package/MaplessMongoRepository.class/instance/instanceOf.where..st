@@ -4,7 +4,7 @@ instanceOf: aMaplessClass where: someConditions
 
 	| result databaseCollection |
 
-	databaseCollection := self databaseCollectionNamed: aMaplessClass name asString.
+	databaseCollection := self databaseCollectionNamed: aMaplessClass collectionName.
 	result :=  databaseCollection queryOne: [ :q | q where: someConditions ].
 
 	^result isNil
