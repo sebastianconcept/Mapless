@@ -10,6 +10,7 @@
 		"testInsertHook" : "sebastiansastre 2/7/2015 13:03",
 		"testMergeComposed" : "sebastiansastre 2/7/2015 12:07",
 		"testMergeSimple" : "sebastiansastre 2/7/2015 12:07",
+		"testReifyWithoutMetadata" : "sebastiansastre 1/22/2017 12:02",
 		"testSaveHook" : "sebastiansastre 2/7/2015 13:00",
 		"testUnrefDestroy" : "sebastiansastre 2/7/2015 12:07",
 		"testUnrefDestroy2" : "sebastiansastre 2/7/2015 12:07",
