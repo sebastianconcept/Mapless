@@ -4,6 +4,6 @@ makeClient
 
 	^ (MongoAPI 
 		host: (OSEnvironment default at: 'MONGO_ADDRESS' ifAbsent: [ 'localhost' ])
-		port: (OSEnvironment default at: 'MONGO_PORT' ifAbsent: [ 27017 ]))
+		port: (OSEnvironment default at: 'MONGO_PORT' ifAbsent: [ 27017 ]) asInteger)
 			open;
 			yourself
