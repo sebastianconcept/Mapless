@@ -1,5 +1,6 @@
 {
 	"class" : {
+		"collection" : "sebastiansastre 2/1/2017 12:04",
 		"collectionName" : "SebastianSastre 1/21/2017 18:13",
 		"currentRepository" : "sebastiansastre 12/7/2014 22:54:40.946964",
 		"existsCid:" : "sebastiansastre 12/7/2014 22:54:40.946964",
@@ -19,6 +20,7 @@
 		"fromJSONObjects:" : "SebastianSastre 5/3/2014 17:22:48",
 		"fromJSONString:" : "SebastianSastre 5/3/2014 17:22:48",
 		"fromReified:" : "SebastianSastre 5/3/2014 17:22:48",
+		"fromResults:" : "sebastiansastre 2/1/2017 12:16",
 		"getNewId" : "sebastiansastre 12/20/2014 15:07",
 		"idAttribute" : "FV 1/30/2015 10:29",
 		"isAbstract" : "SebastianSastre 5/3/2014 17:22:48",
