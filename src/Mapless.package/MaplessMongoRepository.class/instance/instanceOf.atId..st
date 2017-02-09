@@ -1,6 +1,6 @@
 accessing
-instanceOf: aMapless atId: anId
+instanceOf: aMaplessClass atId: anId
 
 	^self  
-		instanceOf: aMapless 
+		instanceOf: aMaplessClass 
 		where: (Dictionary newFromPairs: {self idAttribute. anId})
