@@ -12,7 +12,7 @@ testDateAndTime
 			yourself.
 	
 	self assert: guy isUnsaved.	
-	guy save .
+	guy save.
 	self deny: guy isUnsaved.
 
 	loaded := DummyPerson findId: guy id .
