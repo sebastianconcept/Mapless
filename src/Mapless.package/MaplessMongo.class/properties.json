@@ -1,14 +1,11 @@
 {
-	"category" : "Mapless-Models",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		 ],
 	"commentStamp" : "sebastiansastre 11/30/2012 13:01",
-	"instvars" : [
-		 ],
-	"name" : "MaplessMongo",
-	"pools" : [
-		 ],
 	"super" : "Mapless",
-	"type" : "normal" }
+	"category" : "Mapless-Models",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "MaplessMongo",
+	"type" : "normal"
+}

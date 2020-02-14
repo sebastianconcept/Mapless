@@ -1,14 +1,11 @@
 {
-	"category" : "Mapless-Repositories",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		 ],
 	"commentStamp" : "FV 1/30/2015 10:25",
-	"instvars" : [
-		 ],
-	"name" : "MaplessMongoRepository",
-	"pools" : [
-		 ],
 	"super" : "MaplessRepository",
-	"type" : "normal" }
+	"category" : "Mapless-Repositories",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "MaplessMongoRepository",
+	"type" : "normal"
+}

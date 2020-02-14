@@ -1,14 +1,11 @@
 {
-	"category" : "Mapless-Errors",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		 ],
 	"commentStamp" : "",
-	"instvars" : [
-		 ],
-	"name" : "MaplessModelMetadataError",
-	"pools" : [
-		 ],
 	"super" : "MaplessError",
-	"type" : "normal" }
+	"category" : "Mapless-Errors",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "MaplessModelMetadataError",
+	"type" : "normal"
+}

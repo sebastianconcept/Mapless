@@ -1,4 +1,7 @@
 actions
-reset 
+reset
 	"Close, no fail"
-	[ self close ] on: Error do: [ :x |  ] 
+
+	[ self close ]
+		on: Error
+		do: [ :x |  ]

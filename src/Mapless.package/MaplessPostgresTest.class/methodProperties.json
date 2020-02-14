@@ -1,26 +1,29 @@
 {
-	"class" : {
-		"lastStoredRun" : "sebastiansastre 2/19/2015 12:53" },
 	"instance" : {
-		"do:" : "sebastiansastre 2/19/2015 12:53",
-		"setUp" : "sebastiansastre 2/19/2015 16:23",
-		"tearDown" : "sebastiansastre 2/19/2015 12:53",
-		"testComposedAccess" : "sebastiansastre 2/19/2015 12:53",
-		"testComposedDelete" : "sebastiansastre 2/19/2015 12:53",
-		"testComposedDestroy" : "sebastiansastre 2/19/2015 12:53",
-		"testComposedSave" : "sebastiansastre 2/19/2015 12:53",
 		"testComposedSaveAndLoad" : "sebastiansastre 2/19/2015 12:53",
-		"testComposition" : "sebastiansastre 2/19/2015 12:53",
-		"testDateAndTime" : "sebastiansastre 2/20/2015 11:45",
-		"testDelete" : "sebastiansastre 2/19/2015 12:53",
-		"testDestroy" : "sebastiansastre 2/19/2015 12:53",
 		"testIsUnsaved" : "sebastiansastre 2/19/2015 12:53",
-		"testMultipleComposedComposables" : "sebastiansastre 2/19/2015 12:53",
-		"testMultipleComposedMixedSaveAndLoad" : "sebastiansastre 2/19/2015 12:53",
-		"testMultipleComposedSaveAndLoad" : "sebastiansastre 2/19/2015 12:53",
-		"testQueryUsers" : "sebastiansastre 2/20/2015 17:22",
-		"testSaveSetsID" : "sebastiansastre 2/19/2015 12:53",
-		"testSimpleSave" : "sebastiansastre 2/19/2015 12:53",
 		"testSimpleSaveAndLoad" : "sebastiansastre 2/20/2015 11:39",
 		"testSimpleSaveAndUpdate" : "sebastiansastre 2/19/2015 12:53",
-		"testSubModelsFromReifiedJSON" : "sebastiansastre 2/19/2015 12:53" } }
+		"testComposedSave" : "sebastiansastre 2/19/2015 12:53",
+		"testQueryUsers" : "sebastiansastre 2/20/2015 17:22",
+		"testDelete" : "sebastiansastre 2/19/2015 12:53",
+		"setUp" : "sebastiansastre 2/19/2015 16:23",
+		"testMultipleComposedComposables" : "sebastiansastre 2/19/2015 12:53",
+		"testSubModelsFromReifiedJSON" : "sebastiansastre 2/19/2015 12:53",
+		"testMultipleComposedSaveAndLoad" : "sebastiansastre 2/19/2015 12:53",
+		"testComposition" : "sebastiansastre 2/19/2015 12:53",
+		"testComposedDelete" : "sebastiansastre 2/19/2015 12:53",
+		"tearDown" : "sebastiansastre 2/19/2015 12:53",
+		"do:" : "sebastiansastre 2/19/2015 12:53",
+		"testComposedAccess" : "sebastiansastre 2/19/2015 12:53",
+		"testComposedDestroy" : "sebastiansastre 2/19/2015 12:53",
+		"testMultipleComposedMixedSaveAndLoad" : "sebastiansastre 2/19/2015 12:53",
+		"testSimpleSave" : "sebastiansastre 2/19/2015 12:53",
+		"testDateAndTime" : "sebastiansastre 2/20/2015 11:45",
+		"testSaveSetsID" : "sebastiansastre 2/19/2015 12:53",
+		"testDestroy" : "sebastiansastre 2/19/2015 12:53"
+	},
+	"class" : {
+		"lastStoredRun" : "sebastiansastre 2/19/2015 12:53"
+	}
+}

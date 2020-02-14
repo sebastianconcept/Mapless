@@ -1,14 +1,11 @@
 {
-	"category" : "Mapless-Mongo",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		 ],
 	"commentStamp" : "",
-	"instvars" : [
-		 ],
-	"name" : "MongoAPI",
-	"pools" : [
-		 ],
 	"super" : "Mongo",
-	"type" : "normal" }
+	"category" : "Mapless-Mongo",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "MongoAPI",
+	"type" : "normal"
+}
