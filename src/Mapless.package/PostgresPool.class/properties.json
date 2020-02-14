@@ -1,14 +1,11 @@
 {
-	"category" : "Mapless-Postgres",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		 ],
 	"commentStamp" : "",
-	"instvars" : [
-		 ],
-	"name" : "PostgresPool",
-	"pools" : [
-		 ],
 	"super" : "MaplessAbstractPool",
-	"type" : "normal" }
+	"category" : "Mapless-Postgres",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "PostgresPool",
+	"type" : "normal"
+}

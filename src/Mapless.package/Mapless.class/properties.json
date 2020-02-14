@@ -1,15 +1,16 @@
 {
+	"commentStamp" : "sebastiansastre 3/15/2012 21:49",
+	"super" : "Object",
 	"category" : "Mapless-Models",
 	"classinstvars" : [
-		"idAttribute" ],
-	"classvars" : [
-		 ],
-	"commentStamp" : "sebastiansastre 3/15/2012 21:49",
+		"idAttribute"
+	],
+	"pools" : [ ],
+	"classvars" : [ ],
 	"instvars" : [
 		"raw",
-		"data" ],
+		"data"
+	],
 	"name" : "Mapless",
-	"pools" : [
-		 ],
-	"super" : "Object",
-	"type" : "normal" }
+	"type" : "normal"
+}

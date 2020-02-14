@@ -6,9 +6,12 @@ withClientDo: aBlock
 	the XXCurrentClient dynamic variable's value."
 
 	| client |
-
 	client := self requestClient.
-		
-	^ self currentClientDynamicVariable value: client during:[
-		[aBlock value: client] ensure:[
-			self returnClient: client]]
+	^ self currentClientDynamicVariable
+		value: client
+		during: [ [ [ aBlock value: client ]
+				on: Error
+				do: [ :x | 
+					client reset.
+					MongoOperationError signal: x messageText] ]
+				ensure: [ self returnClient: client ] ]

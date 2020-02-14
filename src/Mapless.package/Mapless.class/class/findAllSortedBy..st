@@ -6,7 +6,8 @@ findAllSortedBy: aSelector
 
 	|answer|
 
-	answer := TreeSet sortSelector: aSelector equalitySelector: #=.
+
+	answer := GRSmallOrderedSet  sortSelector: aSelector equalitySelector: #=.
 	self modelClasses do:[:aModelClass|
 		aModelClass == Mapless ifFalse:[
 			answer addAll: aModelClass findAll]].

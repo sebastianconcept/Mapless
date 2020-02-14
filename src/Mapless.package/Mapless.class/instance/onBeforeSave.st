@@ -4,4 +4,4 @@ onBeforeSave
 	This is a convenience message sent by the backend 
 	for subclasses to take any (re)action of this interesting moment."
 
-	self modifiedOn: DateAndTime now asUTC asUnixTime
+	self modifiedOn: DateAndTime now

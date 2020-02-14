@@ -1,14 +1,11 @@
 {
-	"category" : "Mapless-Repositories",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		 ],
 	"commentStamp" : "",
-	"instvars" : [
-		 ],
-	"name" : "MaplessPostgresRepository",
-	"pools" : [
-		 ],
 	"super" : "MaplessRepository",
-	"type" : "normal" }
+	"category" : "Mapless-Repositories",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "MaplessPostgresRepository",
+	"type" : "normal"
+}

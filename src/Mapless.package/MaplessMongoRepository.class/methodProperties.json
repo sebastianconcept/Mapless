@@ -1,17 +1,22 @@
 {
-	"class" : {
-		"databaseNamed:" : "sebastiansastre 2/18/2015 17:25" },
 	"instance" : {
-		"destroy:" : "sebastiansastre 2/9/2017 18:11",
-		"ensureCollection" : "FV 1/28/2015 17:29",
-		"existsId:of:" : "sebastiansastre 2/19/2015 22:55",
+		"instancesOf:where:" : "FV 1/30/2015 16:03",
+		"do:" : "sebastiansastre 6/26/2019 10:09",
 		"idAttribute" : "sebastiansastre 2/19/2015 15:53",
+		"onBeforeInsert:" : "sebastiansastre 2/18/2015 21:19",
+		"existsId:of:" : "sebastiansastre 2/19/2015 22:55",
+		"update:" : "SebastianSastre 1/21/2017 18:11",
+		"ensureCollection" : "FV 1/28/2015 17:29",
+		"instancesOf:where:limit:offset:" : "SebastianSastre 1/21/2017 18:11",
+		"save:" : "sebastiansastre 2/18/2015 18:33",
+		"instancesOf:where:limit:" : "FV 1/30/2015 16:03",
 		"insert:" : "SebastianSastre 1/21/2017 18:11",
+		"destroy:" : "sebastiansastre 2/9/2017 18:11",
 		"instanceOf:atId:" : "sebastiansastre 2/9/2017 14:51",
 		"instanceOf:where:" : "SebastianSastre 1/21/2017 18:11",
-		"instancesOf:where:" : "FV 1/30/2015 16:03",
-		"instancesOf:where:limit:" : "FV 1/30/2015 16:03",
-		"instancesOf:where:limit:offset:" : "SebastianSastre 1/21/2017 18:11",
-		"onBeforeInsert:" : "sebastiansastre 2/18/2015 21:19",
-		"save:" : "sebastiansastre 2/18/2015 18:33",
-		"update:" : "SebastianSastre 1/21/2017 18:11" } }
+		"databaseCollectionNamed:" : "sebastiansastre 6/28/2019 10:27"
+	},
+	"class" : {
+		"databaseNamed:" : "sebastiansastre 2/18/2015 17:25"
+	}
+}
