@@ -1,7 +1,0 @@
-catalog
-catalogKeyClassesAndExample
-	^ '
-Mapless
-
-
-'

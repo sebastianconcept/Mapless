@@ -1,3 +1,0 @@
-actions
-ensureCollection
-	self shouldBeImplemented.
