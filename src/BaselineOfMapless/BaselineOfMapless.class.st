@@ -28,9 +28,6 @@ BaselineOfMapless >> dependencies: spec [
 ]
 
 { #category : #baseline }
-BaselineOfMapless >> projectPackages: spec [ 
-
-		spec
-			repository: 'github://sebastianconcept/Mapless/src';
-			package: 'Mapless'.
+BaselineOfMapless >> projectPackages: spec [
+	spec package: 'Mapless'
 ]
