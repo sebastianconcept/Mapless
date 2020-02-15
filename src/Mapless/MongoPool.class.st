@@ -44,6 +44,13 @@ MongoPool >> ifUnavailablePurge: aMongoClient [
 ]
 
 { #category : #actions }
+MongoPool >> initialize [
+	super initialize.
+
+	MongoAPI defaultAuthMechanismClass: SCRAMSHA1AuthMechanism.
+]
+
+{ #category : #actions }
 MongoPool >> makeClient [
 	"Returns a new client so it can be (re)used in the pool"
 
