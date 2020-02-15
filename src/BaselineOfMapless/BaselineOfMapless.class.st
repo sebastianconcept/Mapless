@@ -1,7 +1,7 @@
 Class {
 	#name : #BaselineOfMapless,
 	#superclass : #BaselineOf,
-	#category : 'BaselineOfMapless'
+	#category : #BaselineOfMapless
 }
 
 { #category : #baseline }
@@ -31,6 +31,6 @@ BaselineOfMapless >> dependencies: spec [
 BaselineOfMapless >> projectPackages: spec [ 
 
 		spec
-			repository: 'github://github.com:sebastianconcept/Mapless/src';
+			repository: 'github://sebastianconcept/Mapless/src';
 			package: 'Mapless'.
 ]
