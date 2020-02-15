@@ -114,6 +114,13 @@ MaplessAbstractPool >> initializeIdleClients [
 	^ idleClients := IdentitySet new
 ]
 
+{ #category : #testing }
+MaplessAbstractPool >> isUsingAuth [
+	"Answers true if we can assume the client won't be using authentication mechanisms."
+
+	^ self username notEmpty and: [ self password notEmpty ]
+]
+
 { #category : #actions }
 MaplessAbstractPool >> logNewClient: mongoClient [
 	

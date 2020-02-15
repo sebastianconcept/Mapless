@@ -258,7 +258,7 @@ MaplessMongoTest >> testDateAndTime [
 	| when guy loaded |
 	
 	self do: [ 
-	when := DateAndTime now.
+	when := DateAndTime now asUTC.
 	guy := DummyPerson new
 			firstName: 'john';
 			lastName: 'q';
