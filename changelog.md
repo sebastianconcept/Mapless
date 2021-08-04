@@ -1,3 +1,9 @@
+August 4, 2021
+===================================
+
+* Fixed isUsingAuth. All test green.
+* Updated readme file.
+
 March 2, 2015 - Release 0.2.8
 ===================================
 
