@@ -4,7 +4,9 @@ Class {
 	#instVars : [
 		'clientsMutex',
 		'busyClients',
-		'idleClients'
+		'idleClients',
+		'username',
+		'password'
 	],
 	#classInstVars : [
 		'instance'
@@ -114,11 +116,25 @@ MaplessAbstractPool >> initializeIdleClients [
 	^ idleClients := IdentitySet new
 ]
 
+{ #category : #initialization }
+MaplessAbstractPool >> initializePassword [
+	^ password := OSEnvironment current
+		at: 'DB_PASSWORD'
+		ifAbsent: [ nil ]
+]
+
+{ #category : #initialization }
+MaplessAbstractPool >> initializeUsername [
+	^ username := OSEnvironment current
+		at: 'DB_USERNAME'
+		ifAbsent: [ nil ]
+]
+
 { #category : #testing }
 MaplessAbstractPool >> isUsingAuth [
 	"Answers true if we can assume the client won't be using authentication mechanisms."
 
-	^ self username notEmpty and: [ self password notEmpty ]
+	^ self username notNil and: [ self password notNil ]
 ]
 
 { #category : #actions }
@@ -138,7 +154,12 @@ MaplessAbstractPool >> makeClient [
 
 { #category : #accessing }
 MaplessAbstractPool >> password [
-	^ OSEnvironment current at: 'DB_PASSWORD' ifAbsent: [ 'abc123' ]
+	^ password ifNil: [ self initializePassword ]
+]
+
+{ #category : #accessing }
+MaplessAbstractPool >> password: anObject [
+	password := anObject
 ]
 
 { #category : #actions }
@@ -211,7 +232,12 @@ MaplessAbstractPool >> returningUnusedClient [
 
 { #category : #accessing }
 MaplessAbstractPool >> username [
-	^ OSEnvironment current at: 'DB_USERNAME' ifAbsent: [ 'admin' ]
+	^ username ifNil: [ self initializeUsername ]
+]
+
+{ #category : #accessing }
+MaplessAbstractPool >> username: anObject [
+	username := anObject
 ]
 
 { #category : #actions }
