@@ -1,3 +1,9 @@
+August 5, 2021
+===================================
+
+* The Mapless id is now using OID's so they take advantage of the BSON serialization of ObjectId.
+* Fixed all tests but testSubModelsFromReifiedJSON 
+
 August 4, 2021
 ===================================
 
