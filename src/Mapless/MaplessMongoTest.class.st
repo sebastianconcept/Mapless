@@ -40,30 +40,27 @@ MaplessMongoTest >> testComposedAccess [
 	"Test proxies and its on-demand-load and DNU mechanism"
 
 	| user guy |
-	
-	self do: [ 
-	user := DummyUser new
+	self
+		do: [ user := DummyUser new
 				userame: 'johnq';
 				yourself.
-	
-	guy := DummyPerson new
-			firstName: 'john';
-			lastName: 'q';
-			yourself.
-
-	user person: guy.
-
-	self do:[ 
-		guy save.
-		user save ].
-	
-	self do:[
-		self assert: ( DummyUser findId: user id ) completeName = 'john q'.
-		self assert: ( DummyUser findId: user id ) person class = MaplessReference.
-		self assert: ( DummyUser findId: user id ) person model class = DummyPerson.
-		self assert: ( DummyUser findId: user id ) person firstName = 'john'.
-		self assert: ( DummyUser findId: user id ) person lastName = 'q' ]
- ]
+			guy := DummyPerson new
+				firstName: 'john';
+				lastName: 'q';
+				yourself.
+			user person: guy.
+			self
+				do: [ guy save.
+					user save ].
+			self
+				do: [ self assert: (DummyUser findId: user id) completeName = 'john q'.
+					self
+						assert: (DummyUser findId: user id) person class = MaplessReference.
+					self
+						assert: (DummyUser findId: user id) person model class = DummyPerson.
+					self
+						assert: (DummyUser findId: user id) person firstName = 'john'.
+					self assert: (DummyUser findId: user id) person lastName = 'q' ] ]
 ]
 
 { #category : #tests }
@@ -624,28 +621,19 @@ MaplessMongoTest >> testSimpleSaveAndUpdate [
 
 { #category : #tests }
 MaplessMongoTest >> testSubModelsFromReifiedJSON [
-
 	| user guy jsonString reified |
-	
-	self do: [ 
-	user := DummyUser new
+	self
+		do: [ user := DummyUser new
 				userame: 'johnq';
 				yourself.
-	
-	guy := DummyPerson new
-			firstName: 'john';
-			lastName: 'q';
-			yourself.
-
-	user person: guy.
-		
-	jsonString := user unreferenced asJSONString.
-
-	reified := DummyUser fromJSONString: jsonString.
-
-	self assert: guy isUnsaved.	
-	self assert: reified person class = DummyPerson.
-	self assert: reified completeName = 'john q'.
-	]
-
+			guy := DummyPerson new
+				firstName: 'john';
+				lastName: 'q';
+				yourself.
+			user person: guy.
+			jsonString := user unreferenced asJSONString.
+			reified := DummyUser fromJSONString: jsonString.
+			self assert: guy isUnsaved.
+			self assert: reified person class = DummyPerson.
+			self assert: reified completeName = 'john q' ]
 ]
