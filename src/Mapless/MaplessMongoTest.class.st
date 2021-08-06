@@ -141,6 +141,43 @@ MaplessMongoTest >> testComposedDestroy [
 ]
 
 { #category : #tests }
+MaplessMongoTest >> testComposedResaveAndLoad [
+	| user guy loaded |
+	self
+		do: [ user := DummyUser new
+				username: 'johnq';
+				yourself.
+			guy := DummyPerson new
+				firstName: 'John';
+				lastName: 'W';
+				yourself.
+			user person: guy.
+			self do: [ guy save ].
+			self
+				shouldnt: [ self do: [ user save ] ]
+				raise: MaplessUnsavedSubmodel.
+			self deny: user isUnsaved.
+			self deny: guy isUnsaved ].
+	self
+		do: [ loaded := DummyUser findId: user id.
+			self assert: loaded person firstName equals: 'John'.
+			loaded person lastName: 'wayne'.
+			loaded person save.
+			loaded := DummyUser findId: user id.
+			self assert: loaded person lastName equals: 'wayne' ].
+	self
+		do: [ loaded := DummyUser findId: user id.
+			self assert: loaded person firstName equals: 'John'.
+			loaded person lastName: 'Wayne'.
+			loaded person save.
+			loaded username: 'johnw'.
+			loaded save.
+			loaded := DummyUser findId: user id.
+			self assert: loaded username equals: 'johnw'.
+			self assert: loaded person firstName equals: 'John' ]
+]
+
+{ #category : #tests }
 MaplessMongoTest >> testComposedSave [
 
 	| user guy |
