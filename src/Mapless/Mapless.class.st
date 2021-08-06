@@ -20,6 +20,25 @@ Class {
 	#category : #'Mapless-Models'
 }
 
+{ #category : #testing }
+Mapless class >> canRepresentArrayOfMaplessReferences: anObject [
+	"Answers true if anObject can represent a collection of sub mapless references."
+
+	^ anObject isCollection
+		and: [ anObject
+				anySatisfy: [ :anyOne | self canRepresentSubMapless: anyOne ] ]
+]
+
+{ #category : #testing }
+Mapless class >> canRepresentSubMapless: anObject [
+	"Answers true if anObject can represent a sub mapless."
+
+	^ anObject isDictionary
+		and: [ anObject size = 2
+				and: [ (anObject includesKey: '_id')
+						and: [ anObject includesKey: 'modelClass' ] ] ]
+]
+
 { #category : #accessing }
 Mapless class >> collection [
 
@@ -167,9 +186,26 @@ Mapless class >> fromJSONObjects: someJsonObjects [
 ]
 
 { #category : #actions }
-Mapless class >> fromJSONString: aJSONString [
+Mapless class >> fromJSONString: aJsonString [
+	^ self fromJsonObject: (OrderedJson readFrom: aJsonString readStream)
+]
 
-	^ self fromJSONObject:  (OrderedJson readFrom: aJSONString readStream) 
+{ #category : #actions }
+Mapless class >> fromJsonObject: aJsonObjectOrNilOrArray [
+	| modelClass |
+	aJsonObjectOrNilOrArray ifNil: [ ^ nil ].
+	aJsonObjectOrNilOrArray isArray
+		ifTrue: [ ^ self fromJSONObjects: aJsonObjectOrNilOrArray ].
+
+	"If the content has metadata then it will use it to decide what instances to create.
+	When there is no Mapless metadata available, the assumption is 
+	that it should create instances of this class of Mapless."
+	modelClass := aJsonObjectOrNilOrArray
+		at: 'modelClass'
+		ifAbsent: [ self name ].
+	^ (Smalltalk at: modelClass asSymbol) basicNew
+		initializeOn: aJsonObjectOrNilOrArray asJsonObject;
+		yourself
 ]
 
 { #category : #accessing }
@@ -188,8 +224,7 @@ Mapless class >> fromResults: someMongoTalkResults [
 
 { #category : #actions }
 Mapless class >> getNewId [
-
-	^ UUID new asString36
+	^ OID nextOID
 ]
 
 { #category : #accessing }
@@ -560,7 +595,7 @@ Mapless >> initializeOn: aJsonObject [
 	self createdOn ifNil: [
 		self createdOn: DateAndTime now ].
 
-	self setSubModelsAndReferences
+	self setSubModelReferences
 
 ]
 
@@ -607,19 +642,20 @@ Mapless >> jsonWriteOn: aStream [
 ]
 
 { #category : #actions }
-Mapless >> makeReferenceFrom: aJSONString [ 
+Mapless >> makeReferenceFrom: aJSONString [
 	"Answers a new reference from aJSONString (or nil if doesn't feel like one)"
 
 	| jsonObject |
-
-	jsonObject := [ Json readFrom: aJSONString readStream ] ifError: [ :x| nil ].
-
-	^ (jsonObject notNil and:[
-	(jsonObject at: self class idAttribute) notNil and:[
-	jsonObject modelClass notNil]]) 
-		ifTrue:[ MaplessReference fromJSONObject: jsonObject ]
-		ifFalse:[ nil ] 
-
+	self flag: #deprecated.
+	"Will be removed, use:
+	MaplessReference fromJSONObject: aJsonObject"
+	jsonObject := [ Json readFrom: aJSONString readStream ]
+		ifError: [ :x | nil ].
+	^ (jsonObject notNil
+		and: [ (jsonObject at: self class idAttribute) notNil
+				and: [ jsonObject modelClass notNil ] ])
+		ifTrue: [ MaplessReference fromJSONObject: jsonObject ]
+		ifFalse: [ nil ]
 ]
 
 { #category : #actions }
@@ -795,29 +831,19 @@ Mapless >> setModelsFrom: someJsonStrings on: aKey of: aJsonObject [
 ]
 
 { #category : #actions }
-Mapless >> setReferenceFrom: aString on: aKey of: aJSONObject [
-	"Set a reference (only if aJsonObject feels like one)"
-
-	| jsonObject |
-
-	jsonObject := [ Json readFrom: aString readStream ] ifError: [ :x | nil ].
-
-	(jsonObject notNil and:[
-	(jsonObject at: self class idAttribute) notNil and: [
-	jsonObject modelClass notNil]]) ifTrue: [ 
-		 aJSONObject 
-			at: aKey 
-			put: ( MaplessReference fromJSONObject: jsonObject ) ] 
-
+Mapless >> setReferenceFrom: aJsonObject on: aKey of: parentJsonObject [
+	parentJsonObject
+		at: aKey
+		put: (MaplessReference fromJSONObject: aJsonObject)
 ]
 
 { #category : #actions }
-Mapless >> setReferencesFrom: someJsonStrings on: aKey of: aJsonObject [
-	"Set references (only if someJsonStrings feels like those)"
-
-	 aJsonObject 
-		at: aKey 
-		put: (someJsonStrings collect: [ :json | self makeReferenceFrom: json ])
+Mapless >> setReferencesFrom: someJsonObjects on: aKey of: parentJsonObject [
+	parentJsonObject
+		at: aKey
+		put:
+			(someJsonObjects
+				collect: [ :jsonObject | MaplessReference fromJSONObject: jsonObject ])
 ]
 
 { #category : #actions }
@@ -830,23 +856,17 @@ Mapless >> setSubModelReferences [
 ]
 
 { #category : #actions }
-Mapless >> setSubModelReferencesAt: aKey with: anObject [ 
-	
-	"1. It's a submodel"	
-	(anObject isString and:[
-	(('*',self class idAttribute,'*') match: anObject) and:[
-	('*modelClass*' match: anObject) ] ] )  ifTrue:[ 
-		self setReferenceFrom: anObject on: aKey of: self data ].
-	
-	"2. it's a collection of submodels"
-	(anObject isCollection and:[
-	anObject notEmpty and:[
-	(anObject allSatisfy: [:e| e isString ]) and:[|any|
-	any := anObject anyOne.
-	(('*',self class idAttribute,'*') match: any) and:[
-	('*modelClass*' match: any)]]]]) ifTrue:[
-		self setReferencesFrom: anObject on: aKey of: self data ].
+Mapless >> setSubModelReferencesAt: aKey with: anObject [
+	"1. It's a submodel"
 
+	(self class canRepresentSubMapless: anObject)
+		ifTrue: [ ^ self setReferenceFrom: anObject on: aKey of: self data ].
+
+	"2. it's a collection of submodels"
+	(anObject isCollection
+		and: [ anObject notEmpty
+				and: [ anObject anySatisfy: [ :e | self class canRepresentSubMapless: e ] ] ])
+		ifTrue: [ self setReferencesFrom: anObject on: aKey of: self data ]
 ]
 
 { #category : #actions }
@@ -860,10 +880,7 @@ Mapless >> setSubModels [
 
 { #category : #actions }
 Mapless >> setSubModelsAndReferences [
-
-	self setSubModels.	
 	self setSubModelReferences
-
 ]
 
 { #category : #actions }

@@ -51,7 +51,7 @@ MaplessReference >> asJsonObject [
 	id ifNil: [ ^ MaplessUnsavedSubmodel signal: 'This sub model is unsaved. You need to save all sub models before saving a composed model' ].
 	self assert: id notNil.
 
-	^ JsonObject new
+	^ OrderedJsonObject new
 		at: 'modelClass' put: modelClass;
 		at: MaplessCurrentRepository value idAttribute put: id;
 		yourself
@@ -111,7 +111,7 @@ MaplessReference >> initializeModel [
 	
 	(model notNil and:[
 	model isUnsaved not]) ifTrue:[
-		oid := model oid ].
+		id := model id ].
 	
 	^ model
 

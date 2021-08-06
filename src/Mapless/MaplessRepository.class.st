@@ -47,7 +47,7 @@ MaplessRepository >> asStorable: anObject [
 		ifFalse: [ (anObject class = MaplessReference)
 					ifFalse: [ 
 						(anObject isKindOf: Mapless)
-							ifTrue:[ anObject asMaplessReference asJsonString ] 
+							ifTrue:[ anObject asMaplessReference asJsonObject ] 
 							ifFalse:[ anObject ]]
 					ifTrue: [
 						(anObject hasModel not or:[ 
