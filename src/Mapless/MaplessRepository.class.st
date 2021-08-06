@@ -37,23 +37,20 @@ MaplessRepository >> addCollection: aCollectionName [
 
 { #category : #actions }
 MaplessRepository >> asStorable: anObject [
-
-	^ anObject isCollection 
-		ifTrue: [ 
-			anObject class = OrderedJsonObject 
-				ifTrue:[(JsonObject fromAssociations: anObject associations) collect:[:e|
-							self asStorable: e]]
-				ifFalse:[anObject collect: [:e| self asStorable: e]]]
-		ifFalse: [ (anObject class = MaplessReference)
-					ifFalse: [ 
-						(anObject isKindOf: Mapless)
-							ifTrue:[ anObject asMaplessReference asJsonObject ] 
-							ifFalse:[ anObject ]]
-					ifTrue: [
-						(anObject hasModel not or:[ 
-						anObject isUnsaved not]) 
-							ifTrue: [ anObject asJsonString ]
-							ifFalse: [ MaplessUnsavedSubmodel signal: 'This sub model is unsaved. You need to save all sub models before saving a composed model' ]]]
+	^ anObject isCollection
+		ifTrue: [ anObject class = OrderedJsonObject
+				ifTrue: [ (JsonObject fromAssociations: anObject associations)
+						collect: [ :e | self asStorable: e ] ]
+				ifFalse: [ anObject collect: [ :e | self asStorable: e ] ] ]
+		ifFalse: [ anObject class = MaplessReference
+				ifFalse: [ (anObject isKindOf: Mapless)
+						ifTrue: [ anObject asMaplessReference asJsonObject ]
+						ifFalse: [ anObject ] ]
+				ifTrue: [ (anObject hasModel not or: [ anObject isUnsaved not ])
+						ifTrue: [ anObject asJsonObject ]
+						ifFalse: [ MaplessUnsavedSubmodel
+								signal:
+									'This sub model is unsaved. You need to save all sub models before saving a composed model' ] ] ]
 ]
 
 { #category : #accessing }
@@ -319,16 +316,12 @@ MaplessRepository >> onBeforeUpdate: aMapless [
 MaplessRepository >> storableFor: aJsonObject [
 	"Returns a new JsonObject that's the BSON friendly version of aJsonObject
 	by visinting all the values. It will complain if sub models are not previously saved."
-	
+
 	| storableDocument storablePart |
-		
 	storableDocument := JsonObject new.
-
-	aJsonObject keysAndValuesDo: [ :k :v | 
-		storablePart := self asStorable: v.
-		storableDocument 
-			at: k
-			put: storablePart ].
-
-	^ storableDocument 
+	aJsonObject
+		keysAndValuesDo: [ :key :value | 
+			storablePart := self asStorable: value.
+			storableDocument at: key put: storablePart ].
+	^ storableDocument
 ]
