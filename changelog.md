@@ -1,3 +1,9 @@
+August 8, 2021
+===================================
+
+* Made MaplessMongoRepository to have the current mongo client used during the `#do:` thread/operation so the database and any other operation is taken from that very client (hence socket stream).
+* Fixed all tests and MaplessMongoBenchmark
+
 August 5, 2021
 ===================================
 
