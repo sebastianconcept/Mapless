@@ -18,7 +18,7 @@ MaplessMongoModelTest >> do: aBlock [
 MaplessMongoModelTest >> setUp [
 	super setUp.
 	pool := MongoPool instance.
-	mongoRepository   := MaplessMongoRepository on: (pool databaseAt: 'Mapless-Tests')
+	mongoRepository   := MaplessMongoRepository for: 'Mapless-Tests'
 ]
 
 { #category : #'setUp-tearDown' }

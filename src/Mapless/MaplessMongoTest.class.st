@@ -14,16 +14,15 @@ MaplessMongoTest class >> lastStoredRun [
 ]
 
 { #category : #actions }
-MaplessMongoTest >> do: aBlock [ 
-
-	^repository do: aBlock 
+MaplessMongoTest >> do: aBlock [
+	^ repository do: aBlock
 ]
 
 { #category : #'setUp-tearDown' }
 MaplessMongoTest >> setUp [
 	super setUp.
 	pool := MongoPool instance.
-	repository   := MaplessMongoRepository on: (pool databaseAt: 'Mapless-Tests' )
+	repository := MaplessMongoRepository for: 'Mapless-Tests'
 ]
 
 { #category : #'setUp-tearDown' }

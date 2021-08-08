@@ -12,19 +12,25 @@ Class {
 	#name : #MaplessRepository,
 	#superclass : #Object,
 	#instVars : [
-		'database'
+		'databaseName'
 	],
 	#category : #'Mapless-Repositories'
 }
 
 { #category : #actions }
-MaplessRepository class >> on: aDatabase [
+MaplessRepository class >> for: aDatabaseName [
+	^ self new initializeOn: aDatabaseName
+]
 
+{ #category : #actions }
+MaplessRepository class >> on: aDatabase [
+	self flag: #deprecated.
 	^self new initializeDatabase: aDatabase
 ]
 
 { #category : #actions }
 MaplessRepository class >> onDatabaseName: aDatabaseName [
+	self flag: #deprecated.
 
 	^self on: (self databaseNamed: aDatabaseName)
 ]
@@ -54,18 +60,17 @@ MaplessRepository >> asStorable: anObject [
 ]
 
 { #category : #accessing }
-MaplessRepository >> database [
-
-	^ database
-]
-
-{ #category : #accessing }
 MaplessRepository >> databaseCollectionNamed: aCollectionName [
 "Answers the collection for this kind of models hold by the current database"
 	
 	"self ensureCollectionNamed: aCollectionName."
 	
 	^ self database collectionAt: aCollectionName
+]
+
+{ #category : #accessing }
+MaplessRepository >> databaseName [
+	^ databaseName
 ]
 
 { #category : #actions }
@@ -133,8 +138,13 @@ MaplessRepository >> idOf: aMapless [
 
 { #category : #initialization }
 MaplessRepository >> initializeDatabase: aDatabase [
-
+	self flag: #deprecated.
 	database := aDatabase 
+]
+
+{ #category : #initialization }
+MaplessRepository >> initializeOn: aDatabase [
+	databaseName := aDatabase
 ]
 
 { #category : #accessing }
