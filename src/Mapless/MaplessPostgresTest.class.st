@@ -22,7 +22,7 @@ MaplessPostgresTest >> do: aBlock [
 { #category : #'setUp-tearDown' }
 MaplessPostgresTest >> setUp [
 	super setUp.
-	pool := PostgresPool instance.
+	pool := MaplessPostgresPool instance.
 	repository   := MaplessPostgresRepository onDatabaseName: 'Mapless-Tests'
 ]
 
