@@ -2,7 +2,6 @@ Class {
 	#name : #MaplessMongoModelTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'pool',
 		'mongoRepository'
 	],
 	#category : #'Mapless-Mongo-Tests'
@@ -16,16 +15,16 @@ MaplessMongoModelTest >> do: aBlock [
 
 { #category : #'setUp-tearDown' }
 MaplessMongoModelTest >> setUp [
+
 	super setUp.
-	pool := MongoPool instance.
-	mongoRepository   := MaplessMongoRepository for: 'Mapless-Tests'
+	mongoRepository := MaplessMongoRepository for: 'Mapless-Tests'
 ]
 
 { #category : #'setUp-tearDown' }
 MaplessMongoModelTest >> tearDown [
+
 	super tearDown.
-	pool reset.
-	pool := nil
+	mongoRepository := nil
 ]
 
 { #category : #tests }

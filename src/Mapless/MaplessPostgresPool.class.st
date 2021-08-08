@@ -1,25 +1,25 @@
 Class {
-	#name : #PostgresPool,
+	#name : #MaplessPostgresPool,
 	#superclass : #MaplessAbstractPool,
 	#category : #'Mapless-Postgres'
 }
 
 { #category : #actions }
-PostgresPool >> close: aPostgressConnection [
+MaplessPostgresPool >> close: aPostgressConnection [
 
 	aPostgressConnection isConnected ifTrue: [
 		aPostgressConnection flushAll; quit ]
 ]
 
 { #category : #accessing }
-PostgresPool >> currentClientDynamicVariable [
+MaplessPostgresPool >> currentClientDynamicVariable [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
 	^ PostgresCurrentClient
 ]
 
 { #category : #actions }
-PostgresPool >> ifUnavailablePurge: aPostgressConnection [
+MaplessPostgresPool >> ifUnavailablePurge: aPostgressConnection [
 	"Tests aPostgressConnection and remove it from this pool if invalid."
 
 	aPostgressConnection isConnected ifFalse: [ 
@@ -27,7 +27,7 @@ PostgresPool >> ifUnavailablePurge: aPostgressConnection [
 ]
 
 { #category : #actions }
-PostgresPool >> makeClient [
+MaplessPostgresPool >> makeClient [
 	"Returns a new client so it can be (re)used in the pool"
 
 	| connection |
@@ -47,13 +47,13 @@ PostgresPool >> makeClient [
 ]
 
 { #category : #reactions }
-PostgresPool >> onLogout: aRedisClient [
+MaplessPostgresPool >> onLogout: aRedisClient [
 	
 	self remove: aRedisClient
 ]
 
 { #category : #actions }
-PostgresPool >> purgeUnavailable [
+MaplessPostgresPool >> purgeUnavailable [
 	"Removes any client that might be expired or unreacheable."
 	
 	self busyClients copy do: [ :e | self ifUnavailablePurge: e ].
@@ -61,7 +61,7 @@ PostgresPool >> purgeUnavailable [
 ]
 
 { #category : #actions }
-PostgresPool >> remove: aRedisClient [
+MaplessPostgresPool >> remove: aRedisClient [
 
 	self close: aRedisClient.
 

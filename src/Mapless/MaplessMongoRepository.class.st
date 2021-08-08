@@ -24,7 +24,7 @@ Class {
 MaplessMongoRepository class >> databaseNamed: aDatabaseName [
 	"Returns the database found at aDatabaseName"
 	
-	^ MongoPool instance databaseAt: aDatabaseName 
+	^ MaplessMongoPool instance databaseAt: aDatabaseName 
 ]
 
 { #category : #accessing }
@@ -64,7 +64,7 @@ MaplessMongoRepository >> do: aBlock [
 	"Performs aBlock and providing access to the mongo client in use during this thread to 
 	anyone calling CurrentMongoDatabase value."
 
-	MongoPool instance
+	MaplessMongoPool instance
 		do: [ :client | 
 			[ mongoClient := client.
 			MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
