@@ -14,6 +14,9 @@ A MaplessMongoRepository is a connection layer between Mapless and the mongo dat
 Class {
 	#name : #MaplessMongoRepository,
 	#superclass : #MaplessRepository,
+	#instVars : [
+		'mongoClient'
+	],
 	#category : #'Mapless-Repositories'
 }
 
@@ -22,6 +25,11 @@ MaplessMongoRepository class >> databaseNamed: aDatabaseName [
 	"Returns the database found at aDatabaseName"
 	
 	^ MongoPool instance databaseAt: aDatabaseName 
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> database [
+	^ mongoClient databaseNamed: databaseName
 ]
 
 { #category : #accessing }
@@ -53,13 +61,14 @@ MaplessMongoRepository >> destroy: aMapless [
 
 { #category : #actions }
 MaplessMongoRepository >> do: aBlock [
-	"Performs aBlock and provides access to the database to 
+	"Performs aBlock and providing access to the mongo client in use during this thread to 
 	anyone calling CurrentMongoDatabase value."
 
-	MaplessCurrentRepository
-		value: self
-		during: [ 
-			MongoPool instance do: [ :mongoClient | ^ aBlock value ] ]
+	MongoPool instance
+		do: [ :client | 
+			[ mongoClient := client.
+			MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
+				ensure: [ mongoClient := nil ] ]
 ]
 
 { #category : #actions }
@@ -71,6 +80,12 @@ MaplessMongoRepository >> ensureCollection [
 MaplessMongoRepository >> existsId: anId of: aMaplessClass [
 
 	^ ( self instanceOf: aMaplessClass  atId:  anId ) notNil
+]
+
+{ #category : #testing }
+MaplessMongoRepository >> hasMongoClient [
+
+	^ mongoClient notNil 
 ]
 
 { #category : #accessing }
@@ -147,6 +162,12 @@ MaplessMongoRepository >> instancesOf: aMaplessClass where: someConditions limit
 	^(result isNil and:[result isEmpty])
 		ifTrue: [ #() ]
 		ifFalse: [ (aMaplessClass fromJSONObjects: result) collect: [ :each | self onAfterRead: each ] ]
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> mongoClient [
+
+	^ mongoClient
 ]
 
 { #category : #reactions }
