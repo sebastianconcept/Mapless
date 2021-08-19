@@ -1,3 +1,6 @@
+"
+When a mapless is composed with another mapless it will use a MaplessReference proxy when is read from the database.
+"
 Class {
 	#name : #MaplessReference,
 	#superclass : #Object,
@@ -30,6 +33,27 @@ MaplessReference class >> fromJSONObject: aJsonObject [
 MaplessReference class >> fromJSONString: aJSONString [
 		
 	^ self fromJSONObject: (OrderedJson readFrom: aJSONString readStream) 
+]
+
+{ #category : #actions }
+MaplessReference class >> fromVoyageReference: aDictionaryish [
+	"Answers a MaplessReference based on the voyage reference information found at aDictionaryish.
+	It assumes the Mapless model class to create for the corresponding composed object has the same name as Voyage would expect suffixed with 'Mapless'.
+	Example: if voyage has this object as BlahUser its document would instantiate BlahUserMapless instances."
+
+	| classSelector |
+	classSelector := (aDictionaryish at: '#instanceOf') , 'Mapless'.
+	^ self
+		fromVoyageReference: aDictionaryish
+		classSelector: classSelector
+]
+
+{ #category : #actions }
+MaplessReference class >> fromVoyageReference: aJsonObject classSelector: classSelector [
+	^ self new
+		id: (aJsonObject at: '__id');
+		modelClass: classSelector;
+		yourself
 ]
 
 { #category : #accessing }

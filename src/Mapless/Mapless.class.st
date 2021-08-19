@@ -270,6 +270,17 @@ Mapless class >> isDeprecated [
 	^ false
 ]
 
+{ #category : #testing }
+Mapless class >> isVoyageReference: anObject [
+	"Answers true if anObject has the keys and values of a voyage reference."
+
+	^ anObject isDictionary
+		and: [ anObject size = 3
+				and: [ (anObject includesKey: '__id')
+						and: [ (anObject includesKey: '#instanceOf')
+								and: [ anObject includesKey: '#collection' ] ] ] ]
+]
+
 { #category : #accessing }
 Mapless class >> keysToExclude [
 	"Answers the names of the keys that should be ignored 
