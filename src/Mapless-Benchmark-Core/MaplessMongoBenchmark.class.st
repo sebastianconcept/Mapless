@@ -1,7 +1,6 @@
 "
 This class provides some basic performance test for Mapless on MongoDB.
 
-
 Convenience to run it logging to the Transcript:
 
 MaplessMongoBenchmark run
