@@ -36,7 +36,7 @@ BaselineOfMapless >> setUpDependencies: spec [
 BaselineOfMapless >> setUpPackages: spec [
 	spec package: 'Mapless-Base-Core'.
 	spec
-		package: 'Maples-Benchmark-Core'
+		package: 'Mapless-Benchmark-Core'
 		with: [ spec requires: 'Mapless-Base-Core' ].
 	spec
 		package: 'Mapless-Tests-Base'
@@ -48,9 +48,9 @@ BaselineOfMapless >> setUpPackages: spec [
 		package: 'Mapless-Mongo-Tests'
 		with: [ spec requires: #('Mapless-Mongo-Core' 'Mapless-Tests-Base') ].
 	spec
-		package: 'Mapless-Posgres-Core'
+		package: 'Mapless-Postgres-Core'
 		with: [ spec requires: 'Mapless-Base-Core' ].
 	spec
-		package: 'Mapless-Posgres-Tests'
+		package: 'Mapless-Postgres-Tests'
 		with: [ spec requires: #('Mapless-Postgres-Core' 'Mapless-Tests-Base') ]
 ]
