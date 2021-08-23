@@ -43,7 +43,7 @@ BaselineOfMapless >> setUpPackages: spec [
 		with: [ spec requires: 'Mapless-Base-Core' ].
 	spec
 		package: 'Mapless-Mongo-Core'
-		with: [ spec requires: 'Mapless-Mongo-Core' ].
+		with: [ spec requires: 'Mapless-Base-Core' ].
 	spec
 		package: 'Mapless-Mongo-Tests'
 		with: [ spec requires: #('Mapless-Mongo-Core' 'Mapless-Tests-Base') ].
