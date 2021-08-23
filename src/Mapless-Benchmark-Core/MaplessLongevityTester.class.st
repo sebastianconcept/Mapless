@@ -18,7 +18,7 @@ Class {
 		'timer',
 		'workers'
 	],
-	#category : #'Mapless-Benchmark-Core-Mapless-Benchmark-Core'
+	#category : #'Mapless-Benchmark-Core'
 }
 
 { #category : #actions }

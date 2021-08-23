@@ -15,7 +15,7 @@ Class {
 		'removedIds',
 		'hadFinished'
 	],
-	#category : #'Mapless-Benchmark-Core-Mapless-Benchmark-Core'
+	#category : #'Mapless-Benchmark-Core'
 }
 
 { #category : #accessing }

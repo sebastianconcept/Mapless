@@ -15,7 +15,7 @@ Convenience to run it logging to SomeLogFile.log:
 Class {
 	#name : #MaplessMongoBenchmark,
 	#superclass : #Object,
-	#category : #'Mapless-Benchmark-Core-Mapless-Benchmark-Core'
+	#category : #'Mapless-Benchmark-Core'
 }
 
 { #category : #actions }
