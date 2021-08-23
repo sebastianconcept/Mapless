@@ -5,5 +5,5 @@ A MaplessCurrentPersistenceStrategy is a dinamyc varible to hold the current rep
 Class {
 	#name : #MaplessCurrentRepository,
 	#superclass : #DynamicVariable,
-	#category : #'Mapless-Repositories'
+	#category : #'Mapless-Core'
 }

@@ -1,7 +1,7 @@
 Class {
 	#name : #MaplessPostgresRepository,
 	#superclass : #MaplessRepository,
-	#category : #'Mapless-Repositories'
+	#category : #'Mapless-Postgres'
 }
 
 { #category : #actions }

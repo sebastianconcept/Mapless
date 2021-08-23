@@ -11,7 +11,14 @@ BaselineOfMapless >> baseline: spec [
 		for: #common
 		do: [ spec blessing: #release.
 			self dependencies: spec.
-			self projectPackages: spec ]
+			self projectPackages: spec.
+			spec
+				group: 'Core' with: #('Mapless-Core' 'Mapless-Models' 'Mapless-Errors');
+				group: 'Mongo' with: #('Mapless-Mongo Mapless-Mongo-Errors' 'Mapless-Mongo-Tests' );
+				group: 'Postgres'
+					with: #('Mapless-Postgres' 'Mapless-Postgres-Tests');
+				group: 'Benchmark' with: #('Mapless-Benchmark');
+				group: 'default' with: #('Core' 'Mongo') ]
 ]
 
 { #category : #baseline }

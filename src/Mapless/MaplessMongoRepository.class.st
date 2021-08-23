@@ -17,7 +17,7 @@ Class {
 	#instVars : [
 		'mongoClient'
 	],
-	#category : #'Mapless-Repositories'
+	#category : #'Mapless-Mongo'
 }
 
 { #category : #actions }

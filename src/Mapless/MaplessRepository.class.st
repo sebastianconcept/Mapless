@@ -14,7 +14,7 @@ Class {
 	#instVars : [
 		'databaseName'
 	],
-	#category : #'Mapless-Repositories'
+	#category : #'Mapless-Core'
 }
 
 { #category : #actions }
