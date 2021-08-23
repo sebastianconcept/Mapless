@@ -1,10 +1,10 @@
 Mapless
 =======
 
-*Obscenely simple persistence for Smalltalk.* Mapless is a small framework for storing objects in a key->data fashion (i.e.: noSQL databases) without requiring any kind of object-data map. Supported backends are MongoDB and Redis.
+*Obscenely simple persistence for Smalltalk.* Mapless is a small framework for storing objects in a key->value fashion (i.e.: noSQL databases) without requiring any kind of mapping definition. Supported backends are MongoDB and Redis.
 
-*There is no instVars...*
-*There is no accessors...*
+*There are no instVars...*
+*There are no accessors...*
 *There is no object-mapping impedance...*
 
 *Only persistence.*
