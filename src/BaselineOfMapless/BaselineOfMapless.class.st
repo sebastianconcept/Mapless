@@ -41,14 +41,14 @@ BaselineOfMapless >> setUpPackages: spec [
 		package: 'Mapless-Tests-Base'
 		with: [ spec requires: 'Mapless-Base-Core' ].
 	spec
-		package: 'Mapless-Benchmark-Core'
-		with: [ spec requires: 'Mapless-Tests-Base' ].
-	spec
 		package: 'Mapless-Mongo-Core'
 		with: [ spec requires: #('Mapless-Base-Core' 'MongoTalk') ].
 	spec
 		package: 'Mapless-Mongo-Tests'
 		with: [ spec requires: #('Mapless-Mongo-Core' 'Mapless-Tests-Base') ].
+	spec
+		package: 'Mapless-Benchmark-Core'
+		with: [ spec requires: 'Mapless-Mongo-Tests' ].
 	spec
 		package: 'Mapless-Postgres-Core'
 		with: [ spec requires: 'Mapless-Base-Core' ].
