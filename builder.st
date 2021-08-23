@@ -1,1 +1,7 @@
-Gofer it	configurationOf: 'Mapless';	"url: 'http://smalltalkhub.com/mc/Pharo/MetaRepoForPharo50/main';"	url: 'http://smalltalkhub.com/mc/sebastianconcept/Mapless/main';	load.(#ConfigurationOfMapless asClass project version: #stable) load.Smalltalk saveSession.
+Metacello new
+        repository: 'tonel://./src'; "No git or git repository inside docker, just the src folder"
+        baseline: 'Mapless';
+        onConflictUseIncoming;
+        load.
+
+Smalltalk saveSession.

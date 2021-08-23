@@ -3,7 +3,6 @@
 
 echo "Downloading fresh Pharo image and a VM ..."
 
-# wget -O- get.pharo.org/30+vm | bash
 curl get.pharo.org | bash 
 
 echo "Opening Pharo to load Mapless ..."
