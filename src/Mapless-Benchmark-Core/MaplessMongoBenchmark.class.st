@@ -10,7 +10,6 @@ Convenience to run it logging to SomeLogFile.log:
 
 'SomeLogFile.log' asFileReference writeStreamDo: [ :stream |
 	MaplessMongoBenchmark runPrintingOn: stream ]  
-
 "
 Class {
 	#name : #MaplessMongoBenchmark,

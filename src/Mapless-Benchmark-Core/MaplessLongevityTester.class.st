@@ -1,6 +1,6 @@
 "
 Helper class that can start/stop and spawn workers to do a long lasting test.
-
+ 
 Usage to spawn 5 workers:
 MaplessLongevityTester start: 5.
 

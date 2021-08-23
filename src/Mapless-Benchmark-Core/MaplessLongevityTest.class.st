@@ -1,5 +1,6 @@
 "
 Worker of a long lasting test coordinated by MaplessLongevityTester
+
 "
 Class {
 	#name : #MaplessLongevityTest,
