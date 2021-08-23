@@ -35,12 +35,14 @@ BaselineOfMapless >> setUpDependencies: spec [
 { #category : #baseline }
 BaselineOfMapless >> setUpPackages: spec [
 	spec package: 'Mapless-Base-Core'.
-	spec
-		package: 'Mapless-Benchmark-Core'
-		with: [ spec requires: 'Mapless-Base-Core' ].
+
 	spec
 		package: 'Mapless-Tests-Base'
 		with: [ spec requires: 'Mapless-Base-Core' ].
+		
+	spec
+		package: 'Mapless-Benchmark-Core'
+		with: [ spec requires: 'Mapless-Tests-Base' ].
 	spec
 		package: 'Mapless-Mongo-Core'
 		with: [ spec requires: #('Mapless-Base-Core' 'MongoTalk')].
