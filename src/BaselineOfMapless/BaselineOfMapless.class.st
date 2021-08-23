@@ -29,7 +29,7 @@ BaselineOfMapless >> setUpDependencies: spec [
 	spec
 		baseline: 'MongoTalk'
 		with:
-			[ spec repository: 'github://pharo-nosql/mongotalk/mc:1.25' ].
+			[ spec repository: 'github://pharo-nosql/mongotalk:1.25/mc' ].
 ]
 
 { #category : #baseline }
