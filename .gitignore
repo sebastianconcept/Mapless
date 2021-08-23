@@ -6,7 +6,6 @@ pharo-ui
 
 # Project specific temporaries / requisites / transient #
 #########################################################
-Mapless/
 site/_site/
 _site
 
