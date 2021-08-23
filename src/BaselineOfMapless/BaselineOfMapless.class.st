@@ -14,22 +14,21 @@ BaselineOfMapless >> baseline: spec [
 			self setUpPackages: spec.
 			spec
 				group: 'Core' with: #('Mapless-Base-Core');
-				group: 'Mongo' with: #('Mapless-Mongo-Core' 'Mapless-Mongo-Tests');
-				group: 'Postgres' with: #('Mapless-Postgres-Core' 'Mapless-Postgres-Tests');
+				group: 'Mongo' with: #('Mapless-Mongo-Tests');
+				group: 'Postgres' with: #('Mapless-Postgres-Tests');
 				group: 'Benchmark' with: #('Mapless-Benchmark-Core');
-				group: 'default' with: #('Mongo' 'Benchmark') ]
+				group: 'default' with: #('Mongo') ]
 ]
 
 { #category : #baseline }
 BaselineOfMapless >> setUpDependencies: spec [
-
 	spec
 		baseline: 'JSONExtensions'
 		with: [ spec repository: 'github://sebastianconcept/JSONExtensions/src' ].
 	spec
 		baseline: 'MongoTalk'
-		with:
-			[ spec repository: 'github://pharo-nosql/mongotalk:1.25/mc' ].
+		with: [ spec repository: 'github://pharo-nosql/mongotalk:1.25/mc' ].
+	spec baseline: 'P3' with: [ spec repository: 'github://svenvc/P3' ]
 ]
 
 { #category : #baseline }
@@ -51,7 +50,7 @@ BaselineOfMapless >> setUpPackages: spec [
 		with: [ spec requires: 'Mapless-Mongo-Tests' ].
 	spec
 		package: 'Mapless-Postgres-Core'
-		with: [ spec requires: 'Mapless-Base-Core' ].
+		with: [ spec requires: #('Mapless-Base-Core' 'P3')].
 	spec
 		package: 'Mapless-Postgres-Tests'
 		with: [ spec requires: #('Mapless-Postgres-Core' 'Mapless-Tests-Base') ]
