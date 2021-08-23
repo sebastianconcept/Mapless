@@ -1,3 +1,10 @@
+August 23, 2021
+===================================
+
+* Added MaplessLongevityTester in order to run long lasting tests with read/write load and consistency check when using MongoDB.
+* Reorganized classes in packages and updated BaselineOfMapless.
+* Removed unused dummy classes.
+
 August 8, 2021
 ===================================
 
