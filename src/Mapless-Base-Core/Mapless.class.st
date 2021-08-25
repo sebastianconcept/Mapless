@@ -590,7 +590,7 @@ Mapless >> initializeData [
 { #category : #json }
 Mapless >> initializeFromJSON: jsonString [
 
-	data := Json readFrom: jsonString readStream
+	data := OrderedJson readFrom: jsonString readStream
 ]
 
 { #category : #initializing }
