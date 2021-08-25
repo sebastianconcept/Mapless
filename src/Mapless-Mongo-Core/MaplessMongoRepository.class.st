@@ -64,7 +64,7 @@ MaplessMongoRepository >> do: aBlock [
 	"Performs aBlock and providing access to the mongo client in use during this thread to 
 	anyone calling CurrentMongoDatabase value."
 
-	self with: MaplessMongoPool instance do: aBlock
+	^ self with: MaplessMongoPool instance do: aBlock
 ]
 
 { #category : #actions }

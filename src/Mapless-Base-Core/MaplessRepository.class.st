@@ -131,12 +131,6 @@ MaplessRepository >> hasCollectionNamed: aCollectionName [
 ]
 
 { #category : #initialization }
-MaplessRepository >> initializeDatabase: aDatabase [
-	self flag: #deprecated.
-	database := aDatabase 
-]
-
-{ #category : #initialization }
 MaplessRepository >> initializeOn: aString [
 	databaseName := aString
 ]
