@@ -95,12 +95,12 @@ MaplessRepository >> denormalizeIdOf: aMapless [
 	Removes it from 'id' in case is present (not failing if absent)." 
 
 	"It's either already having the right one or it needs translation..."
-	(aMapless data includesKey: 'id') ifTrue: [ 
-		aMapless data at: self idAttribute put: aMapless id ].
+	(aMapless maplessData includesKey: 'id') ifTrue: [ 
+		aMapless basicMaplessData at: self idAttribute put: aMapless id ].
 	
 	"clean it.
 	Note: if a concrete repo one day needs to use 'id' as id, then it needs to override this to not remove here."
-	aMapless data removeKey: 'id' ifAbsent: [ nil ].
+	aMapless basicMaplessData removeKey: 'id' ifAbsent: [ nil ].
 	
 	^ aMapless
 ]
@@ -130,12 +130,6 @@ MaplessRepository >> hasCollectionNamed: aCollectionName [
 	^ self database hasCollectionNamed: aCollectionName
 ]
 
-{ #category : #actions }
-MaplessRepository >> idOf: aMapless [
-	"Answers the id of aMapless that is expected for this concrete backend."
-	^ aMapless data at: self idAttribute
-]
-
 { #category : #initialization }
 MaplessRepository >> initializeDatabase: aDatabase [
 	self flag: #deprecated.
@@ -143,8 +137,8 @@ MaplessRepository >> initializeDatabase: aDatabase [
 ]
 
 { #category : #initialization }
-MaplessRepository >> initializeOn: aDatabase [
-	databaseName := aDatabase
+MaplessRepository >> initializeOn: aString [
+	databaseName := aString
 ]
 
 { #category : #accessing }
@@ -167,8 +161,7 @@ MaplessRepository >> isUnsaved: aMapless [
 	Note: we assume that if aMapless does not have an id 
 	then is because the application never used the backend to saved it."
 
-	^ (self idOf: aMapless) isNil and: [ 
-	aMapless id isNil ]
+	^ aMapless basicMaplessId isNil and: [ aMapless id isNil ]
 ]
 
 { #category : #actions }
@@ -180,8 +173,8 @@ MaplessRepository >> normalizeIdOf: aMapless [
 	Removes it from the concrete place in case is present (not failing if absent)." 
 
 	"It's either already having the right one or it needs translation..."
-	(aMapless data includesKey: self idAttribute) ifTrue: [ 
-		aMapless data at: 'id' put: (aMapless data at: self idAttribute) ].
+	(aMapless basicMaplessData includesKey: self idAttribute) ifTrue: [ 
+		aMapless basicMaplessData at: 'id' put: (aMapless maplessId) ].
 	
 	"clean it.
 	Note: if a concrete repo one day needs to use 'id' as id, then it needs to override this to not remove here."
