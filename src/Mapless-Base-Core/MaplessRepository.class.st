@@ -24,6 +24,16 @@ MaplessRepository class >> for: aDatabaseName with: aDatabaseAccessor [
 	^ self new initializeOn: aDatabaseName with: aDatabaseAccessor
 ]
 
+{ #category : #accessing }
+MaplessRepository >> accessor [
+	^ accessor
+]
+
+{ #category : #accessing }
+MaplessRepository >> accessor: anObject [
+	accessor := anObject
+]
+
 { #category : #actions }
 MaplessRepository >> addCollection: aCollectionName [
 
@@ -120,8 +130,9 @@ MaplessRepository >> hasCollectionNamed: aCollectionName [
 ]
 
 { #category : #initialization }
-MaplessRepository >> initializeOn: aString [
-	databaseName := aString
+MaplessRepository >> initializeOn: aDatabaseName with: aDatabaseAccessor [
+	databaseName := aDatabaseName.
+	accessor := aDatabaseAccessor
 ]
 
 { #category : #accessing }
@@ -296,6 +307,16 @@ MaplessRepository >> onBeforeUpdate: aMapless [
 	aMapless onBeforeUpdate.
 	
 	self denormalizeIdOf: aMapless 
+]
+
+{ #category : #actions }
+MaplessRepository >> shutDown [
+	accessor stop
+]
+
+{ #category : #actions }
+MaplessRepository >> startUp: anInteger [
+	accessor start: anInteger
 ]
 
 { #category : #actions }

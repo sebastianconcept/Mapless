@@ -1,3 +1,12 @@
+August 25, 2021
+===================================
+
+* Removed deprecated methods.
+* Added a `develop` branch for converging all the progress of the project roadmap in it while preserving in the `master` branch only the production-ready code, release candidate commits and fixes.
+* Mades `MaplessMongoRepository` able to drop its database.
+* Made the pools have a `maxClient` value to prevent resource abuse under usage storms.
+* Made the pools have a warm up to connect N clients right from the start.
+
 August 23, 2021
 ===================================
 

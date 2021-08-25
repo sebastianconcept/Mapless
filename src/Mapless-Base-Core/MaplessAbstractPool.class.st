@@ -1,43 +1,73 @@
+"
+This is the abstraction that Mapless uses to have pools of clients to the database connections.
+See subclasses for concrete accessors.
+"
 Class {
 	#name : #MaplessAbstractPool,
 	#superclass : #Object,
 	#instVars : [
+		'maxClients',
 		'clientsMutex',
 		'busyClients',
 		'idleClients',
+		'hostname',
+		'port',
 		'username',
-		'password'
-	],
-	#classInstVars : [
-		'instance'
+		'password',
+		'authenticationDatabaseName'
 	],
 	#category : #'Mapless-Base-Core-Repositories'
 }
 
-{ #category : #initialization }
-MaplessAbstractPool class >> initializeInstance [
+{ #category : #'instance creation' }
+MaplessAbstractPool class >> defaultMaxClients [
+	"Default maximum quantity of clients for the connection pool used in case no max was specified"
 
-	^ instance := self new
+	^ 50
+]
+
+{ #category : #'instance creation' }
+MaplessAbstractPool class >> hostname: aString port: anInteger [
+	^ self
+		hostname: aString
+		port: anInteger
+		username: nil
+		password: nil
+]
+
+{ #category : #'instance creation' }
+MaplessAbstractPool class >> hostname: aString port: anInteger username: anUsernameOrNil password: aPasswordOrNil [
+	^ self new
+		hostname: aString;
+		port: anInteger;
+		username: anUsernameOrNil;
+		password: aPasswordOrNil;
+		yourself
+]
+
+{ #category : #'instance creation' }
+MaplessAbstractPool class >> local [
+	^ self
+		hostname: 'localhost'
+		port: 27017
+		username: nil
+		password: nil
 ]
 
 { #category : #accessing }
-MaplessAbstractPool class >> instance [ 
-
-	^ instance ifNil:[self initializeInstance]
-]
-
-{ #category : #actions }
-MaplessAbstractPool class >> reset [ 
-
-	instance ifNotNil:[
-		instance reset].
-		
-	instance := nil
+MaplessAbstractPool >> allClients [
+	^ self busyClients , self idleClients
 ]
 
 { #category : #accessing }
 MaplessAbstractPool >> authenticationDatabaseName [
-	^ OSEnvironment current at: 'DB_AUTH_NAME' ifAbsent: [ 'admin' ]
+	^ authenticationDatabaseName
+		ifNil: [ self initializeAuthenticationDatabaseName ]
+]
+
+{ #category : #accessing }
+MaplessAbstractPool >> authenticationDatabaseName: aString [
+	authenticationDatabaseName := aString
 ]
 
 { #category : #accessing }
@@ -57,12 +87,6 @@ MaplessAbstractPool >> currentClientDynamicVariable [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
 	^ self subclassResponsibility 
-]
-
-{ #category : #accessing }
-MaplessAbstractPool >> databaseName [
-
-	^ OSEnvironment default at: 'DB_NAME' ifAbsent: [ 'admin' ]
 ]
 
 { #category : #actions }
@@ -92,10 +116,30 @@ MaplessAbstractPool >> hasIdleClients [
 	^ self idleClients notEmpty
 ]
 
+{ #category : #testing }
+MaplessAbstractPool >> hasMaxClients [
+	^ self maxClients = self quantityOfClients
+]
+
+{ #category : #accessing }
+MaplessAbstractPool >> hostname [
+	^ hostname
+]
+
+{ #category : #accessing }
+MaplessAbstractPool >> hostname: anObject [
+	hostname := anObject
+]
+
 { #category : #accessing }
 MaplessAbstractPool >> idleClients [ 
 	"Answers the bunch of clients that are currently idle"
 	^ idleClients ifNil:[self initializeIdleClients]
+]
+
+{ #category : #initialization }
+MaplessAbstractPool >> initializeAuthenticationDatabaseName [
+	^ authenticationDatabaseName := 'admin'
 ]
 
 { #category : #initialization }
@@ -117,24 +161,13 @@ MaplessAbstractPool >> initializeIdleClients [
 ]
 
 { #category : #initialization }
-MaplessAbstractPool >> initializePassword [
-	^ password := OSEnvironment current
-		at: 'DB_PASSWORD'
-		ifAbsent: [ nil ]
-]
-
-{ #category : #initialization }
-MaplessAbstractPool >> initializeUsername [
-	^ username := OSEnvironment current
-		at: 'DB_USERNAME'
-		ifAbsent: [ nil ]
+MaplessAbstractPool >> initializeMaxClients [
+	^ maxClients := self class defaultMaxClients
 ]
 
 { #category : #testing }
 MaplessAbstractPool >> isUsingAuth [
-	"Answers true if we can assume the client won't be using authentication mechanisms."
-
-	^ self username notNil and: [ self password notNil ]
+	^ username notNil and: [ password notNil ]
 ]
 
 { #category : #actions }
@@ -153,13 +186,33 @@ MaplessAbstractPool >> makeClient [
 ]
 
 { #category : #accessing }
+MaplessAbstractPool >> maxClients [
+	^ maxClients ifNil: [ self initializeMaxClients ]
+]
+
+{ #category : #accessing }
+MaplessAbstractPool >> maxClients: anInteger [
+	maxClients := anInteger
+]
+
+{ #category : #accessing }
 MaplessAbstractPool >> password [
-	^ password ifNil: [ self initializePassword ]
+	^ password
 ]
 
 { #category : #accessing }
 MaplessAbstractPool >> password: anObject [
 	password := anObject
+]
+
+{ #category : #accessing }
+MaplessAbstractPool >> port [
+	^ port
+]
+
+{ #category : #accessing }
+MaplessAbstractPool >> port: anObject [
+	port := anObject
 ]
 
 { #category : #actions }
@@ -169,6 +222,11 @@ MaplessAbstractPool >> printOn: aStream [
 	
 	aStream 
 		nextPutAll: '(',self busyClients size asString,' busy, ',self idleClients size asString, ' idle)'
+]
+
+{ #category : #accessing }
+MaplessAbstractPool >> quantityOfClients [
+	^ self busyClients size + self idleClients size
 ]
 
 { #category : #actions }
@@ -189,13 +247,14 @@ MaplessAbstractPool >> requestClient [
 		critical: [ | client |
 			client := self hasIdleClients
 				ifTrue: [ self idleClients anyOne ]
-				ifFalse: [ self makeClient ].
+				ifFalse: [ self hasMaxClients
+						ifTrue: [ ^ MaplessMaximumPoolClientsReached signal ].
+					self makeClient ].
 			(client notNil and: [ client isValid not ])
 				ifTrue: [ self remove: client.
 					client := self makeClient ].
 			self idleClients remove: client ifAbsent: [ nil ].
 			client ifNotNil: [ self busyClients add: client ].
-
 			client ]
 ]
 
@@ -230,9 +289,28 @@ MaplessAbstractPool >> returningUnusedClient [
 
 ]
 
+{ #category : #actions }
+MaplessAbstractPool >> start [
+
+	^ self start: 2
+]
+
+{ #category : #actions }
+MaplessAbstractPool >> start: anInteger [
+	anInteger timesRepeat: [ self idleClients add: self makeClient ]
+]
+
+{ #category : #actions }
+MaplessAbstractPool >> stop [
+	self idleClients do: [ :each | each close ].
+	[ self hasBusyClients ]
+		whileTrue: [ 1 second wait.
+			self stop ]
+]
+
 { #category : #accessing }
 MaplessAbstractPool >> username [
-	^ username ifNil: [ self initializeUsername ]
+	^ username
 ]
 
 { #category : #accessing }

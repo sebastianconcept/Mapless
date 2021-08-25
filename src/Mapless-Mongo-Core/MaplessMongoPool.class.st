@@ -1,3 +1,8 @@
+"
+Mapless uses this class to have pools of MongoDB clients available for the repository to use.
+If more clients are needed, it will create them lazily up to a max.
+When the max is reached, it will start throwing exceptions if the load wants to create more.
+"
 Class {
 	#name : #MaplessMongoPool,
 	#superclass : #MaplessAbstractPool,
@@ -55,9 +60,7 @@ MaplessMongoPool >> makeClient [
 	"Returns a new client so it can be (re)used in the pool"
 
 	| newClient isAuthenticated |
-	newClient := (MongoAPI
-		host: (OSEnvironment current at: 'MONGO_ADDRESS' ifAbsent: [ 'localhost' ])
-		port: (OSEnvironment current at: 'MONGO_PORT' ifAbsent: [ 27017 ]) asInteger)
+	newClient := (MongoAPI host: hostname port: port asInteger)
 		open;
 		yourself.
 	self isUsingAuth

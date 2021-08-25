@@ -19,16 +19,18 @@ MaplessMongoTest >> do: aBlock [
 
 { #category : #'setUp-tearDown' }
 MaplessMongoTest >> setUp [
-
 	super setUp.
-	repository := MaplessMongoRepository for: 'Mapless-Tests'
+	repository := MaplessMongoRepository
+		for: 'Mapless-Test'
+		with: MaplessMongoPool local
 ]
 
 { #category : #'setUp-tearDown' }
 MaplessMongoTest >> tearDown [
-
 	super tearDown.
-	repository := nil
+	repository
+		drop;
+		shutDown
 ]
 
 { #category : #tests }
