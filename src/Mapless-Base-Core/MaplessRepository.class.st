@@ -1,9 +1,10 @@
 "
-A MaplessRepository is an abstraction for all the repository supported by Mapless. Subclasses are concrete strategies for having Mapless supported by each repository.
+A MaplessRepository is an abstraction for the repositories supported by Mapless. Subclasses are concrete strategies for having Mapless supported by each technology.
 
 Instance Variables
-	database:	holds the backend connection. It gets instantiated using the class message #on:
-
+	databaseName:	holds the name of the database this repository will be working with. 
+	accessor: holds what's needed to get an available client to the database service.
+	
 Look for the subclasses for concrete implementation details.
 
 
@@ -12,27 +13,15 @@ Class {
 	#name : #MaplessRepository,
 	#superclass : #Object,
 	#instVars : [
-		'databaseName'
+		'databaseName',
+		'accessor'
 	],
 	#category : #'Mapless-Base-Core-Repositories'
 }
 
 { #category : #actions }
-MaplessRepository class >> for: aDatabaseName [
-	^ self new initializeOn: aDatabaseName
-]
-
-{ #category : #actions }
-MaplessRepository class >> on: aDatabase [
-	self flag: #deprecated.
-	^self new initializeDatabase: aDatabase
-]
-
-{ #category : #actions }
-MaplessRepository class >> onDatabaseName: aDatabaseName [
-	self flag: #deprecated.
-
-	^self on: (self databaseNamed: aDatabaseName)
+MaplessRepository class >> for: aDatabaseName with: aDatabaseAccessor [
+	^ self new initializeOn: aDatabaseName with: aDatabaseAccessor
 ]
 
 { #category : #actions }
