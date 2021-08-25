@@ -403,6 +403,11 @@ Mapless >> at: aKey put: anObject [
 	^ self data at: aKey put: anObject
 ]
 
+{ #category : #accessing }
+Mapless >> basicMaplessData [
+	^ self data
+]
+
 { #category : #converting }
 Mapless >> basicMaplessId [
 
@@ -657,7 +662,7 @@ Mapless >> maplessData [
 	"Returns the data part of a Mapless document.
 	By default it is the data object, but subclasses might extend or change this."
 
-	^self data
+	^ self basicMaplessData
 ]
 
 { #category : #converting }

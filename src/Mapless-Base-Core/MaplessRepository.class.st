@@ -95,12 +95,12 @@ MaplessRepository >> denormalizeIdOf: aMapless [
 	Removes it from 'id' in case is present (not failing if absent)." 
 
 	"It's either already having the right one or it needs translation..."
-	(aMapless data includesKey: 'id') ifTrue: [ 
-		aMapless data at: self idAttribute put: aMapless id ].
+	(aMapless maplessData includesKey: 'id') ifTrue: [ 
+		aMapless basicMaplessData at: self idAttribute put: aMapless id ].
 	
 	"clean it.
 	Note: if a concrete repo one day needs to use 'id' as id, then it needs to override this to not remove here."
-	aMapless data removeKey: 'id' ifAbsent: [ nil ].
+	aMapless basicMaplessData removeKey: 'id' ifAbsent: [ nil ].
 	
 	^ aMapless
 ]
@@ -173,8 +173,8 @@ MaplessRepository >> normalizeIdOf: aMapless [
 	Removes it from the concrete place in case is present (not failing if absent)." 
 
 	"It's either already having the right one or it needs translation..."
-	(aMapless data includesKey: self idAttribute) ifTrue: [ 
-		aMapless data at: 'id' put: (aMapless data at: self idAttribute) ].
+	(aMapless basicMaplessData includesKey: self idAttribute) ifTrue: [ 
+		aMapless basicMaplessData at: 'id' put: (aMapless maplessId) ].
 	
 	"clean it.
 	Note: if a concrete repo one day needs to use 'id' as id, then it needs to override this to not remove here."
