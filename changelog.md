@@ -6,6 +6,7 @@ August 25, 2021
 * Mades `MaplessMongoRepository` able to drop its database.
 * Made the pools have a `maxClient` value to prevent resource abuse under usage storms.
 * Made the pools have a warm up to connect N clients right from the start.
+* Introducing non-backward compatible changes: what we used to call `modelClass` is now `maplessClass` to get rid of naming ambiguity.
 
 August 23, 2021
 ===================================
