@@ -130,12 +130,6 @@ MaplessRepository >> hasCollectionNamed: aCollectionName [
 	^ self database hasCollectionNamed: aCollectionName
 ]
 
-{ #category : #actions }
-MaplessRepository >> idOf: aMapless [
-	"Answers the id of aMapless that is expected for this concrete backend."
-	^ aMapless data at: self idAttribute
-]
-
 { #category : #initialization }
 MaplessRepository >> initializeDatabase: aDatabase [
 	self flag: #deprecated.
@@ -143,8 +137,8 @@ MaplessRepository >> initializeDatabase: aDatabase [
 ]
 
 { #category : #initialization }
-MaplessRepository >> initializeOn: aDatabase [
-	databaseName := aDatabase
+MaplessRepository >> initializeOn: aString [
+	databaseName := aString
 ]
 
 { #category : #accessing }
@@ -167,8 +161,7 @@ MaplessRepository >> isUnsaved: aMapless [
 	Note: we assume that if aMapless does not have an id 
 	then is because the application never used the backend to saved it."
 
-	^ (self idOf: aMapless) isNil and: [ 
-	aMapless id isNil ]
+	^ aMapless basicMaplessId isNil and: [ aMapless id isNil ]
 ]
 
 { #category : #actions }

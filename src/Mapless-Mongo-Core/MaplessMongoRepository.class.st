@@ -64,11 +64,7 @@ MaplessMongoRepository >> do: aBlock [
 	"Performs aBlock and providing access to the mongo client in use during this thread to 
 	anyone calling CurrentMongoDatabase value."
 
-	MaplessMongoPool instance
-		do: [ :client | 
-			[ mongoClient := client.
-			MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
-				ensure: [ mongoClient := nil ] ]
+	self with: MaplessMongoPool instance do: aBlock
 ]
 
 { #category : #actions }
@@ -103,7 +99,7 @@ MaplessMongoRepository >> insert: aMapless [
 
 	self onBeforeInsert: aMapless.
 
-	[ bsonFriendly := (self storableFor: aMapless data) ] ifCurtailed: [
+	[ bsonFriendly := (self storableFor: aMapless maplessData) ] ifCurtailed: [
 		aMapless data removeKey: self idAttribute ifAbsent: [ nil ] ] .
 
 	(self databaseCollectionNamed: aMapless class collectionName) add: bsonFriendly. 
@@ -193,18 +189,27 @@ MaplessMongoRepository >> save: aMapless [
 
 { #category : #actions }
 MaplessMongoRepository >> update: aMapless [
-
 	| bsonFriendly |
-
 	self onBeforeUpdate: aMapless.
-	
 	bsonFriendly := self storableFor: aMapless data.
-
 	(self databaseCollectionNamed: aMapless class collectionName)
-		replace:  (Dictionary new 
-					at: self idAttribute put: (self idOf: aMapless);
-					yourself)
+		replace:
+			(Dictionary new
+				at: self idAttribute put:
+					aMapless basicMaplessId;
+				yourself)
 		with: bsonFriendly.
-		
 	self onAfterUpdate: aMapless
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> with: aMaplessAccessor do: aBlock [
+	"Performs aBlock and providing access to the mongo client in use during this thread to 
+	anyone calling CurrentMongoDatabase value."
+
+	aMaplessAccessor
+		do: [ :client | 
+			[ mongoClient := client.
+			MaplessCurrentRepository value: self during: [ ^ aBlock cull: self ] ]
+				ensure: [ mongoClient := nil ] ]
 ]
