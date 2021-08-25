@@ -254,7 +254,7 @@ MaplessMongoTest >> testComposedSaveAndLoad [
 					self assert: loaded username = 'johnq'.
 					self assert: loaded person firstName = 'john'.
 					self assert: loaded person lastName = 'q'.
-					self assert: loaded person modelClass = DummyPerson asString.
+					self assert: loaded person maplessClass = DummyPerson asString.
 					self assert: loaded person model class = DummyPerson ] ]
 ]
 
@@ -278,7 +278,7 @@ MaplessMongoTest >> testComposition [
 	self assert: user isUnsaved.
 	self assert: guy isUnsaved.	
 	self assert: ((user data at: 'person') class = DummyPerson ).
-	self assert: ((user data at: 'person') modelClass = #DummyPerson).
+	self assert: ((user data at: 'person') maplessClass = #DummyPerson).
 	self assert: user id isNil.
 	self assert: (user data at: 'person') id isNil.
 	self assert: (user completeName = 'john q')]
