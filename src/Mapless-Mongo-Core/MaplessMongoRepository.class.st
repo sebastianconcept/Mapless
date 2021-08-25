@@ -1,12 +1,6 @@
 "
 A MaplessMongoRepository is a connection layer between Mapless and the mongo database. Use it using 
 
-(MaplessMongoRepository on: aMongoDatabase) do: [ 
-	
-	""your stuff here""
-	 ]
-
-
 
 
 
@@ -19,13 +13,6 @@ Class {
 	],
 	#category : #'Mapless-Mongo-Core-Connections'
 }
-
-{ #category : #actions }
-MaplessMongoRepository class >> databaseNamed: aDatabaseName [
-	"Returns the database found at aDatabaseName"
-	
-	^ MaplessMongoPool instance databaseAt: aDatabaseName 
-]
 
 { #category : #accessing }
 MaplessMongoRepository >> database [
@@ -61,10 +48,24 @@ MaplessMongoRepository >> destroy: aMapless [
 
 { #category : #actions }
 MaplessMongoRepository >> do: aBlock [
-	"Performs aBlock and providing access to the mongo client in use during this thread to 
-	anyone calling CurrentMongoDatabase value."
+	^ self do: aBlock with: accessor
+]
 
-	^ self with: MaplessMongoPool instance do: aBlock
+{ #category : #actions }
+MaplessMongoRepository >> do: aBlock with: aDatabaseAccessor [
+	"Performs aBlock and providing access to the mongo client in use during this thread to 
+	anyone calling MaplessCurrentRepository value."
+
+	aDatabaseAccessor
+		do: [ :client | 
+			[ mongoClient := client.
+			MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
+				ensure: [ mongoClient := nil ] ]
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> drop [
+	^ self do: [ self database drop ]
 ]
 
 { #category : #actions }
@@ -111,7 +112,7 @@ MaplessMongoRepository >> insert: aMapless [
 { #category : #accessing }
 MaplessMongoRepository >> instanceOf: aMaplessClass atId: anId [
 
-	^self  
+	^self
 		instanceOf: aMaplessClass 
 		where: (Dictionary newFromPairs: {self idAttribute. anId})
 ]

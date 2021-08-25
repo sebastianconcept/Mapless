@@ -15,16 +15,18 @@ MaplessMongoModelTest >> do: aBlock [
 
 { #category : #'setUp-tearDown' }
 MaplessMongoModelTest >> setUp [
-
 	super setUp.
-	mongoRepository := MaplessMongoRepository for: 'Mapless-Tests'
+	mongoRepository := MaplessMongoRepository
+		for: 'Mapless-Test'
+		with: MaplessMongoPool local
 ]
 
 { #category : #'setUp-tearDown' }
 MaplessMongoModelTest >> tearDown [
-
 	super tearDown.
-	mongoRepository := nil
+	mongoRepository
+		drop;
+		shutDown
 ]
 
 { #category : #tests }
