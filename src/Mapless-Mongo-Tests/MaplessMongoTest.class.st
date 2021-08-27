@@ -278,7 +278,7 @@ MaplessMongoTest >> testComposition [
 	self assert: user isUnsaved.
 	self assert: guy isUnsaved.	
 	self assert: ((user data at: 'person') class = DummyPerson ).
-	self assert: ((user data at: 'person') maplessClass = #DummyPerson).
+	self assert: ((user data at: 'person') _c = #DummyPerson).
 	self assert: user id isNil.
 	self assert: (user data at: 'person') id isNil.
 	self assert: (user completeName = 'john q')]
