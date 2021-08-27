@@ -24,7 +24,7 @@ Mapless class >> canBeMapless: anObject [
 	"Answers true if anObject can be used to instantiate mapless."
 
 	^ anObject isDictionary
-		and: [ anObject size > 1 and: [ anObject includesKey: 'maplessClass' ] ]
+		and: [ anObject size > 1 and: [ anObject includesKey: '_c' ] ]
 ]
 
 { #category : #testing }
@@ -43,7 +43,7 @@ Mapless class >> canRepresentSubMapless: anObject [
 	^ anObject isDictionary
 		and: [ anObject size = 2
 				and: [ (anObject includesKey: '_id')
-						and: [ anObject includesKey: 'maplessClass' ] ] ]
+						and: [ anObject includesKey: '_c' ] ] ]
 ]
 
 { #category : #accessing }
@@ -178,7 +178,7 @@ Mapless class >> fromJSONObject: aJsonObjectOrNilOrArray [
 	When there is no Mapless metadata available, the assumption is 
 	that it should create instances of this class of Mapless."
 	maplessClass := aJsonObjectOrNilOrArray
-		at: 'maplessClass'
+		at: '_c'
 		ifAbsent: [ self maplessClassName ].
 	^ (Smalltalk at: maplessClass asSymbol) basicNew
 		initializeOn: aJsonObjectOrNilOrArray asJsonObject;
@@ -588,7 +588,7 @@ Mapless >> initialize [
 { #category : #initializing }
 Mapless >> initializeData [
 	data := OrderedJsonObject new
-		maplessClass: self class maplessClassName;
+		_c: self class maplessClassName;
 		yourself
 ]
 
@@ -785,7 +785,7 @@ Mapless >> setModelFrom: aJsonString on: aKey of: aJsonObject [
 	| json maplessClass newSubMapless |
 	json := Json readFrom: aJsonString readStream.
 	maplessClass := Smalltalk
-		at: (json at: 'maplessClass') asSymbol
+		at: (json at: '_c') asSymbol
 		ifAbsent: [ self error: 'Cannot find that class' ].
 	newSubMapless := maplessClass fromJSONObject: json.
 	newSubMapless setSubModels.
@@ -803,7 +803,7 @@ Mapless >> setModelsFrom: someJsonStrings on: aKey of: aJsonObject [
 			(someJsonStrings
 				collect: [ :json | 
 					maplessClass := Smalltalk
-						at: (json at: 'maplessClass') asSymbol
+						at: (json at: '_c') asSymbol
 						ifAbsent: [ self error: 'Cannot find that class' ].
 					newSubMapless := maplessClass fromJSON: json.
 					newSubMapless setSubModels.
@@ -870,7 +870,7 @@ Mapless >> setSubModelsAt: aKey with: anObject [
 	| maplessClass newSubMapless |
 	(self class canBeMapless: anObject)
 		ifTrue: [ maplessClass := Smalltalk
-				at: (anObject at: 'maplessClass') asSymbol
+				at: (anObject at: '_c') asSymbol
 				ifAbsent: [ self error: 'Could not find that class' ].
 			newSubMapless := maplessClass fromJSONObject: anObject.
 			newSubMapless setSubModels.
@@ -883,7 +883,7 @@ Mapless >> setSubModelsAt: aKey with: anObject [
 			subMapless := anObject
 				collect: [ :each | 
 					maplessClass := Smalltalk
-						at: (each at: 'maplessClass') asSymbol
+						at: (each at: '_c') asSymbol
 						ifAbsent: [ self error: 'Could not find that class' ].
 					newSubMapless := maplessClass fromJSONObject: each.
 					newSubMapless setSubModels ].

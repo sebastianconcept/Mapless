@@ -24,7 +24,7 @@ MaplessReference class >> for: aMapless [
 MaplessReference class >> fromJSONObject: aJsonObject [
 	^ self new
 		id: (aJsonObject at: Mapless idAttribute);
-		maplessClass: aJsonObject maplessClass;
+		maplessClass: aJsonObject _c;
 		yourself
 ]
 
@@ -59,7 +59,7 @@ MaplessReference class >> fromVoyageReference: aJsonObject classSelector: classS
 MaplessReference >> = anObject [
 	^ super = anObject
 		or: [ self id = anObject id
-				and: [ self maplessClass = anObject maplessClass ] ]
+				and: [ self _c = anObject _c ] ]
 ]
 
 { #category : #actions }
@@ -75,7 +75,7 @@ MaplessReference >> asJsonObject [
 					'This sub model is unsaved. You need to save all sub mapless before saving a composed mapless' ].
 	self assert: id notNil.
 	^ OrderedJsonObject new
-		at: 'maplessClass' put: maplessClass;
+		at: '_c' put: maplessClass;
 		at: MaplessCurrentRepository value idAttribute put: id;
 		yourself
 ]
