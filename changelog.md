@@ -1,3 +1,10 @@
+August 27, 2021 - 0.4.0-alpha
+===================================
+
+* Introducing another non-backward compatible change: the metadata we used to call `maplessClass` is now found as `_c` in the mongo documents. This has a nice impact by making Mapless to send less self-serving content over the wire without loosing features or introducing complexity. If you need help migrating from a previous version please contact the maintainers.
+* Removes the `raw` instance variable as is not really needed.
+* Makes internal API more consistent and removes deprecations and redundancies.
+
 August 25, 2021
 ===================================
 
