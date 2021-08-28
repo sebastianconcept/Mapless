@@ -1,9 +1,10 @@
 "
-A MaplessRepository is an abstraction for all the repository supported by Mapless. Subclasses are concrete strategies for having Mapless supported by each repository.
+A MaplessRepository is an abstraction for the repositories supported by Mapless. Subclasses are concrete strategies for having Mapless supported by each technology.
 
 Instance Variables
-	database:	holds the backend connection. It gets instantiated using the class message #on:
-
+	databaseName:	holds the name of the database this repository will be working with. 
+	accessor: holds what's needed to get an available client to the database service.
+	
 Look for the subclasses for concrete implementation details.
 
 
@@ -12,27 +13,25 @@ Class {
 	#name : #MaplessRepository,
 	#superclass : #Object,
 	#instVars : [
-		'databaseName'
+		'databaseName',
+		'accessor'
 	],
 	#category : #'Mapless-Base-Core-Repositories'
 }
 
 { #category : #actions }
-MaplessRepository class >> for: aDatabaseName [
-	^ self new initializeOn: aDatabaseName
+MaplessRepository class >> for: aDatabaseName with: aDatabaseAccessor [
+	^ self new initializeOn: aDatabaseName with: aDatabaseAccessor
 ]
 
-{ #category : #actions }
-MaplessRepository class >> on: aDatabase [
-	self flag: #deprecated.
-	^self new initializeDatabase: aDatabase
+{ #category : #accessing }
+MaplessRepository >> accessor [
+	^ accessor
 ]
 
-{ #category : #actions }
-MaplessRepository class >> onDatabaseName: aDatabaseName [
-	self flag: #deprecated.
-
-	^self on: (self databaseNamed: aDatabaseName)
+{ #category : #accessing }
+MaplessRepository >> accessor: anObject [
+	accessor := anObject
 ]
 
 { #category : #actions }
@@ -95,12 +94,12 @@ MaplessRepository >> denormalizeIdOf: aMapless [
 	Removes it from 'id' in case is present (not failing if absent)." 
 
 	"It's either already having the right one or it needs translation..."
-	(aMapless data includesKey: 'id') ifTrue: [ 
-		aMapless data at: self idAttribute put: aMapless id ].
+	(aMapless maplessData includesKey: 'id') ifTrue: [ 
+		aMapless basicMaplessData at: self idAttribute put: aMapless id ].
 	
 	"clean it.
 	Note: if a concrete repo one day needs to use 'id' as id, then it needs to override this to not remove here."
-	aMapless data removeKey: 'id' ifAbsent: [ nil ].
+	aMapless basicMaplessData removeKey: 'id' ifAbsent: [ nil ].
 	
 	^ aMapless
 ]
@@ -130,21 +129,10 @@ MaplessRepository >> hasCollectionNamed: aCollectionName [
 	^ self database hasCollectionNamed: aCollectionName
 ]
 
-{ #category : #actions }
-MaplessRepository >> idOf: aMapless [
-	"Answers the id of aMapless that is expected for this concrete backend."
-	^ aMapless data at: self idAttribute
-]
-
 { #category : #initialization }
-MaplessRepository >> initializeDatabase: aDatabase [
-	self flag: #deprecated.
-	database := aDatabase 
-]
-
-{ #category : #initialization }
-MaplessRepository >> initializeOn: aDatabase [
-	databaseName := aDatabase
+MaplessRepository >> initializeOn: aDatabaseName with: aDatabaseAccessor [
+	databaseName := aDatabaseName.
+	accessor := aDatabaseAccessor
 ]
 
 { #category : #accessing }
@@ -167,8 +155,7 @@ MaplessRepository >> isUnsaved: aMapless [
 	Note: we assume that if aMapless does not have an id 
 	then is because the application never used the backend to saved it."
 
-	^ (self idOf: aMapless) isNil and: [ 
-	aMapless id isNil ]
+	^ aMapless basicMaplessId isNil and: [ aMapless id isNil ]
 ]
 
 { #category : #actions }
@@ -180,8 +167,8 @@ MaplessRepository >> normalizeIdOf: aMapless [
 	Removes it from the concrete place in case is present (not failing if absent)." 
 
 	"It's either already having the right one or it needs translation..."
-	(aMapless data includesKey: self idAttribute) ifTrue: [ 
-		aMapless data at: 'id' put: (aMapless data at: self idAttribute) ].
+	(aMapless basicMaplessData includesKey: self idAttribute) ifTrue: [ 
+		aMapless basicMaplessData at: 'id' put: (aMapless maplessId) ].
 	
 	"clean it.
 	Note: if a concrete repo one day needs to use 'id' as id, then it needs to override this to not remove here."
@@ -320,6 +307,16 @@ MaplessRepository >> onBeforeUpdate: aMapless [
 	aMapless onBeforeUpdate.
 	
 	self denormalizeIdOf: aMapless 
+]
+
+{ #category : #actions }
+MaplessRepository >> shutDown [
+	accessor stop
+]
+
+{ #category : #actions }
+MaplessRepository >> startUp: anInteger [
+	accessor start: anInteger
 ]
 
 { #category : #actions }

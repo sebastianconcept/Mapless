@@ -1,3 +1,20 @@
+August 27, 2021 - 0.4.0-alpha
+===================================
+
+* Introducing another non-backward compatible change: the metadata we used to call `maplessClass` is now found as `_c` in the mongo documents. This has a nice impact by making Mapless to send less self-serving content over the wire without loosing features or introducing complexity. If you need help migrating from a previous version please contact the maintainers.
+* Removes the `raw` instance variable as is not really needed.
+* Makes internal API more consistent and removes deprecations and redundancies.
+
+August 25, 2021
+===================================
+
+* Removed deprecated methods.
+* Added a `develop` branch for converging all the progress of the project roadmap in it while preserving in the `master` branch only the production-ready code, release candidate commits and fixes.
+* Mades `MaplessMongoRepository` able to drop its database.
+* Made the pools have a `maxClient` value to prevent resource abuse under usage storms.
+* Made the pools have a warm up to connect N clients right from the start.
+* Introducing non-backward compatible changes: what we used to call `modelClass` is now `maplessClass` to get rid of naming ambiguity.
+
 August 23, 2021
 ===================================
 

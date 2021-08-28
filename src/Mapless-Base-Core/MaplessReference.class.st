@@ -5,7 +5,7 @@ Class {
 	#name : #MaplessReference,
 	#superclass : #Object,
 	#instVars : [
-		'modelClass',
+		'maplessClass',
 		'id',
 		'model'
 	],
@@ -22,11 +22,10 @@ MaplessReference class >> for: aMapless [
 
 { #category : #actions }
 MaplessReference class >> fromJSONObject: aJsonObject [
-
 	^ self new
 		id: (aJsonObject at: Mapless idAttribute);
-		modelClass: aJsonObject modelClass;
-		yourself 
+		maplessClass: aJsonObject _c;
+		yourself
 ]
 
 { #category : #actions }
@@ -52,31 +51,31 @@ MaplessReference class >> fromVoyageReference: aDictionaryish [
 MaplessReference class >> fromVoyageReference: aJsonObject classSelector: classSelector [
 	^ self new
 		id: (aJsonObject at: '__id');
-		modelClass: classSelector;
+		maplessClass: classSelector;
 		yourself
 ]
 
 { #category : #accessing }
 MaplessReference >> = anObject [
-
-	^ super = anObject or:[
-	self id = anObject id and:[
-	self modelClass = anObject modelClass ] ]
+	^ super = anObject
+		or: [ self id = anObject id
+				and: [ self _c = anObject _c ] ]
 ]
 
 { #category : #actions }
-MaplessReference >> asJsonObject [ 
-
+MaplessReference >> asJsonObject [
 	"The only valid scenario when this won't have an id 
 	is when it wraps an unsaved submodel"
+
 	id ifNil: [ id := model id ].
-
-	"a nil id at this point should never happen"	
-	id ifNil: [ ^ MaplessUnsavedSubmodel signal: 'This sub model is unsaved. You need to save all sub models before saving a composed model' ].
+	"a nil id at this point should never happen"
+	id
+		ifNil: [ ^ MaplessUnsavedSubmodel
+				signal:
+					'This sub model is unsaved. You need to save all sub mapless before saving a composed mapless' ].
 	self assert: id notNil.
-
 	^ OrderedJsonObject new
-		at: 'modelClass' put: modelClass;
+		at: '_c' put: maplessClass;
 		at: MaplessCurrentRepository value idAttribute put: id;
 		yourself
 ]
@@ -93,16 +92,12 @@ MaplessReference >> doesNotUnderstand: aMessage [
 
 { #category : #accessing }
 MaplessReference >> getMongoModel [
-
 	| class |
-	
-	class := Smalltalk 
-				at: modelClass asSymbol 
-				ifAbsent:[ self error: 'This image does not have ',modelClass asString,' class' ].
-	
-	^ class findId: id 
-	
-	
+	class := Smalltalk
+		at: maplessClass asSymbol
+		ifAbsent: [ self
+				error: 'This image does not have ' , maplessClass asString , ' class' ].
+	^ class findId: id
 ]
 
 { #category : #testing }
@@ -143,11 +138,9 @@ MaplessReference >> initializeModel [
 
 { #category : #initialization }
 MaplessReference >> initializeOn: aMongoMapless [
-
 	id := aMongoMapless id.
-	modelClass := aMongoMapless class name asString.
-	
-	model := aMongoMapless 
+	maplessClass := aMongoMapless class maplessClassName.
+	model := aMongoMapless
 ]
 
 { #category : #testing }
@@ -163,6 +156,16 @@ MaplessReference >> jsonWriteOn: aStream [
 ]
 
 { #category : #accessing }
+MaplessReference >> maplessClass [
+	^ maplessClass
+]
+
+{ #category : #accessing }
+MaplessReference >> maplessClass: aString [
+	maplessClass := aString
+]
+
+{ #category : #accessing }
 MaplessReference >> model [
 	^ model ifNil: [ self initializeModel ]
 ]
@@ -170,16 +173,6 @@ MaplessReference >> model [
 { #category : #accessing }
 MaplessReference >> model: anObject [
 	model := anObject
-]
-
-{ #category : #accessing }
-MaplessReference >> modelClass [
-	^ modelClass
-]
-
-{ #category : #accessing }
-MaplessReference >> modelClass: anObject [
-	modelClass := anObject
 ]
 
 { #category : #actions }

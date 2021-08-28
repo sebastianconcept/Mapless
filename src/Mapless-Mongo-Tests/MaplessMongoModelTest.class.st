@@ -15,16 +15,18 @@ MaplessMongoModelTest >> do: aBlock [
 
 { #category : #'setUp-tearDown' }
 MaplessMongoModelTest >> setUp [
-
 	super setUp.
-	mongoRepository := MaplessMongoRepository for: 'Mapless-Tests'
+	mongoRepository := MaplessMongoRepository
+		for: 'Mapless-Test'
+		with: MaplessMongoPool local
 ]
 
 { #category : #'setUp-tearDown' }
 MaplessMongoModelTest >> tearDown [
-
 	super tearDown.
-	mongoRepository := nil
+	mongoRepository
+		drop;
+		shutDown
 ]
 
 { #category : #tests }
@@ -159,7 +161,7 @@ MaplessMongoModelTest >> testReifyWithoutMetadata [
 			firstName: 'john';
 			yourself.
 
-	serializedWith := '{"id": "abc123", "modelClass": "DummyPerson","createdOn": "2017-01-22T13:49:37.564031+00:00","firstName": "john"}'.
+	serializedWith := '{"id": "abc123", "_c": "DummyPerson","createdOn": "2017-01-22T13:49:37.564031+00:00","firstName": "john"}'.
 	
 	serializedWithout :=  '{"id": "abc123", "createdOn": "2017-01-22T13:49:37.564031+00:00","firstName": "john"}'.
 	
