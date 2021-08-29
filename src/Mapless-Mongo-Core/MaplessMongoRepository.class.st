@@ -202,15 +202,3 @@ MaplessMongoRepository >> update: aMapless [
 		with: bsonFriendly.
 	self onAfterUpdate: aMapless
 ]
-
-{ #category : #actions }
-MaplessMongoRepository >> with: aMaplessAccessor do: aBlock [
-	"Performs aBlock and providing access to the mongo client in use during this thread to 
-	anyone calling CurrentMongoDatabase value."
-
-	aMaplessAccessor
-		do: [ :client | 
-			[ mongoClient := client.
-			MaplessCurrentRepository value: self during: [ ^ aBlock cull: self ] ]
-				ensure: [ mongoClient := nil ] ]
-]
