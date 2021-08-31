@@ -1,3 +1,7 @@
+August 28, 2021
+===================================
+* Adds `MaplessMemoryRepository` its accessor and unit test for regression coverage.
+
 August 27, 2021 - 0.4.0-alpha
 ===================================
 
