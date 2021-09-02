@@ -1,3 +1,7 @@
+September 1st, 2021
+===================================
+* Fixed `BaslineOfMapless` missing Memory package.
+
 August 28, 2021
 ===================================
 * Adds `MaplessMemoryRepository` its accessor and unit test for regression coverage.

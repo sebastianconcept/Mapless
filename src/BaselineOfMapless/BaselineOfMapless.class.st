@@ -14,6 +14,7 @@ BaselineOfMapless >> baseline: spec [
 			self setUpPackages: spec.
 			spec
 				group: 'Core' with: #('Mapless-Base-Core');
+				group: 'Memory' with: #('Mapless-Memory-Tests');
 				group: 'Mongo' with: #('Mapless-Mongo-Tests');
 				group: 'Postgres' with: #('Mapless-Postgres-Tests');
 				group: 'Benchmark' with: #('Mapless-Benchmark-Core');
@@ -40,6 +41,12 @@ BaselineOfMapless >> setUpPackages: spec [
 		package: 'Mapless-Tests-Base'
 		with: [ spec requires: 'Mapless-Base-Core' ].
 	spec
+		package: 'Mapless-Memory-Core'
+		with: [ spec requires: #('Mapless-Base-Core') ].
+	spec
+		package: 'Mapless-Memory-Tests'
+		with: [ spec requires: #('Mapless-Memory-Core') ].
+	spec
 		package: 'Mapless-Mongo-Core'
 		with: [ spec requires: #('Mapless-Base-Core' 'MongoTalk') ].
 	spec
@@ -50,7 +57,7 @@ BaselineOfMapless >> setUpPackages: spec [
 		with: [ spec requires: 'Mapless-Mongo-Tests' ].
 	spec
 		package: 'Mapless-Postgres-Core'
-		with: [ spec requires: #('Mapless-Base-Core' 'P3')].
+		with: [ spec requires: #('Mapless-Base-Core' 'P3') ].
 	spec
 		package: 'Mapless-Postgres-Tests'
 		with: [ spec requires: #('Mapless-Postgres-Core' 'Mapless-Tests-Base') ]

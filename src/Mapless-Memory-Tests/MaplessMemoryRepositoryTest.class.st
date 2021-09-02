@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'repository'
 	],
-	#category : #'Mapless-Mongo-Tests-Tests'
+	#category : #'Mapless-Memory-Tests'
 }
 
 { #category : #tests }
