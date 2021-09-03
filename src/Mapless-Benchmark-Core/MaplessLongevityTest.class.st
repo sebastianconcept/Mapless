@@ -94000,7 +94000,9 @@ Zywiec'
 
 { #category : #accessing }
 MaplessLongevityTest class >> getRepository [
-	^ MaplessMongoRepository for: 'Mapless-Tests'
+	^ MaplessMongoRepository
+		for: 'Mapless-Tests'
+		with: MaplessMongoPool local
 ]
 
 { #category : #accessing }
