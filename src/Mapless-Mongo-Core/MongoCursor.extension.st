@@ -18,7 +18,9 @@ MongoCursor >> execute [
 				chunkSize: query chunkSize ].
 	reply := (ReplyOperation stream: root stream) read.
 	reply responseTo = requestId
-		ifFalse: [ ^ MongoOperationError signalFor: reply message: 'Unexpected responseTo in response'].
+		ifFalse: [ ^ MongoOperationError
+				signalFor: reply
+				message: 'Unexpected responseTo in response' ].
 	reply
 		do: [ :each | 
 			numberReturned < limit

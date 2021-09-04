@@ -9,8 +9,7 @@ BaselineOfMapless >> baseline: spec [
 	<baseline>
 	spec
 		for: #common
-		do: [ 
-			self setUpDependencies: spec.
+		do: [ self setUpDependencies: spec.
 			self setUpPackages: spec.
 			spec
 				group: 'Core' with: #('Mapless-Base-Core');

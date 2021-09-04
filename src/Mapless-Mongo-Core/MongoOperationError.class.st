@@ -9,24 +9,23 @@ Class {
 
 { #category : #'instance creation' }
 MongoOperationError class >> newFor: aReply [
-	^self basicNew
+	^ self basicNew
 		initialize: aReply;
 		yourself
 ]
 
 { #category : #signalling }
 MongoOperationError class >> signalFor: reply message: aString [
-
-	^ (self newFor: reply ) signal: aString 
+	^ (self newFor: reply) signal: aString
 ]
 
 { #category : #initialization }
 MongoOperationError >> initialize: aReply [
 	self initialize.
-	reply := aReply.
+	reply := aReply
 ]
 
 { #category : #accessing }
 MongoOperationError >> reply [
-	^reply
+	^ reply
 ]

@@ -23,15 +23,13 @@ Class {
 
 { #category : #actions }
 MaplessLongevityTester class >> addWorkerNamed: aString [
-	|worker|
+	| worker |
 	worker := MaplessLongevityTest new
-				name: aString;
-				yourself.
-	self workers
-		add:
-			worker.
+		name: aString;
+		yourself.
+	self workers add: worker.
 	worker when: #reported send: #onReported: to: self.
-	^  worker
+	^ worker
 ]
 
 { #category : #actions }
@@ -64,7 +62,7 @@ MaplessLongevityTester class >> initializeWorkers [
 
 { #category : #actions }
 MaplessLongevityTester class >> onReported: aWorker [
-
+	
 ]
 
 { #category : #actions }
@@ -76,6 +74,7 @@ MaplessLongevityTester class >> reset [
 
 { #category : #actions }
 MaplessLongevityTester class >> setUp [
+	
 ]
 
 { #category : #actions }

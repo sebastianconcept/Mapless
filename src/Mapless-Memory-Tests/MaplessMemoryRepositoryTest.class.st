@@ -53,7 +53,7 @@ MaplessMemoryRepositoryTest >> testDatabaseCollection [
 	db := repository database.
 	databaseCollection := db collectionNamed: 'Things'.
 	self assert: databaseCollection name equals: 'Things'.
-	self assert: databaseCollection isEmpty.
+	self assert: databaseCollection isEmpty
 ]
 
 { #category : #tests }
@@ -118,8 +118,7 @@ MaplessMemoryRepositoryTest >> testDatabaseCollectionSave [
 				yourself.
 			self assert: guy isUnsaved.
 			guy save.
-			self assert: guy isUnsaved not].
-		
+			self assert: guy isUnsaved not ].
 	self assert: (databaseCollection includes: guy)
 ]
 
