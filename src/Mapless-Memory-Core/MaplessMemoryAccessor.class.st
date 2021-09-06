@@ -31,14 +31,20 @@ MaplessMemoryAccessor >> initialize [
 { #category : #actions }
 MaplessMemoryAccessor >> start [
 	"For compatibility"
+
+	
 ]
 
 { #category : #actions }
 MaplessMemoryAccessor >> start: anInteger [
 	"For compatibility"
+
+	
 ]
 
 { #category : #actions }
 MaplessMemoryAccessor >> stop [
 	"For compatibility"
+
+	
 ]

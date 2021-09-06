@@ -54,13 +54,12 @@ MaplessMemoryRepository >> drop [
 
 { #category : #actions }
 MaplessMemoryRepository >> ensureCollection [
-	self shouldBeImplemented.
+	self shouldBeImplemented
 ]
 
 { #category : #testing }
 MaplessMemoryRepository >> existsId: anId of: aMaplessClass [
-
-	^ ( self instanceOf: aMaplessClass  atId:  anId ) notNil
+	^ (self instanceOf: aMaplessClass atId: anId) notNil
 ]
 
 { #category : #accessing }
@@ -96,14 +95,22 @@ MaplessMemoryRepository >> instanceOf: aMaplessClass where: someConditions [
 MaplessMemoryRepository >> instancesOf: aMaplessClass where: someConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
-	^self instancesOf: aMaplessClass where: someConditions limit: nil offset: nil
+	^ self
+		instancesOf: aMaplessClass
+		where: someConditions
+		limit: nil
+		offset: nil
 ]
 
 { #category : #accessing }
 MaplessMemoryRepository >> instancesOf: aMaplessClass where: someConditions limit: aLimitOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
-	^self instancesOf: aMaplessClass where: someConditions limit: aLimitOrNil offset: nil
+	^ self
+		instancesOf: aMaplessClass
+		where: someConditions
+		limit: aLimitOrNil
+		offset: nil
 ]
 
 { #category : #accessing }
@@ -123,9 +130,7 @@ MaplessMemoryRepository >> instancesOf: aMaplessClass where: someConditions limi
 
 { #category : #actions }
 MaplessMemoryRepository >> onBeforeSave: aMapless [
-
 	aMapless ensureId.
-
 	super onBeforeSave: aMapless
 ]
 

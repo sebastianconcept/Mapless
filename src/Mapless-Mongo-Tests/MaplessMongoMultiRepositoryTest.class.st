@@ -15,7 +15,11 @@ MaplessMongoMultiRepositoryTest >> setUp [
 
 { #category : #running }
 MaplessMongoMultiRepositoryTest >> tearDown [
-	repositories valuesDo: [ :repo | repo drop; shutDown ].
+	repositories
+		valuesDo: [ :repo | 
+			repo
+				drop;
+				shutDown ].
 	super tearDown
 ]
 

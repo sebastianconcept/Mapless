@@ -18,8 +18,7 @@ Class {
 
 { #category : #actions }
 MaplessMongoBenchmark class >> run [
-
-	self runPrintingOn: Transcript 
+	self runPrintingOn: Transcript
 ]
 
 { #category : #actions }
@@ -36,27 +35,23 @@ MaplessMongoBenchmark class >> runPrintingOn: aStream [
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save10KPeopleOn: aStream [ 
-
-	self save: 10000 peopleOn: aStream 
+MaplessMongoBenchmark class >> save10KPeopleOn: aStream [
+	self save: 10000 peopleOn: aStream
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save10KUsersOn: aStream [ 
-
-	self save: 10000 usersOn: aStream 
+MaplessMongoBenchmark class >> save10KUsersOn: aStream [
+	self save: 10000 usersOn: aStream
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save1KPeopleOn: aStream [ 
-
-	self save: 1000 peopleOn: aStream 
+MaplessMongoBenchmark class >> save1KPeopleOn: aStream [
+	self save: 1000 peopleOn: aStream
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save1KUsersOn: aStream [ 
-
-	self save: 1000 usersOn: aStream 
+MaplessMongoBenchmark class >> save1KUsersOn: aStream [
+	self save: 1000 usersOn: aStream
 ]
 
 { #category : #actions }

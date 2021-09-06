@@ -14,10 +14,9 @@ Class {
 
 { #category : #actions }
 MaplessReference class >> for: aMapless [
-
 	^ self new
 		initializeOn: aMapless;
-		yourself 
+		yourself
 ]
 
 { #category : #actions }
@@ -30,8 +29,7 @@ MaplessReference class >> fromJSONObject: aJsonObject [
 
 { #category : #actions }
 MaplessReference class >> fromJSONString: aJSONString [
-		
-	^ self fromJSONObject: (OrderedJson readFrom: aJSONString readStream) 
+	^ self fromJSONObject: (OrderedJson readFrom: aJSONString readStream)
 ]
 
 { #category : #actions }
@@ -58,8 +56,7 @@ MaplessReference class >> fromVoyageReference: aJsonObject classSelector: classS
 { #category : #accessing }
 MaplessReference >> = anObject [
 	^ super = anObject
-		or: [ self id = anObject id
-				and: [ self _c = anObject _c ] ]
+		or: [ self id = anObject id and: [ self _c = anObject _c ] ]
 ]
 
 { #category : #actions }
@@ -102,7 +99,6 @@ MaplessReference >> getMongoModel [
 
 { #category : #testing }
 MaplessReference >> hasModel [
- 
 	^ model notNil
 ]
 
@@ -117,23 +113,18 @@ MaplessReference >> id: anObject [
 ]
 
 { #category : #initialization }
-MaplessReference >> initializeModel [ 
+MaplessReference >> initializeModel [
 	"Note this reference will load the model from the database only once,
 	usually in the first message send"
-	
+
 	self flag: #todo.
 	"sas: this should be improved to decouple this guy from the specific strategy needed for model retrieve.
 	Can a dynamic variable help in deciding what's the strategy to get the model?
 	So if you're using Redis go a Redis get, if using Mongo a Mongo get, ditto with Postgres"
-	
 	model := self getMongoModel.
-	
-	(model notNil and:[
-	model isUnsaved not]) ifTrue:[
-		id := model id ].
-	
+	(model notNil and: [ model isUnsaved not ])
+		ifTrue: [ id := model id ].
 	^ model
-
 ]
 
 { #category : #initialization }
@@ -145,13 +136,11 @@ MaplessReference >> initializeOn: aMongoMapless [
 
 { #category : #testing }
 MaplessReference >> isKindOf: aClasss [
-
-	^ self model isKindOf: aClasss 
+	^ self model isKindOf: aClasss
 ]
 
 { #category : #actions }
 MaplessReference >> jsonWriteOn: aStream [
-
 	self asJsonObject jsonWriteOn: aStream
 ]
 
@@ -176,7 +165,6 @@ MaplessReference >> model: anObject [
 ]
 
 { #category : #actions }
-MaplessReference >> unreferenced [ 
-
-	^ self model unreferenced 
+MaplessReference >> unreferenced [
+	^ self model unreferenced
 ]

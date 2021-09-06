@@ -41,7 +41,7 @@ MaplessMemoryCollection >> findId: anOID [
 ]
 
 { #category : #testing }
-MaplessMemoryCollection >> includes: anObject [ 
+MaplessMemoryCollection >> includes: anObject [
 	^ elements includesKey: anObject id
 ]
 

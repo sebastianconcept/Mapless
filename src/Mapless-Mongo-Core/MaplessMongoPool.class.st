@@ -21,38 +21,38 @@ MaplessMongoPool >> authenticate: mongoClient [
 MaplessMongoPool >> currentClientDynamicVariable [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
+
 	^ MongoCurrentClient
 ]
 
 { #category : #actions }
-MaplessMongoPool >> databaseAt: aDatabaseName [ 
-
-	self do:[ :client |
-		^ client databaseNamed: aDatabaseName ]
+MaplessMongoPool >> databaseAt: aDatabaseName [
+	self do: [ :client | ^ client databaseNamed: aDatabaseName ]
 ]
 
 { #category : #actions }
 MaplessMongoPool >> databaseAt: aDatabaseName do: aBlock [
-
-	self do:[ :client |
-		(client databaseNamed: aDatabaseName) do: [ ^ aBlock value ] ]
+	self
+		do:
+			[ :client | (client databaseNamed: aDatabaseName) do: [ ^ aBlock value ] ]
 ]
 
 { #category : #actions }
 MaplessMongoPool >> ifUnavailablePurge: aMongoClient [
 	"Tests aMongoClient and remove it from this pool if invalid."
 
-	(aMongoClient isAvailable not or: [
-	([aMongoClient databases first collections.
-	true] on: Error do: [ :x | false]) not ] ) ifTrue: [
-		self remove:  aMongoClient ]
+	(aMongoClient isAvailable not
+		or: [ ([ aMongoClient databases first collections.
+			true ]
+				on: Error
+				do: [ :x | false ]) not ])
+		ifTrue: [ self remove: aMongoClient ]
 ]
 
 { #category : #actions }
 MaplessMongoPool >> initialize [
 	super initialize.
-
-	MongoAPI defaultAuthMechanismClass: SCRAMSHA1AuthMechanism.
+	MongoAPI defaultAuthMechanismClass: SCRAMSHA1AuthMechanism
 ]
 
 { #category : #actions }
@@ -73,14 +73,13 @@ MaplessMongoPool >> makeClient [
 
 { #category : #reactions }
 MaplessMongoPool >> onLogout: aMongo [
-
-	self remove: aMongo 
+	self remove: aMongo
 ]
 
 { #category : #actions }
 MaplessMongoPool >> purgeUnavailable [
 	"Removes any client that might be expired or unreacheable."
-	
-	self busyClients copy do:[ :e | self ifUnavailablePurge: e ].
-	self idleClients copy do:[ :e | self ifUnavailablePurge: e ]
+
+	self busyClients copy do: [ :e | self ifUnavailablePurge: e ].
+	self idleClients copy do: [ :e | self ifUnavailablePurge: e ]
 ]
