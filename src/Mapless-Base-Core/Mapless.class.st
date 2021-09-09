@@ -57,6 +57,20 @@ Mapless class >> collectionName [
 	^ name asString
 ]
 
+{ #category : #querying }
+Mapless class >> count [
+	"Answer what's the number of instances of the receiver in the repository."
+
+	^ self currentRepository count: self where: {} asDictionary
+]
+
+{ #category : #querying }
+Mapless class >> count: someConditions [
+	"Answer the integer number of instances of the receiver that meet someConditions in the repository."
+
+	^ self currentRepository count: self where: someConditions
+]
+
 { #category : #accessing }
 Mapless class >> currentRepository [
 	^ MaplessCurrentRepository value

@@ -15,6 +15,14 @@ Class {
 }
 
 { #category : #accessing }
+MaplessMongoRepository >> count: aMaplessClass where: someConditions [
+	"Answer what's the number of instances of aMaplessClass in this repository."
+
+	^ (self databaseCollectionNamed: aMaplessClass collectionName)
+		sizeForQuery: someConditions
+]
+
+{ #category : #accessing }
 MaplessMongoRepository >> database [
 	^ mongoClient databaseNamed: databaseName
 ]
