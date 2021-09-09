@@ -2,20 +2,20 @@ Class {
 	#name : #MaplessMongoModelTest,
 	#superclass : #MaplessTestCase,
 	#instVars : [
-		'mongoRepository'
+		'repository'
 	],
 	#category : #'Mapless-Mongo-Tests-Tests'
 }
 
 { #category : #actions }
 MaplessMongoModelTest >> do: aBlock [
-	^ mongoRepository do: aBlock
+	^ repository do: aBlock
 ]
 
 { #category : #'setUp-tearDown' }
 MaplessMongoModelTest >> setUp [
 	super setUp.
-	mongoRepository := MaplessMongoRepository
+	repository := MaplessMongoRepository
 		for: 'Mapless-Test'
 		with: MaplessMongoPool local
 ]
@@ -23,7 +23,7 @@ MaplessMongoModelTest >> setUp [
 { #category : #'setUp-tearDown' }
 MaplessMongoModelTest >> tearDown [
 	super tearDown.
-	mongoRepository
+	repository
 		drop;
 		shutDown
 ]
