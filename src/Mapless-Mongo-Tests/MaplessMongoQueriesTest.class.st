@@ -45,6 +45,22 @@ MaplessMongoQueriesTest >> tearDown [
 ]
 
 { #category : #tests }
+MaplessMongoQueriesTest >> testCursorCount [
+	repository
+		do: [ self addDummyPeople.
+			self assert: DummyPerson count equals: 20 ]
+]
+
+{ #category : #tests }
+MaplessMongoQueriesTest >> testCursorCountWithConditions [
+	repository
+		do: [ self addDummyPeople.
+			self
+				assert: (DummyPerson count: {('firstName' -> 'john')} asDictionary)
+				equals: 10 +1 ]
+]
+
+{ #category : #tests }
 MaplessMongoQueriesTest >> testSelectWithAnd [
 	| found |
 	repository
