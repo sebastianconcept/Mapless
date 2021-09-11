@@ -10,7 +10,28 @@ Class {
 	#category : #'Mapless-Memory-Tests'
 }
 
-{ #category : #tests }
+{ #category : #actions }
+MaplessMemoryRepositoryTest >> addDummyPeople [
+	| guy |
+	1 to: 10 do: [ :i | 
+		guy := DummyPerson new
+			firstName: 'john';
+			lastName: 'q';
+			yourself.
+		i > 1
+			ifTrue: [ guy lastName: guy lastName , i asString ].
+		guy save ].
+	1 to: 10 do: [ :i | 
+		guy := DummyPerson new
+			firstName: 'john';
+			lastName: 'q';
+			yourself.
+		i > 1
+			ifTrue: [ guy firstName: guy firstName , i asString ].
+		guy save ]
+]
+
+{ #category : #actions }
 MaplessMemoryRepositoryTest >> newDummyPersonNamed: aString [
 	^ DummyPerson new
 		firstName: aString;
@@ -45,6 +66,22 @@ MaplessMemoryRepositoryTest >> testAccessorDatabaseAccess [
 	db := repository database.
 	self assert: db class equals: MaplessMemoryDatabase.
 	self assert: db databaseName equals: 'Mapless-Test'
+]
+
+{ #category : #tests }
+MaplessMemoryRepositoryTest >> testCursorCount [
+	repository
+		do: [ self addDummyPeople.
+			self assert: DummyPerson count equals: 20 ]
+]
+
+{ #category : #tests }
+MaplessMemoryRepositoryTest >> testCursorCountWithConditions [
+	repository
+		do: [ self addDummyPeople.
+			self
+				assert: (DummyPerson count: [ :each | each firstName = 'john' ])
+				equals: 10 + 1 ]
 ]
 
 { #category : #tests }

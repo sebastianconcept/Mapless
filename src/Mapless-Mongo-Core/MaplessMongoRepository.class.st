@@ -15,6 +15,13 @@ Class {
 }
 
 { #category : #accessing }
+MaplessMongoRepository >> count: aMaplessClass [
+	"Answer what's the number of instances of aMaplessClass in this repository."
+
+	^ self count: aMaplessClass where: {} asDictionary
+]
+
+{ #category : #accessing }
 MaplessMongoRepository >> count: aMaplessClass where: someConditions [
 	"Answer what's the number of instances of aMaplessClass in this repository."
 

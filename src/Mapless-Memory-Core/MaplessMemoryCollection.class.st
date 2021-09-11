@@ -74,6 +74,20 @@ MaplessMemoryCollection >> remove: anObject [
 ]
 
 { #category : #accessing }
+MaplessMemoryCollection >> size [
+	^ elements size
+]
+
+{ #category : #accessing }
+MaplessMemoryCollection >> sizeForQuery: someConditions [
+	someConditions isClosure
+		ifFalse: [ self
+				error:
+					'This repository is based on a Dictionary, use a regular block for the conditions' ].
+	^ (self elements select: someConditions) size
+]
+
+{ #category : #accessing }
 MaplessMemoryCollection >> values [
 	^ elements values
 ]

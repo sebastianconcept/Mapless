@@ -11,6 +11,21 @@ Class {
 }
 
 { #category : #accessing }
+MaplessMemoryRepository >> count: aMaplessClass [
+	"Answer what's the number of instances of aMaplessClass in this repository."
+
+	^ (self databaseCollectionNamed: aMaplessClass collectionName) size
+]
+
+{ #category : #accessing }
+MaplessMemoryRepository >> count: aMaplessClass where: someConditions [
+	"Answer what's the number of instances of aMaplessClass in this repository."
+
+	^ (self databaseCollectionNamed: aMaplessClass collectionName)
+		sizeForQuery: someConditions
+]
+
+{ #category : #accessing }
 MaplessMemoryRepository >> database [
 	^ accessor databaseNamed: databaseName
 ]
