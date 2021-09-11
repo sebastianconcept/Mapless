@@ -21,7 +21,7 @@ MaplessMemoryCollection class >> newNamed: aString [
 { #category : #accessing }
 MaplessMemoryCollection >> add: anObject [
 	^ elements
-		at: (anObject data at: anObject class idAttribute)
+		at: (anObject data at: anObject class idPropertyName)
 		put: anObject
 ]
 
@@ -69,7 +69,7 @@ MaplessMemoryCollection >> name: anObject [
 { #category : #accessing }
 MaplessMemoryCollection >> remove: anObject [
 	^ elements
-		removeKey: (anObject data at: anObject class idAttribute)
+		removeKey: (anObject data at: anObject class idPropertyName)
 		ifAbsent: [ "ignore" ]
 ]
 

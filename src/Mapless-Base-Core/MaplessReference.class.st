@@ -22,7 +22,7 @@ MaplessReference class >> for: aMapless [
 { #category : #actions }
 MaplessReference class >> fromJSONObject: aJsonObject [
 	^ self new
-		id: (aJsonObject at: Mapless idAttribute);
+		id: (aJsonObject at: Mapless idPropertyName);
 		maplessClass: aJsonObject _c;
 		yourself
 ]
@@ -73,7 +73,7 @@ MaplessReference >> asJsonObject [
 	self assert: id notNil.
 	^ OrderedJsonObject new
 		at: '_c' put: maplessClass;
-		at: MaplessCurrentRepository value idAttribute put: id;
+		at: MaplessCurrentRepository value idPropertyName put: id;
 		yourself
 ]
 

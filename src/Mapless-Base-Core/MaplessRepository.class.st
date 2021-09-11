@@ -92,7 +92,7 @@ MaplessRepository >> denormalizeIdOf: aMapless [
 	"It's either already having the right one or it needs translation..."
 
 	(aMapless maplessData includesKey: 'id')
-		ifTrue: [ aMapless basicMaplessData at: self idAttribute put: aMapless id ].
+		ifTrue: [ aMapless basicMaplessData at: self idPropertyName put: aMapless id ].
 
 	"clean it.
 	Note: if a concrete repo one day needs to use 'id' as id, then it needs to override this to not remove here."
@@ -116,6 +116,20 @@ MaplessRepository >> ensureCollectionNamed: aCollectionName [
 		ifFalse: [ self addCollection: aCollectionName ]
 ]
 
+{ #category : #accessing }
+MaplessRepository >> find: aMaplessClass where: someConditions [
+	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+
+	^ self subclassResponsibility
+]
+
+{ #category : #accessing }
+MaplessRepository >> findOne: aMaplessClass where: someConditions [
+	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
+
+	^ self subclassResponsibility
+]
+
 { #category : #testing }
 MaplessRepository >> hasCollectionNamed: aCollectionName [
 	^ self database hasCollectionNamed: aCollectionName
@@ -125,20 +139,6 @@ MaplessRepository >> hasCollectionNamed: aCollectionName [
 MaplessRepository >> initializeOn: aDatabaseName with: aDatabaseAccessor [
 	databaseName := aDatabaseName.
 	accessor := aDatabaseAccessor
-]
-
-{ #category : #accessing }
-MaplessRepository >> instanceOf: aMaplessClass where: someConditions [
-	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
-
-	^ self subclassResponsibility
-]
-
-{ #category : #accessing }
-MaplessRepository >> instancesOf: aMaplessClass where: someConditions [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
-
-	^ self subclassResponsibility
 ]
 
 { #category : #testing }
@@ -160,12 +160,12 @@ MaplessRepository >> normalizeIdOf: aMapless [
 
 	"It's either already having the right one or it needs translation..."
 
-	(aMapless basicMaplessData includesKey: self idAttribute)
+	(aMapless basicMaplessData includesKey: self idPropertyName)
 		ifTrue: [ aMapless basicMaplessData at: 'id' put: aMapless maplessId ].
 
 	"clean it.
 	Note: if a concrete repo one day needs to use 'id' as id, then it needs to override this to not remove here."
-	aMapless data removeKey: self idAttribute ifAbsent: [ nil ].
+	aMapless data removeKey: self idPropertyName ifAbsent: [ nil ].
 	^ aMapless
 ]
 

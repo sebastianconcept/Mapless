@@ -90,13 +90,13 @@ Mapless class >> existsId: anId [
 Mapless class >> find: someConditions [
 	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
 
-	^ self currentRepository instancesOf: self where: someConditions
+	^ self currentRepository find: self where: someConditions
 ]
 
 { #category : #querying }
 Mapless class >> find: someConditions limit: toHowManyResults [
 	^ self currentRepository
-		instancesOf: self
+		find: self
 		where: someConditions
 		limit: toHowManyResults
 ]
@@ -104,7 +104,7 @@ Mapless class >> find: someConditions limit: toHowManyResults [
 { #category : #querying }
 Mapless class >> find: someConditions limit: howManyResults offset: startingFromWhichResult [
 	^ self currentRepository
-		instancesOf: self
+		find: self
 		where: someConditions
 		limit: howManyResults
 		offset: startingFromWhichResult
@@ -114,7 +114,7 @@ Mapless class >> find: someConditions limit: howManyResults offset: startingFrom
 Mapless class >> findAll [
 	"Answer a collection with all receiver instances from the repository."
 
-	^ self currentRepository instancesOf: self where: Dictionary new
+	^ self currentRepository find: self where: Dictionary new
 ]
 
 { #category : #querying }
@@ -137,7 +137,7 @@ Mapless class >> findAllSortedBy: aSelector [
 { #category : #querying }
 Mapless class >> findCid: anId [
 	^ self currentRepository
-		instanceOf: self
+		findOne: self
 		where:
 			(Dictionary
 				newFromPairs:
@@ -147,19 +147,19 @@ Mapless class >> findCid: anId [
 
 { #category : #querying }
 Mapless class >> findId: anId [
-	^ self currentRepository instanceOf: self atId: anId
+	^ self currentRepository findOne: self atId: anId
 ]
 
 { #category : #querying }
 Mapless class >> findOne: someConditions [
 	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
 
-	^ self currentRepository instanceOf: self where: someConditions
+	^ self currentRepository findOne: self where: someConditions
 ]
 
 { #category : #querying }
 Mapless class >> first [
-	^ self currentRepository instanceOf: self where: Dictionary new
+	^ self currentRepository findOne: self where: Dictionary new
 ]
 
 { #category : #'instance creation' }
@@ -222,12 +222,12 @@ Mapless class >> getNewId [
 ]
 
 { #category : #configuration }
-Mapless class >> idAttribute [
+Mapless class >> idPropertyName [
 	"Answers the attribute name for the id used by the backend.
 	Different persistance backends might use different names.
 	For example: '_id'  'id'  'oid'  etc"
 
-	^ self currentRepository idAttribute
+	^ self currentRepository idPropertyName
 ]
 
 { #category : #testing }
@@ -403,7 +403,7 @@ Mapless >> basicMaplessData [
 
 { #category : #converting }
 Mapless >> basicMaplessId [
-	^ self maplessData at: self class idAttribute
+	^ self maplessData at: self class idPropertyName
 ]
 
 { #category : #actions }
