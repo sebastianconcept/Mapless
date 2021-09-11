@@ -115,6 +115,18 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimi
 MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
+	^ self
+		find: aMaplessClass
+		where: someConditions
+		limit: aLimitOrNil
+		offset: anOffsetOrNil
+		sort: nil
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+
 	| result databaseCollection |
 	databaseCollection := self
 		databaseCollectionNamed: aMaplessClass collectionName.
@@ -122,11 +134,36 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimi
 		query: [ :q | 
 			aLimitOrNil ifNotNil: [ :limit | q limit: limit ].
 			anOffsetOrNil ifNotNil: [ :offset | q offset: offset ].
+			sortConditionsOrNil ifNotNil: [ :sort | q sort: sort ].
 			q where: someConditions ].
 	^ (result isNil and: [ result isEmpty ])
 		ifTrue: [ #() ]
 		ifFalse: [ (aMaplessClass fromJSONObjects: result)
 				collect: [ :each | self onAfterRead: each ] ]
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil sort: sortConditions [
+	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+
+	^ self
+		find: aMaplessClass
+		where: someConditions
+		limit: aLimitOrNil
+		offset: nil
+		sort: sortConditions
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> find: aMaplessClass where: someConditions sort: sortConditions [
+	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+
+	^ self
+		find: aMaplessClass
+		where: someConditions
+		limit: nil
+		offset: nil
+		sort: sortConditions
 ]
 
 { #category : #accessing }
