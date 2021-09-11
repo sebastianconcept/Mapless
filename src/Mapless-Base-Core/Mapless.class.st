@@ -143,22 +143,12 @@ Mapless class >> find: someConditions sort: sortConditions [
 Mapless class >> findAll [
 	"Answer a collection with all receiver instances from the repository."
 
-	^ self currentRepository find: self where: Dictionary new
+	^ self currentRepository findAll: self
 ]
 
 { #category : #querying }
-Mapless class >> findAllSortedBy: aSelector [
-	"Answers all instances or ans empty set.
-	Note: this is only a good idea when you have very few of this objects
-	and starts to become a REALLY BAD idea when you have, for instance, more than 1000."
-
-	| answer |
-	answer := SortedCollection sortUsing: #yourself ascending.
-	self modelClasses
-		do: [ :aModelClass | 
-			aModelClass == Mapless
-				ifFalse: [ answer addAll: aModelClass findAll ] ].
-	^ answer
+Mapless class >> findAllSort: sortConditions [
+	^ self currentRepository findAll: self sort: sortConditions
 ]
 
 { #category : #querying }

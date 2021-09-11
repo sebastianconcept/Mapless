@@ -188,6 +188,31 @@ MaplessMemoryRepositoryTest >> testDatabaseDrop [
 ]
 
 { #category : #tests }
+MaplessMemoryRepositoryTest >> testFindAll [
+	| found |
+	repository
+		do: [ self addDummyPeople.
+			found := DummyPerson findAll.
+			self assert: found notNil.
+			self assert: found size equals: 20 ]
+]
+
+{ #category : #tests }
+MaplessMemoryRepositoryTest >> testFindAllSorted [
+	| found |
+	repository
+		do: [ (self newDummyPersonNamed: 'Peter') save.
+			(self newDummyPersonNamed: 'Robert') save.
+			(self newDummyPersonNamed: 'John') save.
+			found := DummyPerson findAllSort: #firstName ascending.
+			self assert: found notNil.
+			self assert: found size equals: 3.
+			self assert: found notNil.
+			self assert: found first firstName = 'John'.
+			self assert: found last firstName = 'Robert' ]
+]
+
+{ #category : #tests }
 MaplessMemoryRepositoryTest >> testSelectWithSort [
 	| found |
 	repository

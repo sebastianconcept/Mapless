@@ -61,6 +61,16 @@ MaplessMongoQueriesTest >> testCursorCountWithConditions [
 ]
 
 { #category : #tests }
+MaplessMongoQueriesTest >> testFindAll [
+	| found |
+	repository
+		do: [ self addDummyPeople.
+			found := DummyPerson findAll.
+			self assert: found notNil.
+			self assert: found size equals: 20 ]
+]
+
+{ #category : #tests }
 MaplessMongoQueriesTest >> testSelectWithAnd [
 	| found |
 	repository

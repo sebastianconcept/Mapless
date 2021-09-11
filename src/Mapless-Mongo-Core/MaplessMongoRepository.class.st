@@ -167,6 +167,16 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditions sort: sortCo
 ]
 
 { #category : #accessing }
+MaplessMongoRepository >> findAll: aMaplessClass [
+	^ self find: aMaplessClass where: [ :q |  ]
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions [
+	^ self find: aMaplessClass where: [ :q |  ] sort: sortConditions
+]
+
+{ #category : #accessing }
 MaplessMongoRepository >> findOne: aMaplessClass atId: anId [
 	^ self
 		findOne: aMaplessClass

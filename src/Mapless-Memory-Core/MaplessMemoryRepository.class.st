@@ -155,6 +155,19 @@ MaplessMemoryRepository >> find: aMaplessClass where: someConditions sort: sortC
 ]
 
 { #category : #accessing }
+MaplessMemoryRepository >> findAll: aMaplessClass [
+	^ self find: aMaplessClass where: [ :each | true ]
+]
+
+{ #category : #accessing }
+MaplessMemoryRepository >> findAll: aMaplessClass sort: sortConditions [
+	^ self
+		find: aMaplessClass
+		where: [ :each | true ]
+		sort: sortConditions
+]
+
+{ #category : #accessing }
 MaplessMemoryRepository >> findOne: aMaplessClass atId: anId [
 	^ (self databaseCollectionNamed: aMaplessClass collectionName)
 		findId: anId

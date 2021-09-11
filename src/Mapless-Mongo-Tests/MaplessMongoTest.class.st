@@ -33,6 +33,13 @@ MaplessMongoTest >> do: aBlock [
 	^ repository do: aBlock
 ]
 
+{ #category : #tests }
+MaplessMongoTest >> newDummyPersonNamed: aString [
+	^ DummyPerson new
+		firstName: aString;
+		yourself
+]
+
 { #category : #'setUp-tearDown' }
 MaplessMongoTest >> setUp [
 	super setUp.
@@ -346,6 +353,33 @@ MaplessMongoTest >> testDestroy [
 			people do: [ :guy | guy destroy ].
 			self
 				assert: (people allSatisfy: [ :guy | (DummyPerson existsId: guy id) not ]) ]
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testFindAll [
+	| found |
+	repository
+		do: [ (self newDummyPersonNamed: 'Peter') save.
+			(self newDummyPersonNamed: 'Robert') save.
+			(self newDummyPersonNamed: 'John') save.
+			found := DummyPerson findAll.
+			self assert: found notNil.
+			self assert: found size equals: 3 ]
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testFindAllSorted [
+	| found |
+	repository
+		do: [ (self newDummyPersonNamed: 'Peter') save.
+			(self newDummyPersonNamed: 'Robert') save.
+			(self newDummyPersonNamed: 'John') save.
+			found := DummyPerson findAllSort: {(#firstName -> 1)} asDictionary.
+			self assert: found notNil.
+			self assert: found size equals: 3.
+			self assert: found notNil.
+			self assert: found first firstName = 'John'.
+			self assert: found last firstName = 'Robert' ]
 ]
 
 { #category : #tests }
