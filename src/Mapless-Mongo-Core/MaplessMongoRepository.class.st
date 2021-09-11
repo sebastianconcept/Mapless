@@ -134,7 +134,7 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimi
 		query: [ :q | 
 			aLimitOrNil ifNotNil: [ :limit | q limit: limit ].
 			anOffsetOrNil ifNotNil: [ :offset | q offset: offset ].
-			sortConditionsOrNil ifNotNil: [ :sort | q sort: sort ].
+			sortConditionsOrNil ifNotNil: [ :sort | q order: sort ].
 			q where: someConditions ].
 	^ (result isNil and: [ result isEmpty ])
 		ifTrue: [ #() ]

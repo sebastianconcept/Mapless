@@ -96,5 +96,5 @@ MaplessMongoQueriesTest >> testSelectWithSort [
 			self assert: found notNil.
 			self assert: found size equals: 1 + 10 + 1.
 			self assert: found first firstName = 'john'.
-			self assert: found second firstName = 'john3' ]
+			self assert: found last firstName = 'john3' ]
 ]
