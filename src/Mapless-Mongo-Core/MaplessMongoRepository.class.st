@@ -48,8 +48,8 @@ MaplessMongoRepository >> destroy: aMapless [
 	| bsonFriendly filter |
 	self onBeforeDestroy: aMapless.
 	filter := JsonObject new
-		at: aMapless class idAttribute
-			put: (aMapless data at: aMapless class idAttribute);
+		at: aMapless class idPropertyName
+			put: (aMapless data at: aMapless class idPropertyName);
 		yourself.
 	bsonFriendly := self storableFor: filter.
 	(self databaseCollectionNamed: aMapless class collectionName)
@@ -86,83 +86,33 @@ MaplessMongoRepository >> ensureCollection [
 
 { #category : #testing }
 MaplessMongoRepository >> existsId: anId of: aMaplessClass [
-	^ (self instanceOf: aMaplessClass atId: anId) notNil
-]
-
-{ #category : #testing }
-MaplessMongoRepository >> hasMongoClient [
-	^ mongoClient notNil
+	^ (self findOne: aMaplessClass atId: anId) notNil
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> idAttribute [
-	"Answers '_id' because we're using MongoDB here 
-	and that's what Mongo uses as id."
-
-	^ '_id'
-]
-
-{ #category : #actions }
-MaplessMongoRepository >> insert: aMapless [
-	| bsonFriendly |
-	self onBeforeInsert: aMapless.
-	[ bsonFriendly := self storableFor: aMapless maplessData ]
-		ifCurtailed: [ aMapless data removeKey: self idAttribute ifAbsent: [ nil ] ].
-	(self databaseCollectionNamed: aMapless class collectionName)
-		add: bsonFriendly.
-	self onAfterInsert: aMapless
-]
-
-{ #category : #accessing }
-MaplessMongoRepository >> instanceOf: aMaplessClass atId: anId [
-	^ self
-		instanceOf: aMaplessClass
-		where:
-			(Dictionary
-				newFromPairs:
-					{self idAttribute.
-					anId})
-]
-
-{ #category : #accessing }
-MaplessMongoRepository >> instanceOf: aMaplessClass where: someConditions [
-	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
-
-	| result databaseCollection |
-	databaseCollection := self
-		databaseCollectionNamed: aMaplessClass collectionName.
-	result := databaseCollection
-		queryOne: [ :q | q where: someConditions ].
-	^ result isNil
-		ifTrue: [ nil ]
-		ifFalse: [ self
-				onAfterRead: (aMaplessClass fromJSONObject: result asJsonObject) ]
-]
-
-{ #category : #accessing }
-MaplessMongoRepository >> instancesOf: aMaplessClass where: someConditions [
+MaplessMongoRepository >> find: aMaplessClass where: someConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
-		instancesOf: aMaplessClass
+		find: aMaplessClass
 		where: someConditions
 		limit: nil
 		offset: nil
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> instancesOf: aMaplessClass where: someConditions limit: aLimitOrNil [
+MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
-		instancesOf: aMaplessClass
+		find: aMaplessClass
 		where: someConditions
 		limit: aLimitOrNil
 		offset: nil
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> instancesOf: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
+MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	| result databaseCollection |
@@ -177,6 +127,56 @@ MaplessMongoRepository >> instancesOf: aMaplessClass where: someConditions limit
 		ifTrue: [ #() ]
 		ifFalse: [ (aMaplessClass fromJSONObjects: result)
 				collect: [ :each | self onAfterRead: each ] ]
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> findOne: aMaplessClass atId: anId [
+	^ self
+		findOne: aMaplessClass
+		where:
+			(Dictionary
+				newFromPairs:
+					{self idPropertyName.
+					anId})
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> findOne: aMaplessClass where: someConditions [
+	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
+
+	| result databaseCollection |
+	databaseCollection := self
+		databaseCollectionNamed: aMaplessClass collectionName.
+	result := databaseCollection
+		queryOne: [ :q | q where: someConditions ].
+	^ result isNil
+		ifTrue: [ nil ]
+		ifFalse: [ self
+				onAfterRead: (aMaplessClass fromJSONObject: result asJsonObject) ]
+]
+
+{ #category : #testing }
+MaplessMongoRepository >> hasMongoClient [
+	^ mongoClient notNil
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> idPropertyName [
+	"Answers '_id' because we're using MongoDB here 
+	and that's what Mongo uses as id."
+
+	^ '_id'
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> insert: aMapless [
+	| bsonFriendly |
+	self onBeforeInsert: aMapless.
+	[ bsonFriendly := self storableFor: aMapless maplessData ]
+		ifCurtailed: [ aMapless data removeKey: self idPropertyName ifAbsent: [ nil ] ].
+	(self databaseCollectionNamed: aMapless class collectionName)
+		add: bsonFriendly.
+	self onAfterInsert: aMapless
 ]
 
 { #category : #accessing }
@@ -209,7 +209,7 @@ MaplessMongoRepository >> update: aMapless [
 	(self databaseCollectionNamed: aMapless class collectionName)
 		replace:
 			(Dictionary new
-				at: self idAttribute put: aMapless basicMaplessId;
+				at: self idPropertyName put: aMapless basicMaplessId;
 				yourself)
 		with: bsonFriendly.
 	self onAfterUpdate: aMapless

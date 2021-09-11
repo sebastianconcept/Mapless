@@ -7,7 +7,7 @@ Class {
 { #category : #'as yet unclassified' }
 DummyUser class >> findUsername: anUsername [
 	^ self currentRepository
-		instanceOf: self
+		findOne: self
 		where:
 			(JsonObject
 				newFromPairs:

@@ -74,25 +74,54 @@ MaplessMemoryRepository >> ensureCollection [
 
 { #category : #testing }
 MaplessMemoryRepository >> existsId: anId of: aMaplessClass [
-	^ (self instanceOf: aMaplessClass atId: anId) notNil
+	^ (self findOne: aMaplessClass atId: anId) notNil
 ]
 
 { #category : #accessing }
-MaplessMemoryRepository >> idAttribute [
-	"Answers '_id' because we're using MongoDB here 
-	and that's what Mongo uses as id."
+MaplessMemoryRepository >> find: aMaplessClass where: someConditions [
+	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
-	^ '_id'
+	^ self
+		find: aMaplessClass
+		where: someConditions
+		limit: nil
+		offset: nil
 ]
 
 { #category : #accessing }
-MaplessMemoryRepository >> instanceOf: aMaplessClass atId: anId [
+MaplessMemoryRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+
+	^ self
+		find: aMaplessClass
+		where: someConditions
+		limit: aLimitOrNil
+		offset: nil
+]
+
+{ #category : #accessing }
+MaplessMemoryRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+
+	| result databaseCollection |
+	databaseCollection := self
+		databaseCollectionNamed: aMaplessClass collectionName.
+	result := databaseCollection values select: someConditions.
+	anOffsetOrNil notNil
+		ifTrue: [ result := result
+				copyFrom: anOffsetOrNil
+				to: (result size min: anOffsetOrNil + aLimitOrNil) ].
+	^ result collect: [ :each | self onAfterRead: each ]
+]
+
+{ #category : #accessing }
+MaplessMemoryRepository >> findOne: aMaplessClass atId: anId [
 	^ (self databaseCollectionNamed: aMaplessClass collectionName)
 		findId: anId
 ]
 
 { #category : #accessing }
-MaplessMemoryRepository >> instanceOf: aMaplessClass where: someConditions [
+MaplessMemoryRepository >> findOne: aMaplessClass where: someConditions [
 	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
 
 	| result databaseCollection |
@@ -107,40 +136,11 @@ MaplessMemoryRepository >> instanceOf: aMaplessClass where: someConditions [
 ]
 
 { #category : #accessing }
-MaplessMemoryRepository >> instancesOf: aMaplessClass where: someConditions [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+MaplessMemoryRepository >> idPropertyName [
+	"Answers '_id' because we're using MongoDB here 
+	and that's what Mongo uses as id."
 
-	^ self
-		instancesOf: aMaplessClass
-		where: someConditions
-		limit: nil
-		offset: nil
-]
-
-{ #category : #accessing }
-MaplessMemoryRepository >> instancesOf: aMaplessClass where: someConditions limit: aLimitOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
-
-	^ self
-		instancesOf: aMaplessClass
-		where: someConditions
-		limit: aLimitOrNil
-		offset: nil
-]
-
-{ #category : #accessing }
-MaplessMemoryRepository >> instancesOf: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
-
-	| result databaseCollection |
-	databaseCollection := self
-		databaseCollectionNamed: aMaplessClass collectionName.
-	result := databaseCollection values select: someConditions.
-	anOffsetOrNil notNil
-		ifTrue: [ result := result
-				copyFrom: anOffsetOrNil
-				to: (result size min: anOffsetOrNil + aLimitOrNil) ].
-	^ result collect: [ :each | self onAfterRead: each ]
+	^ '_id'
 ]
 
 { #category : #actions }
