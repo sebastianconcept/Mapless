@@ -186,3 +186,17 @@ MaplessMemoryRepositoryTest >> testDatabaseDrop [
 	db drop.
 	self assert: db collections isEmpty
 ]
+
+{ #category : #tests }
+MaplessMemoryRepositoryTest >> testSelectWithSort [
+	| found |
+	repository
+		do: [ self addDummyPeople.
+			found := DummyPerson
+				find: [ :each | each firstName = 'john' | (each firstName = 'john3') ]
+				sort: #firstName ascending.
+			self assert: found notNil.
+			self assert: found size equals: 1 + 10 + 1.
+			self assert: found first firstName = 'john'.
+			self assert: found last firstName = 'john3' ]
+]

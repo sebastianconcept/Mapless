@@ -111,6 +111,35 @@ Mapless class >> find: someConditions limit: howManyResults offset: startingFrom
 ]
 
 { #category : #querying }
+Mapless class >> find: someConditions limit: howManyResults offset: startingFromWhichResult sort: sortConditions [
+	^ self currentRepository
+		find: self
+		where: someConditions
+		limit: howManyResults
+		offset: startingFromWhichResult
+		sort: sortConditions
+]
+
+{ #category : #querying }
+Mapless class >> find: someConditions limit: toHowManyResults sort: sortConditions [
+	^ self currentRepository
+		find: self
+		where: someConditions
+		limit: toHowManyResults
+		sort: sortConditions
+]
+
+{ #category : #querying }
+Mapless class >> find: someConditions sort: sortConditions [
+	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
+
+	^ self currentRepository
+		find: self
+		where: someConditions
+		sort: sortConditions
+]
+
+{ #category : #querying }
 Mapless class >> findAll [
 	"Answer a collection with all receiver instances from the repository."
 
@@ -124,9 +153,7 @@ Mapless class >> findAllSortedBy: aSelector [
 	and starts to become a REALLY BAD idea when you have, for instance, more than 1000."
 
 	| answer |
-	answer := GRSmallOrderedSet
-		sortSelector: aSelector
-		equalitySelector: #=.
+	answer := SortedCollection sortUsing: #yourself ascending.
 	self modelClasses
 		do: [ :aModelClass | 
 			aModelClass == Mapless

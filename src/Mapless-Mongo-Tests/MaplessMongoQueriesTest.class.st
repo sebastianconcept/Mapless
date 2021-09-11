@@ -84,3 +84,17 @@ MaplessMongoQueriesTest >> testSelectWithOr [
 			self assert: (found anySatisfy: [ :e | e firstName = 'john' ]).
 			self assert: (found anySatisfy: [ :e | e firstName = 'john3' ]) ]
 ]
+
+{ #category : #tests }
+MaplessMongoQueriesTest >> testSelectWithSort [
+	| found |
+	repository
+		do: [ self addDummyPeople.
+			found := DummyPerson
+				find: [ :each | each firstName = 'john' | (each firstName = 'john3') ]
+				sort: {('firstName' -> 1)} asDictionary.
+			self assert: found notNil.
+			self assert: found size equals: 1 + 10 + 1.
+			self assert: found first firstName = 'john'.
+			self assert: found last firstName = 'john3' ]
+]
