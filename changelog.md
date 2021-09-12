@@ -1,3 +1,14 @@
+September 11, 2021
+===================================
+* Made reposotories API consistent. No mode `instanceOf` kind of messages. The whole API feels inspired in MongoDB.
+* Fixed setters. Now they return the receiver instead of the value that was set.
+* Added `find:where:sort` and all the `*sort:` variations for the API.
+
+September 8, 2021
+===================================
+* Added `count` and `count:where:` with basic coverage.
+* Added basic coverage showing usage of MongoTalk-Queries in the `Mapless class>>find:` argument.
+
 September 1st, 2021
 ===================================
 * Fixed `BaslineOfMapless` missing Memory package.
