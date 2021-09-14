@@ -124,7 +124,7 @@ MaplessMemoryRepository >> find: aMaplessClass where: someConditions limit: aLim
 				copyFrom: anOffsetOrNil
 				to: (result size min: anOffsetOrNil + aLimitOrNil) ].
 	sortConditionsOrNil
-		ifNotNil: [ result := (SortedCollection sortUsing: sortConditionsOrNil)
+		ifNotNil: [ result := (SortedCollection sortBlock: sortConditionsOrNil)
 				addAll: result;
 				yourself ].
 	^ result collect: [ :each | self onAfterRead: each ]
