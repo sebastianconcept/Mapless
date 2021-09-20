@@ -77,13 +77,21 @@ MaplessMongoTest >> testComposedAccess [
 			user person: guy.
 			guy save.
 			user save.
-			self assert: (DummyUser findId: user id) completeName = 'john q'.
 			self
-				assert: (DummyUser findId: user id) person class = MaplessReference.
+				assert: (DummyUser findId: user id) completeName
+				equals: 'john q'.
 			self
-				assert: (DummyUser findId: user id) person model class = DummyPerson.
-			self assert: (DummyUser findId: user id) person firstName = 'john'.
-			self assert: (DummyUser findId: user id) person lastName = 'q' ]
+				assert: (DummyUser findId: user id) person class
+				equals: MaplessReference.
+			self
+				assert: (DummyUser findId: user id) person model class
+				equals: DummyPerson.
+			self
+				assert: (DummyUser findId: user id) person firstName
+				equals: 'john'.
+			self
+				assert: (DummyUser findId: user id) person lastName
+				equals: 'q' ]
 ]
 
 { #category : #tests }
@@ -249,11 +257,11 @@ MaplessMongoTest >> testComposition [
 				lastName: 'q';
 				yourself.
 			user person: guy.
-			self assert: (user data at: 'person') class = DummyPerson.
-			self assert: (user data at: 'person') _c = #DummyPerson.
+			self assert: (user data at: 'person') class equals: DummyPerson.
+			self assert: (user data at: 'person') _c equals: #DummyPerson.
 			self assert: user id isNil.
 			self assert: (user data at: 'person') id isNil.
-			self assert: user completeName = 'john q' ]
+			self assert: user completeName equals: 'john q' ]
 ]
 
 { #category : #tests }
@@ -599,6 +607,6 @@ MaplessMongoTest >> testSubModelsFromReifiedJSON [
 			reified := DummyUser
 				fromJSONString: jsonString
 				in: self currentRepository.
-			self assert: reified person class = DummyPerson.
-			self assert: reified completeName = 'john q' ]
+			self assert: reified person class equals: DummyPerson.
+			self assert: reified completeName equals: 'john q' ]
 ]

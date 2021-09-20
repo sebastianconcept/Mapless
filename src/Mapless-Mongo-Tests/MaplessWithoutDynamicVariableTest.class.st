@@ -36,3 +36,26 @@ MaplessWithoutDynamicVariableTest >> testSaveToAndReadFromTwoDatabases [
 	self assert: found notNil.
 	self assert: found firstName equals: guy firstName
 ]
+
+{ #category : #running }
+MaplessWithoutDynamicVariableTest >> testUseSubmapless [
+	| repo user guy found |
+	repo := MaplessMongoRepository
+		for: 'Mapless-Test'
+		with: MaplessMongoPool local.
+	repositories at: 1 put: repo.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	user := DummyUser new
+		uername: 'e';
+		person: guy;
+		yourself.
+	repo save: guy.
+	repo save: user.
+	found := repo findOne: DummyUser atId: user id.
+	self assert: found notNil.
+	self assert: found person firstName equals: guy firstName.
+	self assert: found completeName equals: 'john q'
+]
