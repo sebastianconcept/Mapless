@@ -52,11 +52,8 @@ MaplessMongoMultiRepositoryTest >> testSaveToAndReadFromTwoDatabases [
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
-			self assert: guy isUnsaved.
 			guy save.
-			self deny: guy isUnsaved ].
-	repo1
-		do: [ found := DummyPerson findId: guy id.
+			found := DummyPerson findId: guy id.
 			self assert: found notNil.
 			self assert: found firstName equals: guy firstName ].
 	repo2
@@ -64,11 +61,8 @@ MaplessMongoMultiRepositoryTest >> testSaveToAndReadFromTwoDatabases [
 				firstName: 'peter';
 				lastName: 'e';
 				yourself.
-			self assert: guy isUnsaved.
 			guy save.
-			self deny: guy isUnsaved ].
-	repo2
-		do: [ found := DummyPerson findId: guy id.
+			found := DummyPerson findId: guy id.
 			self assert: found notNil.
 			self assert: found firstName equals: guy firstName ]
 ]
