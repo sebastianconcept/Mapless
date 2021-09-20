@@ -7,6 +7,11 @@ Class {
 	#category : #'Mapless-Mongo-Tests-Tests'
 }
 
+{ #category : #accessing }
+MaplessMongoModelTest >> currentRepository [
+	^ MaplessCurrentRepository value
+]
+
 { #category : #actions }
 MaplessMongoModelTest >> do: aBlock [
 	^ repository do: aBlock
@@ -66,7 +71,7 @@ MaplessMongoModelTest >> testInsertHook [
 		yourself.
 	self assert: user beforeInsert isNil.
 	self assert: user afterInsert isNil.
-	self do: [ user insert ].
+	self do: [ self currentRepository insert: user ].
 	self assert: user beforeInsert.
 	self assert: user afterInsert
 ]
@@ -122,15 +127,23 @@ MaplessMongoModelTest >> testReifyWithoutMetadata [
 	user := DummyPerson new
 		firstName: 'john';
 		yourself.
-	serializedWith := '{"id": "abc123", "_c": "DummyPerson","createdOn": "2017-01-22T13:49:37.564031+00:00","firstName": "john"}'.
-	serializedWithout := '{"id": "abc123", "createdOn": "2017-01-22T13:49:37.564031+00:00","firstName": "john"}'.
+	serializedWith := '{"_id": "abc123", "_c": "DummyPerson","createdOn": "2017-01-22T13:49:37.564031+00:00","firstName": "john"}'.
+	serializedWithout := '{"_id": "abc123", "createdOn": "2017-01-22T13:49:37.564031+00:00","firstName": "john"}'.
 	self
 		do: [ self
-				assert: (DummyPerson fromJSONString: serializedWith) class == DummyPerson.
+				assert:
+					(DummyPerson fromJSONString: serializedWith in: self currentRepository)
+						class == DummyPerson.
 			self
-				assert: (DummyPerson fromJSONString: serializedWithout) class == DummyPerson.
+				assert:
+					(DummyPerson
+						fromJSONString: serializedWithout
+						in: self currentRepository) class == DummyPerson.
 			self
-				assert: (DummyUser fromJSONString: serializedWithout) class == DummyUser ]
+				assert:
+					(DummyUser
+						fromJSONString: serializedWithout
+						in: self currentRepository) class == DummyUser ]
 ]
 
 { #category : #tests }
@@ -168,24 +181,21 @@ MaplessMongoModelTest >> testUnrefDestroy [
 				yourself.
 			"Save all tags in the collection"
 			person tags: tagsCollection.
-			self assert: person isUnsaved.
 			"save tagsCollection"
 			tagsCollection do: [ :e | e save ].
 			person save.
-			self deny: person isUnsaved.
 			loaded := DummyPerson findId: person id.
 			self assert: loaded notNil.
-			self deny: loaded isUnsaved.
 			reified := loaded unreferenced.
-			self assert: reified data tags class = OrderedCollection.
-			self assert: (reified data tags first class = MaplessReference) not.
+			self assert: reified maplessData tags class = OrderedCollection.
 			self
-				assert: (reified data tags second class = MaplessReference) not.
-			self assert: reified data tags first isCustomer.
-			self assert: reified data tags second isComplicated = false.
+				assert: (reified maplessData tags first class = MaplessReference) not.
+			self
+				assert: (reified maplessData tags second class = MaplessReference) not.
+			self assert: reified maplessData tags first isCustomer.
+			self assert: reified maplessData tags second isComplicated = false.
 			reified destroy.
-			"self do: [ loaded destroy].
-	"
+			"loaded destroy"
 			self assert: (reloaded := DummyPerson existsId: reified id) not ]
 ]
 
@@ -215,10 +225,8 @@ MaplessMongoModelTest >> testUnrefDestroy2 [
 				yourself.
 			self do: [ friends do: [ :e | e save ] ].
 			self do: [ guy save ].
-			self deny: guy isUnsaved.
 			self do: [ loaded := DummyPerson findId: guy id ].
 			self assert: loaded notNil.
-			self deny: loaded isUnsaved.
 			self do: [ reified := loaded unreferenced ].
 			self assert: reified data friends class = OrderedCollection.
 			self do: [ reified destroy ].
@@ -257,14 +265,11 @@ MaplessMongoModelTest >> testUnreferenced [
 
 			"Save all tags in the collection"
 			person tags: tagsCollection.
-			self assert: person isUnsaved.
 			"save tagsCollection"
 			tagsCollection do: [ :e | self do: [ e save ] ].
 			self do: [ person save ].
-			self deny: person isUnsaved.
 			self do: [ loaded := DummyPerson findId: person id ].
 			self assert: loaded notNil.
-			self deny: loaded isUnsaved.
 			self do: [ reified := loaded unreferenced ].
 			self assert: reified data tags class = OrderedCollection.
 			self assert: (reified data tags first class = MaplessReference) not.
@@ -301,10 +306,8 @@ MaplessMongoModelTest >> testUnreferenced2 [
 				yourself.
 			friends do: [ :e | self do: [ e save ] ].
 			self do: [ guy save ].
-			self deny: guy isUnsaved.
 			self do: [ loaded := DummyPerson findId: guy id ].
 			self assert: loaded notNil.
-			self deny: loaded isUnsaved.
 			self do: [ reified := loaded unreferenced ].
 			self assert: reified data friends class = OrderedCollection.
 			self assert: reified data favorites = stuff ]
@@ -319,8 +322,21 @@ MaplessMongoModelTest >> testUpdatetHook [
 	self assert: user beforeUpdate isNil.
 	self assert: user afterUpdate isNil.
 	self
-		do: [ user save.
-			user save ].
+		do: [ self currentRepository insert: user.
+			self currentRepository update: user ].
 	self assert: user beforeUpdate.
 	self assert: user afterUpdate
+]
+
+{ #category : #tests }
+MaplessMongoModelTest >> testUpsertHook [
+	| user |
+	user := DummyUser new
+		username: 'johnq';
+		yourself.
+	self assert: user beforeUpsert isNil.
+	self assert: user afterUpsert isNil.
+	self do: [ user save ].
+	self assert: user beforeUpsert.
+	self assert: user afterUpsert
 ]

@@ -28,6 +28,11 @@ MaplessMongoTest class >> lastStoredRun [
 		yourself
 ]
 
+{ #category : #accessing }
+MaplessMongoTest >> currentRepository [
+	^ MaplessCurrentRepository value
+]
+
 { #category : #actions }
 MaplessMongoTest >> do: aBlock [
 	^ repository do: aBlock
@@ -70,18 +75,23 @@ MaplessMongoTest >> testComposedAccess [
 				lastName: 'q';
 				yourself.
 			user person: guy.
+			guy save.
+			user save.
 			self
-				do: [ guy save.
-					user save ].
+				assert: (DummyUser findId: user id) completeName
+				equals: 'john q'.
 			self
-				do: [ self assert: (DummyUser findId: user id) completeName = 'john q'.
-					self
-						assert: (DummyUser findId: user id) person class = MaplessReference.
-					self
-						assert: (DummyUser findId: user id) person model class = DummyPerson.
-					self
-						assert: (DummyUser findId: user id) person firstName = 'john'.
-					self assert: (DummyUser findId: user id) person lastName = 'q' ] ]
+				assert: (DummyUser findId: user id) person class
+				equals: MaplessReference.
+			self
+				assert: (DummyUser findId: user id) person model class
+				equals: DummyPerson.
+			self
+				assert: (DummyUser findId: user id) person firstName
+				equals: 'john'.
+			self
+				assert: (DummyUser findId: user id) person lastName
+				equals: 'q' ]
 ]
 
 { #category : #tests }
@@ -100,13 +110,8 @@ MaplessMongoTest >> testComposedDelete [
 										firstName: char asString;
 										yourself);
 								yourself) ].
-			self assert: (users allSatisfy: [ :user | user isUnsaved ]).
-			self assert: (users allSatisfy: [ :user | user person isUnsaved ]).
 			self do: [ users do: [ :user | user person save ] ].
 			self do: [ users do: [ :user | user save ] ].
-			self assert: (users allSatisfy: [ :user | user isUnsaved not ]).
-			self
-				assert: (users allSatisfy: [ :user | user person isUnsaved not ]).
 			self assert: (users allSatisfy: [ :user | user isDeleted not ]).
 			self
 				assert: (users allSatisfy: [ :user | user person isDeleted not ]).
@@ -134,26 +139,18 @@ MaplessMongoTest >> testComposedDestroy [
 										firstName: char asString;
 										yourself);
 								yourself) ].
-			self assert: (users allSatisfy: [ :user | user isUnsaved ]).
-			self assert: (users allSatisfy: [ :user | user person isUnsaved ]).
-			self do: [ users do: [ :user | user person save ] ].
-			self do: [ users do: [ :user | user save ] ].
-			self assert: (users allSatisfy: [ :user | user isUnsaved not ]).
-			self
-				assert: (users allSatisfy: [ :user | user person isUnsaved not ]).
-			self do: [ users do: [ :user | user person destroy ] ].
-			self
-				do: [ self
-						assert:
-							(users
-								allSatisfy: [ :user | (DummyPerson existsId: user person id) not ]).
-					self
-						assert: (users allSatisfy: [ :user | DummyUser existsId: user id ]) ].
-			self do: [ users do: [ :user | user destroy ] ].
+			users do: [ :user | user person save ].
+			users do: [ :user | user save ].
+			users do: [ :user | user person destroy ].
 			self
 				assert:
-					(self
-						do: [ users allSatisfy: [ :user | (DummyUser existsId: user id) not ] ]) ]
+					(users
+						allSatisfy: [ :user | (DummyPerson existsId: user person id) not ]).
+			self
+				assert: (users allSatisfy: [ :user | DummyUser existsId: user id ]).
+			users do: [ :user | user destroy ].
+			self
+				assert: (users allSatisfy: [ :user | (DummyUser existsId: user id) not ]) ]
 ]
 
 { #category : #tests }
@@ -168,21 +165,15 @@ MaplessMongoTest >> testComposedResaveAndLoad [
 				lastName: 'W';
 				yourself.
 			user person: guy.
-			self do: [ guy save ].
-			self
-				shouldnt: [ self do: [ user save ] ]
-				raise: MaplessUnsavedSubmodel.
-			self deny: user isUnsaved.
-			self deny: guy isUnsaved ].
-	self
-		do: [ loaded := DummyUser findId: user id.
+			guy save.
+			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel.
+			loaded := DummyUser findId: user id.
 			self assert: loaded person firstName equals: 'John'.
 			loaded person lastName: 'wayne'.
 			loaded person save.
 			loaded := DummyUser findId: user id.
-			self assert: loaded person lastName equals: 'wayne' ].
-	self
-		do: [ loaded := DummyUser findId: user id.
+			self assert: loaded person lastName equals: 'wayne'.
+			loaded := DummyUser findId: user id.
 			self assert: loaded person firstName equals: 'John'.
 			loaded person lastName: 'Wayne'.
 			loaded person save.
@@ -207,19 +198,11 @@ MaplessMongoTest >> testComposedSave [
 			user person: guy.
 
 			"Whithout saving a submodel"
-			self assert: user isUnsaved.
-			self assert: guy isUnsaved.
-			self
-				should: [ self do: [ user save ] ]
-				raise: MaplessUnsavedSubmodel.
+			self should: [ user save ] raise: MaplessUnsavedSubmodel.
 
 			"After saving that submodel"
-			self do: [ guy save ].
-			self
-				shouldnt: [ self do: [ user save ] ]
-				raise: MaplessUnsavedSubmodel.
-			self deny: user isUnsaved.
-			self deny: guy isUnsaved ]
+			guy save.
+			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel ]
 ]
 
 { #category : #tests }
@@ -238,38 +221,28 @@ MaplessMongoTest >> testComposedSaveAndLoad [
 			user person: guy.
 
 			"Whithout saving a submodel"
-			self assert: user isUnsaved.
-			self assert: guy isUnsaved.
-			self
-				should: [ self do: [ user save ] ]
-				raise: MaplessUnsavedSubmodel.
+			self should: [ user save ] raise: MaplessUnsavedSubmodel.
 
 			"After saving that submodel"
-			self do: [ guy save ].
-			self
-				shouldnt: [ self do: [ user save ] ]
-				raise: MaplessUnsavedSubmodel.
-			self deny: user isUnsaved.
-			self deny: guy isUnsaved.
-			self
-				do: [ loaded := DummyUser findId: user id.
-					self assert: loaded notNil.
-					self deny: loaded isUnsaved.
-					self assert: loaded createdOn notNil.
-					self assert: loaded modifiedOn notNil.
-					loaded
-						createdOn: nil;
-						modifiedOn: nil.
-					user
-						createdOn: nil;
-						modifiedOn: nil.
-					loaded data
-						keysAndValuesDo: [ :k :v | self assert: v = (user data at: k) ].
-					self assert: loaded username = 'johnq'.
-					self assert: loaded person firstName = 'john'.
-					self assert: loaded person lastName = 'q'.
-					self assert: loaded person maplessClass = DummyPerson asString.
-					self assert: loaded person model class = DummyPerson ] ]
+			guy save.
+			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel.
+			loaded := DummyUser findId: user id.
+			self assert: loaded notNil.
+			self assert: loaded createdOn notNil.
+			self assert: loaded modifiedOn notNil.
+			loaded
+				createdOn: nil;
+				modifiedOn: nil.
+			user
+				createdOn: nil;
+				modifiedOn: nil.
+			loaded data
+				keysAndValuesDo: [ :k :v | self assert: v equals: (user data at: k) ].
+			self assert: loaded username = 'johnq'.
+			self assert: loaded person firstName = 'john'.
+			self assert: loaded person lastName = 'q'.
+			self assert: loaded person maplessClassName = DummyPerson name.
+			self assert: loaded person model class = DummyPerson ]
 ]
 
 { #category : #tests }
@@ -284,13 +257,11 @@ MaplessMongoTest >> testComposition [
 				lastName: 'q';
 				yourself.
 			user person: guy.
-			self assert: user isUnsaved.
-			self assert: guy isUnsaved.
-			self assert: (user data at: 'person') class = DummyPerson.
-			self assert: (user data at: 'person') _c = #DummyPerson.
+			self assert: (user data at: 'person') class equals: DummyPerson.
+			self assert: (user data at: 'person') _c equals: #DummyPerson.
 			self assert: user id isNil.
 			self assert: (user data at: 'person') id isNil.
-			self assert: user completeName = 'john q' ]
+			self assert: user completeName equals: 'john q' ]
 ]
 
 { #category : #tests }
@@ -303,9 +274,7 @@ MaplessMongoTest >> testDateAndTime [
 				lastName: 'q';
 				createdOn: when;
 				yourself.
-			self assert: guy isUnsaved.
 			guy save.
-			self deny: guy isUnsaved.
 			loaded := DummyPerson findId: guy id.
 			self
 				assert: loaded createdOn asDate asString = when asDate asString.
@@ -326,9 +295,7 @@ MaplessMongoTest >> testDelete [
 							(DummyPerson new
 								firstName: char asString;
 								yourself) ].
-			self assert: (people allSatisfy: [ :guy | guy isUnsaved ]).
 			people do: [ :guy | guy save ].
-			self assert: (people allSatisfy: [ :guy | guy isUnsaved not ]).
 			self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
 			people do: [ :guy | guy delete ].
 			self assert: (people allSatisfy: [ :guy | guy isDeleted ]) ]
@@ -346,9 +313,7 @@ MaplessMongoTest >> testDestroy [
 							(DummyPerson new
 								firstName: char asString;
 								yourself) ].
-			self assert: (people allSatisfy: [ :guy | guy isUnsaved ]).
 			people do: [ :guy | guy save ].
-			self assert: (people allSatisfy: [ :guy | guy isUnsaved not ]).
 			self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
 			people do: [ :guy | guy destroy ].
 			self
@@ -389,10 +354,7 @@ MaplessMongoTest >> testIsUnsaved [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self
-		do: [ self assert: guy isUnsaved.
-			guy save.
-			self deny: guy isUnsaved ]
+	self do: [ guy save ]
 ]
 
 { #category : #tests }
@@ -436,11 +398,11 @@ MaplessMongoTest >> testMultipleComposedComposables [
 						label: 'nice';
 						yourself);
 				yourself.
-			self do: [ tagsOfTagsOfTags do: [ :tag | tag save ] ].
+			tagsOfTagsOfTags do: [ :tag | tag save ].
 			tagsOfTags first tags: tagsOfTagsOfTags.
 			tagsOfTags second tags: tagsOfTagsOfTags.
 			self
-				shouldnt: [ self do: [ tagsOfTags do: [ :tag | tag save ] ] ]
+				shouldnt: [ tagsOfTags do: [ :tag | tag save ] ]
 				raise: MaplessUnsavedSubmodel.
 			tags first tags: tagsOfTags.
 			tags second tags: tagsOfTags.
@@ -448,25 +410,20 @@ MaplessMongoTest >> testMultipleComposedComposables [
 			self
 				shouldnt: [ self do: [ tags do: [ :e | e save ] ] ]
 				raise: MaplessUnsavedSubmodel.
-			self deny: (tagsOfTagsOfTags anySatisfy: [ :tag | tag isUnsaved ]).
-			self deny: (tagsOfTags anySatisfy: [ :tag | tag isUnsaved ]).
-			self deny: (tags anySatisfy: [ :tag | tag isUnsaved ]).
-			self
-				do: [ loaded := DummyTag findId: tags first id.
-					self assert: loaded notNil.
-					self deny: loaded isUnsaved.
-					self assert: loaded label = 'is this'.
-					self assert: loaded tags isCollection.
-					self assert: loaded tags notEmpty.
-					self assert: loaded tags isCollection.
-					self deny: loaded tags first tags isEmpty.
-					self assert: loaded tags first label = 'like'.
-					self assert: loaded tags second label = 'really?'.
-					self assert: loaded tags size = 2.
-					self deny: loaded tags first tags isEmpty.
-					self assert: loaded tags first tags size = 2.
-					self assert: loaded tags first tags first label = 'wow'.
-					self assert: loaded tags first tags second label = 'nice' ] ]
+			loaded := DummyTag findId: tags first id.
+			self assert: loaded notNil.
+			self assert: loaded label = 'is this'.
+			self assert: loaded tags isCollection.
+			self assert: loaded tags notEmpty.
+			self assert: loaded tags isCollection.
+			self deny: loaded tags first tags isEmpty.
+			self assert: loaded tags first label = 'like'.
+			self assert: loaded tags second label = 'really?'.
+			self assert: loaded tags size = 2.
+			self deny: loaded tags first tags isEmpty.
+			self assert: loaded tags first tags size = 2.
+			self assert: loaded tags first tags first label = 'wow'.
+			self assert: loaded tags first tags second label = 'nice' ]
 ]
 
 { #category : #tests }
@@ -493,25 +450,21 @@ MaplessMongoTest >> testMultipleComposedMixedSaveAndLoad [
 						yourself);
 				yourself.
 			things := guy things.
-			self do: [ guy things do: [ :each | each save ] ].
+			guy things do: [ :each | each save ].
 			self
 				shouldnt: [ self do: [ guy save ] ]
 				raise: MaplessUnsavedSubmodel.
-			self deny: guy isUnsaved.
-			self assert: (things allSatisfy: [ :e | e isUnsaved not ]).
-			self
-				do: [ loaded := DummyPerson findId: guy id.
-					self assert: loaded notNil.
-					self deny: loaded isUnsaved.
-					self assert: loaded firstName = 'john'.
-					self assert: loaded things isCollection.
-					self assert: loaded things notEmpty.
-					loaded things
-						do: [ :each | self assert: (things anySatisfy: [ :t | t id = each id ]) ].
-					loaded unreferenced.
-					self assert: loaded things first class = DummyTag.
-					self assert: loaded things second class = DummyTag.
-					self assert: loaded things third class = DummyUser ] ]
+			loaded := DummyPerson findId: guy id.
+			self assert: loaded notNil.
+			self assert: loaded firstName = 'john'.
+			self assert: loaded things isCollection.
+			self assert: loaded things notEmpty.
+			loaded things
+				do: [ :each | self assert: (things anySatisfy: [ :t | t id = each id ]) ].
+			loaded unreferenced.
+			self assert: loaded things first class = DummyTag.
+			self assert: loaded things second class = DummyTag.
+			self assert: loaded things third class = DummyUser ]
 ]
 
 { #category : #tests }
@@ -540,24 +493,17 @@ MaplessMongoTest >> testMultipleComposedSaveAndLoad [
 				person: guy;
 				tags: tags;
 				yourself.
-			self do: [ tags do: [ :tag | tag save ] ].
-			self do: [ guy save ].
-			self
-				shouldnt: [ self do: [ user save ] ]
-				raise: MaplessUnsavedSubmodel.
-			self deny: user isUnsaved.
-			self deny: guy isUnsaved.
-			self assert: (tags allSatisfy: [ :e | e isUnsaved not ]).
-			self
-				do: [ loaded := DummyUser findId: user id.
-					self assert: loaded notNil.
-					self deny: loaded isUnsaved.
-					self assert: loaded username = 'johnq'.
-					self assert: loaded tags isCollection.
-					self assert: loaded tags notEmpty.
-					self assert: loaded tags isCollection.
-					loaded tags
-						do: [ :tag | self assert: (tags anySatisfy: [ :t | t id = tag id ]) ] ] ]
+			tags do: [ :tag | tag save ].
+			guy save.
+			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel.
+			loaded := DummyUser findId: user id.
+			self assert: loaded notNil.
+			self assert: loaded username = 'johnq'.
+			self assert: loaded tags isCollection.
+			self assert: loaded tags notEmpty.
+			self assert: loaded tags isCollection.
+			loaded tags
+				do: [ :tag | self assert: (tags anySatisfy: [ :t | t id = tag id ]) ] ]
 ]
 
 { #category : #tests }
@@ -576,8 +522,6 @@ MaplessMongoTest >> testQueryUsers [
 										firstName: char asString;
 										yourself);
 								yourself) ].
-			self assert: (users allSatisfy: [ :user | user isUnsaved ]).
-			self assert: (users allSatisfy: [ :user | user person isUnsaved ]).
 			self do: [ users do: [ :user | user person save ] ].
 			self do: [ users do: [ :user | user save ] ].
 			self
@@ -607,10 +551,7 @@ MaplessMongoTest >> testSimpleSave [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self
-		do: [ self assert: guy isUnsaved.
-			guy save.
-			self deny: guy isUnsaved ]
+	self do: [ guy save ]
 ]
 
 { #category : #tests }
@@ -620,12 +561,10 @@ MaplessMongoTest >> testSimpleSaveAndLoad [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self do: [ self assert: guy isUnsaved ].
-	self do: [ guy save ].
-	self do: [ self deny: guy isUnsaved ].
-	self do: [ loaded := DummyPerson findId: guy id ].
+	self
+		do: [ guy save.
+			loaded := DummyPerson findId: guy id ].
 	self assert: loaded notNil.
-	self do: [ self deny: loaded isUnsaved ].
 	loaded data
 		keysAndValuesDo: [ :k :v | 
 			((loaded data at: k) isKindOf: DateAndTime) not
@@ -640,15 +579,15 @@ MaplessMongoTest >> testSimpleSaveAndUpdate [
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
-			self assert: guy isUnsaved.
-			self do: [ guy save ].
-			self deny: guy isUnsaved.
-			self do: [ loaded := DummyPerson findId: guy id ].
-			self assert: loaded firstName = 'john'.
-			self deny: loaded remember = 'this words'.
+			self
+				do: [ guy save.
+					loaded := DummyPerson findId: guy id ].
+			self assert: loaded firstName equals: 'john'.
+			self deny: loaded remember equals: 'this words'.
 			loaded remember: 'this words'.
-			self do: [ loaded save ].
-			self do: [ reloaded := DummyPerson findId: guy id ].
+			self
+				do: [ loaded save.
+					reloaded := DummyPerson findId: guy id ].
 			self assert: reloaded remember = 'this words' ]
 ]
 
@@ -665,8 +604,9 @@ MaplessMongoTest >> testSubModelsFromReifiedJSON [
 				yourself.
 			user person: guy.
 			jsonString := user unreferenced asJSONString.
-			reified := DummyUser fromJSONString: jsonString.
-			self assert: guy isUnsaved.
-			self assert: reified person class = DummyPerson.
-			self assert: reified completeName = 'john q' ]
+			reified := DummyUser
+				fromJSONString: jsonString
+				in: self currentRepository.
+			self assert: reified person class equals: DummyPerson.
+			self assert: reified completeName equals: 'john q' ]
 ]

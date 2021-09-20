@@ -5,31 +5,32 @@ Class {
 	#name : #MaplessReference,
 	#superclass : #Object,
 	#instVars : [
-		'maplessClass',
-		'id',
-		'model'
+		'model',
+		'data',
+		'repository'
 	],
 	#category : #'Mapless-Base-Core-Models'
 }
 
 { #category : #actions }
-MaplessReference class >> for: aMapless [
+MaplessReference class >> for: aMapless in: aMaplessRepository [
 	^ self new
-		initializeOn: aMapless;
+		initializeOnMapless: aMapless in: aMaplessRepository;
 		yourself
 ]
 
 { #category : #actions }
-MaplessReference class >> fromJSONObject: aJsonObject [
+MaplessReference class >> fromJSONObject: aJsonObject in: aRepository [
 	^ self new
-		id: (aJsonObject at: Mapless idPropertyName);
-		maplessClass: aJsonObject _c;
+		initializeOnData: aJsonObject in: aRepository;
 		yourself
 ]
 
 { #category : #actions }
-MaplessReference class >> fromJSONString: aJSONString [
-	^ self fromJSONObject: (OrderedJson readFrom: aJSONString readStream)
+MaplessReference class >> fromJSONString: aJSONString in: aMaplessRepository [
+	^ self
+		fromJSONObject: (OrderedJson readFrom: aJSONString readStream)
+		in: aMaplessRepository
 ]
 
 { #category : #actions }
@@ -55,25 +56,24 @@ MaplessReference class >> fromVoyageReference: aJsonObject classSelector: classS
 
 { #category : #accessing }
 MaplessReference >> = anObject [
-	^ super = anObject
-		or: [ self id = anObject id and: [ self _c = anObject _c ] ]
+	^ self id notNil
+		and: [ self id = anObject id and: [ self maplessClassName = anObject _c ] ]
 ]
 
 { #category : #actions }
-MaplessReference >> asJsonObject [
+MaplessReference >> asJsonObjectIn: aMaplessRepository [
 	"The only valid scenario when this won't have an id 
 	is when it wraps an unsaved submodel"
 
-	id ifNil: [ id := model id ].
 	"a nil id at this point should never happen"
-	id
+
+	self id
 		ifNil: [ ^ MaplessUnsavedSubmodel
 				signal:
 					'This sub model is unsaved. You need to save all sub mapless before saving a composed mapless' ].
-	self assert: id notNil.
 	^ OrderedJsonObject new
-		at: '_c' put: maplessClass;
-		at: MaplessCurrentRepository value idPropertyName put: id;
+		at: '_c' put: self maplessClassName;
+		at: repository idPropertyName put: self id;
 		yourself
 ]
 
@@ -91,10 +91,12 @@ MaplessReference >> doesNotUnderstand: aMessage [
 MaplessReference >> getMongoModel [
 	| class |
 	class := Smalltalk
-		at: maplessClass asSymbol
+		at: self maplessClassName asSymbol
 		ifAbsent: [ self
-				error: 'This image does not have ' , maplessClass asString , ' class' ].
-	^ class findId: id
+				error:
+					'This image does not have ' , self maplessClassName asString
+						, ' class' ].
+	^ repository findOne: class atId: (data at: repository idPropertyName)
 ]
 
 { #category : #testing }
@@ -104,12 +106,9 @@ MaplessReference >> hasModel [
 
 { #category : #accessing }
 MaplessReference >> id [
-	^ id
-]
-
-{ #category : #accessing }
-MaplessReference >> id: anObject [
-	id := anObject
+	^ model isNil
+		ifFalse: [ model id ]
+		ifTrue: [ data at: repository idPropertyName ]
 ]
 
 { #category : #initialization }
@@ -117,21 +116,21 @@ MaplessReference >> initializeModel [
 	"Note this reference will load the model from the database only once,
 	usually in the first message send"
 
-	self flag: #todo.
-	"sas: this should be improved to decouple this guy from the specific strategy needed for model retrieve.
-	Can a dynamic variable help in deciding what's the strategy to get the model?
-	So if you're using Redis go a Redis get, if using Mongo a Mongo get, ditto with Postgres"
-	model := self getMongoModel.
-	(model notNil and: [ model isUnsaved not ])
-		ifTrue: [ id := model id ].
-	^ model
+	"sas: this should be improved to decouple this guy from the specific strategy needed for model retrieve. Maybe a responsibility of a resolver https://github.com/sebastianconcept/Mapless/issues/22"
+
+	^ model := self getMongoModel
 ]
 
 { #category : #initialization }
-MaplessReference >> initializeOn: aMongoMapless [
-	id := aMongoMapless id.
-	maplessClass := aMongoMapless class maplessClassName.
-	model := aMongoMapless
+MaplessReference >> initializeOnData: aJSONObject in: aRepository [
+	data := aJSONObject.
+	repository := aRepository
+]
+
+{ #category : #initialization }
+MaplessReference >> initializeOnMapless: aMapless in: aRepository [
+	model := aMapless.
+	repository := aRepository
 ]
 
 { #category : #testing }
@@ -141,27 +140,19 @@ MaplessReference >> isKindOf: aClasss [
 
 { #category : #actions }
 MaplessReference >> jsonWriteOn: aStream [
-	self asJsonObject jsonWriteOn: aStream
+	(self asJsonObjectIn: repository) jsonWriteOn: aStream
 ]
 
 { #category : #accessing }
-MaplessReference >> maplessClass [
-	^ maplessClass
-]
-
-{ #category : #accessing }
-MaplessReference >> maplessClass: aString [
-	maplessClass := aString
+MaplessReference >> maplessClassName [
+	^ model isNil
+		ifFalse: [ model class name ]
+		ifTrue: [ data at: '_c' ]
 ]
 
 { #category : #accessing }
 MaplessReference >> model [
 	^ model ifNil: [ self initializeModel ]
-]
-
-{ #category : #accessing }
-MaplessReference >> model: anObject [
-	model := anObject
 ]
 
 { #category : #actions }

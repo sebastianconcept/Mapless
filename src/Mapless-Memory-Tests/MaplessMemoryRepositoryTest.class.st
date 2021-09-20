@@ -104,9 +104,7 @@ MaplessMemoryRepositoryTest >> testDatabaseCollectionFindId [
 				firstName: 'John';
 				lastName: 'Q';
 				yourself.
-			self assert: guy isUnsaved.
-			guy save.
-			self assert: guy isUnsaved not ].
+			guy save ].
 	self assert: (databaseCollection includes: guy).
 	repository
 		do: [ self assert: (DummyPerson findId: guy id) notNil.
@@ -135,9 +133,9 @@ MaplessMemoryRepositoryTest >> testDatabaseCollectionFindWithConditions [
 	self assert: databaseCollection isEmpty.
 	repository
 		do: [ guys := {'John' . 'Peter' . 'Dave'}
-				collect: [ :name | (self newDummyPersonNamed: name) save ] ].
-	repository
-		do: [ guy := DummyPerson find: [ :each | each firstName = 'John' ].
+				collect: [ :name | self newDummyPersonNamed: name ].
+			guys do: #save.
+			guy := DummyPerson find: [ :each | each firstName = 'John' ].
 			guys detect: [ :e | e firstName = 'John' ].
 			self assert: guys first firstName equals: 'John' ]
 ]
@@ -153,9 +151,7 @@ MaplessMemoryRepositoryTest >> testDatabaseCollectionSave [
 				firstName: 'John';
 				lastName: 'Q';
 				yourself.
-			self assert: guy isUnsaved.
-			guy save.
-			self assert: guy isUnsaved not ].
+			guy save ].
 	self assert: (databaseCollection includes: guy)
 ]
 
@@ -169,9 +165,9 @@ MaplessMemoryRepositoryTest >> testDatabaseCollectionSaveAndDestroy [
 				firstName: 'John';
 				lastName: 'Q';
 				yourself.
-			guy save ].
-	self assert: (databaseCollection includes: guy).
-	repository do: [ guy destroy ].
+			guy save.
+			self assert: (databaseCollection includes: guy).
+			guy destroy ].
 	self deny: (databaseCollection includes: guy).
 	self assert: databaseCollection isEmpty
 ]

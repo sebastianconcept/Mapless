@@ -68,14 +68,21 @@ MaplessPostgresTest >> testComposedAccess [
 				do: [ guy save.
 					user save ].
 			self
-				do: [ self assert: (DummyUser findId: user id) completeName = 'john q'.
+				do: [ self
+						assert: (DummyUser findId: user id) completeName
+						equals: 'john q'.
 					self
-						assert: (DummyUser findId: user id) person class = MaplessReference.
+						assert: (DummyUser findId: user id) person class
+						equals: MaplessReference.
 					self
-						assert: (DummyUser findId: user id) person model class = DummyPerson.
+						assert: (DummyUser findId: user id) person model class
+						equals: DummyPerson.
 					self
-						assert: (DummyUser findId: user id) person firstName = 'john'.
-					self assert: (DummyUser findId: user id) person lastName = 'q' ] ]
+						assert: (DummyUser findId: user id) person firstName
+						equals: 'john'.
+					self
+						assert: (DummyUser findId: user id) person lastName
+						equals: 'q' ] ]
 ]
 
 { #category : #tests }
@@ -94,13 +101,8 @@ MaplessPostgresTest >> testComposedDelete [
 										firstName: char asString;
 										yourself);
 								yourself) ].
-			self assert: (users allSatisfy: [ :user | user isUnsaved ]).
-			self assert: (users allSatisfy: [ :user | user person isUnsaved ]).
 			self do: [ users do: [ :user | user person save ] ].
 			self do: [ users do: [ :user | user save ] ].
-			self assert: (users allSatisfy: [ :user | user isUnsaved not ]).
-			self
-				assert: (users allSatisfy: [ :user | user person isUnsaved not ]).
 			self assert: (users allSatisfy: [ :user | user isDeleted not ]).
 			self
 				assert: (users allSatisfy: [ :user | user person isDeleted not ]).
@@ -128,13 +130,8 @@ MaplessPostgresTest >> testComposedDestroy [
 										firstName: char asString;
 										yourself);
 								yourself) ].
-			self assert: (users allSatisfy: [ :user | user isUnsaved ]).
-			self assert: (users allSatisfy: [ :user | user person isUnsaved ]).
 			self do: [ users do: [ :user | user person save ] ].
 			self do: [ users do: [ :user | user save ] ].
-			self assert: (users allSatisfy: [ :user | user isUnsaved not ]).
-			self
-				assert: (users allSatisfy: [ :user | user person isUnsaved not ]).
 			self do: [ users do: [ :user | user person destroy ] ].
 			self
 				do: [ self
@@ -164,8 +161,6 @@ MaplessPostgresTest >> testComposedSave [
 			user person: guy.
 
 			"Whithout saving a submodel"
-			self assert: user isUnsaved.
-			self assert: guy isUnsaved.
 			self
 				should: [ self do: [ user save ] ]
 				raise: MaplessUnsavedSubmodel.
@@ -174,9 +169,7 @@ MaplessPostgresTest >> testComposedSave [
 			self do: [ guy save ].
 			self
 				shouldnt: [ self do: [ user save ] ]
-				raise: MaplessUnsavedSubmodel.
-			self deny: user isUnsaved.
-			self deny: guy isUnsaved ]
+				raise: MaplessUnsavedSubmodel ]
 ]
 
 { #category : #tests }
@@ -193,8 +186,6 @@ MaplessPostgresTest >> testComposedSaveAndLoad [
 			user person: guy.
 
 			"Whithout saving a submodel"
-			self assert: user isUnsaved.
-			self assert: guy isUnsaved.
 			self
 				should: [ self do: [ user save ] ]
 				raise: MaplessUnsavedSubmodel.
@@ -204,12 +195,9 @@ MaplessPostgresTest >> testComposedSaveAndLoad [
 			self
 				shouldnt: [ self do: [ user save ] ]
 				raise: MaplessUnsavedSubmodel.
-			self deny: user isUnsaved.
-			self deny: guy isUnsaved.
 			self
 				do: [ loaded := DummyUser findId: user id.
 					self assert: loaded notNil.
-					self deny: loaded isUnsaved.
 					self assert: loaded createdOn notNil.
 					self assert: loaded modifiedOn notNil.
 					loaded
@@ -239,13 +227,13 @@ MaplessPostgresTest >> testComposition [
 				lastName: 'q';
 				yourself.
 			user person: guy.
-			self assert: user isUnsaved.
-			self assert: guy isUnsaved.
-			self assert: (user data at: 'person') class = DummyPerson.
-			self assert: (user data at: 'person') modelClass = #DummyPerson.
+			self assert: (user data at: 'person') class equals: DummyPerson.
+			self
+				assert: (user data at: 'person') modelClass
+				equals: #DummyPerson.
 			self assert: user id isNil.
 			self assert: (user data at: 'person') id isNil.
-			self assert: user completeName = 'john q' ]
+			self assert: user completeName equals: 'john q' ]
 ]
 
 { #category : #tests }
@@ -258,9 +246,7 @@ MaplessPostgresTest >> testDateAndTime [
 		createdOn: when;
 		yourself.
 	self
-		do: [ self assert: guy isUnsaved.
-			guy save.
-			self deny: guy isUnsaved.
+		do: [ guy save.
 			loaded := DummyPerson findId: guy id.
 			self
 				assert: loaded createdOn asDate asString = when asDate asString.
@@ -281,9 +267,7 @@ MaplessPostgresTest >> testDelete [
 							(DummyPerson new
 								firstName: char asString;
 								yourself) ].
-			self assert: (people allSatisfy: [ :guy | guy isUnsaved ]).
 			people do: [ :guy | guy save ].
-			self assert: (people allSatisfy: [ :guy | guy isUnsaved not ]).
 			self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
 			people do: [ :guy | guy delete ].
 			self assert: (people allSatisfy: [ :guy | guy isDeleted ]) ]
@@ -301,9 +285,7 @@ MaplessPostgresTest >> testDestroy [
 							(DummyPerson new
 								firstName: char asString;
 								yourself) ].
-			self assert: (people allSatisfy: [ :guy | guy isUnsaved ]).
 			people do: [ :guy | guy save ].
-			self assert: (people allSatisfy: [ :guy | guy isUnsaved not ]).
 			self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
 			people do: [ :guy | guy destroy ].
 			self
@@ -318,9 +300,9 @@ MaplessPostgresTest >> testIsUnsaved [
 		lastName: 'q';
 		yourself.
 	self
-		do: [ self assert: guy isUnsaved.
+		do: [ self deny: guy hasId.
 			guy save.
-			self deny: guy isUnsaved ]
+			self assert: guy hasId ]
 ]
 
 { #category : #tests }
@@ -376,13 +358,9 @@ MaplessPostgresTest >> testMultipleComposedComposables [
 			self
 				shouldnt: [ self do: [ tags do: [ :e | e save ] ] ]
 				raise: MaplessUnsavedSubmodel.
-			self deny: (tagsOfTagsOfTags anySatisfy: [ :tag | tag isUnsaved ]).
-			self deny: (tagsOfTags anySatisfy: [ :tag | tag isUnsaved ]).
-			self deny: (tags anySatisfy: [ :tag | tag isUnsaved ]).
 			self
 				do: [ loaded := DummyTag findId: tags first id.
 					self assert: loaded notNil.
-					self deny: loaded isUnsaved.
 					self assert: loaded label = 'is this'.
 					self assert: loaded tags isCollection.
 					self assert: loaded tags notEmpty.
@@ -425,12 +403,9 @@ MaplessPostgresTest >> testMultipleComposedMixedSaveAndLoad [
 			self
 				shouldnt: [ self do: [ guy save ] ]
 				raise: MaplessUnsavedSubmodel.
-			self deny: guy isUnsaved.
-			self assert: (things allSatisfy: [ :e | e isUnsaved not ]).
 			self
 				do: [ loaded := DummyPerson findId: guy id.
 					self assert: loaded notNil.
-					self deny: loaded isUnsaved.
 					self assert: loaded firstName = 'john'.
 					self assert: loaded things isCollection.
 					self assert: loaded things notEmpty.
@@ -473,13 +448,9 @@ MaplessPostgresTest >> testMultipleComposedSaveAndLoad [
 			self
 				shouldnt: [ self do: [ user save ] ]
 				raise: MaplessUnsavedSubmodel.
-			self deny: user isUnsaved.
-			self deny: guy isUnsaved.
-			self assert: (tags allSatisfy: [ :e | e isUnsaved not ]).
 			self
 				do: [ loaded := DummyUser findId: user id.
 					self assert: loaded notNil.
-					self deny: loaded isUnsaved.
 					self assert: loaded username = 'johnq'.
 					self assert: loaded tags isCollection.
 					self assert: loaded tags notEmpty.
@@ -503,9 +474,6 @@ MaplessPostgresTest >> testQueryUsers [
 								firstName: char asString;
 								yourself);
 						yourself) ].
-	self
-		do: [ self assert: (users allSatisfy: [ :user | user isUnsaved ]).
-			self assert: (users allSatisfy: [ :user | user person isUnsaved ]) ].
 	self do: [ users do: [ :user | user person save ] ].
 	self do: [ users do: [ :user | user save ] ].
 	self
@@ -536,10 +504,7 @@ MaplessPostgresTest >> testSimpleSave [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self
-		do: [ self assert: guy isUnsaved.
-			guy save.
-			self deny: guy isUnsaved ]
+	self do: [ guy save ]
 ]
 
 { #category : #tests }
@@ -549,12 +514,9 @@ MaplessPostgresTest >> testSimpleSaveAndLoad [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self do: [ self assert: guy isUnsaved ].
 	self do: [ guy save ].
-	self do: [ self deny: guy isUnsaved ].
 	self do: [ loaded := DummyPerson findId: guy id ].
 	self assert: loaded notNil.
-	self do: [ self deny: loaded isUnsaved ].
 	loaded modifiedOn: nil.
 	guy modifiedOn: nil.
 	loaded data
@@ -571,9 +533,7 @@ MaplessPostgresTest >> testSimpleSaveAndUpdate [
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
-			self assert: guy isUnsaved.
 			self do: [ guy save ].
-			self deny: guy isUnsaved.
 			self do: [ loaded := DummyPerson findId: guy id ].
 			self assert: loaded firstName = 'john'.
 			self deny: loaded remember = 'this words'.
@@ -597,7 +557,6 @@ MaplessPostgresTest >> testSubModelsFromReifiedJSON [
 			user person: guy.
 			jsonString := user unreferenced asJSONString.
 			reified := DummyUser fromJSONString: jsonString.
-			self assert: guy isUnsaved.
-			self assert: reified person class = DummyPerson.
-			self assert: reified completeName = 'john q' ]
+			self assert: reified person class equals: DummyPerson.
+			self assert: reified completeName equals: 'john q' ]
 ]

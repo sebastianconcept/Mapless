@@ -188,18 +188,17 @@ MaplessPostgresRepository >> insert: aMapless [
 
 { #category : #reactions }
 MaplessPostgresRepository >> onBeforeInsert: aMapless [
-	aMapless ensureId.
+	self flag: #review. "not supported at the moment"
+	aMapless ensurePrivateId.
 	super onBeforeInsert: aMapless
 ]
 
 { #category : #actions }
 MaplessPostgresRepository >> save: aMapless [
 	"Storage this instance into the persistent collection"
-
+	self flag: #review. "use some sort of upsert?"
 	self onBeforeSave: aMapless.
-	(self isUnsaved: aMapless)
-		ifTrue: [ self insert: aMapless ]
-		ifFalse: [ self update: aMapless ].
+	self upsert: aMapless.
 	self onAfterSave: aMapless
 ]
 

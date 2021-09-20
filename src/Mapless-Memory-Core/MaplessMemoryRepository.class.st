@@ -10,6 +10,11 @@ Class {
 	#category : #'Mapless-Memory-Core'
 }
 
+{ #category : #actions }
+MaplessMemoryRepository class >> getNewId [
+	^ UUID new asString36
+]
+
 { #category : #accessing }
 MaplessMemoryRepository >> count: aMaplessClass [
 	"Answer what's the number of instances of aMaplessClass in this repository."
@@ -190,10 +195,14 @@ MaplessMemoryRepository >> findOne: aMaplessClass where: someConditions [
 
 { #category : #accessing }
 MaplessMemoryRepository >> idPropertyName [
-	"Answers '_id' because we're using MongoDB here 
-	and that's what Mongo uses as id."
+	^ 'id'
+]
 
-	^ '_id'
+{ #category : #actions }
+MaplessMemoryRepository >> insert: aMapless [
+	self onBeforeInsert: aMapless.
+	self upsert: aMapless.
+	self onAfterInsert: aMapless
 ]
 
 { #category : #actions }
@@ -207,8 +216,22 @@ MaplessMemoryRepository >> save: aMapless [
 	"Storage this instance into the persistent collection"
 
 	self onBeforeSave: aMapless.
+	self update: aMapless.
+	self onAfterSave: aMapless
+]
+
+{ #category : #actions }
+MaplessMemoryRepository >> update: aMapless [
+	self onBeforeUpdate: aMapless.
+	self upsert: aMapless.
+	self onAfterUpdate: aMapless
+]
+
+{ #category : #actions }
+MaplessMemoryRepository >> upsert: aMapless [
+	self onBeforeUpsert: aMapless.
 	(self databaseCollectionNamed: aMapless class collectionName)
 		add: aMapless.
-	self onAfterSave: aMapless.
+	self onAfterUpsert: aMapless.
 	^ aMapless
 ]

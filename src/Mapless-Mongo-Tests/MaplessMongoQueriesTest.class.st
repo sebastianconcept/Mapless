@@ -48,7 +48,7 @@ MaplessMongoQueriesTest >> tearDown [
 MaplessMongoQueriesTest >> testCursorCount [
 	repository
 		do: [ self addDummyPeople.
-			self assert: DummyPerson count equals: 20 ]
+			self assert: DummyPerson count equals: DummyPerson findAll size ]
 ]
 
 { #category : #tests }
@@ -57,7 +57,10 @@ MaplessMongoQueriesTest >> testCursorCountWithConditions [
 		do: [ self addDummyPeople.
 			self
 				assert: (DummyPerson count: {('firstName' -> 'john')} asDictionary)
-				equals: 10 +1 ]
+				equals: 10 + 1.
+			self
+				deny: (DummyPerson count: {('firstName' -> 'john')} asDictionary)
+				equals: DummyPerson findAll size ]
 ]
 
 { #category : #tests }

@@ -13,19 +13,8 @@ Class {
 	#instVars : [
 		'data'
 	],
-	#classInstVars : [
-		'idAttribute'
-	],
 	#category : #'Mapless-Base-Core-Models'
 }
-
-{ #category : #testing }
-Mapless class >> canBeMapless: anObject [
-	"Answers true if anObject can be used to instantiate mapless."
-
-	^ anObject isDictionary
-		and: [ anObject size > 1 and: [ anObject includesKey: '_c' ] ]
-]
 
 { #category : #testing }
 Mapless class >> canRepresentArrayOfMaplessReferences: anObject [
@@ -74,11 +63,6 @@ Mapless class >> count: someConditions [
 { #category : #accessing }
 Mapless class >> currentRepository [
 	^ MaplessCurrentRepository value
-]
-
-{ #category : #testing }
-Mapless class >> existsCid: anId [
-	^ (self findCid: anId) notNil
 ]
 
 { #category : #testing }
@@ -152,17 +136,6 @@ Mapless class >> findAllSort: sortConditions [
 ]
 
 { #category : #querying }
-Mapless class >> findCid: anId [
-	^ self currentRepository
-		findOne: self
-		where:
-			(Dictionary
-				newFromPairs:
-					{'cid'.
-					anId})
-]
-
-{ #category : #querying }
 Mapless class >> findId: anId [
 	^ self currentRepository findOne: self atId: anId
 ]
@@ -180,24 +153,13 @@ Mapless class >> first [
 ]
 
 { #category : #'instance creation' }
-Mapless class >> fromBSON: someBSONData [
-	^ self
-		fromJSONObject: (BSON read: someBSONData readStream) asJsonObject
-]
-
-{ #category : #'instance creation' }
-Mapless class >> fromJSON: aJSONString [
-	^ self new
-		initializeFromJSON: aJSONString;
-		yourself
-]
-
-{ #category : #'instance creation' }
-Mapless class >> fromJSONObject: aJsonObjectOrNilOrArray [
+Mapless class >> fromJSONObject: aJsonObjectOrNilOrArray in: aMaplessRepository [
 	| maplessClass |
 	aJsonObjectOrNilOrArray ifNil: [ ^ nil ].
 	aJsonObjectOrNilOrArray isArray
-		ifTrue: [ ^ self fromJSONObjects: aJsonObjectOrNilOrArray ].
+		ifTrue: [ ^ self
+				fromJSONObjects: aJsonObjectOrNilOrArray
+				with: aMaplessRepository ].
 
 	"If the content has metadata then it will use it to decide what instances to create.
 	When there is no Mapless metadata available, the assumption is 
@@ -206,45 +168,29 @@ Mapless class >> fromJSONObject: aJsonObjectOrNilOrArray [
 		at: '_c'
 		ifAbsent: [ self maplessClassName ].
 	^ (Smalltalk at: maplessClass asSymbol) basicNew
-		initializeOn: aJsonObjectOrNilOrArray asJsonObject;
+		initializeOn: aJsonObjectOrNilOrArray asJsonObject
+			with: aMaplessRepository;
 		yourself
 ]
 
 { #category : #'instance creation' }
-Mapless class >> fromJSONObjects: someJsonObjects [
-	^ someJsonObjects collect: [ :e | self fromJSONObject: e ]
+Mapless class >> fromJSONObjects: someJsonObjects with: aRepository [
+	^ someJsonObjects
+		collect: [ :e | self fromJSONObject: e in: aRepository ]
 ]
 
 { #category : #'instance creation' }
-Mapless class >> fromJSONString: aJsonString [
-	^ self fromJSONObject: (OrderedJson readFrom: aJsonString readStream)
-]
-
-{ #category : #'instance creation' }
-Mapless class >> fromReified: aJsonObject [
-	^ self fromJSONObject: aJsonObject
-]
-
-{ #category : #'instance creation' }
-Mapless class >> fromResults: someMongoTalkResults [
-	^ (someMongoTalkResults isNil or: [ someMongoTalkResults isEmpty ])
-		ifTrue: [ #() ]
-		ifFalse: [ (self fromJSONObjects: someMongoTalkResults)
-				collect: [ :each | self currentRepository onAfterRead: each ] ]
-]
-
-{ #category : #actions }
-Mapless class >> getNewId [
-	^ OID nextOID
+Mapless class >> fromJSONString: aJsonString in: aMaplessRepository [
+	^ self
+		fromJSONObject: (OrderedJson readFrom: aJsonString readStream)
+		in: aMaplessRepository
 ]
 
 { #category : #configuration }
 Mapless class >> idPropertyName [
-	"Answers the attribute name for the id used by the backend.
-	Different persistance backends might use different names.
-	For example: '_id'  'id'  'oid'  etc"
+	"For itself, Mapless uses 'id' as the property name for its main key."
 
-	^ self currentRepository idPropertyName
+	^ 'id'
 ]
 
 { #category : #testing }
@@ -296,20 +242,6 @@ Mapless class >> maplessClassName [
 	^ self name
 ]
 
-{ #category : #actions }
-Mapless class >> mergeByCidWithStored: aMapless [
-	"Merges the stored verision of aMapless (found by cid) by
-	 overwriting and adding whatever is in aMapless."
-
-	| stored |
-	stored := aMapless freshFromCid.
-	stored
-		ifNil: [ stored := aMapless ]
-		ifNotNil:
-			[ aMapless data keysAndValuesDo: [ :k :v | stored data at: k put: v ] ].
-	^ stored
-]
-
 { #category : #accessing }
 Mapless class >> modelClasses [
 	"Answers the set of classes which are concrete model classes.
@@ -352,19 +284,6 @@ Mapless >> = aModel [
 ]
 
 { #category : #converting }
-Mapless >> asBSON [
-	^ BSON write: self asBSONFriendly
-]
-
-{ #category : #converting }
-Mapless >> asBSONFriendly [
-	^ Dictionary new
-		at: 'key' put: self id;
-		at: 'value' put: self asNoSQLValue;
-		yourself
-]
-
-{ #category : #converting }
 Mapless >> asDictionary [
 	"Answers this instance as a JSON friendly dictionary"
 
@@ -391,11 +310,9 @@ Mapless >> asMaplessReference [
 	^ MaplessReference for: self
 ]
 
-{ #category : #converting }
-Mapless >> asNoSQLValue [
-	"Answers this aggregate as value you will expect to have in a noSQL storage"
-
-	self subclassResponsibility
+{ #category : #actions }
+Mapless >> asMaplessReferenceIn: aMaplessRepository [
+	^ MaplessReference for: self in: aMaplessRepository
 ]
 
 { #category : #accessing }
@@ -510,50 +427,29 @@ Mapless >> doesNotUnderstand: aMessage [
 ]
 
 { #category : #actions }
-Mapless >> ensureId [
-	"Makes sure this mapless has stamped a backend side id."
-
-	self hasId
-		ifFalse: [ self id: self class getNewId ]
-]
-
-{ #category : #actions }
 Mapless >> fresh [
-	^ self isUnsaved
-		ifTrue: [ self ]
-		ifFalse: [ self class findId: self id ]
-]
-
-{ #category : #actions }
-Mapless >> freshFromCid [
-	^ self class findCid: self cid
-]
-
-{ #category : #testing }
-Mapless >> hasCid [
-	^ self cid notNil
+	^ self hasId
+		ifFalse: [ self ]
+		ifTrue: [ self class findId: self id ]
 ]
 
 { #category : #testing }
 Mapless >> hasId [
-	^ self id notNil
+	^ self maplessData includesKey: 'id'
 ]
 
 { #category : #accessing }
 Mapless >> id [
 	"Answers the server-side assigned id of this mapless.
 	Note: the expectation is to have this id set when is saved/inserted 
-	for the first time into a repo. A second important expectation is that
-	different repositories might use different names to store their 'id'
-	for example MongoDB uses '_id' and Postgres uses 'oid' and others
-	might use variations that should get normalized into 'id'."
+	for the first time into a repo."
 
-	^ self data at: 'id'
+	^ self maplessData at: 'id'
 ]
 
 { #category : #accessing }
 Mapless >> id: anId [
-	^ self data at: 'id' put: anId
+	^ self maplessData at: 'id' put: anId
 ]
 
 { #category : #initializing }
@@ -569,17 +465,12 @@ Mapless >> initializeData [
 		yourself
 ]
 
-{ #category : #json }
-Mapless >> initializeFromJSON: jsonString [
-	data := OrderedJson readFrom: jsonString readStream
-]
-
 { #category : #initializing }
-Mapless >> initializeOn: aJsonObject [
+Mapless >> initializeOn: aJsonObject with: aMaplessRepository [
 	super initialize.
 	data := aJsonObject.
-	self setSubModelReferences.
-	self setSubModels
+	self setSubModelReferencesIn: aMaplessRepository.
+	self setSubModelsIn: aMaplessRepository
 ]
 
 { #category : #actions }
@@ -599,13 +490,6 @@ Mapless >> isDeleted [
 { #category : #testing }
 Mapless >> isPersistentModel [
 	^ true
-]
-
-{ #category : #testing }
-Mapless >> isUnsaved [
-	"Answer true if this instance was not saved yet"
-
-	^ self currentRepository isUnsaved: self
 ]
 
 { #category : #json }
@@ -633,7 +517,7 @@ Mapless >> merge: aMapless [
 	It's just adding the missing parts.
 	It does it deep, though."
 
-	(aMapless data keys asOrderedCollection
+	(aMapless maplessData keys asOrderedCollection
 		removeAllFoundIn: aMapless class keysToExclude;
 		yourself)
 		do: [ :aKey | 
@@ -643,7 +527,7 @@ Mapless >> merge: aMapless [
 				ifTrue: [ | subMaplessOrNil |
 					subMaplessOrNil := self perform: aKey asSymbol.
 					subMaplessOrNil ifNotNil: [ subMaplessOrNil merge: part ] ].
-			self data at: aKey ifAbsentPut: [ part ] ]
+			self maplessData at: aKey ifAbsentPut: [ part ] ]
 ]
 
 { #category : #hooks }
@@ -674,6 +558,15 @@ Mapless >> onAfterDestroyed [
 ]
 
 { #category : #hooks }
+Mapless >> onAfterInsert [
+	"This mapless was inserted.
+	This is a convenience message sent by the backend 
+	for subclasses to take any (re)action of this interesting moment."
+
+	
+]
+
+{ #category : #hooks }
 Mapless >> onAfterRead [
 	"This mapless was just read from the backend.
 	This is a convenience message sent by the backend 
@@ -683,8 +576,31 @@ Mapless >> onAfterRead [
 ]
 
 { #category : #hooks }
+Mapless >> onAfterSave [
+	
+]
+
+{ #category : #hooks }
 Mapless >> onAfterSaved [
 	"This mapless was saved by the backend.
+	This is a convenience message sent by the backend 
+	for subclasses to take any (re)action of this interesting moment."
+
+	
+]
+
+{ #category : #hooks }
+Mapless >> onAfterUpdate [
+	"This mapless was updated.
+	This is a convenience message sent by the backend 
+	for subclasses to take any (re)action of this interesting moment."
+
+	
+]
+
+{ #category : #hooks }
+Mapless >> onAfterUpsert [
+	"This mapless was either inserted or updated.
 	This is a convenience message sent by the backend 
 	for subclasses to take any (re)action of this interesting moment."
 
@@ -715,7 +631,6 @@ Mapless >> onBeforeInsert [
 	This is a convenience message sent by the backend 
 	for subclasses to take any (re)action of this interesting moment."
 
-	self ensureId
 ]
 
 { #category : #hooks }
@@ -744,6 +659,16 @@ Mapless >> onBeforeUpdate [
 	self modifiedOn: DateAndTime now
 ]
 
+{ #category : #hooks }
+Mapless >> onBeforeUpsert [
+	"This mapless is about to be upserted (intended to be added to the repo either for 
+	the first time or updating the stored version).
+	This is a convenience message sent by the backend 
+	for subclasses to take any (re)action of this interesting moment."
+
+	
+]
+
 { #category : #accessing }
 Mapless >> persistenceStrategy [
 	^ self class currentRepository
@@ -764,133 +689,92 @@ Mapless >> save [
 ]
 
 { #category : #actions }
-Mapless >> setModelFrom: aJsonString on: aKey of: aJsonObject [
-	"Set model (only if someJsonStrings feels like those)"
-
-	| json maplessClass newSubMapless |
-	json := Json readFrom: aJsonString readStream.
-	maplessClass := Smalltalk
-		at: (json at: '_c') asSymbol
-		ifAbsent: [ self error: 'Cannot find that class' ].
-	newSubMapless := maplessClass fromJSONObject: json.
-	newSubMapless setSubModels.
-	aJsonObject at: aKey put: newSubMapless
-]
-
-{ #category : #actions }
-Mapless >> setModelsFrom: someJsonStrings on: aKey of: aJsonObject [
-	"Set models (only if someJsonStrings feels like those)"
-
-	| maplessClass newSubMapless |
-	aJsonObject
-		at: aKey
-		put:
-			(someJsonStrings
-				collect: [ :json | 
-					maplessClass := Smalltalk
-						at: (json at: '_c') asSymbol
-						ifAbsent: [ self error: 'Cannot find that class' ].
-					newSubMapless := maplessClass fromJSON: json.
-					newSubMapless setSubModels.
-					newSubMapless ])
-]
-
-{ #category : #actions }
-Mapless >> setReferenceFrom: aJsonObject on: aKey of: parentJsonObject [
+Mapless >> setReferenceFrom: aJsonObject on: aKey of: parentJsonObject in: aMaplessRepository [
 	parentJsonObject
 		at: aKey
-		put: (MaplessReference fromJSONObject: aJsonObject)
+		put: (MaplessReference fromJSONObject: aJsonObject in: aMaplessRepository)
 ]
 
 { #category : #actions }
-Mapless >> setReferencesFrom: someJsonObjects on: aKey of: parentJsonObject [
+Mapless >> setReferencesFrom: someJsonObjects on: aKey of: parentJsonObject in: aMaplessRepository [
 	parentJsonObject
 		at: aKey
 		put:
 			(someJsonObjects
-				collect: [ :jsonObject | MaplessReference fromJSONObject: jsonObject ])
+				collect:
+					[ :jsonObject | MaplessReference fromJSONObject: jsonObject in: aMaplessRepository ])
 ]
 
 { #category : #actions }
-Mapless >> setSubModelReferences [
-	"Creates proxies to sub models regarding 
-	to the JSON data this instance."
-
-	self data
-		keysAndValuesDo: [ :k :v | self setSubModelReferencesAt: k with: v ]
-]
-
-{ #category : #actions }
-Mapless >> setSubModelReferencesAt: aKey with: anObject [
+Mapless >> setSubModelReferencesAt: aKey with: anObject in: aMaplessRepository [
 	"1. It's a submodel"
 
 	(self class canRepresentSubMapless: anObject)
-		ifTrue: [ ^ self setReferenceFrom: anObject on: aKey of: self data ].
+		ifTrue: [ ^ self
+				setReferenceFrom: anObject
+				on: aKey
+				of: self data
+				in: aMaplessRepository ].
 
 	"2. it's a collection of submodels"
 	(anObject isCollection
 		and: [ anObject notEmpty
 				and: [ anObject anySatisfy: [ :e | self class canRepresentSubMapless: e ] ] ])
-		ifTrue: [ self setReferencesFrom: anObject on: aKey of: self data ]
+		ifTrue: [ self
+				setReferencesFrom: anObject
+				on: aKey
+				of: self data
+				in: aMaplessRepository ]
 ]
 
 { #category : #actions }
-Mapless >> setSubModels [
-	"On demand creates sub models regarding 
+Mapless >> setSubModelReferencesIn: aMaplessRepository [
+	"Creates proxies to sub models regarding 
 	to the JSON data this instance."
 
-	self data keysAndValuesDo: [ :k :v | self setSubModelsAt: k with: v ]
+	self data
+		keysAndValuesDo:
+			[ :k :v | self setSubModelReferencesAt: k with: v in: aMaplessRepository ]
 ]
 
 { #category : #actions }
-Mapless >> setSubModelsAndReferences [
-	self setSubModelReferences
-]
-
-{ #category : #actions }
-Mapless >> setSubModelsAt: aKey with: anObject [
+Mapless >> setSubModelsAt: aKey with: anObject in: aMaplessRepository [
 	"one submapless"
 
 	| maplessClass newSubMapless |
-	(self class canBeMapless: anObject)
+	(aMaplessRepository canBeMapless: anObject)
 		ifTrue: [ maplessClass := Smalltalk
 				at: (anObject at: '_c') asSymbol
 				ifAbsent: [ self error: 'Could not find that class' ].
-			newSubMapless := maplessClass fromJSONObject: anObject.
-			newSubMapless setSubModels.
+			newSubMapless := maplessClass
+				fromJSONObject: anObject
+				in: aMaplessRepository.
+			newSubMapless setSubModelsIn: aMaplessRepository.
 			self data at: aKey put: newSubMapless ].
 
 	"many submapless"
 	(anObject isCollection
-		and: [ anObject anySatisfy: [ :e | self class canBeMapless: e ] ])
+		and: [ anObject anySatisfy: [ :e | aMaplessRepository canBeMapless: e ] ])
 		ifTrue: [ | subMapless |
 			subMapless := anObject
 				collect: [ :each | 
 					maplessClass := Smalltalk
 						at: (each at: '_c') asSymbol
 						ifAbsent: [ self error: 'Could not find that class' ].
-					newSubMapless := maplessClass fromJSONObject: each.
-					newSubMapless setSubModels ].
+					newSubMapless := maplessClass
+						fromJSONObject: each
+						in: aMaplessRepository.
+					newSubMapless setSubModelsIn: aMaplessRepository ].
 			self data at: aKey put: subMapless ]
 ]
 
-{ #category : #accessing }
-Mapless >> subModelAt: aSelector [
-	"Answers the reified submodel (instantiating if necessary)."
+{ #category : #actions }
+Mapless >> setSubModelsIn: aMaplessRepository [
+	"On demand creates sub models regarding 
+	to the JSON data this instance."
 
-	| subModelData class |
-	subModelData := self data at: aSelector.
-	subModelData ifNil: [ ^ nil ].
-
-	"legacy code from Amber's json serialization
-	subModelData := subModelData at: '@data'.
-	subModelData ifNil:[^ FlowModelDataError signal: 'Cannot find ', aSelector,'''s data']."
-	class := subModelData at: 'class'.
-	class := Smalltalk
-		at: class asSymbol
-		ifAbsent: [ MaplessModelMetadataError
-				signal: 'Cannot find ' , aSelector , '''s metadata' ].
-	^ class fromReified: subModelData
+	self data
+		keysAndValuesDo: [ :k :v | self setSubModelsAt: k with: v in: aMaplessRepository ]
 ]
 
 { #category : #actions }

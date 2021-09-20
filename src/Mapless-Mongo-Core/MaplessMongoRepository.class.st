@@ -14,6 +14,11 @@ Class {
 	#category : #'Mapless-Mongo-Core-Connections'
 }
 
+{ #category : #actions }
+MaplessMongoRepository class >> getNewId [
+	^ OID nextOID
+]
+
 { #category : #accessing }
 MaplessMongoRepository >> count: aMaplessClass [
 	"Answer what's the number of instances of aMaplessClass in this repository."
@@ -25,8 +30,9 @@ MaplessMongoRepository >> count: aMaplessClass [
 MaplessMongoRepository >> count: aMaplessClass where: someConditions [
 	"Answer what's the number of instances of aMaplessClass in this repository."
 
-	^ (self databaseCollectionNamed: aMaplessClass collectionName)
-		sizeForQuery: someConditions
+	^ self
+		do: [ (self databaseCollectionNamed: aMaplessClass collectionName)
+				sizeForQuery: someConditions ]
 ]
 
 { #category : #accessing }
@@ -48,12 +54,12 @@ MaplessMongoRepository >> destroy: aMapless [
 	| bsonFriendly filter |
 	self onBeforeDestroy: aMapless.
 	filter := JsonObject new
-		at: aMapless class idPropertyName
-			put: (aMapless data at: aMapless class idPropertyName);
+		at: self idPropertyName put: aMapless id;
 		yourself.
 	bsonFriendly := self storableFor: filter.
-	(self databaseCollectionNamed: aMapless class collectionName)
-		remove: bsonFriendly.
+	self
+		do: [ (self databaseCollectionNamed: aMapless class collectionName)
+				remove: bsonFriendly ].
 	self onAfterDestroy: aMapless
 ]
 
@@ -86,7 +92,9 @@ MaplessMongoRepository >> ensureCollection [
 
 { #category : #testing }
 MaplessMongoRepository >> existsId: anId of: aMaplessClass [
-	^ (self findOne: aMaplessClass atId: anId) notNil
+	^ (self
+		count: aMaplessClass
+		where: {(self idPropertyName -> anId)} asDictionary) > 0
 ]
 
 { #category : #accessing }
@@ -128,17 +136,18 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimi
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	| result databaseCollection |
-	databaseCollection := self
-		databaseCollectionNamed: aMaplessClass collectionName.
-	result := databaseCollection
-		query: [ :q | 
-			aLimitOrNil ifNotNil: [ :limit | q limit: limit ].
-			anOffsetOrNil ifNotNil: [ :offset | q offset: offset ].
-			sortConditionsOrNil ifNotNil: [ :sort | q order: sort ].
-			q where: someConditions ].
+	self
+		do: [ databaseCollection := self
+				databaseCollectionNamed: aMaplessClass collectionName.
+			result := databaseCollection
+				query: [ :q | 
+					aLimitOrNil ifNotNil: [ :limit | q limit: limit ].
+					anOffsetOrNil ifNotNil: [ :offset | q offset: offset ].
+					sortConditionsOrNil ifNotNil: [ :sort | q order: sort ].
+					q where: someConditions ] ].
 	^ (result isNil and: [ result isEmpty ])
 		ifTrue: [ #() ]
-		ifFalse: [ (aMaplessClass fromJSONObjects: result)
+		ifFalse: [ (aMaplessClass fromJSONObjects: result with: self)
 				collect: [ :each | self onAfterRead: each ] ]
 ]
 
@@ -192,14 +201,18 @@ MaplessMongoRepository >> findOne: aMaplessClass where: someConditions [
 	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
 
 	| result databaseCollection |
-	databaseCollection := self
-		databaseCollectionNamed: aMaplessClass collectionName.
-	result := databaseCollection
-		queryOne: [ :q | q where: someConditions ].
+	self
+		do: [ databaseCollection := self
+				databaseCollectionNamed: aMaplessClass collectionName.
+			result := databaseCollection
+				queryOne: [ :q | q where: someConditions ] ].
 	^ result isNil
 		ifTrue: [ nil ]
 		ifFalse: [ self
-				onAfterRead: (aMaplessClass fromJSONObject: result asJsonObject) ]
+				onAfterRead:
+					(aMaplessClass
+						fromJSONObject: (self normalizeIdOfOn: result asJsonObject)
+						in: self) ]
 ]
 
 { #category : #testing }
@@ -217,12 +230,8 @@ MaplessMongoRepository >> idPropertyName [
 
 { #category : #actions }
 MaplessMongoRepository >> insert: aMapless [
-	| bsonFriendly |
 	self onBeforeInsert: aMapless.
-	[ bsonFriendly := self storableFor: aMapless maplessData ]
-		ifCurtailed: [ aMapless data removeKey: self idPropertyName ifAbsent: [ nil ] ].
-	(self databaseCollectionNamed: aMapless class collectionName)
-		add: bsonFriendly.
+	self upsert: aMapless.
 	self onAfterInsert: aMapless
 ]
 
@@ -231,33 +240,34 @@ MaplessMongoRepository >> mongoClient [
 	^ mongoClient
 ]
 
-{ #category : #reactions }
-MaplessMongoRepository >> onBeforeInsert: aMapless [
-	aMapless ensureId.
-	super onBeforeInsert: aMapless
-]
-
 { #category : #actions }
 MaplessMongoRepository >> save: aMapless [
 	"Storage this instance into the persistent collection"
 
 	self onBeforeSave: aMapless.
-	(self isUnsaved: aMapless)
-		ifTrue: [ self insert: aMapless ]
-		ifFalse: [ self update: aMapless ].
+	self update: aMapless.
 	self onAfterSave: aMapless
 ]
 
 { #category : #actions }
 MaplessMongoRepository >> update: aMapless [
-	| bsonFriendly |
 	self onBeforeUpdate: aMapless.
-	bsonFriendly := self storableFor: aMapless data.
-	(self databaseCollectionNamed: aMapless class collectionName)
-		replace:
-			(Dictionary new
-				at: self idPropertyName put: aMapless basicMaplessId;
-				yourself)
-		with: bsonFriendly.
+	self upsert: aMapless.
 	self onAfterUpdate: aMapless
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> upsert: aMapless [
+	| bsonFriendly |
+	self onBeforeUpsert: aMapless.
+	bsonFriendly := self storableFor: aMapless maplessData.
+	self
+		do: [ (self databaseCollectionNamed: aMapless class collectionName)
+				update:
+					(Dictionary new
+						at: self idPropertyName put: (self idOf: aMapless);
+						yourself)
+				with: bsonFriendly
+				flags: UpdateOperation flagUpsert ].
+	self onAfterUpsert: aMapless
 ]
