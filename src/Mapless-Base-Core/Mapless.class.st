@@ -153,43 +153,6 @@ Mapless class >> first [
 ]
 
 { #category : #'instance creation' }
-Mapless class >> fromBSON: someBSONData [
-	self halt.
-	#deprecated.
-	^ self
-		fromJSONObject: (BSON read: someBSONData readStream) asJsonObject
-]
-
-{ #category : #'instance creation' }
-Mapless class >> fromJSON: aJSONString [
-	self halt.
-	#deprecated.
-	^ self new
-		initializeFromJSON: aJSONString;
-		yourself
-]
-
-{ #category : #'instance creation' }
-Mapless class >> fromJSONObject: aJsonObjectOrNilOrArray [
-	| maplessClass |
-		self halt.
-	#deprecated.
-	aJsonObjectOrNilOrArray ifNil: [ ^ nil ].
-	aJsonObjectOrNilOrArray isArray
-		ifTrue: [ ^ self fromJSONObjects: aJsonObjectOrNilOrArray ].
-
-	"If the content has metadata then it will use it to decide what instances to create.
-	When there is no Mapless metadata available, the assumption is 
-	that it should create instances of this class of Mapless."
-	maplessClass := aJsonObjectOrNilOrArray
-		at: '_c'
-		ifAbsent: [ self maplessClassName ].
-	^ (Smalltalk at: maplessClass asSymbol) basicNew
-		initializeOn: aJsonObjectOrNilOrArray asJsonObject;
-		yourself
-]
-
-{ #category : #'instance creation' }
 Mapless class >> fromJSONObject: aJsonObjectOrNilOrArray in: aMaplessRepository [
 	| maplessClass |
 	aJsonObjectOrNilOrArray ifNil: [ ^ nil ].
@@ -217,24 +180,10 @@ Mapless class >> fromJSONObjects: someJsonObjects with: aRepository [
 ]
 
 { #category : #'instance creation' }
-Mapless class >> fromJSONString: aJsonString [
-	self halt.
-	#deprecated.
-	^ self fromJSONObject: (OrderedJson readFrom: aJsonString readStream)
-]
-
-{ #category : #'instance creation' }
 Mapless class >> fromJSONString: aJsonString in: aMaplessRepository [
 	^ self
 		fromJSONObject: (OrderedJson readFrom: aJsonString readStream)
 		in: aMaplessRepository
-]
-
-{ #category : #'instance creation' }
-Mapless class >> fromReified: aJsonObject [
-	self halt.
-	#deprecated.
-	^ self fromJSONObject: aJsonObject
 ]
 
 { #category : #configuration }
@@ -516,19 +465,6 @@ Mapless >> initializeData [
 		yourself
 ]
 
-{ #category : #json }
-Mapless >> initializeFromJSON: jsonString [
-	self halt.
-	#deprecated.
-	data := OrderedJson readFrom: jsonString readStream
-]
-
-{ #category : #initializing }
-Mapless >> initializeOn: aJsonObject [ 
-	self halt.
-	#deprecated
-]
-
 { #category : #initializing }
 Mapless >> initializeOn: aJsonObject with: aMaplessRepository [
 	super initialize.
@@ -753,67 +689,10 @@ Mapless >> save [
 ]
 
 { #category : #actions }
-Mapless >> setModelFrom: aJsonString on: aKey of: aJsonObject [
-	"Set model (only if someJsonStrings feels like those)"
-
-	| json maplessClass newSubMapless |
-	self halt.
-	#deprecated.
-	
-	json := Json readFrom: aJsonString readStream.
-	maplessClass := Smalltalk
-		at: (json at: '_c') asSymbol
-		ifAbsent: [ self error: 'Cannot find that class' ].
-	newSubMapless := maplessClass fromJSONObject: json.
-	newSubMapless setSubModels.
-	aJsonObject at: aKey put: newSubMapless
-]
-
-{ #category : #actions }
-Mapless >> setModelsFrom: someJsonStrings on: aKey of: aJsonObject [
-	"Set models (only if someJsonStrings feels like those)"
-
-	| maplessClass newSubMapless |
-	self halt.
-	#deprecated.
-	aJsonObject
-		at: aKey
-		put:
-			(someJsonStrings
-				collect: [ :json | 
-					maplessClass := Smalltalk
-						at: (json at: '_c') asSymbol
-						ifAbsent: [ self error: 'Cannot find that class' ].
-					newSubMapless := maplessClass fromJSON: json.
-					newSubMapless setSubModels.
-					newSubMapless ])
-]
-
-{ #category : #actions }
-Mapless >> setReferenceFrom: aJsonObject on: aKey of: parentJsonObject [
-	self halt.
-	#deprecated.
-	parentJsonObject
-		at: aKey
-		put: (MaplessReference fromJSONObject: aJsonObject)
-]
-
-{ #category : #actions }
 Mapless >> setReferenceFrom: aJsonObject on: aKey of: parentJsonObject in: aMaplessRepository [
 	parentJsonObject
 		at: aKey
 		put: (MaplessReference fromJSONObject: aJsonObject in: aMaplessRepository)
-]
-
-{ #category : #actions }
-Mapless >> setReferencesFrom: someJsonObjects on: aKey of: parentJsonObject [
-	self halt.
-	#deprecated.
-	parentJsonObject
-		at: aKey
-		put:
-			(someJsonObjects
-				collect: [ :jsonObject | MaplessReference fromJSONObject: jsonObject ])
 ]
 
 { #category : #actions }
@@ -824,31 +703,6 @@ Mapless >> setReferencesFrom: someJsonObjects on: aKey of: parentJsonObject in: 
 			(someJsonObjects
 				collect:
 					[ :jsonObject | MaplessReference fromJSONObject: jsonObject in: aMaplessRepository ])
-]
-
-{ #category : #actions }
-Mapless >> setSubModelReferences [
-	"Creates proxies to sub models regarding 
-	to the JSON data this instance."
-	self halt.
-	#deprecated.
-	self data
-		keysAndValuesDo: [ :k :v | self setSubModelReferencesAt: k with: v ]
-]
-
-{ #category : #actions }
-Mapless >> setSubModelReferencesAt: aKey with: anObject [
-	"1. It's a submodel"
-	self halt.
-	#deprecated.
-	(self class canRepresentSubMapless: anObject)
-		ifTrue: [ ^ self setReferenceFrom: anObject on: aKey of: self data ].
-
-	"2. it's a collection of submodels"
-	(anObject isCollection
-		and: [ anObject notEmpty
-				and: [ anObject anySatisfy: [ :e | self class canRepresentSubMapless: e ] ] ])
-		ifTrue: [ self setReferencesFrom: anObject on: aKey of: self data ]
 ]
 
 { #category : #actions }
@@ -881,51 +735,6 @@ Mapless >> setSubModelReferencesIn: aMaplessRepository [
 	self data
 		keysAndValuesDo:
 			[ :k :v | self setSubModelReferencesAt: k with: v in: aMaplessRepository ]
-]
-
-{ #category : #actions }
-Mapless >> setSubModels [
-	"On demand creates sub models regarding 
-	to the JSON data this instance."
-	self halt.
-	#deprecated.
-	self data keysAndValuesDo: [ :k :v | self setSubModelsAt: k with: v ]
-]
-
-{ #category : #actions }
-Mapless >> setSubModelsAndReferences [
-	self halt.
-	#deprecated.
-	self setSubModelReferences
-]
-
-{ #category : #actions }
-Mapless >> setSubModelsAt: aKey with: anObject [
-	"one submapless"
-
-	| maplessClass newSubMapless |
-	self halt.
-	#deprecated.	
-	(self class canBeMapless: anObject)
-		ifTrue: [ maplessClass := Smalltalk
-				at: (anObject at: '_c') asSymbol
-				ifAbsent: [ self error: 'Could not find that class' ].
-			newSubMapless := maplessClass fromJSONObject: anObject.
-			newSubMapless setSubModels.
-			self data at: aKey put: newSubMapless ].
-
-	"many submapless"
-	(anObject isCollection
-		and: [ anObject anySatisfy: [ :e | self class canBeMapless: e ] ])
-		ifTrue: [ | subMapless |
-			subMapless := anObject
-				collect: [ :each | 
-					maplessClass := Smalltalk
-						at: (each at: '_c') asSymbol
-						ifAbsent: [ self error: 'Could not find that class' ].
-					newSubMapless := maplessClass fromJSONObject: each.
-					newSubMapless setSubModels ].
-			self data at: aKey put: subMapless ]
 ]
 
 { #category : #actions }
@@ -966,25 +775,6 @@ Mapless >> setSubModelsIn: aMaplessRepository [
 
 	self data
 		keysAndValuesDo: [ :k :v | self setSubModelsAt: k with: v in: aMaplessRepository ]
-]
-
-{ #category : #accessing }
-Mapless >> subModelAt: aSelector [
-	"Answers the reified submodel (instantiating if necessary)."
-
-	| subModelData class |
-	subModelData := self data at: aSelector.
-	subModelData ifNil: [ ^ nil ].
-
-	"legacy code from Amber's json serialization
-	subModelData := subModelData at: '@data'.
-	subModelData ifNil:[^ FlowModelDataError signal: 'Cannot find ', aSelector,'''s data']."
-	class := subModelData at: 'class'.
-	class := Smalltalk
-		at: class asSymbol
-		ifAbsent: [ MaplessModelMetadataError
-				signal: 'Cannot find ' , aSelector , '''s metadata' ].
-	^ class fromReified: subModelData
 ]
 
 { #category : #actions }
