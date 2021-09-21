@@ -1,3 +1,7 @@
+September 21, 2021
+===================================
+* Now a `Mapless` coming from data from Voyage, can have a Voyage reference reified as a `MaplessReference`.
+
 September 20, 2021 - v0.4.3-alpha | Hidden Alpha
 ===================================
 * Introduces mainly the optional usage of the dynamic variable.
