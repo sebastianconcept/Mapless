@@ -30,8 +30,9 @@ Mapless class >> canRepresentSubMapless: anObject [
 	"Answers true if anObject can represent a sub mapless."
 
 	^ anObject isDictionary
-		and: [ anObject size = 2
-				and: [ (anObject includesKey: '_id') and: [ anObject includesKey: '_c' ] ] ]
+		and: [ (anObject size = 2
+				and: [ (anObject includesKey: '_id') and: [ anObject includesKey: '_c' ] ])
+				or: [ self isVoyageReference: anObject ] ]
 ]
 
 { #category : #accessing }
