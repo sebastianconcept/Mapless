@@ -1,4 +1,15 @@
-September 11, 2021
+September 20, 2021 - v0.4.3-alpha | Hidden Alpha
+===================================
+* Introduces mainly the optional usage of the dynamic variable.
+* Multi repo usage becomes cleaner now.
+* Fixes unit tests.
+* Simplifies use of the id property name. Now it won't need to manipulate the id anymore.
+
+September 14, 2021 v0.4.2-alpha | Eastern Panther
+===================================
+* Hotfix to make it compatible with Pharo 7.
+
+September 11, 2021 🇺🇸 😔 🙏 #NeverForget
 ===================================
 * Made reposotories API consistent. No mode `instanceOf` kind of messages. The whole API feels inspired in MongoDB.
 * Fixed setters. Now they return the receiver instead of the value that was set.
