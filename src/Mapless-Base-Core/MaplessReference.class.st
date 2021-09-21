@@ -20,9 +20,16 @@ MaplessReference class >> for: aMapless in: aMaplessRepository [
 ]
 
 { #category : #actions }
-MaplessReference class >> fromJSONObject: aJsonObject in: aRepository [
+MaplessReference class >> fromJSONObject: aJsonObject in: aMaplessRepository [
+	| data |
+	data := (Mapless isVoyageReference: aJsonObject)
+		ifTrue: [ JsonObject new
+				at: aMaplessRepository idPropertyName put: aJsonObject __id;
+				at: '_c' put: (aJsonObject at: '#instanceOf') , 'Mapless';
+				yourself ]
+		ifFalse: [ aJsonObject ].
 	^ self new
-		initializeOnData: aJsonObject in: aRepository;
+		initializeOnData: data in: aMaplessRepository;
 		yourself
 ]
 
@@ -31,27 +38,6 @@ MaplessReference class >> fromJSONString: aJSONString in: aMaplessRepository [
 	^ self
 		fromJSONObject: (OrderedJson readFrom: aJSONString readStream)
 		in: aMaplessRepository
-]
-
-{ #category : #actions }
-MaplessReference class >> fromVoyageReference: aDictionaryish [
-	"Answers a MaplessReference based on the voyage reference information found at aDictionaryish.
-	It assumes the Mapless model class to create for the corresponding composed object has the same name as Voyage would expect suffixed with 'Mapless'.
-	Example: if voyage has this object as BlahUser its document would instantiate BlahUserMapless instances."
-
-	| classSelector |
-	classSelector := (aDictionaryish at: '#instanceOf') , 'Mapless'.
-	^ self
-		fromVoyageReference: aDictionaryish
-		classSelector: classSelector
-]
-
-{ #category : #actions }
-MaplessReference class >> fromVoyageReference: aJsonObject classSelector: classSelector [
-	^ self new
-		id: (aJsonObject at: '__id');
-		maplessClass: classSelector;
-		yourself
 ]
 
 { #category : #accessing }
