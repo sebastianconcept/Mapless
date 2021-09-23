@@ -122,31 +122,6 @@ MaplessMongoModelTest >> testMergeSimple [
 ]
 
 { #category : #tests }
-MaplessMongoModelTest >> testReifyWithoutMetadata [
-	| user serializedWith serializedWithout |
-	user := DummyPerson new
-		firstName: 'john';
-		yourself.
-	serializedWith := '{"_id": "abc123", "_c": "DummyPerson","createdOn": "2017-01-22T13:49:37.564031+00:00","firstName": "john"}'.
-	serializedWithout := '{"_id": "abc123", "createdOn": "2017-01-22T13:49:37.564031+00:00","firstName": "john"}'.
-	self
-		do: [ self
-				assert:
-					(DummyPerson fromJSONString: serializedWith in: self currentRepository)
-						class == DummyPerson.
-			self
-				assert:
-					(DummyPerson
-						fromJSONString: serializedWithout
-						in: self currentRepository) class == DummyPerson.
-			self
-				assert:
-					(DummyUser
-						fromJSONString: serializedWithout
-						in: self currentRepository) class == DummyUser ]
-]
-
-{ #category : #tests }
 MaplessMongoModelTest >> testSaveHook [
 	| user |
 	user := DummyUser new
