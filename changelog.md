@@ -1,3 +1,9 @@
+September 22, 2021
+===================================
+* Introduces `MaplessResolver` to collaborate with `MaplessRepository` on getting the `Mapless` from JSON and return `MaplessReference`.
+* Aditional unit tests.
+* One of  resolver, `MaplessVoyageWithMaplessSuffixResolver` helps with using `Mapless` to connect a MongoDB backend created/used by Voyage.
+
 September 21, 2021
 ===================================
 * Now a `Mapless` coming from data from Voyage, can have a Voyage reference reified as a `MaplessReference`.
