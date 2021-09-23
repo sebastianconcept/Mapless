@@ -211,7 +211,7 @@ MaplessMongoRepository >> findOne: aMaplessClass where: someConditions [
 		ifFalse: [ self
 				onAfterRead:
 					(aMaplessClass
-						fromJSONObject: (self normalizeIdOfOn: result asJsonObject)
+						fromJSONObject: (self normalizeIdOfOn: (result asJsonObjectIn: self))
 						in: self) ]
 ]
 

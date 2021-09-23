@@ -21,15 +21,9 @@ MaplessReference class >> for: aMapless in: aMaplessRepository [
 
 { #category : #actions }
 MaplessReference class >> fromJSONObject: aJsonObject in: aMaplessRepository [
-	| data |
-	data := (Mapless isVoyageReference: aJsonObject)
-		ifTrue: [ JsonObject new
-				at: aMaplessRepository idPropertyName put: aJsonObject __id;
-				at: '_c' put: (aJsonObject at: '#instanceOf') , 'Mapless';
-				yourself ]
-		ifFalse: [ aJsonObject ].
 	^ self new
-		initializeOnData: data in: aMaplessRepository;
+		initializeOnData: (aMaplessRepository referenceDataFrom: aJsonObject)
+			in: aMaplessRepository;
 		yourself
 ]
 

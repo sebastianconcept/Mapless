@@ -16,25 +16,6 @@ Class {
 	#category : #'Mapless-Base-Core-Models'
 }
 
-{ #category : #testing }
-Mapless class >> canRepresentArrayOfMaplessReferences: anObject [
-	"Answers true if anObject can represent a collection of sub mapless references."
-
-	^ anObject isCollection
-		and: [ anObject
-				anySatisfy: [ :anyOne | self canRepresentSubMapless: anyOne ] ]
-]
-
-{ #category : #testing }
-Mapless class >> canRepresentSubMapless: anObject [
-	"Answers true if anObject can represent a sub mapless."
-
-	^ anObject isDictionary
-		and: [ (anObject size = 2
-				and: [ (anObject includesKey: '_id') and: [ anObject includesKey: '_c' ] ])
-				or: [ self isVoyageReference: anObject ] ]
-]
-
 { #category : #accessing }
 Mapless class >> collection [
 	^ self currentRepository database collectionAt: self collectionName
@@ -155,21 +136,14 @@ Mapless class >> first [
 
 { #category : #'instance creation' }
 Mapless class >> fromJSONObject: aJsonObjectOrNilOrArray in: aMaplessRepository [
-	| maplessClass |
 	aJsonObjectOrNilOrArray ifNil: [ ^ nil ].
 	aJsonObjectOrNilOrArray isArray
 		ifTrue: [ ^ self
 				fromJSONObjects: aJsonObjectOrNilOrArray
 				with: aMaplessRepository ].
-
-	"If the content has metadata then it will use it to decide what instances to create.
-	When there is no Mapless metadata available, the assumption is 
-	that it should create instances of this class of Mapless."
-	maplessClass := aJsonObjectOrNilOrArray
-		at: '_c'
-		ifAbsent: [ self maplessClassName ].
-	^ (Smalltalk at: maplessClass asSymbol) basicNew
-		initializeOn: aJsonObjectOrNilOrArray asJsonObject
+	^ (aMaplessRepository maplessClassFor: aJsonObjectOrNilOrArray)
+		basicNew
+		initializeOn: (aJsonObjectOrNilOrArray asJsonObjectIn: aMaplessRepository)
 			with: aMaplessRepository;
 		yourself
 ]
@@ -217,17 +191,6 @@ Mapless class >> isDeprecated [
 	^ self == DeprecatedModelClass"
 
 	^ false
-]
-
-{ #category : #testing }
-Mapless class >> isVoyageReference: anObject [
-	"Answers true if anObject has the keys and values of a voyage reference."
-
-	^ anObject isDictionary
-		and: [ anObject size = 3
-				and: [ (anObject includesKey: '__id')
-						and: [ (anObject includesKey: '#instanceOf')
-								and: [ anObject includesKey: '#collection' ] ] ] ]
 ]
 
 { #category : #configuration }
@@ -710,7 +673,7 @@ Mapless >> setReferencesFrom: someJsonObjects on: aKey of: parentJsonObject in: 
 Mapless >> setSubModelReferencesAt: aKey with: anObject in: aMaplessRepository [
 	"1. It's a submodel"
 
-	(self class canRepresentSubMapless: anObject)
+	(aMaplessRepository canRepresentSubMapless: anObject)
 		ifTrue: [ ^ self
 				setReferenceFrom: anObject
 				on: aKey
@@ -720,7 +683,7 @@ Mapless >> setSubModelReferencesAt: aKey with: anObject in: aMaplessRepository [
 	"2. it's a collection of submodels"
 	(anObject isCollection
 		and: [ anObject notEmpty
-				and: [ anObject anySatisfy: [ :e | self class canRepresentSubMapless: e ] ] ])
+				and: [ anObject anySatisfy: [ :e | aMaplessRepository canRepresentSubMapless: e ] ] ])
 		ifTrue: [ self
 				setReferencesFrom: anObject
 				on: aKey
@@ -733,7 +696,7 @@ Mapless >> setSubModelReferencesIn: aMaplessRepository [
 	"Creates proxies to sub models regarding 
 	to the JSON data this instance."
 
-	self data
+	self maplessData
 		keysAndValuesDo:
 			[ :k :v | self setSubModelReferencesAt: k with: v in: aMaplessRepository ]
 ]

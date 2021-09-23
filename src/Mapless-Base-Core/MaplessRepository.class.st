@@ -14,14 +14,26 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'databaseName',
-		'accessor'
+		'accessor',
+		'resolver'
 	],
 	#category : #'Mapless-Base-Core-Repositories'
 }
 
 { #category : #actions }
 MaplessRepository class >> for: aDatabaseName with: aDatabaseAccessor [
-	^ self new initializeOn: aDatabaseName with: aDatabaseAccessor
+	^ self
+		for: aDatabaseName
+		with: aDatabaseAccessor
+		using: MaplessCollectionToClassNameResolver new
+]
+
+{ #category : #actions }
+MaplessRepository class >> for: aDatabaseName with: aDatabaseAccessor using: aMaplessResolver [
+	^ self new
+		initializeOn: aDatabaseName
+		with: aDatabaseAccessor
+		using: aMaplessResolver
 ]
 
 { #category : #actions }
@@ -68,6 +80,18 @@ MaplessRepository >> canBeMapless: anObject [
 
 	^ anObject isDictionary
 		and: [ anObject size > 1 and: [ anObject includesKey: '_c' ] ]
+]
+
+{ #category : #testing }
+MaplessRepository >> canRepresentArrayOfMaplessReferences: anObject [
+	"Answers true if anObject can represent a collection of sub mapless references."
+
+	^ resolver canRepresentArrayOfMaplessReferences: anObject in: self
+]
+
+{ #category : #testing }
+MaplessRepository >> canRepresentSubMapless: anObject [
+	^ resolver canRepresentSubMapless: anObject in: self
 ]
 
 { #category : #accessing }
@@ -142,9 +166,10 @@ MaplessRepository >> idOf: aMapless [
 ]
 
 { #category : #initialization }
-MaplessRepository >> initializeOn: aDatabaseName with: aDatabaseAccessor [
+MaplessRepository >> initializeOn: aDatabaseName with: aDatabaseAccessor using: aMaplessResolver [
 	databaseName := aDatabaseName.
-	accessor := aDatabaseAccessor
+	accessor := aDatabaseAccessor.
+	resolver := aMaplessResolver
 ]
 
 { #category : #testing }
@@ -155,6 +180,11 @@ MaplessRepository >> isUnsaved: aMapless [
 
 	^ (aMapless maplessData includesKey: self idPropertyName) not
 		and: [ aMapless id isNil ]
+]
+
+{ #category : #accessing }
+MaplessRepository >> maplessClassFor: aJsonObject [
+	^ resolver maplessClassFor: aJsonObject in: self
 ]
 
 { #category : #actions }
@@ -241,6 +271,21 @@ MaplessRepository >> onBeforeUpsert: aMapless [
 	self ensureIdOf: aMapless.
 	aMapless onBeforeUpsert.
 	^ aMapless
+]
+
+{ #category : #accessing }
+MaplessRepository >> referenceDataFrom: aJsonObject [
+	^ resolver referenceDataFrom: aJsonObject in: self
+]
+
+{ #category : #accessing }
+MaplessRepository >> resolver [
+	^ resolver
+]
+
+{ #category : #accessing }
+MaplessRepository >> resolver: anObject [
+	resolver := anObject
 ]
 
 { #category : #actions }

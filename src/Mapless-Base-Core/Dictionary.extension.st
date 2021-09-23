@@ -1,16 +1,18 @@
 Extension { #name : #Dictionary }
 
 { #category : #'*Mapless-Base-Core' }
-Dictionary >> asJsonObject [
+Dictionary >> asJsonObjectIn: aMaplessRepository [
 	"Answers a JSON object based on the contents of this dictionary."
 
 	^ [ :json | 
 	self
 		keysAndValuesDo: [ :key :value | 
 			value isDictionary
-				ifFalse: [ (Mapless canRepresentArrayOfMaplessReferences: value)
-						ifTrue: [ json at: key put: (value collect: [ :each | each asJsonObject ]) ]
+				ifFalse: [ (aMaplessRepository canRepresentArrayOfMaplessReferences: value)
+						ifTrue: [ json
+								at: key
+								put: (value collect: [ :each | each asJsonObjectIn: aMaplessRepository ]) ]
 						ifFalse: [ json at: key put: value ] ]
-				ifTrue: [ json at: key put: value asJsonObject ] ].
+				ifTrue: [ json at: key put: (value asJsonObjectIn: aMaplessRepository) ] ].
 	json ] value: JsonObject new
 ]
