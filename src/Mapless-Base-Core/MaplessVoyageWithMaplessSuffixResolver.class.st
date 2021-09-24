@@ -19,6 +19,17 @@ MaplessVoyageWithMaplessSuffixResolver >> canRepresentSubMapless: anObject in: a
 ]
 
 { #category : #testing }
+MaplessVoyageWithMaplessSuffixResolver >> isVoyage: anObject in: aMaplessRepository [
+	"Answers true if anObject has the keys and values of a voyage object or reference."
+
+	^ anObject isDictionary
+		and: [ ((anObject includesKey: '_id')
+				or: [ (anObject includesKey: '__id')
+						and: [ anObject includesKey: '#collection' ] ])
+				and: [ anObject includesKey: '#instanceOf' ] ]
+]
+
+{ #category : #testing }
 MaplessVoyageWithMaplessSuffixResolver >> isVoyageReference: anObject in: aMaplessRepository [
 	"Answers true if anObject has the keys and values of a voyage reference."
 
