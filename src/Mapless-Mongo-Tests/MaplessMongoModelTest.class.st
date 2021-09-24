@@ -71,7 +71,7 @@ MaplessMongoModelTest >> testInsertHook [
 		yourself.
 	self assert: user beforeInsert isNil.
 	self assert: user afterInsert isNil.
-	self do: [ self currentRepository insert: user ].
+	self do: [ user insert ].
 	self assert: user beforeInsert.
 	self assert: user afterInsert
 ]
@@ -297,8 +297,8 @@ MaplessMongoModelTest >> testUpdatetHook [
 	self assert: user beforeUpdate isNil.
 	self assert: user afterUpdate isNil.
 	self
-		do: [ self currentRepository insert: user.
-			self currentRepository update: user ].
+		do: [ user insert.
+			user update ].
 	self assert: user beforeUpdate.
 	self assert: user afterUpdate
 ]

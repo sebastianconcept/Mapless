@@ -18,7 +18,7 @@ Class {
 
 { #category : #accessing }
 Mapless class >> collection [
-	^ self currentRepository database collectionAt: self collectionName
+	^ self getRepository database collectionAt: self collectionName
 ]
 
 { #category : #configuration }
@@ -32,14 +32,14 @@ Mapless class >> collectionName [
 Mapless class >> count [
 	"Answer what's the number of instances of the receiver in the repository."
 
-	^ self currentRepository count: self
+	^ self getRepository count: self
 ]
 
 { #category : #querying }
 Mapless class >> count: someConditions [
 	"Answer the integer number of instances of the receiver that meet someConditions in the repository."
 
-	^ self currentRepository count: self where: someConditions
+	^ self getRepository count: self where: someConditions
 ]
 
 { #category : #accessing }
@@ -49,19 +49,19 @@ Mapless class >> currentRepository [
 
 { #category : #testing }
 Mapless class >> existsId: anId [
-	^ self currentRepository existsId: anId of: self
+	^ self getRepository existsId: anId of: self
 ]
 
 { #category : #querying }
 Mapless class >> find: someConditions [
 	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
 
-	^ self currentRepository find: self where: someConditions
+	^ self getRepository find: self where: someConditions
 ]
 
 { #category : #querying }
 Mapless class >> find: someConditions limit: toHowManyResults [
-	^ self currentRepository
+	^ self getRepository
 		find: self
 		where: someConditions
 		limit: toHowManyResults
@@ -69,7 +69,7 @@ Mapless class >> find: someConditions limit: toHowManyResults [
 
 { #category : #querying }
 Mapless class >> find: someConditions limit: howManyResults offset: startingFromWhichResult [
-	^ self currentRepository
+	^ self getRepository
 		find: self
 		where: someConditions
 		limit: howManyResults
@@ -78,7 +78,7 @@ Mapless class >> find: someConditions limit: howManyResults offset: startingFrom
 
 { #category : #querying }
 Mapless class >> find: someConditions limit: howManyResults offset: startingFromWhichResult sort: sortConditions [
-	^ self currentRepository
+	^ self getRepository
 		find: self
 		where: someConditions
 		limit: howManyResults
@@ -88,7 +88,7 @@ Mapless class >> find: someConditions limit: howManyResults offset: startingFrom
 
 { #category : #querying }
 Mapless class >> find: someConditions limit: toHowManyResults sort: sortConditions [
-	^ self currentRepository
+	^ self getRepository
 		find: self
 		where: someConditions
 		limit: toHowManyResults
@@ -99,7 +99,7 @@ Mapless class >> find: someConditions limit: toHowManyResults sort: sortConditio
 Mapless class >> find: someConditions sort: sortConditions [
 	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
 
-	^ self currentRepository
+	^ self getRepository
 		find: self
 		where: someConditions
 		sort: sortConditions
@@ -109,29 +109,29 @@ Mapless class >> find: someConditions sort: sortConditions [
 Mapless class >> findAll [
 	"Answer a collection with all receiver instances from the repository."
 
-	^ self currentRepository findAll: self
+	^ self getRepository findAll: self
 ]
 
 { #category : #querying }
 Mapless class >> findAllSort: sortConditions [
-	^ self currentRepository findAll: self sort: sortConditions
+	^ self getRepository findAll: self sort: sortConditions
 ]
 
 { #category : #querying }
 Mapless class >> findId: anId [
-	^ self currentRepository findOne: self atId: anId
+	^ self getRepository findOne: self atId: anId
 ]
 
 { #category : #querying }
 Mapless class >> findOne: someConditions [
 	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
 
-	^ self currentRepository findOne: self where: someConditions
+	^ self getRepository findOne: self where: someConditions
 ]
 
 { #category : #querying }
 Mapless class >> first [
-	^ self currentRepository findOne: self where: Dictionary new
+	^ self getRepository findOne: self where: Dictionary new
 ]
 
 { #category : #'instance creation' }
@@ -155,10 +155,20 @@ Mapless class >> fromJSONObjects: someJsonObjects with: aRepository [
 ]
 
 { #category : #'instance creation' }
+Mapless class >> fromJSONString: aJsonString [
+	^ self fromJSONString: aJsonString in: self getRepository
+]
+
+{ #category : #'instance creation' }
 Mapless class >> fromJSONString: aJsonString in: aMaplessRepository [
 	^ self
 		fromJSONObject: (OrderedJson readFrom: aJsonString readStream)
 		in: aMaplessRepository
+]
+
+{ #category : #accessing }
+Mapless class >> getRepository [
+	^ self currentRepository
 ]
 
 { #category : #configuration }
@@ -334,11 +344,6 @@ Mapless >> createdOn [
 	^ self at: selector asString put: (self dateAndTimeAt: selector)
 ]
 
-{ #category : #convenience }
-Mapless >> currentRepository [
-	^ self class currentRepository
-]
-
 { #category : #accessing }
 Mapless >> data [
 	^ data ifNil: [ self initializeData ]
@@ -364,14 +369,14 @@ Mapless >> dateAndTimeAt: aSelector [
 Mapless >> delete [
 	"Saves this instance as deleted in the persistent collection"
 
-	self currentRepository delete: self
+	self getRepository delete: self
 ]
 
 { #category : #actions }
 Mapless >> destroy [
 	"Removes this instance from the persistent collection"
 
-	^ self currentRepository destroy: self
+	^ self getRepository destroy: self
 ]
 
 { #category : #accessing }
@@ -395,6 +400,11 @@ Mapless >> fresh [
 	^ self hasId
 		ifFalse: [ self ]
 		ifTrue: [ self class findId: self id ]
+]
+
+{ #category : #convenience }
+Mapless >> getRepository [
+	^ self class getRepository
 ]
 
 { #category : #testing }
@@ -441,7 +451,7 @@ Mapless >> initializeOn: aJsonObject with: aMaplessRepository [
 Mapless >> insert [
 	"Insert this instance into the persistent collection"
 
-	^ self currentRepository insert: self
+	^ self getRepository insert: self
 ]
 
 { #category : #testing }
@@ -633,11 +643,6 @@ Mapless >> onBeforeUpsert [
 	
 ]
 
-{ #category : #accessing }
-Mapless >> persistenceStrategy [
-	^ self class currentRepository
-]
-
 { #category : #actions }
 Mapless >> sanitize: someFields [
 	"Removes someFields from the receiver."
@@ -649,7 +654,7 @@ Mapless >> sanitize: someFields [
 Mapless >> save [
 	"Storage this instance into the persistent collection"
 
-	^ self currentRepository save: self
+	^ self getRepository save: self
 ]
 
 { #category : #actions }
@@ -768,5 +773,5 @@ Mapless >> unreferenced [
 
 { #category : #actions }
 Mapless >> update [
-	^ self currentRepository update: self
+	^ self getRepository update: self
 ]

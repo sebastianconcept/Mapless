@@ -594,19 +594,17 @@ MaplessMongoTest >> testSimpleSaveAndUpdate [
 { #category : #tests }
 MaplessMongoTest >> testSubModelsFromReifiedJSON [
 	| user guy jsonString reified |
+	user := DummyUser new
+		userame: 'johnq';
+		yourself.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	user person: guy.
 	self
-		do: [ user := DummyUser new
-				userame: 'johnq';
-				yourself.
-			guy := DummyPerson new
-				firstName: 'john';
-				lastName: 'q';
-				yourself.
-			user person: guy.
-			jsonString := user unreferenced asJSONString.
-			reified := DummyUser
-				fromJSONString: jsonString
-				in: self currentRepository.
-			self assert: reified person class equals: DummyPerson.
-			self assert: reified completeName equals: 'john q' ]
+		do: [ jsonString := user unreferenced asJSONString.
+			reified := DummyUser fromJSONString: jsonString ].
+	self assert: reified person class equals: DummyPerson.
+	self assert: reified completeName equals: 'john q'
 ]
