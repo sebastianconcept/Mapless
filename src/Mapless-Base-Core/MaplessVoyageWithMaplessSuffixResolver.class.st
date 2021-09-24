@@ -42,7 +42,7 @@ MaplessVoyageWithMaplessSuffixResolver >> isVoyageReference: anObject in: aMaple
 
 { #category : #accessing }
 MaplessVoyageWithMaplessSuffixResolver >> maplessClassNameFor: aJsonObject in: aMaplessRepository [
-	^ (self isVoyageReference: aJsonObject in: aMaplessRepository)
+	^ (self isVoyage: aJsonObject in: aMaplessRepository)
 		ifTrue: [ (aJsonObject at: '#instanceOf') , suffix ]
 		ifFalse: [ aJsonObject at: '_c' ]
 ]
