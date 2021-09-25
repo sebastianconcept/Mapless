@@ -654,7 +654,7 @@ Mapless >> sanitize: someFields [
 Mapless >> save [
 	"Storage this instance into the persistent collection"
 
-	^ self getRepository save: self
+	self getRepository save: self
 ]
 
 { #category : #actions }

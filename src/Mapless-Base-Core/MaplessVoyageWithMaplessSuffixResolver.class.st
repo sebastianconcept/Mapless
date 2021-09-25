@@ -23,9 +23,10 @@ MaplessVoyageWithMaplessSuffixResolver >> isVoyage: anObject in: aMaplessReposit
 	"Answers true if anObject has the keys and values of a voyage object or reference."
 
 	^ anObject isDictionary
-		and: [ ((anObject includesKey: '_id')
+		and: [ (((anObject includesKey: '_id')
 				or: [ (anObject includesKey: '__id')
 						and: [ anObject includesKey: '#collection' ] ])
+				or: [ anObject includesKey: 'id' ])
 				and: [ anObject includesKey: '#instanceOf' ] ]
 ]
 
@@ -49,7 +50,7 @@ MaplessVoyageWithMaplessSuffixResolver >> maplessClassNameFor: aJsonObject in: a
 
 { #category : #accessing }
 MaplessVoyageWithMaplessSuffixResolver >> referenceDataFrom: aJsonObject in: aMaplessRepository [
-	^ (MaplessResolver
+	^ (aMaplessRepository resolver
 		isVoyageReference: aJsonObject
 		in: aMaplessRepository)
 		ifTrue: [ JsonObject new
