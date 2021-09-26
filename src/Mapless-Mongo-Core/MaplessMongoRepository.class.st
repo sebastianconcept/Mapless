@@ -276,3 +276,21 @@ MaplessMongoRepository >> upsert: aMapless [
 				flags: UpdateOperation flagUpsert ].
 	self onAfterUpsert: aMapless
 ]
+
+{ #category : #actions }
+MaplessMongoRepository >> withClientDo: aBlock [
+	^ self withClientDo: aBlock with: accessor
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> withClientDo: aBlock with: aDatabaseAccessor [
+	"Performs aBlock and providing access to the mongo client as aBlock argument."
+
+	aDatabaseAccessor
+		do: [ :client | 
+			[ mongoClient := client.
+			MaplessCurrentRepository
+				value: self
+				during: [ ^ aBlock value: client ] ]
+				ensure: [ mongoClient := nil ] ]
+]

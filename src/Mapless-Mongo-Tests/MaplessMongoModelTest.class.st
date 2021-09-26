@@ -136,6 +136,37 @@ MaplessMongoModelTest >> testRaiseErrorWhenTryingToInsertADuplicatedUnique [
 ]
 
 { #category : #tests }
+MaplessMongoModelTest >> testRaiseErrorWhenTryingToSaveADuplicatedUnique [
+	| john peter |
+	repository
+		do: [ repository database
+				command:
+					{('createIndexes' -> DummyPerson collectionName).
+					('indexes'
+						->
+							{{('key' -> {('lastName' -> 1)} asDictionary).
+							('name' -> 'lastName_unique').
+							('unique' -> true)} asDictionary})} asOrderedDictionary ].
+	john := DummyPerson new
+		firstName: 'John';
+		lastName: 'Someson';
+		yourself.
+	peter := DummyPerson new
+		firstName: 'Peter';
+		lastName: 'Someson';
+		yourself.
+	self
+		do: [ john save.
+			self should: [ john insert ] raise: MongoCommandError.
+			[ john insert ]
+				on: MongoCommandError
+				do: [ :x | self assert: x isInsertionError ].
+			[ peter insert ]
+				on: MongoCommandError
+				do: [ :x | self assert: x isInsertionError ] ]
+]
+
+{ #category : #tests }
 MaplessMongoModelTest >> testSaveHook [
 	| user |
 	user := DummyUser new
@@ -328,4 +359,9 @@ MaplessMongoModelTest >> testUpsertHook [
 	self do: [ user save ].
 	self assert: user beforeUpsert.
 	self assert: user afterUpsert
+]
+
+{ #category : #actions }
+MaplessMongoModelTest >> withClientDo: aBlock [
+	^ repository withClientDo: aBlock
 ]
