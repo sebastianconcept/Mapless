@@ -250,6 +250,7 @@ MaplessRepository >> onBeforeDestroy: aMapless [
 
 { #category : #hooks }
 MaplessRepository >> onBeforeInsert: aMapless [
+	self ensureIdOf: aMapless.
 	aMapless onBeforeInsert.
 	^ aMapless
 ]

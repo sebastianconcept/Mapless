@@ -230,8 +230,13 @@ MaplessMongoRepository >> idPropertyName [
 
 { #category : #actions }
 MaplessMongoRepository >> insert: aMapless [
+	| bsonFriendly |
 	self onBeforeInsert: aMapless.
-	self upsert: aMapless.
+	bsonFriendly := self storableFor: aMapless maplessData.
+	self
+		do: [ (self databaseCollectionNamed: aMapless class collectionName)
+				commandInsert: bsonFriendly
+				writeConcern: nil ].
 	self onAfterInsert: aMapless
 ]
 
@@ -270,4 +275,22 @@ MaplessMongoRepository >> upsert: aMapless [
 				with: bsonFriendly
 				flags: UpdateOperation flagUpsert ].
 	self onAfterUpsert: aMapless
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> withClientDo: aBlock [
+	^ self withClientDo: aBlock with: accessor
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> withClientDo: aBlock with: aDatabaseAccessor [
+	"Performs aBlock and providing access to the mongo client as aBlock argument."
+
+	aDatabaseAccessor
+		do: [ :client | 
+			[ mongoClient := client.
+			MaplessCurrentRepository
+				value: self
+				during: [ ^ aBlock value: client ] ]
+				ensure: [ mongoClient := nil ] ]
 ]
