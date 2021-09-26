@@ -376,7 +376,7 @@ Mapless >> delete [
 Mapless >> destroy [
 	"Removes this instance from the persistent collection"
 
-	^ self getRepository destroy: self
+	self getRepository destroy: self
 ]
 
 { #category : #accessing }
@@ -451,7 +451,7 @@ Mapless >> initializeOn: aJsonObject with: aMaplessRepository [
 Mapless >> insert [
 	"Insert this instance into the persistent collection"
 
-	^ self getRepository insert: self
+	self getRepository insert: self
 ]
 
 { #category : #testing }
@@ -773,5 +773,5 @@ Mapless >> unreferenced [
 
 { #category : #actions }
 Mapless >> update [
-	^ self getRepository update: self
+	self getRepository update: self
 ]
