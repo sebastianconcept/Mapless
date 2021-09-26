@@ -230,8 +230,13 @@ MaplessMongoRepository >> idPropertyName [
 
 { #category : #actions }
 MaplessMongoRepository >> insert: aMapless [
+	| bsonFriendly |
 	self onBeforeInsert: aMapless.
-	self upsert: aMapless.
+	bsonFriendly := self storableFor: aMapless maplessData.
+	self
+		do: [ (self databaseCollectionNamed: aMapless class collectionName)
+				commandInsert: bsonFriendly
+				writeConcern: nil ].
 	self onAfterInsert: aMapless
 ]
 

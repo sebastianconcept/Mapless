@@ -122,6 +122,20 @@ MaplessMongoModelTest >> testMergeSimple [
 ]
 
 { #category : #tests }
+MaplessMongoModelTest >> testRaiseErrorWhenTryingToInsertADuplicatedUnique [
+	| user |
+	user := DummyUser new
+		username: 'johnq';
+		yourself.
+	self
+		do: [ user insert.
+			self should: [ user insert ] raise: MongoCommandError.
+			[ user insert ]
+				on: MongoCommandError
+				do: [ :x | self assert: x isInsertionError ] ]
+]
+
+{ #category : #tests }
 MaplessMongoModelTest >> testSaveHook [
 	| user |
 	user := DummyUser new

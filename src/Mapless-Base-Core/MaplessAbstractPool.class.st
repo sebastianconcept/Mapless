@@ -333,6 +333,6 @@ MaplessAbstractPool >> withClientDo: aBlock [
 				on: Error
 				do: [ :x | 
 					client reset.
-					MongoOperationError signal: x messageText ] ]
+					x signal ] ]
 				ensure: [ self returnClient: client ] ]
 ]
