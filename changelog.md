@@ -1,8 +1,18 @@
+September 27, 2021
+===================================
+* Adds API to do operations with custom concerns.
+* Adjusts `upsert` command for MongoDB 4.0.
+* Adds `testUpsert` for coverage.
+
+September 26, 2021
+===================================
+* Will raise an exception when trying to insert a mapless with a duplicate value on indices with unique values.
+
 September 22, 2021
 ===================================
 * Introduces `MaplessResolver` to collaborate with `MaplessRepository` on getting the `Mapless` from JSON and return `MaplessReference`.
 * Aditional unit tests.
-* One of  resolver, `MaplessVoyageWithMaplessSuffixResolver` helps with using `Mapless` to connect a MongoDB backend created/used by Voyage.
+* One of the resolvers, `MaplessVoyageWithMaplessSuffixResolver` helps with using `Mapless` to connect a MongoDB backend created or in use by a Voyage app.
 
 September 21, 2021
 ===================================
