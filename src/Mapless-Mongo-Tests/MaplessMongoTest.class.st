@@ -608,3 +608,22 @@ MaplessMongoTest >> testSubModelsFromReifiedJSON [
 	self assert: reified person class equals: DummyPerson.
 	self assert: reified completeName equals: 'john q'
 ]
+
+{ #category : #tests }
+MaplessMongoTest >> testUpsert [
+	| guy theId found freshFound |
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	self
+		do: [ guy upsert.
+			theId := guy id.
+			found := DummyPerson findId: theId.
+			self assert: found notNil equals: true.
+			self assert: found firstName equals: 'john'.
+			found firstName: 'John'.
+			found upsert.
+			freshFound := DummyPerson findId: theId.
+			self assert: freshFound firstName equals: 'John' ]
+]

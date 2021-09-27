@@ -51,6 +51,13 @@ MaplessMongoRepository >> databaseCollectionNamed: aCollectionName [
 MaplessMongoRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
+	self destroy: aMapless writeConcern: nil
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> destroy: aMapless writeConcern: aConcernOrNil [
+	"Removes aMapless from the persistent collection"
+
 	| bsonFriendly filter |
 	self onBeforeDestroy: aMapless.
 	filter := JsonObject new
@@ -59,7 +66,9 @@ MaplessMongoRepository >> destroy: aMapless [
 	bsonFriendly := self storableFor: filter.
 	self
 		do: [ (self databaseCollectionNamed: aMapless class collectionName)
-				remove: bsonFriendly ].
+				commandDelete: bsonFriendly
+				limit: 1
+				writeConcern: aConcernOrNil ].
 	self onAfterDestroy: aMapless
 ]
 
@@ -230,13 +239,18 @@ MaplessMongoRepository >> idPropertyName [
 
 { #category : #actions }
 MaplessMongoRepository >> insert: aMapless [
+	self insert: aMapless writeConcern: nil
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> insert: aMapless writeConcern: aConcernOrNil [
 	| bsonFriendly |
 	self onBeforeInsert: aMapless.
 	bsonFriendly := self storableFor: aMapless maplessData.
 	self
 		do: [ (self databaseCollectionNamed: aMapless class collectionName)
 				commandInsert: bsonFriendly
-				writeConcern: nil ].
+				writeConcern: aConcernOrNil ].
 	self onAfterInsert: aMapless
 ]
 
@@ -255,25 +269,45 @@ MaplessMongoRepository >> save: aMapless [
 ]
 
 { #category : #actions }
+MaplessMongoRepository >> save: aMapless writeConcern: aConcernOrNil [
+	"Storage this instance into the persistent collection"
+
+	self onBeforeSave: aMapless.
+	self update: aMapless writeConcern: aConcernOrNil.
+	self onAfterSave: aMapless
+]
+
+{ #category : #actions }
 MaplessMongoRepository >> update: aMapless [
+	self update: aMapless writeConcern: nil
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> update: aMapless writeConcern: aConcernOrNil [
 	self onBeforeUpdate: aMapless.
-	self upsert: aMapless.
+	self upsert: aMapless writeConcern: aConcernOrNil.
 	self onAfterUpdate: aMapless
 ]
 
 { #category : #actions }
 MaplessMongoRepository >> upsert: aMapless [
+	self upsert: aMapless writeConcern: nil
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> upsert: aMapless writeConcern: aConcernOrNil [
 	| bsonFriendly |
 	self onBeforeUpsert: aMapless.
 	bsonFriendly := self storableFor: aMapless maplessData.
 	self
-		do: [ (self databaseCollectionNamed: aMapless class collectionName)
-				update:
+		do: [ self database
+				commandUpsert:
 					(Dictionary new
 						at: self idPropertyName put: (self idOf: aMapless);
 						yourself)
 				with: bsonFriendly
-				flags: UpdateOperation flagUpsert ].
+				collection: aMapless class collectionName
+				writeConcern: aConcernOrNil ].
 	self onAfterUpsert: aMapless
 ]
 

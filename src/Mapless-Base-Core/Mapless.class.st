@@ -775,3 +775,10 @@ Mapless >> unreferenced [
 Mapless >> update [
 	self getRepository update: self
 ]
+
+{ #category : #actions }
+Mapless >> upsert [
+	"Storage this instance into the persistent collection"
+
+	self getRepository upsert: self
+]
