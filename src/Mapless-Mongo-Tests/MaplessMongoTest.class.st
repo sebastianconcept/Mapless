@@ -284,6 +284,92 @@ MaplessMongoTest >> testDateAndTime [
 ]
 
 { #category : #tests }
+MaplessMongoTest >> testDefaultConcerns [
+	| concern |
+	concern := MongoWriteConcern new
+		j: true;
+		w: 'majority';
+		wtimeout: 5000;
+		yourself.
+	repository
+		defaultInsertConcern: concern;
+		defaultUpsertConcern: concern;
+		defaultUpdateConcern: concern;
+		defaultDeleteConcern: concern;
+		yourself.
+	self assert: repository defaultInsertConcern equals: concern.
+	self assert: repository defaultUpsertConcern equals: concern.
+	self assert: repository defaultUpdateConcern equals: concern.
+	self assert: repository defaultDeleteConcern equals: concern.
+	
+
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testDefaultConcernsOnAMaplessClass [
+	| concern1 concern2 |
+	concern1 := MongoWriteConcern new
+		j: true;
+		w: 'majority';
+		wtimeout: 5000;
+		yourself.
+	concern2 := MongoWriteConcern new
+		j: true;
+		w: 1;
+		wtimeout: 10000;
+		yourself.
+	repository
+		defaultInsertConcern: concern2;
+		defaultUpsertConcern: concern2;
+		defaultUpdateConcern: concern2;
+		defaultDeleteConcern: concern2;
+		yourself.
+	repository insertConcern: concern1 for: DummyPerson.
+	repository upsertConcern: concern1 for: DummyPerson.
+	repository updateConcern: concern1 for: DummyPerson.
+	repository deleteConcern: concern1 for: DummyPerson.
+	self
+		assert: (repository insertConcernFor: DummyPerson)
+		equals: concern1.
+	self deny: (repository insertConcernFor: DummyUser) equals: concern1.
+	self deny: (repository upsertConcernFor: DummyUser) equals: concern1.
+	self deny: (repository updateConcernFor: DummyUser) equals: concern1.
+	self deny: (repository deleteConcernFor: DummyUser) equals: concern1.
+	self
+		assert: (repository insertConcernFor: DummyUser)
+		equals: concern2.
+	self
+		assert: (repository upsertConcernFor: DummyUser)
+		equals: concern2.
+	self
+		assert: (repository updateConcernFor: DummyUser)
+		equals: concern2.
+	self
+		assert: (repository deleteConcernFor: DummyUser)
+		equals: concern2.
+	self
+		deny: (repository insertConcernFor: DummyPerson)
+		equals: concern2.
+	self
+		deny: (repository upsertConcernFor: DummyPerson)
+		equals: concern2.
+	self
+		deny: (repository updateConcernFor: DummyPerson)
+		equals: concern2.
+	self
+		deny: (repository deleteConcernFor: DummyPerson)
+		equals: concern2
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testDefaultNilConcerns [
+	self assert: repository defaultInsertConcern equals: nil.
+	self assert: repository defaultUpsertConcern equals: nil.
+	self assert: repository defaultUpdateConcern equals: nil.
+	self assert: repository defaultDeleteConcern equals: nil
+]
+
+{ #category : #tests }
 MaplessMongoTest >> testDelete [
 	| people |
 	self
@@ -545,6 +631,26 @@ MaplessMongoTest >> testSaveSetsID [
 ]
 
 { #category : #tests }
+MaplessMongoTest >> testSetConcernsOnAMaplessClass [
+	| concern |
+	concern := MongoWriteConcern new
+		j: true;
+		w: 'majority';
+		wtimeout: 5000;
+		yourself.
+	self assert: repository defaultInsertConcern equals: nil.
+	self assert: repository defaultUpsertConcern equals: nil.
+	self assert: repository defaultUpdateConcern equals: nil.
+	self assert: repository defaultDeleteConcern equals: nil.
+	repository insertConcern: concern for: DummyPerson.
+	self
+		assert: (repository insertConcernFor: DummyPerson)
+		equals: concern.
+	self deny: (repository insertConcernFor: DummyUser) equals: concern.
+	self assert: (repository insertConcernFor: DummyUser) equals: nil
+]
+
+{ #category : #tests }
 MaplessMongoTest >> testSimpleSave [
 	| guy |
 	guy := DummyPerson new
@@ -607,4 +713,41 @@ MaplessMongoTest >> testSubModelsFromReifiedJSON [
 			reified := DummyUser fromJSONString: jsonString ].
 	self assert: reified person class equals: DummyPerson.
 	self assert: reified completeName equals: 'john q'
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testUpsert [
+	| guy theId found freshFound |
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	self
+		do: [ guy upsert.
+			theId := guy id.
+			found := DummyPerson findId: theId.
+			self assert: found notNil equals: true.
+			self assert: found firstName equals: 'john'.
+			found firstName: 'John'.
+			found upsert.
+			freshFound := DummyPerson findId: theId.
+			self assert: freshFound firstName equals: 'John' ]
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testUseConcernsOnAMaplessClass [
+	| concern guy found |
+	concern := MongoWriteConcern new
+		j: true;
+		w: 'majority';
+		wtimeout: 5000;
+		yourself.
+	repository upsertConcern: concern for: DummyPerson.
+	guy := DummyPerson new
+		firstName: 'Steven';
+		yourself.
+	repository save: guy.
+	self assert: guy hasId.
+	found := repository findOne: DummyPerson atId: guy id.
+	self assert: found id equals: guy id
 ]

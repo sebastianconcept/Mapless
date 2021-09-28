@@ -356,6 +356,19 @@ MaplessMongoModelTest >> testUpsertHook [
 		yourself.
 	self assert: user beforeUpsert isNil.
 	self assert: user afterUpsert isNil.
+	self do: [ user upsert ].
+	self assert: user beforeUpsert.
+	self assert: user afterUpsert
+]
+
+{ #category : #tests }
+MaplessMongoModelTest >> testUpsertHookOnSave [
+	| user |
+	user := DummyUser new
+		username: 'johnq';
+		yourself.
+	self assert: user beforeUpsert isNil.
+	self assert: user afterUpsert isNil.
 	self do: [ user save ].
 	self assert: user beforeUpsert.
 	self assert: user afterUpsert
