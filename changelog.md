@@ -1,3 +1,10 @@
+September 28, 2021
+===================================
+* Completes the API.
+* Default concerns can be set at the repository level.
+* Concerns can be custom per Mapless class.
+* Adds basic coverage.
+  
 September 27, 2021
 ===================================
 * Adds API to do operations with custom concerns.
