@@ -10,7 +10,8 @@ Class {
 	#superclass : #MaplessRepository,
 	#instVars : [
 		'mongoClient',
-		'concerns'
+		'concerns',
+		'defaultConcerns'
 	],
 	#category : #'Mapless-Mongo-Core-Connections'
 }
@@ -54,8 +55,61 @@ MaplessMongoRepository >> databaseCollectionNamed: aCollectionName [
 ]
 
 { #category : #accessing }
+MaplessMongoRepository >> defaultConcerns [
+	^ defaultConcerns ifNil: [ self initializeDefaultConcerns ]
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> defaultDeleteConcern [
+	^ self defaultConcerns at: #delete
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> defaultDeleteConcern: aConcernOrNil [
+	^ self defaultConcerns at: #delete put: aConcernOrNil
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> defaultInsertConcern [
+	^ self defaultConcerns at: #insert
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> defaultInsertConcern: aConcernOrNil [
+	^ self defaultConcerns at: #insert put: aConcernOrNil
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> defaultUpdateConcern [
+	^ self defaultConcerns at: #update
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> defaultUpdateConcern: aConcernOrNil [
+	^ self defaultConcerns at: #update put: aConcernOrNil
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> defaultUpsertConcern [
+	^ self defaultConcerns at: #upsert
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> defaultUpsertConcern: aConcernOrNil [
+	^ self defaultConcerns at: #upsert put: aConcernOrNil
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> deleteConcern: aConcern for: aMaplessClass [
+	^ (self concerns at: #delete) at: aMaplessClass put: aConcern
+]
+
+{ #category : #accessing }
 MaplessMongoRepository >> deleteConcernFor: aMaplessClass [
-	^ (self concerns at: #delete) at: aMaplessClass ifAbsent: [ nil ]
+	^ (self concerns at: #delete)
+		at: aMaplessClass
+		ifPresent: [ :val | val ]
+		ifAbsent: [ self defaultDeleteConcern ]
 ]
 
 { #category : #actions }
@@ -253,10 +307,20 @@ MaplessMongoRepository >> idPropertyName [
 { #category : #initialization }
 MaplessMongoRepository >> initializeConcerns [
 	^ concerns := Dictionary new
-		at: #delete put: Dictionary new;
 		at: #insert put: Dictionary new;
-		at: #update put: Dictionary new;
 		at: #upsert put: Dictionary new;
+		at: #update put: Dictionary new;
+		at: #delete put: Dictionary new;
+		yourself
+]
+
+{ #category : #initialization }
+MaplessMongoRepository >> initializeDefaultConcerns [
+	^ defaultConcerns := Dictionary new
+		at: #insert put: nil;
+		at: #upsert put: nil;
+		at: #update put: nil;
+		at: #delete put: nil;
 		yourself
 ]
 
@@ -280,8 +344,16 @@ MaplessMongoRepository >> insert: aMapless writeConcern: aConcernOrNil [
 ]
 
 { #category : #accessing }
+MaplessMongoRepository >> insertConcern: aConcern for: aMaplessClass [
+	^ (self concerns at: #insert) at: aMaplessClass put: aConcern
+]
+
+{ #category : #accessing }
 MaplessMongoRepository >> insertConcernFor: aMaplessClass [
-	^ (self concerns at: #insert) at: aMaplessClass ifAbsent: [ nil ]
+	^ (self concerns at: #insert)
+		at: aMaplessClass
+		ifPresent: [ :val | val ]
+		ifAbsent: [ self defaultInsertConcern ]
 ]
 
 { #category : #accessing }
@@ -322,8 +394,16 @@ MaplessMongoRepository >> update: aMapless writeConcern: aConcernOrNil [
 ]
 
 { #category : #accessing }
+MaplessMongoRepository >> updateConcern: aConcern for: aMaplessClass [
+	^ (self concerns at: #update) at: aMaplessClass put: aConcern
+]
+
+{ #category : #accessing }
 MaplessMongoRepository >> updateConcernFor: aMaplessClass [
-	^ (self concerns at: #update) at: aMaplessClass ifAbsent: [ nil ]
+	^ (self concerns at: #update)
+		at: aMaplessClass
+		ifPresent: [ :val | val ]
+		ifAbsent: [ self defaultUpdateConcern ]
 ]
 
 { #category : #actions }
@@ -351,8 +431,16 @@ MaplessMongoRepository >> upsert: aMapless writeConcern: aConcernOrNil [
 ]
 
 { #category : #accessing }
+MaplessMongoRepository >> upsertConcern: aConcern for: aMaplessClass [
+	^ (self concerns at: #upsert) at: aMaplessClass put: aConcern
+]
+
+{ #category : #accessing }
 MaplessMongoRepository >> upsertConcernFor: aMaplessClass [
-	^ (self concerns at: #upsert) at: aMaplessClass ifAbsent: [ nil ]
+	^ (self concerns at: #upsert)
+		at: aMaplessClass
+		ifPresent: [ :val | val ]
+		ifAbsent: [ self defaultUpsertConcern ]
 ]
 
 { #category : #actions }
