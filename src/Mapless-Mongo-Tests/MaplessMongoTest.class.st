@@ -284,6 +284,12 @@ MaplessMongoTest >> testDateAndTime [
 ]
 
 { #category : #tests }
+MaplessMongoTest >> testDefaultConcerns [
+
+self fail
+]
+
+{ #category : #tests }
 MaplessMongoTest >> testDelete [
 	| people |
 	self

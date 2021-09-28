@@ -9,7 +9,8 @@ Class {
 	#name : #MaplessMongoRepository,
 	#superclass : #MaplessRepository,
 	#instVars : [
-		'mongoClient'
+		'mongoClient',
+		'concerns'
 	],
 	#category : #'Mapless-Mongo-Core-Connections'
 }
@@ -17,6 +18,11 @@ Class {
 { #category : #actions }
 MaplessMongoRepository class >> getNewId [
 	^ OID nextOID
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> concerns [
+	^ concerns ifNil: [ self initializeConcerns ]
 ]
 
 { #category : #accessing }
@@ -47,11 +53,18 @@ MaplessMongoRepository >> databaseCollectionNamed: aCollectionName [
 	^ self database collectionAt: aCollectionName
 ]
 
+{ #category : #accessing }
+MaplessMongoRepository >> deleteConcernFor: aMaplessClass [
+	^ (self concerns at: #delete) at: aMaplessClass ifAbsent: [ nil ]
+]
+
 { #category : #actions }
 MaplessMongoRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
-	self destroy: aMapless writeConcern: nil
+	self
+		destroy: aMapless
+		writeConcern: (self deleteConcernFor: aMapless class)
 ]
 
 { #category : #actions }
@@ -237,9 +250,21 @@ MaplessMongoRepository >> idPropertyName [
 	^ '_id'
 ]
 
+{ #category : #initialization }
+MaplessMongoRepository >> initializeConcerns [
+	^ concerns := Dictionary new
+		at: #delete put: Dictionary new;
+		at: #insert put: Dictionary new;
+		at: #update put: Dictionary new;
+		at: #upsert put: Dictionary new;
+		yourself
+]
+
 { #category : #actions }
 MaplessMongoRepository >> insert: aMapless [
-	self insert: aMapless writeConcern: nil
+	self
+		insert: aMapless
+		writeConcern: (self insertConcernFor: aMapless class)
 ]
 
 { #category : #actions }
@@ -255,6 +280,11 @@ MaplessMongoRepository >> insert: aMapless writeConcern: aConcernOrNil [
 ]
 
 { #category : #accessing }
+MaplessMongoRepository >> insertConcernFor: aMaplessClass [
+	^ (self concerns at: #insert) at: aMaplessClass ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
 MaplessMongoRepository >> mongoClient [
 	^ mongoClient
 ]
@@ -263,9 +293,9 @@ MaplessMongoRepository >> mongoClient [
 MaplessMongoRepository >> save: aMapless [
 	"Storage this instance into the persistent collection"
 
-	self onBeforeSave: aMapless.
-	self update: aMapless.
-	self onAfterSave: aMapless
+	self
+		save: aMapless
+		writeConcern: (self upsertConcernFor: aMapless class)
 ]
 
 { #category : #actions }
@@ -273,13 +303,15 @@ MaplessMongoRepository >> save: aMapless writeConcern: aConcernOrNil [
 	"Storage this instance into the persistent collection"
 
 	self onBeforeSave: aMapless.
-	self update: aMapless writeConcern: aConcernOrNil.
+	self upsert: aMapless writeConcern: aConcernOrNil.
 	self onAfterSave: aMapless
 ]
 
 { #category : #actions }
 MaplessMongoRepository >> update: aMapless [
-	self update: aMapless writeConcern: nil
+	self
+		update: aMapless
+		writeConcern: (self updateConcernFor: aMapless class)
 ]
 
 { #category : #actions }
@@ -289,9 +321,16 @@ MaplessMongoRepository >> update: aMapless writeConcern: aConcernOrNil [
 	self onAfterUpdate: aMapless
 ]
 
+{ #category : #accessing }
+MaplessMongoRepository >> updateConcernFor: aMaplessClass [
+	^ (self concerns at: #update) at: aMaplessClass ifAbsent: [ nil ]
+]
+
 { #category : #actions }
 MaplessMongoRepository >> upsert: aMapless [
-	self upsert: aMapless writeConcern: nil
+	self
+		upsert: aMapless
+		writeConcern: (self upsertConcernFor: aMapless class)
 ]
 
 { #category : #actions }
@@ -309,6 +348,11 @@ MaplessMongoRepository >> upsert: aMapless writeConcern: aConcernOrNil [
 				collection: aMapless class collectionName
 				writeConcern: aConcernOrNil ].
 	self onAfterUpsert: aMapless
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> upsertConcernFor: aMaplessClass [
+	^ (self concerns at: #upsert) at: aMaplessClass ifAbsent: [ nil ]
 ]
 
 { #category : #actions }
