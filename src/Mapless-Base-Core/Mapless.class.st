@@ -468,7 +468,7 @@ Mapless >> isPersistentModel [
 
 { #category : #json }
 Mapless >> jsonWriteOn: aStream [
-	self data jsonWriteOn: aStream
+	self maplessData jsonWriteOn: aStream
 ]
 
 { #category : #accessing }

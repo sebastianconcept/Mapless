@@ -333,6 +333,6 @@ MaplessAbstractPool >> withClientDo: aBlock [
 				on: Error
 				do: [ :x | 
 					client reset.
-					x signal ] ]
+					x pass ] ]
 				ensure: [ self returnClient: client ] ]
 ]
