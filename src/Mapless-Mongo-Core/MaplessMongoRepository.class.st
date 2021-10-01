@@ -223,8 +223,11 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimi
 					q where: someConditions ] ].
 	^ (result isNil and: [ result isEmpty ])
 		ifTrue: [ #() ]
-		ifFalse: [ (aMaplessClass fromJSONObjects: result with: self)
-				collect: [ :each | self onAfterRead: each ] ]
+		ifFalse: [ (aMaplessClass
+				fromJSONObjects:
+					(result
+						collect: [ :e | self normalizeIdOfOn: (e asJsonObjectIn: self) ])
+				with: self) collect: [ :each | self onAfterRead: each ] ]
 ]
 
 { #category : #accessing }

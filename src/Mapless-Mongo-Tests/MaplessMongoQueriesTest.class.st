@@ -74,6 +74,25 @@ MaplessMongoQueriesTest >> testFindAll [
 ]
 
 { #category : #tests }
+MaplessMongoQueriesTest >> testFresh [
+	| found guy freshGuy |
+	repository
+		do: [ self addDummyPeople.
+			found := DummyPerson findAll.
+			self assert: found notNil.
+			self assert: found size equals: 20 ].
+	guy := found first.
+	self assert: guy hasId.
+	self assert: (guy maplessData at: 'id') notNil.
+	guy remember: #this.
+	repository
+		do: [ freshGuy := guy fresh.
+			self assert: freshGuy id equals: guy id.
+			self deny: freshGuy rememer equals: #this.
+			self deny: guy hash equals: freshGuy hash ]
+]
+
+{ #category : #tests }
 MaplessMongoQueriesTest >> testSelectWithAnd [
 	| found |
 	repository
