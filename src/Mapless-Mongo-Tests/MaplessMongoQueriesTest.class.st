@@ -98,10 +98,11 @@ MaplessMongoQueriesTest >> testSelectWithAnd [
 	repository
 		do: [ self addDummyPeople.
 			found := DummyPerson
-				findOne: [ :each | each firstName = 'john' & (each lastName = 'q4') ].
-			self assert: found notNil.
-			self assert: found firstName equals: 'john'.
-			self assert: found lastName equals: 'q4' ]
+				find: [ :each | each firstName = 'john' & (each lastName = 'q4') ].
+			self assert: found notEmpty.
+			self assert: found size equals: 1.
+			self assert: found first firstName equals: 'john'.
+			self assert: found first lastName equals: 'q4' ]
 ]
 
 { #category : #tests }
