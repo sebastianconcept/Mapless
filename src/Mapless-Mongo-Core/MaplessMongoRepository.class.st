@@ -174,81 +174,81 @@ MaplessMongoRepository >> existsId: anId of: aMaplessClass [
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditions [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
 	^ self
 		find: aMaplessClass
-		where: someConditions
+		where: someConditionsOrNil
 		limit: nil
 		offset: nil
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
 	^ self
 		find: aMaplessClass
-		where: someConditions
+		where: someConditionsOrNil
 		limit: aLimitOrNil
 		offset: nil
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
 	^ self
 		find: aMaplessClass
-		where: someConditions
+		where: someConditionsOrNil
 		limit: aLimitOrNil
 		offset: anOffsetOrNil
 		sort: nil
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
-	| result databaseCollection |
-	self
-		do: [ databaseCollection := self
-				databaseCollectionNamed: aMaplessClass collectionName.
-			result := databaseCollection
-				query: [ :q | 
-					aLimitOrNil ifNotNil: [ :limit | q limit: limit ].
-					anOffsetOrNil ifNotNil: [ :offset | q offset: offset ].
-					sortConditionsOrNil ifNotNil: [ :sort | q order: sort ].
-					q where: someConditions ] ].
-	^ (result isNil and: [ result isEmpty ])
-		ifTrue: [ #() ]
-		ifFalse: [ (aMaplessClass
-				fromJSONObjects:
-					(result
-						collect: [ :e | self normalizeIdOfOn: (e asJsonObjectIn: self) ])
-				with: self) collect: [ :each | self onAfterRead: each ] ]
+	| command cursor |
+	command := OrderedDictionary new
+		at: 'find' put: aMaplessClass collectionName;
+		yourself.
+	someConditionsOrNil
+		ifNotNil: [ :conditions | command at: 'filter' put: conditions asMongoQuery ].
+	aLimitOrNil
+		ifNotNil: [ :limit | command at: 'limit' put: aLimitOrNil ].
+	anOffsetOrNil ifNotNil: [ :offset | command at: 'skip' put: offset ].
+	sortConditionsOrNil
+		ifNotNil: [ :sort | command at: 'sort' put: sort ].
+	self do: [ cursor := self newCursorFor: command ].
+	^ (aMaplessClass
+		fromJSONObjects:
+			(cursor
+				collect: [ :each | self normalizeIdOfOn: (each asJsonObjectIn: self) ])
+		with: self) collect: [ :each | self onAfterRead: each ]
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil sort: sortConditions [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil sort: sortConditions [
+	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
 	^ self
 		find: aMaplessClass
-		where: someConditions
+		where: someConditionsOrNil
 		limit: aLimitOrNil
 		offset: nil
 		sort: sortConditions
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditions sort: sortConditions [
+MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil sort: sortConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
 		find: aMaplessClass
-		where: someConditions
+		where: someConditionsOrNil
 		limit: nil
 		offset: nil
 		sort: sortConditions
@@ -256,12 +256,12 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditions sort: sortCo
 
 { #category : #accessing }
 MaplessMongoRepository >> findAll: aMaplessClass [
-	^ self find: aMaplessClass where: [ :q |  ]
+	^ self find: aMaplessClass where: nil
 ]
 
 { #category : #accessing }
 MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions [
-	^ self find: aMaplessClass where: [ :q |  ] sort: sortConditions
+	^ self find: aMaplessClass where: nil sort: sortConditions
 ]
 
 { #category : #accessing }
@@ -365,6 +365,17 @@ MaplessMongoRepository >> mongoClient [
 ]
 
 { #category : #actions }
+MaplessMongoRepository >> newCursorFor: aDictionary [
+	"Returns a new MongoCursor based on the current database and using aDictionary as command.
+	We're making it able to read from secondaries by default in case this uses a 
+	connection to a secondary node in a MongoDB cluster."
+
+	^ (MongoCommandCursor database: self database dictionary: aDictionary)
+		setFlagSlaveOk;
+		yourself
+]
+
+{ #category : #actions }
 MaplessMongoRepository >> save: aMapless [
 	"Storage this instance into the persistent collection"
 
@@ -462,4 +473,27 @@ MaplessMongoRepository >> withClientDo: aBlock with: aDatabaseAccessor [
 				value: self
 				during: [ ^ aBlock value: client ] ]
 				ensure: [ mongoClient := nil ] ]
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> workingFind: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+
+	| result databaseCollection |
+	self
+		do: [ databaseCollection := self
+				databaseCollectionNamed: aMaplessClass collectionName.
+			result := databaseCollection
+				query: [ :q | 
+					aLimitOrNil ifNotNil: [ :limit | q limit: limit ].
+					anOffsetOrNil ifNotNil: [ :offset | q offset: offset ].
+					sortConditionsOrNil ifNotNil: [ :sort | q order: sort ].
+					q where: someConditions ] ].
+	^ (result isNil and: [ result isEmpty ])
+		ifTrue: [ #() ]
+		ifFalse: [ (aMaplessClass
+				fromJSONObjects:
+					(result
+						collect: [ :e | self normalizeIdOfOn: (e asJsonObjectIn: self) ])
+				with: self) collect: [ :each | self onAfterRead: each ] ]
 ]
