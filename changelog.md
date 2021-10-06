@@ -1,10 +1,14 @@
+October 6, 2021
+===================================
+* `MaplessMongoRepository` is now using `MongoCommandCursor` which is created using `setFlagSlaveOk`. This makes Mapless able to read documents from secondary nodes in a MongoDB replica set.
+
 September 28, 2021
 ===================================
 * Completes the API.
 * Default concerns can be set at the repository level.
 * Concerns can be custom per Mapless class.
 * Adds basic coverage.
-  
+
 September 27, 2021
 ===================================
 * Adds API to do operations with custom concerns.
