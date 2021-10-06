@@ -1,3 +1,64 @@
+October 6, 2021
+===================================
+* `MaplessMongoRepository` is now using `MongoCommandCursor` which is created using `setFlagSlaveOk`. This makes Mapless able to read documents from secondary nodes in a MongoDB replica set.
+
+September 28, 2021
+===================================
+* Completes the API.
+* Default concerns can be set at the repository level.
+* Concerns can be custom per Mapless class.
+* Adds basic coverage.
+
+September 27, 2021
+===================================
+* Adds API to do operations with custom concerns.
+* Adjusts `upsert` command for MongoDB 4.0.
+* Adds `testUpsert` for coverage.
+
+September 26, 2021
+===================================
+* Will raise an exception when trying to insert a mapless with a duplicate value on indices with unique values.
+
+September 22, 2021
+===================================
+* Introduces `MaplessResolver` to collaborate with `MaplessRepository` on getting the `Mapless` from JSON and return `MaplessReference`.
+* Aditional unit tests.
+* One of the resolvers, `MaplessVoyageWithMaplessSuffixResolver` helps with using `Mapless` to connect a MongoDB backend created or in use by a Voyage app.
+
+September 21, 2021
+===================================
+* Now a `Mapless` coming from data from Voyage, can have a Voyage reference reified as a `MaplessReference`.
+
+September 20, 2021 - v0.4.3-alpha | Hidden Alpha
+===================================
+* Introduces mainly the optional usage of the dynamic variable.
+* Multi repo usage becomes cleaner now.
+* Fixes unit tests.
+* Simplifies use of the id property name. Now it won't need to manipulate the id anymore.
+
+September 14, 2021 v0.4.2-alpha | Eastern Panther
+===================================
+* Hotfix to make it compatible with Pharo 7.
+
+September 11, 2021 🇺🇸 😔 🙏 #NeverForget
+===================================
+* Made reposotories API consistent. No mode `instanceOf` kind of messages. The whole API feels inspired in MongoDB.
+* Fixed setters. Now they return the receiver instead of the value that was set.
+* Added `find:where:sort` and all the `*sort:` variations for the API.
+
+September 8, 2021
+===================================
+* Added `count` and `count:where:` with basic coverage.
+* Added basic coverage showing usage of MongoTalk-Queries in the `Mapless class>>find:` argument.
+
+September 1st, 2021
+===================================
+* Fixed `BaslineOfMapless` missing Memory package.
+
+August 28, 2021
+===================================
+* Adds `MaplessMemoryRepository` its accessor and unit test for regression coverage.
+
 August 27, 2021 - 0.4.0-alpha
 ===================================
 

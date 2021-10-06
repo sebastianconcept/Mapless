@@ -5192,7 +5192,7 @@ Zulma'
 
 { #category : #accessing }
 MaplessLongevityTest class >> getLastNames [
-  |all|
+	| all |
 	all := Set new.
 	'Aaberg
 Aaby
@@ -94000,7 +94000,9 @@ Zywiec'
 
 { #category : #accessing }
 MaplessLongevityTest class >> getRepository [
-	^ MaplessMongoRepository for: 'Mapless-Tests'
+	^ MaplessMongoRepository
+		for: 'Mapless-Tests'
+		with: MaplessMongoPool local
 ]
 
 { #category : #accessing }
@@ -94085,7 +94087,7 @@ MaplessLongevityTest >> firstNames [
 
 { #category : #initializing }
 MaplessLongevityTest >> initializeFirstNames [
-	^ firstNames := self class getFirstNames asOrderedCollection shuffle 
+	^ firstNames := self class getFirstNames asOrderedCollection shuffle
 ]
 
 { #category : #initializing }
@@ -94154,7 +94156,7 @@ MaplessLongevityTest >> removeAll [
 			self assert: (DummyPerson findId: oid) isNil.
 			self savedFirstNames remove: guy firstName.
 			self savedLastNames remove: guy lastName.
-			self savedIds remove: guy id ] 
+			self savedIds remove: guy id ]
 ]
 
 { #category : #accessing }
@@ -94209,8 +94211,8 @@ MaplessLongevityTest >> startConsistencyCheck [
 { #category : #actions }
 MaplessLongevityTest >> stop [
 	hadFinished := true.
-	process ifNotNil: [ process terminate  ].
-	process := nil.
+	process ifNotNil: [ process terminate ].
+	process := nil
 ]
 
 { #category : #accessing }
@@ -94229,7 +94231,7 @@ MaplessLongevityTest >> workerClosure [
 						log:
 							'Saved: ' , i asString , ' people at (~' , savesPerSecond asString
 								, ' saves per second) '.
-					self triggerEvent: #reported   with: self.
+					self triggerEvent: #reported with: self.
 					i := 0.
 					totalDelay := 0 ] ] ]
 ]

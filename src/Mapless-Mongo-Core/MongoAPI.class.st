@@ -6,7 +6,7 @@ Class {
 
 { #category : #testing }
 MongoAPI >> isValid [
-	^ self isAvailable 
+	^ self isAvailable
 ]
 
 { #category : #actions }

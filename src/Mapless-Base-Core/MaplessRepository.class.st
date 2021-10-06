@@ -14,14 +14,31 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'databaseName',
-		'accessor'
+		'accessor',
+		'resolver'
 	],
 	#category : #'Mapless-Base-Core-Repositories'
 }
 
 { #category : #actions }
 MaplessRepository class >> for: aDatabaseName with: aDatabaseAccessor [
-	^ self new initializeOn: aDatabaseName with: aDatabaseAccessor
+	^ self
+		for: aDatabaseName
+		with: aDatabaseAccessor
+		using: MaplessCollectionToClassNameResolver new
+]
+
+{ #category : #actions }
+MaplessRepository class >> for: aDatabaseName with: aDatabaseAccessor using: aMaplessResolver [
+	^ self new
+		initializeOn: aDatabaseName
+		with: aDatabaseAccessor
+		using: aMaplessResolver
+]
+
+{ #category : #actions }
+MaplessRepository class >> getNewId [
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }
@@ -36,7 +53,6 @@ MaplessRepository >> accessor: anObject [
 
 { #category : #actions }
 MaplessRepository >> addCollection: aCollectionName [
-
 	^ self database addCollection: aCollectionName
 ]
 
@@ -49,21 +65,41 @@ MaplessRepository >> asStorable: anObject [
 				ifFalse: [ anObject collect: [ :e | self asStorable: e ] ] ]
 		ifFalse: [ anObject class = MaplessReference
 				ifFalse: [ (anObject isKindOf: Mapless)
-						ifTrue: [ anObject asMaplessReference asJsonObject ]
+						ifTrue: [ (anObject asMaplessReferenceIn: self) asJsonObjectIn: self ]
 						ifFalse: [ anObject ] ]
-				ifTrue: [ (anObject hasModel not or: [ anObject isUnsaved not ])
-						ifTrue: [ anObject asJsonObject ]
+				ifTrue: [ anObject hasModel
+						ifTrue: [ anObject asJsonObjectIn: self ]
 						ifFalse: [ MaplessUnsavedSubmodel
 								signal:
 									'This sub model is unsaved. You need to save all sub models before saving a composed model' ] ] ]
 ]
 
+{ #category : #testing }
+MaplessRepository >> canBeMapless: anObject [
+	"Answers true if anObject can be used to instantiate mapless."
+
+	^ anObject isDictionary
+		and: [ anObject size > 1 and: [ anObject includesKey: '_c' ] ]
+]
+
+{ #category : #testing }
+MaplessRepository >> canRepresentArrayOfMaplessReferences: anObject [
+	"Answers true if anObject can represent a collection of sub mapless references."
+
+	^ resolver canRepresentArrayOfMaplessReferences: anObject in: self
+]
+
+{ #category : #testing }
+MaplessRepository >> canRepresentSubMapless: anObject [
+	^ resolver canRepresentSubMapless: anObject in: self
+]
+
 { #category : #accessing }
 MaplessRepository >> databaseCollectionNamed: aCollectionName [
-"Answers the collection for this kind of models hold by the current database"
-	
+	"Answers the collection for this kind of models hold by the current database"
+
 	"self ensureCollectionNamed: aCollectionName."
-	
+
 	^ self database collectionAt: aCollectionName
 ]
 
@@ -77,76 +113,63 @@ MaplessRepository >> delete: aMapless [
 	"Saves this instance as deleted in the persistent collection"
 
 	self onBeforeDelete: aMapless.
-	
 	aMapless beDeleted.
-	
 	self save: aMapless.
-	
 	self onAfterDelete: aMapless
-]
-
-{ #category : #actions }
-MaplessRepository >> denormalizeIdOf: aMapless [
-	"Normalizes aMapless id for the concrete backend (instead of the Mapless API).
-	'id' -> idAttritbute
-	Makes sure that aMapless has the id attribute 
-	under the right name for this concrete repository.
-	Removes it from 'id' in case is present (not failing if absent)." 
-
-	"It's either already having the right one or it needs translation..."
-	(aMapless maplessData includesKey: 'id') ifTrue: [ 
-		aMapless basicMaplessData at: self idAttribute put: aMapless id ].
-	
-	"clean it.
-	Note: if a concrete repo one day needs to use 'id' as id, then it needs to override this to not remove here."
-	aMapless basicMaplessData removeKey: 'id' ifAbsent: [ nil ].
-	
-	^ aMapless
 ]
 
 { #category : #actions }
 MaplessRepository >> do: aBlock [
 	"Performs aBlock and provides access to the database to 
 	anyone calling CurrentMongoDatabase value."
-	
-	MaplessCurrentRepository 
-		value: self
-		during: [ ^ aBlock value ]
+
+	MaplessCurrentRepository value: self during: [ ^ aBlock value ]
 ]
 
 { #category : #actions }
 MaplessRepository >> ensureCollectionNamed: aCollectionName [
 	"Makes sure there is a collection for this kind of models."
 
-	(self hasCollectionNamed: aCollectionName) ifFalse:[
-		self addCollection: aCollectionName]
+	(self hasCollectionNamed: aCollectionName)
+		ifFalse: [ self addCollection: aCollectionName ]
+]
 
+{ #category : #actions }
+MaplessRepository >> ensureIdOf: aMapless [
+	aMapless hasId
+		ifFalse: [ aMapless id: self class getNewId ].
+	aMapless maplessData at: self idPropertyName put: aMapless id
+]
+
+{ #category : #accessing }
+MaplessRepository >> find: aMaplessClass where: someConditions [
+	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+
+	^ self subclassResponsibility
+]
+
+{ #category : #accessing }
+MaplessRepository >> findOne: aMaplessClass where: someConditions [
+	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
+
+	^ self subclassResponsibility
 ]
 
 { #category : #testing }
 MaplessRepository >> hasCollectionNamed: aCollectionName [
-
 	^ self database hasCollectionNamed: aCollectionName
 ]
 
+{ #category : #accessing }
+MaplessRepository >> idOf: aMapless [
+	^ aMapless maplessData at: self idPropertyName
+]
+
 { #category : #initialization }
-MaplessRepository >> initializeOn: aDatabaseName with: aDatabaseAccessor [
+MaplessRepository >> initializeOn: aDatabaseName with: aDatabaseAccessor using: aMaplessResolver [
 	databaseName := aDatabaseName.
-	accessor := aDatabaseAccessor
-]
-
-{ #category : #accessing }
-MaplessRepository >> instanceOf: aMaplessClass where: someConditions [
-	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
-
-	^ self subclassResponsibility 
-]
-
-{ #category : #accessing }
-MaplessRepository >> instancesOf: aMaplessClass where: someConditions [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
-
-	^self subclassResponsibility 
+	accessor := aDatabaseAccessor.
+	resolver := aMaplessResolver
 ]
 
 { #category : #testing }
@@ -155,158 +178,115 @@ MaplessRepository >> isUnsaved: aMapless [
 	Note: we assume that if aMapless does not have an id 
 	then is because the application never used the backend to saved it."
 
-	^ aMapless basicMaplessId isNil and: [ aMapless id isNil ]
+	^ (aMapless maplessData includesKey: self idPropertyName) not
+		and: [ aMapless id isNil ]
+]
+
+{ #category : #accessing }
+MaplessRepository >> maplessClassFor: aJsonObject [
+	^ resolver maplessClassFor: aJsonObject in: self
 ]
 
 { #category : #actions }
-MaplessRepository >> normalizeIdOf: aMapless [
-	"Normalizes aMapless id for the API.
-	idAttritbute -> 'id'
-	Makes sure that aMapless has the id attribute 
-	under the name 'id' taking the information from this concrete repository.
-	Removes it from the concrete place in case is present (not failing if absent)." 
+MaplessRepository >> normalizeIdOfOn: aJsonObject [
+	aJsonObject at: 'id' put: (aJsonObject at: self idPropertyName).
+	aJsonObject removeKey: self idPropertyName ifAbsent: [ nil ].
+	^ aJsonObject
+]
 
-	"It's either already having the right one or it needs translation..."
-	(aMapless basicMaplessData includesKey: self idAttribute) ifTrue: [ 
-		aMapless basicMaplessData at: 'id' put: (aMapless maplessId) ].
-	
-	"clean it.
-	Note: if a concrete repo one day needs to use 'id' as id, then it needs to override this to not remove here."
-	aMapless data removeKey: self idAttribute ifAbsent: [ nil ].
-	
+{ #category : #hooks }
+MaplessRepository >> onAfterDelete: aMapless [
+	aMapless onAfterDelete.
 	^ aMapless
 ]
 
-{ #category : #reactions }
-MaplessRepository >> onAboutToDelete: aMapless [
-
-	#deprecated.
-	Transcript cr; nextPutAll: (self class name,'>>onAboutToDelete: aMapless   is deprecated, use onBeforeDelete:').
-	
-	self onBeforeDelete: aMapless 
-]
-
-{ #category : #reactions }
-MaplessRepository >> onAboutToDestroy: aMapless [
-
-	#deprecated.
-	Transcript cr; nextPutAll: (self class name,'>>onAboutToDestroy: aMapless   is deprecated, use onBeforeDestroy:').
-	
-	self onBeforeDestroy: aMapless 
-]
-
-{ #category : #reactions }
-MaplessRepository >> onAboutToInsert: aMapless [
-
-	#deprecated.
-	Transcript cr; nextPutAll: (self class name,'>>onAboutToInsert: aMapless   is deprecated, use onBeforeInsert:').
-	
-	self onBeforeInsert: aMapless 
-]
-
-{ #category : #reactions }
-MaplessRepository >> onAboutToSave: aMapless [
-
-	#deprecated.
-	Transcript cr; nextPutAll: (self class name,'>>onAboutToSave: aMapless   is deprecated, use onBeforeSave:').
-
-	self onBeforeSave: aMapless 
-]
-
-{ #category : #reactions }
-MaplessRepository >> onAboutToUpdate: aMapless [
-
-	#deprecated.
-	Transcript cr; nextPutAll: (self class name,'>>onAboutToUpdate: aMapless   is deprecated, use onBeforeUpdate:').
-	
-	self onBeforeUpdate: aMapless 
-]
-
-{ #category : #reactions }
-MaplessRepository >> onAfterDelete: aMapless [
-
-	aMapless onAfterDelete
-]
-
-{ #category : #reactions }
+{ #category : #hooks }
 MaplessRepository >> onAfterDestroy: aMapless [
-
 	aMapless onAfterDestroy.
-	
-	
-	self normalizeIdOf: aMapless 
+	^ aMapless
 ]
 
-{ #category : #reactions }
+{ #category : #hooks }
 MaplessRepository >> onAfterInsert: aMapless [
-
 	aMapless onAfterInsert.
-	
-	self normalizeIdOf: aMapless 
+	^ aMapless
 ]
 
-{ #category : #reactions }
+{ #category : #hooks }
 MaplessRepository >> onAfterRead: aMapless [
-
 	aMapless onAfterRead.
-	
-	self normalizeIdOf: aMapless.
-	
-	^ aMapless 
+	^ aMapless
 ]
 
-{ #category : #reactions }
+{ #category : #hooks }
 MaplessRepository >> onAfterSave: aMapless [
-
 	aMapless onAfterSave.
-	
-	self normalizeIdOf: aMapless 
+	^ aMapless
 ]
 
-{ #category : #reactions }
+{ #category : #hooks }
 MaplessRepository >> onAfterUpdate: aMapless [
-
 	aMapless onAfterUpdate.
-	
-	self normalizeIdOf: aMapless 
+	^ aMapless
 ]
 
-{ #category : #reactions }
+{ #category : #hooks }
+MaplessRepository >> onAfterUpsert: aMapless [
+	aMapless onAfterUpsert.
+	^ aMapless
+]
+
+{ #category : #hooks }
 MaplessRepository >> onBeforeDelete: aMapless [
-
-	aMapless onBeforeDelete
+	aMapless onBeforeDelete.
+	^ aMapless
 ]
 
-{ #category : #reactions }
+{ #category : #hooks }
 MaplessRepository >> onBeforeDestroy: aMapless [
-
 	aMapless onBeforeDestroy.
-	
-	self denormalizeIdOf: aMapless 
+	^ aMapless
 ]
 
-{ #category : #reactions }
+{ #category : #hooks }
 MaplessRepository >> onBeforeInsert: aMapless [
-
+	self ensureIdOf: aMapless.
 	aMapless onBeforeInsert.
-	
-	self denormalizeIdOf: aMapless 
+	^ aMapless
 ]
 
-{ #category : #reactions }
+{ #category : #hooks }
 MaplessRepository >> onBeforeSave: aMapless [
-
 	aMapless onBeforeSave.
-	
-	self denormalizeIdOf: aMapless 
+	^ aMapless
 ]
 
-{ #category : #reactions }
+{ #category : #hooks }
 MaplessRepository >> onBeforeUpdate: aMapless [
-
 	aMapless onBeforeUpdate.
-	
-	self denormalizeIdOf: aMapless 
+	^ aMapless
+]
+
+{ #category : #hooks }
+MaplessRepository >> onBeforeUpsert: aMapless [
+	self ensureIdOf: aMapless.
+	aMapless onBeforeUpsert.
+	^ aMapless
+]
+
+{ #category : #accessing }
+MaplessRepository >> referenceDataFrom: aJsonObject [
+	^ resolver referenceDataFrom: aJsonObject in: self
+]
+
+{ #category : #accessing }
+MaplessRepository >> resolver [
+	^ resolver
+]
+
+{ #category : #accessing }
+MaplessRepository >> resolver: anObject [
+	resolver := anObject
 ]
 
 { #category : #actions }
@@ -329,6 +309,7 @@ MaplessRepository >> storableFor: aJsonObject [
 	aJsonObject
 		keysAndValuesDo: [ :key :value | 
 			storablePart := self asStorable: value.
-			storableDocument at: key put: storablePart ].
+			key ~= 'id'
+				ifTrue: [ storableDocument at: key put: storablePart ] ].
 	^ storableDocument
 ]

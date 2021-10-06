@@ -71,48 +71,52 @@ MaplessAbstractPool >> authenticationDatabaseName: aString [
 ]
 
 { #category : #accessing }
-MaplessAbstractPool >> busyClients [ 
+MaplessAbstractPool >> busyClients [
 	"Answers the bunch of clients that are currently busy"
-	^ busyClients ifNil:[self initializeBusyClients]
+
+	^ busyClients ifNil: [ self initializeBusyClients ]
 ]
 
 { #category : #accessing }
 MaplessAbstractPool >> clientsMutex [
 	"Answers the mutex used to protect clients usage"
-	^ clientsMutex ifNil: [self initializeClientsMutex]
+
+	^ clientsMutex ifNil: [ self initializeClientsMutex ]
 ]
 
 { #category : #accessing }
 MaplessAbstractPool >> currentClientDynamicVariable [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
-	^ self subclassResponsibility 
+
+	^ self subclassResponsibility
 ]
 
 { #category : #actions }
 MaplessAbstractPool >> do: aBlock [
 	"Evaluates aBlock using a client"
 
-	^ self withClientDo: aBlock 
-
+	^ self withClientDo: aBlock
 ]
 
 { #category : #testing }
 MaplessAbstractPool >> hasBusyClients [
 	"Answers true if this pool has, at least one, busy client"
+
 	^ self busyClients notEmpty
 ]
 
 { #category : #testing }
 MaplessAbstractPool >> hasClients [
 	"Answers true if this pool has at least one client"
-	^ self hasIdleClients or:[
-	self hasBusyClients]
+
+	^ self hasIdleClients or: [ self hasBusyClients ]
 ]
 
 { #category : #testing }
 MaplessAbstractPool >> hasIdleClients [
 	"Answers true if this pool has, at least one, idle client"
+
 	^ self idleClients notEmpty
 ]
 
@@ -132,9 +136,10 @@ MaplessAbstractPool >> hostname: anObject [
 ]
 
 { #category : #accessing }
-MaplessAbstractPool >> idleClients [ 
+MaplessAbstractPool >> idleClients [
 	"Answers the bunch of clients that are currently idle"
-	^ idleClients ifNil:[self initializeIdleClients]
+
+	^ idleClients ifNil: [ self initializeIdleClients ]
 ]
 
 { #category : #initialization }
@@ -144,19 +149,16 @@ MaplessAbstractPool >> initializeAuthenticationDatabaseName [
 
 { #category : #initialization }
 MaplessAbstractPool >> initializeBusyClients [
-
 	^ busyClients := IdentitySet new
 ]
 
 { #category : #initialization }
 MaplessAbstractPool >> initializeClientsMutex [
-
 	^ clientsMutex := Semaphore forMutualExclusion
 ]
 
 { #category : #initialization }
 MaplessAbstractPool >> initializeIdleClients [
-
 	^ idleClients := IdentitySet new
 ]
 
@@ -172,7 +174,6 @@ MaplessAbstractPool >> isUsingAuth [
 
 { #category : #actions }
 MaplessAbstractPool >> logNewClient: mongoClient [
-	
 	Stdio stderr
 		lf;
 		<< ('Created mongo client ' , mongoClient printString);
@@ -182,7 +183,8 @@ MaplessAbstractPool >> logNewClient: mongoClient [
 { #category : #actions }
 MaplessAbstractPool >> makeClient [
 	"Returns a new client so it can be (re)used in the pool"
-	^ self subclassResponsibility 
+
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }
@@ -217,11 +219,11 @@ MaplessAbstractPool >> port: anObject [
 
 { #category : #actions }
 MaplessAbstractPool >> printOn: aStream [
-
 	super printOn: aStream.
-	
-	aStream 
-		nextPutAll: '(',self busyClients size asString,' busy, ',self idleClients size asString, ' idle)'
+	aStream
+		nextPutAll:
+			'(' , self busyClients size asString , ' busy, '
+				, self idleClients size asString , ' idle)'
 ]
 
 { #category : #accessing }
@@ -231,10 +233,8 @@ MaplessAbstractPool >> quantityOfClients [
 
 { #category : #actions }
 MaplessAbstractPool >> remove: aClient [
-
-	self idleClients remove: aClient ifAbsent:[ nil ].
-	self busyClients remove: aClient ifAbsent:[ nil ].
-	
+	self idleClients remove: aClient ifAbsent: [ nil ].
+	self busyClients remove: aClient ifAbsent: [ nil ]
 ]
 
 { #category : #actions }
@@ -259,15 +259,15 @@ MaplessAbstractPool >> requestClient [
 ]
 
 { #category : #actions }
-MaplessAbstractPool >> reset [ 
-
-	self busyClients copy do:[ :e | 
-		e reset. 
-		self remove: e ].
-
-	self idleClients copy do:[ :e | 
-		e reset.
-		self remove: e ].
+MaplessAbstractPool >> reset [
+	self busyClients copy
+		do: [ :e | 
+			e reset.
+			self remove: e ].
+	self idleClients copy
+		do: [ :e | 
+			e reset.
+			self remove: e ]
 ]
 
 { #category : #actions }
@@ -276,22 +276,22 @@ MaplessAbstractPool >> returnClient: aClient [
 	but only if it's still valid"
 
 	self clientsMutex
-		critical: [ 
-			self busyClients remove: aClient ifAbsent: [ self returningUnusedClient ].
+		critical: [ self busyClients
+				remove: aClient
+				ifAbsent: [ self returningUnusedClient ].
 			aClient isValid
 				ifTrue: [ self idleClients add: aClient ] ]
 ]
 
 { #category : #actions }
 MaplessAbstractPool >> returningUnusedClient [
-
-	Transcript cr; show: 'Warning: returning a client that is not in among the busy ones'
-
+	Transcript
+		cr;
+		show: 'Warning: returning a client that is not in among the busy ones'
 ]
 
 { #category : #actions }
 MaplessAbstractPool >> start [
-
 	^ self start: 2
 ]
 
@@ -333,6 +333,6 @@ MaplessAbstractPool >> withClientDo: aBlock [
 				on: Error
 				do: [ :x | 
 					client reset.
-					MongoOperationError signal: x messageText] ]
+					x pass ] ]
 				ensure: [ self returnClient: client ] ]
 ]
