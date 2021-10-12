@@ -33,7 +33,7 @@ MaplessMongoQueriesTest >> setUp [
 	super setUp.
 	repository := MaplessMongoRepository
 		for: 'Mapless-Test'
-		with: (MaplessMongoPool hostname: 'localhost' port: 30001).
+		with: (MaplessStandaloneMongoPool hostname: 'localhost' port: 30001).
 ]
 
 { #category : #'setUp-tearDown' }

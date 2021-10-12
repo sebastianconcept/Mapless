@@ -22,7 +22,7 @@ MaplessMongoModelTest >> setUp [
 	super setUp.
 	repository := MaplessMongoRepository
 		for: 'Mapless-Test'
-		with: MaplessMongoPool local
+		with: MaplessStandaloneMongoPool local
 ]
 
 { #category : #'setUp-tearDown' }
