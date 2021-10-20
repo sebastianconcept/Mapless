@@ -2,7 +2,6 @@
 Mapless uses this class to have pools of MongoDB clients available for the repository to use.
 If more clients are needed, it will create them lazily up to a max.
 When the max is reached, it will start throwing exceptions if the load wants to create more.
-This particular pool works on 1 IP address that is expected to be running one standalone MongodB service.
 "
 Class {
 	#name : #MaplessStandaloneMongoPool,
@@ -24,18 +23,6 @@ MaplessStandaloneMongoPool >> currentClientDynamicVariable [
 	hold the value of the current client during the evaluation of its usage."
 
 	^ MongoCurrentClient
-]
-
-{ #category : #actions }
-MaplessStandaloneMongoPool >> databaseAt: aDatabaseName [
-	self do: [ :client | ^ client databaseNamed: aDatabaseName ]
-]
-
-{ #category : #actions }
-MaplessStandaloneMongoPool >> databaseAt: aDatabaseName do: aBlock [
-	self
-		do:
-			[ :client | (client databaseNamed: aDatabaseName) do: [ ^ aBlock value ] ]
 ]
 
 { #category : #actions }
@@ -83,4 +70,14 @@ MaplessStandaloneMongoPool >> purgeUnavailable [
 
 	self busyClients copy do: [ :e | self ifUnavailablePurge: e ].
 	self idleClients copy do: [ :e | self ifUnavailablePurge: e ]
+]
+
+{ #category : #actions }
+MaplessStandaloneMongoPool >> readOnlyDo: aBlock [
+	^ self do: aBlock
+]
+
+{ #category : #actions }
+MaplessStandaloneMongoPool >> readWriteDo: aBlock [
+	^ self do: aBlock
 ]

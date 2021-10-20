@@ -7,7 +7,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'maxClients',
-		'clientsMutex',
+		'clientsMonitor',
 		'busyClients',
 		'idleClients',
 		'hostname',
@@ -78,10 +78,10 @@ MaplessAbstractPool >> busyClients [
 ]
 
 { #category : #accessing }
-MaplessAbstractPool >> clientsMutex [
-	"Answers the mutex used to protect clients usage"
+MaplessAbstractPool >> clientsMonitor [
+	"Answers the monitor used to protect clients usage"
 
-	^ clientsMutex ifNil: [ self initializeClientsMutex ]
+	^ clientsMonitor ifNil: [ self initializeClientsMonitor ]
 ]
 
 { #category : #accessing }
@@ -153,8 +153,8 @@ MaplessAbstractPool >> initializeBusyClients [
 ]
 
 { #category : #initialization }
-MaplessAbstractPool >> initializeClientsMutex [
-	^ clientsMutex := Semaphore forMutualExclusion
+MaplessAbstractPool >> initializeClientsMonitor [
+	^ clientsMonitor := Monitor new
 ]
 
 { #category : #initialization }
@@ -169,7 +169,9 @@ MaplessAbstractPool >> initializeMaxClients [
 
 { #category : #testing }
 MaplessAbstractPool >> isUsingAuth [
-	^ username notNil and: [ password notNil ]
+	^ username notNil
+		and: [ password notNil
+				and: [ username notEmpty and: [ password notEmpty ] ] ]
 ]
 
 { #category : #actions }
@@ -243,7 +245,7 @@ MaplessAbstractPool >> requestClient [
 	It'll create a new one if needed.
 	It's a thread safe operation."
 
-	^ self clientsMutex
+	^ self clientsMonitor
 		critical: [ | client |
 			client := self hasIdleClients
 				ifTrue: [ self idleClients anyOne ]
@@ -275,7 +277,7 @@ MaplessAbstractPool >> returnClient: aClient [
 	"Sends aClient to go from the busy ones to the idle ones
 	but only if it's still valid"
 
-	self clientsMutex
+	self clientsMonitor
 		critical: [ self busyClients
 				remove: aClient
 				ifAbsent: [ self returningUnusedClient ].

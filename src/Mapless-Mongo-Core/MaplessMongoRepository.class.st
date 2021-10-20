@@ -38,7 +38,7 @@ MaplessMongoRepository >> count: aMaplessClass where: someConditions [
 	"Answer what's the number of instances of aMaplessClass in this repository."
 
 	^ self
-		do: [ (self databaseCollectionNamed: aMaplessClass collectionName)
+		readOnlyDo: [ (self databaseCollectionNamed: aMaplessClass collectionName)
 				sizeForQuery: someConditions ]
 ]
 
@@ -132,7 +132,7 @@ MaplessMongoRepository >> destroy: aMapless writeConcern: aConcernOrNil [
 		yourself.
 	bsonFriendly := self storableFor: filter.
 	self
-		do: [ (self databaseCollectionNamed: aMapless class collectionName)
+		readWriteDo: [ (self databaseCollectionNamed: aMapless class collectionName)
 				commandDelete: bsonFriendly
 				limit: 1
 				writeConcern: aConcernOrNil ].
@@ -150,7 +150,7 @@ MaplessMongoRepository >> do: aBlock with: aDatabaseAccessor [
 	anyone calling MaplessCurrentRepository value."
 
 	aDatabaseAccessor
-		do: [ :client | 
+		readWriteDo: [ :client | 
 			[ mongoClient := client.
 			MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
 				ensure: [ mongoClient := nil ] ]
@@ -158,7 +158,7 @@ MaplessMongoRepository >> do: aBlock with: aDatabaseAccessor [
 
 { #category : #accessing }
 MaplessMongoRepository >> drop [
-	^ self do: [ self database drop ]
+	^ self readWriteDo: [ self database drop ]
 ]
 
 { #category : #actions }
@@ -222,7 +222,7 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: 
 	anOffsetOrNil ifNotNil: [ :offset | command at: 'skip' put: offset ].
 	sortConditionsOrNil
 		ifNotNil: [ :sort | command at: 'sort' put: sort ].
-	self do: [ cursor := self newCursorFor: command ].
+	self readOnlyDo: [ cursor := self newCursorFor: command ].
 	^ (aMaplessClass
 		fromJSONObjects:
 			(cursor
@@ -279,19 +279,16 @@ MaplessMongoRepository >> findOne: aMaplessClass atId: anId [
 MaplessMongoRepository >> findOne: aMaplessClass where: someConditions [
 	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
 
-	| result databaseCollection |
-	self
-		do: [ databaseCollection := self
-				databaseCollectionNamed: aMaplessClass collectionName.
-			result := databaseCollection
-				queryOne: [ :q | q where: someConditions ] ].
-	^ result isNil
+	| found |
+	found := self
+		find: aMaplessClass
+		where: someConditions
+		limit: 1
+		offset: 0
+		sort: nil.
+	^ found isEmpty
 		ifTrue: [ nil ]
-		ifFalse: [ self
-				onAfterRead:
-					(aMaplessClass
-						fromJSONObject: (self normalizeIdOfOn: (result asJsonObjectIn: self))
-						in: self) ]
+		ifFalse: [ found first ]
 ]
 
 { #category : #testing }
@@ -340,7 +337,7 @@ MaplessMongoRepository >> insert: aMapless writeConcern: aConcernOrNil [
 	self onBeforeInsert: aMapless.
 	bsonFriendly := self storableFor: aMapless maplessData.
 	self
-		do: [ (self databaseCollectionNamed: aMapless class collectionName)
+		readWriteDo: [ (self databaseCollectionNamed: aMapless class collectionName)
 				commandInsert: bsonFriendly
 				writeConcern: aConcernOrNil ].
 	self onAfterInsert: aMapless
@@ -373,6 +370,40 @@ MaplessMongoRepository >> newCursorFor: aDictionary [
 	^ (MongoCommandCursor database: self database dictionary: aDictionary)
 		setFlagSlaveOk;
 		yourself
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> readOnlyDo: aBlock [
+	^ self readOnlyDo: aBlock with: accessor
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> readOnlyDo: aBlock with: aDatabaseAccessor [
+	"Performs aBlock and providing access to the mongo client in use during this thread to 
+	anyone calling MaplessCurrentRepository value."
+
+	aDatabaseAccessor
+		readOnlyDo: [ :client | 
+			[ mongoClient := client.
+			MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
+				ensure: [ mongoClient := nil ] ]
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> readWriteDo: aBlock [
+	^ self readWriteDo: aBlock with: accessor
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> readWriteDo: aBlock with: aDatabaseAccessor [
+	"Performs aBlock and providing access to the mongo client in use during this thread to 
+	anyone calling MaplessCurrentRepository value."
+
+	aDatabaseAccessor
+		readWriteDo: [ :client | 
+			[ mongoClient := client.
+			MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
+				ensure: [ mongoClient := nil ] ]
 ]
 
 { #category : #actions }
@@ -433,7 +464,7 @@ MaplessMongoRepository >> upsert: aMapless writeConcern: aConcernOrNil [
 	self onBeforeUpsert: aMapless.
 	bsonFriendly := self storableFor: aMapless maplessData.
 	self
-		do: [ self database
+		readWriteDo: [ self database
 				commandUpsert:
 					(Dictionary new
 						at: self idPropertyName put: (self idOf: aMapless);
@@ -466,8 +497,15 @@ MaplessMongoRepository >> withClientDo: aBlock [
 MaplessMongoRepository >> withClientDo: aBlock with: aDatabaseAccessor [
 	"Performs aBlock and providing access to the mongo client as aBlock argument."
 
+	^ self withReadWriteClientDo: aBlock with: aDatabaseAccessor
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> withReadOnlyClientDo: aBlock with: aDatabaseAccessor [
+	"Performs aBlock and providing access to the mongo client as aBlock argument."
+
 	aDatabaseAccessor
-		do: [ :client | 
+		readOnlyDo: [ :client | 
 			[ mongoClient := client.
 			MaplessCurrentRepository
 				value: self
@@ -475,25 +513,25 @@ MaplessMongoRepository >> withClientDo: aBlock with: aDatabaseAccessor [
 				ensure: [ mongoClient := nil ] ]
 ]
 
-{ #category : #accessing }
-MaplessMongoRepository >> workingFind: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+{ #category : #actions }
+MaplessMongoRepository >> withReadWriteClientDo: aBlock [
+	^ self withReadWriteClientDo: aBlock with: accessor
+]
 
-	| result databaseCollection |
-	self
-		do: [ databaseCollection := self
-				databaseCollectionNamed: aMaplessClass collectionName.
-			result := databaseCollection
-				query: [ :q | 
-					aLimitOrNil ifNotNil: [ :limit | q limit: limit ].
-					anOffsetOrNil ifNotNil: [ :offset | q offset: offset ].
-					sortConditionsOrNil ifNotNil: [ :sort | q order: sort ].
-					q where: someConditions ] ].
-	^ (result isNil and: [ result isEmpty ])
-		ifTrue: [ #() ]
-		ifFalse: [ (aMaplessClass
-				fromJSONObjects:
-					(result
-						collect: [ :e | self normalizeIdOfOn: (e asJsonObjectIn: self) ])
-				with: self) collect: [ :each | self onAfterRead: each ] ]
+{ #category : #actions }
+MaplessMongoRepository >> withReadWriteClientDo: aBlock with: aDatabaseAccessor [
+	"Performs aBlock and providing access to the mongo client as aBlock argument."
+
+	aDatabaseAccessor
+		readWriteDo: [ :client | 
+			[ mongoClient := client.
+			MaplessCurrentRepository
+				value: self
+				during: [ ^ aBlock value: client ] ]
+				ensure: [ mongoClient := nil ] ]
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> withReadnlyClientDo: aBlock [
+	^ self withReadOnlyClientDo: aBlock with: accessor
 ]
