@@ -9,10 +9,10 @@ MaplessWithoutDynamicVariableTest >> testSaveToAndReadFromTwoDatabases [
 	| repo1 repo2 guy found |
 	repo1 := MaplessMongoRepository
 		for: 'Mapless-Test1'
-		with: MaplessMongoPool local.
+		with: MaplessStandaloneMongoPool local.
 	repo2 := MaplessMongoRepository
 		for: 'Mapless-Test2'
-		with: MaplessMongoPool local.
+		with: MaplessStandaloneMongoPool local.
 	repositories at: 1 put: repo1.
 	repositories at: 2 put: repo2.
 	guy := DummyPerson new
@@ -42,7 +42,7 @@ MaplessWithoutDynamicVariableTest >> testUseSubmapless [
 	| repo user guy found |
 	repo := MaplessMongoRepository
 		for: 'Mapless-Test'
-		with: MaplessMongoPool local.
+		with: MaplessStandaloneMongoPool local.
 	repositories at: 1 put: repo.
 	guy := DummyPerson new
 		firstName: 'john';

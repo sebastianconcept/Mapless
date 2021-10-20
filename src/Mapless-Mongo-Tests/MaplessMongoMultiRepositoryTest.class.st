@@ -28,10 +28,10 @@ MaplessMongoMultiRepositoryTest >> testConnectTwoDatabases [
 	| repo1 repo2 |
 	repo1 := MaplessMongoRepository
 		for: 'Mapless-Test1'
-		with: MaplessMongoPool local.
+		with: MaplessStandaloneMongoPool local.
 	repo2 := MaplessMongoRepository
 		for: 'Mapless-Test2'
-		with: MaplessMongoPool local.
+		with: MaplessStandaloneMongoPool local.
 	repositories at: 1 put: repo1.
 	repositories at: 2 put: repo2
 ]
@@ -41,10 +41,10 @@ MaplessMongoMultiRepositoryTest >> testSaveToAndReadFromTwoDatabases [
 	| repo1 repo2 guy found |
 	repo1 := MaplessMongoRepository
 		for: 'Mapless-Test1'
-		with: MaplessMongoPool local.
+		with: MaplessStandaloneMongoPool local.
 	repo2 := MaplessMongoRepository
 		for: 'Mapless-Test2'
-		with: MaplessMongoPool local.
+		with: MaplessStandaloneMongoPool local.
 	repositories at: 1 put: repo1.
 	repositories at: 2 put: repo2.
 	repo1
@@ -72,10 +72,10 @@ MaplessMongoMultiRepositoryTest >> testStartStopPool [
 	| repo1 repo2 |
 	repo1 := MaplessMongoRepository
 		for: 'Mapless-Test1'
-		with: MaplessMongoPool local.
+		with: MaplessStandaloneMongoPool local.
 	repo2 := MaplessMongoRepository
 		for: 'Mapless-Test2'
-		with: MaplessMongoPool local.
+		with: MaplessStandaloneMongoPool local.
 	repositories at: 1 put: repo1.
 	repositories at: 2 put: repo2.
 	repo1 startUp: 5.

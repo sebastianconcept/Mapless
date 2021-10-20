@@ -1,3 +1,12 @@
+October 20, 2021
+===================================
+* Using `Monitor` instead of `Mutex` in the client pool.
+* Introduces strategy for getting clients `MaplessMongoReplicaSetClientSelectionPolicy` and the concrete `MaplessMongoReplicaSetReadOnlyOnSecondaries` so Mapless on Mongo will read-only from secondaries and write in the primary.
+* Introduces `MaplessMongoRepository` with `readWriteDo:` and `readOnlyDo:`. All operations are going to use one or the other accordingly.
+* Introduces `MaplessUnavailableMaster` exception which would be used when a MongoDB Replica Set is not having a primary or the primary changed and a new one is getting elected.
+* The previous MongoDB pool is now `MaplessStandaloneMongoPool`.
+* `findOne: aMaplessClass where:` is based in the cursor with the right read concern and working in secondaries.
+
 October 6, 2021
 ===================================
 * `MaplessMongoRepository` is now using `MongoCommandCursor` which is created using `setFlagSlaveOk`. This makes Mapless able to read documents from secondary nodes in a MongoDB replica set.
