@@ -9,14 +9,6 @@ Mongo >> authenticateUsername: user password: pass database: aDatabaseName [
 ]
 
 { #category : #'*Mapless-Mongo-Core' }
-Mongo >> isAvailable [
-	"Return true when it is possible to connect to the mongo DB instance, false otherwise.
-	 When it is available it is also opened."
-
-	^ self isOpen
-]
-
-{ #category : #'*Mapless-Mongo-Core' }
 Mongo >> printOn: aStream [
 	aStream
 		nextPutAll: self class name , ' (';

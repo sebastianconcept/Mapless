@@ -222,12 +222,13 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: 
 	anOffsetOrNil ifNotNil: [ :offset | command at: 'skip' put: offset ].
 	sortConditionsOrNil
 		ifNotNil: [ :sort | command at: 'sort' put: sort ].
-	self readOnlyDo: [ cursor := self newCursorFor: command ].
-	^ (aMaplessClass
-		fromJSONObjects:
-			(cursor
-				collect: [ :each | self normalizeIdOfOn: (each asJsonObjectIn: self) ])
-		with: self) collect: [ :each | self onAfterRead: each ]
+	^ self
+		readOnlyDo: [ cursor := self newCursorFor: command.
+			(aMaplessClass
+				fromJSONObjects:
+					(cursor
+						collect: [ :each | self normalizeIdOfOn: (each asJsonObjectIn: self) ])
+				with: self) collect: [ :each | self onAfterRead: each ] ]
 ]
 
 { #category : #accessing }
