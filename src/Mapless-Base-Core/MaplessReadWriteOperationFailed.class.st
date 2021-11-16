@@ -1,5 +1,5 @@
 Class {
-	#name : #MaplessUnsavedSubmodel,
+	#name : #MaplessReadWriteOperationFailed,
 	#superclass : #MaplessError,
 	#category : #'Mapless-Base-Core-Errors'
 }

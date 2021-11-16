@@ -1,0 +1,42 @@
+@startuml ReplicaSet starts
+skinparam Style strictuml
+skinparam SequenceMessageAlignment center
+
+participant "Application" as app
+participant "MaplessRepository" as repo
+participant "MaplessReplicaSetPool" as pool
+participant "MaplessReplicaSetResolver" as resolver
+participant "MongoDB client" as client
+database MongoDB1
+database MongoDB2 #orange
+database MongoDB3
+==Starting the repository==
+app -> repo: start
+note right
+  The application just instantiated
+  the repo and wants it ready to use.
+  The start method can be thought as part
+  of the initialization of the repo.
+end note
+repo -> repo: onPrimaryFound
+note right
+  Setup a reaction for when a primary node is discovered.
+end note
+repo -> repo: onPrimaryUnavailable
+note right
+  Setup a reaction for when none of the nodes is a primary.
+end note
+repo -> pool: start
+pool -> pool: findPrimary
+pool -> repo: aMaplessPool
+repo -> app: aMaplessRepository
+==onPrimaryFound==
+repo -> pool: primaryFound
+pool -> pool: removeInvalidClients
+pool -> pool: ensureMinimumQuantityOfReadOnlyClients
+pool -> pool: ensureMinimumQuantityOfReadWriteClients
+==onPrimaryUnavailable==
+repo -> pool: primaryUnavailable
+pool -> pool: removeInvalidClients
+pool -> pool: ensureMinimumQuantityOfReadOnlyClients
+@enduml

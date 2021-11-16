@@ -14,9 +14,28 @@ MongoAPI class >> mongoUrl: aString [
 	^ self host: url host port: url port
 ]
 
+{ #category : #accessing }
+MongoAPI >> asMongoUrl [
+	^ (host , ':' , port asString) asMongoUrl
+]
+
+{ #category : #accessing }
+MongoAPI >> getIsPrimary [
+	^ self admin isMaster isPrimary
+]
+
 { #category : #initializing }
 MongoAPI >> initializeIsPrimary [
-	^ isPrimary := self admin isMaster isPrimary
+	^ isPrimary := self getIsPrimary
+]
+
+{ #category : #testing }
+MongoAPI >> isAt: aMongoUrlOrNil [
+	"Answers true if this client is connected to the address represented in aMongoUrl."
+
+	^ aMongoUrlOrNil notNil
+		and: [ self host = aMongoUrlOrNil host
+				and: [ self port = aMongoUrlOrNil port ] ]
 ]
 
 { #category : #testing }
@@ -35,6 +54,11 @@ MongoAPI >> isReadWrite [
 ]
 
 { #category : #testing }
+MongoAPI >> isSecondary [
+	^ self isPrimary not
+]
+
+{ #category : #testing }
 MongoAPI >> isType: aSymbol [
 	"Answers true if this MongoDB client is of type aSymbol.
 	Supported types are #readOnly and #readWrite."
@@ -44,7 +68,7 @@ MongoAPI >> isType: aSymbol [
 
 { #category : #testing }
 MongoAPI >> isValid [
-	^ self isAvailable
+	^ self isOpen
 ]
 
 { #category : #actions }
