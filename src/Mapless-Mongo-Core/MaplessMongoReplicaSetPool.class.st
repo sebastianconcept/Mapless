@@ -197,8 +197,7 @@ MaplessMongoReplicaSetPool >> initialize [
 		when: #notPrimaryReadWriteAttempt
 		send: #onNotPrimaryReadWriteAttempt:using:
 		to: self.
-	self when: #primaryFound send: #onPrimaryFound: to: self.
-	self when: #primaryUnavailable send: #onPrimaryUnavailable: to: self
+	self when: #primaryFound send: #onPrimaryFound: to: self
 ]
 
 { #category : #initialization }
@@ -327,15 +326,6 @@ MaplessMongoReplicaSetPool >> onPrimaryFound: aMongoAPI [
 	
 ]
 
-{ #category : #reactions }
-MaplessMongoReplicaSetPool >> onPrimaryUnavailable: aMongoAPI [
-
-	self halt.
-	self removeInvalidClients.
-	self ensureMinimumQuantityOfReadOnlyClients.
-	
-]
-
 { #category : #actions }
 MaplessMongoReplicaSetPool >> printOn: aStream [
 	super printOn: aStream.
@@ -404,7 +394,7 @@ MaplessMongoReplicaSetPool >> readWriteDo: aBlock [
 
 	| client |
 	[ [ [ client := self requestReadWriteClient.
-	client ifNil: [ self readWriteError: nil ].			
+	client ifNil: [ self readWriteError: nil ].
 	^ self currentClientDynamicVariable
 		value: client
 		during: [ [ aBlock value: client ]
@@ -413,7 +403,7 @@ MaplessMongoReplicaSetPool >> readWriteDo: aBlock [
 		do: [ :x1 | 
 			client ifNotNil: [ client reset ].
 			self readWriteError: x1 ] ]
-		on: MongoNotMaster
+		on: MongoNotMaster , MongoCommandError
 		do: [ :x2 | 
 			client ifNotNil: [ client reset ].
 			self
