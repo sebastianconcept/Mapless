@@ -1,0 +1,31 @@
+@startuml Primary discovery process
+skinparam Style strictuml
+skinparam SequenceMessageAlignment center
+
+' participant "Application" as app
+' participant "MaplessRepository" as repo
+participant "MaplessReplicaSetPool" as pool
+participant "MaplessReplicaSetResolver" as resolver
+participant "MongoDB client" as client
+database MongoDB1
+database MongoDB2 #orange
+database MongoDB3
+
+==Primary discovery process==
+
+pool->pool: findPrimary
+loop every mongoUrl in the ReplicaSet config
+  pool->resolver: requestClientFor: aMongoUrl
+  resolver->pool: aMongoClient
+  pool->client: isPrimary
+  alt true
+    client->MongoDB2: isPrimary
+    MongoDB2->client: true
+    client->pool: true
+    pool->pool: signals PrimaryFound
+  else false
+    pool->pool: signals PrimaryNotFound
+  end
+  end loop
+
+  @enduml

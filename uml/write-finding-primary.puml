@@ -1,0 +1,90 @@
+@startuml ReplicaSet starts
+
+participant "Application" as app
+participant "MaplessRepository" as repo
+participant "MaplessReplicaSetPool" as pool
+participant "MaplessReplicaSetResolver" as resolver
+participant "MongoDB client" as client
+database MongoDB1
+database MongoDB2 #orange
+database MongoDB3
+skinparam Style strictuml
+skinparam SequenceMessageAlignment center
+
+app->repo: readWriteDo:
+repo->pool: readWriteDo:
+pool->pool: requestReadWriteIdleClient
+pool->resolver: requestClientFor: aMongoUrl
+alt aMongoClient (read-write)
+  pool<-resolver: aMongoClient (read-write)
+  pool->client: command:
+  client->MongoDB2: command on socket
+  client<-MongoDB2: successful write operation
+  pool<-client: successful write operation
+  repo<-pool: successful write operation
+  app<-repo: successful write operation
+else nil
+  pool<-resolver: nil
+  pool->resolver: hasPrimary
+  note right
+    No client to the primary was returned.
+    Need to create one if the primary address is known or
+    find what's the address of the primary if it's unknown.
+  end note
+  alt the address of the primary node is known
+    pool<-resolver: true
+    pool->pool: makeReadWriteClient
+    pool->resolver: getReadWriteMongoUrl
+    pool<-resolver: aMongoUrl
+    pool->client: open
+    alt the client connection opens
+      pool->pool: addReadWriteClientToBusy
+      pool->pool: aMongoClient
+      pool->client: command:
+      client->MongoDB2: command on socket
+      client<-MongoDB2: successful write operation
+      pool<-client: successful write operation
+      repo<-pool: successful write operation
+      app<-repo: successful write operation
+    else there is a NetworkError
+      pool->pool: onNetworError
+      pool->pool: findPrimary
+      pool->pool: aMongoClient (read-write)
+      pool->client: command:
+      client->MongoDB2: command on socket
+      client<-MongoDB2: successful write operation
+      pool<-client: successful write operation
+      repo<-pool: successful write operation
+      app<-repo: successful write operation
+    end
+  else the address of the primary node is unknown
+    pool<-resolver: false
+    pool->pool: findPrimary
+      pool->pool: aMongoClient (read-write)
+      pool->client: command:
+      client->MongoDB2: command on socket
+      client<-MongoDB2: successful write operation
+      pool<-client: successful write operation
+      repo<-pool: successful write operation
+      app<-repo: successful write operation
+  end
+end
+
+pool -> pool: onReadWriteClientNeeded
+pool -> pool: onReadOnlyClientRequested
+pool -> pool: onPrimaryFound
+pool -> pool: onPrimaryUnavailable
+pool->pool: findPrimary
+loop every (valid) mongoUrl
+  pool->client: command:
+  pool->client: isPrimary
+  alt true
+    client->MongoDB2: isPrimary
+    MongoDB2->client: true
+    client->pool: true
+    pool->pool: signals PrimaryFound
+  else false
+    pool->pool: signals PrimaryNotFound
+  end
+  end loop
+  @enduml
