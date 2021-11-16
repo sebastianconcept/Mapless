@@ -1,5 +1,10 @@
 Class {
 	#name : #MongoNotMaster,
-	#superclass : #MongoOperationError,
+	#superclass : #MongoCommandError,
 	#category : #'Mapless-Mongo-Core-Errors'
 }
+
+{ #category : #accessing }
+MongoNotMaster class >> code [
+	^ 10107
+]
