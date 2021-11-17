@@ -1,3 +1,9 @@
+November 16, 2021 - v0.4.9-alpha | New Eagle
+===================================
+* Pushed a re-designed version of `MaplessMongoReplicaSetPool`. A `MaplessMongoRepository` now will be resilient to primary node changes.
+* `MaplessMongoReplicaSetPool` will use the secondary nodes for read-only operations and the primary node for the read-write operations.
+* Adds some UML diagrams covering the normal and MongoDB primary node failing cases.
+
 October 20, 2021
 ===================================
 * Using `Monitor` instead of `Mutex` in the client pool.
