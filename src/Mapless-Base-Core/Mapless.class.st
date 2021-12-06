@@ -472,6 +472,11 @@ Mapless >> jsonWriteOn: aStream [
 ]
 
 { #category : #accessing }
+Mapless >> maplessClassName [
+	^ self class maplessClassName
+]
+
+{ #category : #accessing }
 Mapless >> maplessData [
 	"Returns the data part of a Mapless document.
 	By default it is the data object, but subclasses might extend or change this."
@@ -688,7 +693,8 @@ Mapless >> setSubModelReferencesAt: aKey with: anObject in: aMaplessRepository [
 	"2. it's a collection of submodels"
 	(anObject isCollection
 		and: [ anObject notEmpty
-				and: [ anObject anySatisfy: [ :e | aMaplessRepository canRepresentSubMapless: e ] ] ])
+				and: [ anObject
+						anySatisfy: [ :e | aMaplessRepository canRepresentSubMapless: e ] ] ])
 		ifTrue: [ self
 				setReferencesFrom: anObject
 				on: aKey
