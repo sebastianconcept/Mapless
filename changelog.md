@@ -1,3 +1,9 @@
+December 6, 2021
+===================================
+* Being less strict about the conditions to answer true on `isVoyageReference: anObject in: aMaplessRepository` and `canRepresentSubMapless: anObject in: aMaplessRepository` in order to make `Mapless` able to interoperate with `Voyage`.
+* Using resolver's help to make `Mapless` and `MaplessReference` to be returned `asStorable:`.
+* `MaplessVoyageWithMaplessSuffixResolver` now uses `referenceAsJsonObject: anObject in: aMaplessRepository` to implement a mapless data object that is compatible with Voyage. Just before a save this method is used by Mapless and now it's being used, beside the usual, including Voyage metadata making both Voyage and Mapless able to achieve interoperability.
+
 November 16, 2021 - v0.4.9-alpha | New Eagle
 ===================================
 * Pushed a re-designed version of `MaplessMongoReplicaSetPool`. A `MaplessMongoRepository` now will be resilient to primary node changes.

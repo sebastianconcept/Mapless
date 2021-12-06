@@ -125,15 +125,14 @@ MaplessMongoRepository >> destroy: aMapless [
 MaplessMongoRepository >> destroy: aMapless writeConcern: aConcernOrNil [
 	"Removes aMapless from the persistent collection"
 
-	| bsonFriendly filter |
+	| filter |
 	self onBeforeDestroy: aMapless.
 	filter := JsonObject new
 		at: self idPropertyName put: aMapless id;
 		yourself.
-	bsonFriendly := self storableFor: filter.
 	self
 		readWriteDo: [ (self databaseCollectionNamed: aMapless class collectionName)
-				commandDelete: bsonFriendly
+				commandDelete: filter
 				limit: 1
 				writeConcern: aConcernOrNil ].
 	self onAfterDestroy: aMapless
@@ -336,7 +335,7 @@ MaplessMongoRepository >> insert: aMapless [
 MaplessMongoRepository >> insert: aMapless writeConcern: aConcernOrNil [
 	| bsonFriendly |
 	self onBeforeInsert: aMapless.
-	bsonFriendly := self storableFor: aMapless maplessData.
+	bsonFriendly := resolver storableFor: aMapless in: self.
 	self
 		readWriteDo: [ (self databaseCollectionNamed: aMapless class collectionName)
 				commandInsert: bsonFriendly
@@ -463,7 +462,7 @@ MaplessMongoRepository >> upsert: aMapless [
 MaplessMongoRepository >> upsert: aMapless writeConcern: aConcernOrNil [
 	| bsonFriendly |
 	self onBeforeUpsert: aMapless.
-	bsonFriendly := self storableFor: aMapless maplessData.
+	bsonFriendly := resolver storableFor: aMapless in: self.
 	self
 		readWriteDo: [ self database
 				commandUpsert:
