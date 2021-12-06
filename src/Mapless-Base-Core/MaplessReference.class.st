@@ -51,10 +51,7 @@ MaplessReference >> asJsonObjectIn: aMaplessRepository [
 		ifNil: [ ^ MaplessUnsavedSubmodel
 				signal:
 					'This sub model is unsaved. You need to save all sub mapless before saving a composed mapless' ].
-	^ OrderedJsonObject new
-		at: '_c' put: self maplessClassName;
-		at: repository idPropertyName put: self id;
-		yourself
+	^ aMaplessRepository maplessReferenceAsJsonObject: self
 ]
 
 { #category : #accessing }

@@ -21,7 +21,7 @@ MaplessVoyageMongoModelTest >> setUp [
 	repository
 		resolver:
 			(MaplessVoyageWithMaplessSuffixResolver new
-				suffix: 'Imported';
+				suffix: 'Interoperating';
 				yourself)
 ]
 
@@ -34,12 +34,84 @@ MaplessVoyageMongoModelTest >> tearDown [
 ]
 
 { #category : #tests }
-MaplessVoyageMongoModelTest >> testReifyWitVoyageMetadata [
-	| serializedFromVoyage |
-	serializedFromVoyage := '{"__id": "abc123", "#instanceOf": "DummyPerson","#collection": "DummyPerson"}'.
+MaplessVoyageMongoModelTest >> testReifyWithReferenceFromVoyageMetadata [
+	| serializedFromVoyage deserializedFromVoyage |
+	serializedFromVoyage := '{"_id": "596f7169a5aa73b9a2110def", "#instanceOf": "DummyUser","#version":345,"username":"Paul","person":{"__id": "d9b4e739421aa92bd8002411","#collection": "DummyPerson","#instanceOf": "DummyPerson"}}'.
+	deserializedFromVoyage := Mapless
+		fromJSONString: serializedFromVoyage
+		in: repository.
 	self
-		assert:
-			(DummyPerson fromJSONString: serializedFromVoyage in: repository)
-				class
-		equals: DummyPersonImported
+		assert: deserializedFromVoyage class
+		equals: DummyUserInteroperating.
+	self assert: deserializedFromVoyage username equals: 'Paul'.
+	self assert: deserializedFromVoyage person notNil.
+	self assert: deserializedFromVoyage person class notNil.
+	self
+		assert: deserializedFromVoyage person class
+		equals: MaplessReference
+]
+
+{ #category : #tests }
+MaplessVoyageMongoModelTest >> testSaveWithVoyageMetadata [
+	| found voyageDummyUserJSON voyageDummyPersonJSON personFromMapless userFromMapless command filter cursor |
+	voyageDummyUserJSON := '{"_id": "596f7169a5aa73b9a2110def", "#instanceOf": "DummyUser","#version":345,"username":"Paul","person":{"__id": "d9b4e739421aa92bd8002411","#collection": "DummyPerson","#instanceOf": "DummyPerson"}}'.
+	voyageDummyPersonJSON := '{"_id": "d9b4e739421aa92bd8002411", "#instanceOf": "DummyPerson","#version":345,"firstName":"Buddy"}'.
+	personFromMapless := DummyPersonInteroperating new
+		firstName: 'Buddy';
+		yourself.
+	userFromMapless := DummyUserInteroperating new
+		username: 'buddy';
+		person: personFromMapless;
+		yourself.
+	repository save: personFromMapless.
+	repository save: userFromMapless.
+	found := repository
+		findOne: DummyPersonInteroperating
+		atId: personFromMapless id.
+	self assert: found notNil.
+	self
+		assert: (found maplessData at: '#instanceOf')
+		equals: 'DummyPerson'.
+	self assert: found id equals: personFromMapless id.
+	found := repository
+		findOne: DummyUserInteroperating
+		atId: userFromMapless id.
+	self assert: found notNil.
+	self
+		assert: (found maplessData at: '#instanceOf')
+		equals: 'DummyUser'.
+	self assert: found id equals: userFromMapless id.
+	self assert: found person class equals: MaplessReference.
+	self
+		assert: found person model class
+		equals: DummyPersonInteroperating.
+	self assert: found person id notNil.
+	self assert: found person id equals: personFromMapless id.
+	self assert: found person model notNil.
+	self assert: found person data notNil.
+	filter := Dictionary
+		newFromPairs:
+			{'_id'.
+			userFromMapless id}.
+	command := OrderedDictionary new
+		at: 'find' put: DummyUserInteroperating collectionName;
+		at: 'filter' put: filter asMongoQuery;
+		yourself.
+	repository
+		readOnlyDo: [ cursor := repository newCursorFor: command.
+			found := cursor collect: [ :each | each ] ].
+	self assert: found notNil.
+	self assert: found notEmpty.
+	self assert: ((found first at: 'person') includesKey: '__id').
+	self assert: ((found first at: 'person') includesKey: '#instanceOf').
+	self assert: ((found first at: 'person') includesKey: '#collection').
+	self
+		assert: ((found first at: 'person') at: '__id')
+		equals: personFromMapless id.
+	self
+		assert: ((found first at: 'person') at: '#instanceOf')
+		equals: 'DummyPerson'.
+	self
+		assert: ((found first at: 'person') at: '#collection')
+		equals: 'DummyPerson'
 ]
