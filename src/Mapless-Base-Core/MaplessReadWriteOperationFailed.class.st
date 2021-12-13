@@ -1,5 +1,5 @@
 Class {
 	#name : #MaplessReadWriteOperationFailed,
-	#superclass : #MaplessError,
+	#superclass : #MaplessMongoError,
 	#category : #'Mapless-Base-Core-Errors'
 }
