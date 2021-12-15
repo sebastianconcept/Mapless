@@ -403,7 +403,7 @@ MaplessMongoReplicaSetPool >> readWriteDo: aBlock [
 		do: [ :x1 | 
 			client ifNotNil: [ client reset ].
 			self readWriteError: x1 ] ]
-		on: MongoNotMaster , MongoCommandError
+		on: MongoNotMaster 
 		do: [ :x2 | 
 			client ifNotNil: [ client reset ].
 			self
