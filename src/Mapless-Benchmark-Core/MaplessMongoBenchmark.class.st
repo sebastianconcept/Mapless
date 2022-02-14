@@ -17,36 +17,57 @@ Class {
 }
 
 { #category : #actions }
-MaplessMongoBenchmark class >> run [
-	self runPrintingOn: Transcript
+MaplessMongoBenchmark class >> runOn: aMaplessRepository [
+	self runOn: aMaplessRepository printingOn: Stdio stdout
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> runPrintingOn: aStream [
+MaplessMongoBenchmark class >> runOn: aMaplessRepository printingOn: aStream [
 	aStream
+		lf;
 		cr;
+		lf;
 		cr;
 		nextPutAll: 'Benchmarking...';
+		lf;
 		cr.
-	self save1KPeopleOn: aStream.
-	self save10KPeopleOn: aStream.
-	self save1KUsersOn: aStream.
-	self save10KUsersOn: aStream
+	self save1KPeopleOn: aMaplessRepository printingOn: aStream.
+	self save10KPeopleOn: aMaplessRepository printingOn: aStream.
+	self save1KUsersOn: aMaplessRepository printingOn: aStream.
+	self save10KUsersOn: aMaplessRepository printingOn: aStream
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save10KPeopleOn: aStream [
-	self save: 10000 peopleOn: aStream
+MaplessMongoBenchmark class >> runOnLocalMongoDBReplicaSet [
+	self
+		runOn:
+			(MaplessMongoRepository
+				for: 'Mapless-Test'
+				with: MaplessMongoReplicaSetPool test)
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save10KUsersOn: aStream [
-	self save: 10000 usersOn: aStream
+MaplessMongoBenchmark class >> runOnLocalStandaloneMongoDB [
+	self
+		runOn:
+			(MaplessMongoRepository
+				for: 'Mapless-Test'
+				with: MaplessStandaloneMongoPool local)
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save1KPeopleOn: aStream [
-	self save: 1000 peopleOn: aStream
+MaplessMongoBenchmark class >> save10KPeopleOn: aMaplessRepository printingOn: aStream [
+	self save: 10000 peopleOn: aMaplessRepository printingOn: aStream
+]
+
+{ #category : #actions }
+MaplessMongoBenchmark class >> save10KUsersOn: aMaplessRepository printingOn: aStream [
+	self save: 10000 usersOn: aMaplessRepository printingOn: aStream
+]
+
+{ #category : #actions }
+MaplessMongoBenchmark class >> save1KPeopleOn: aMaplessRepository printingOn: aStream [
+	self save: 1000 peopleOn: aMaplessRepository printingOn: aStream
 ]
 
 { #category : #actions }
@@ -55,15 +76,19 @@ MaplessMongoBenchmark class >> save1KUsersOn: aStream [
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save: aQuantity peopleOn: aStream [
-	| firstNames lastNames delay savesPerSecond guysIds readsPerSecond mongoRepository |
+MaplessMongoBenchmark class >> save1KUsersOn: aMaplessRepository printingOn: aStream [
+	self save: 1000 usersOn: aMaplessRepository printingOn: aStream
+]
+
+{ #category : #actions }
+MaplessMongoBenchmark class >> save: aQuantity peopleOn: aMaplessRepository printingOn: aStream [
+	| firstNames lastNames delay savesPerSecond guysIds readsPerSecond |
 	firstNames := OrderedCollection new.
 	lastNames := OrderedCollection new.
 	guysIds := OrderedCollection new.
-	mongoRepository := MaplessMongoRepository for: 'Mapless-Tests'.
 	delay := Time
-		millisecondsToRun: [ mongoRepository
-				do: [ 1 to: aQuantity do: [ :i | 
+		millisecondsToRun: [ aMaplessRepository
+				readWriteDo: [ 1 to: aQuantity do: [ :i | 
 						| guy |
 						guy := DummyPerson new
 							firstName: Character alphabet shuffled anyOne asString;
@@ -73,6 +98,7 @@ MaplessMongoBenchmark class >> save: aQuantity peopleOn: aStream [
 						guysIds add: guy id ] ] ].
 	savesPerSecond := (1000 * aQuantity / delay asFloat) truncated.
 	aStream
+		lf;
 		cr;
 		nextPutAll: 'Saved ';
 		nextPutAll: aQuantity asString;
@@ -81,11 +107,12 @@ MaplessMongoBenchmark class >> save: aQuantity peopleOn: aStream [
 		nextPutAll: ' ms ';
 		nextPutAll: '(~' , savesPerSecond asString , ' saves per second)';
 		flush.
-	mongoRepository
-		do: [ delay := Time
+	aMaplessRepository
+		readOnlyDo: [ delay := Time
 				millisecondsToRun: [ guysIds do: [ :guyId | DummyPerson findId: guyId ] ] ].
 	readsPerSecond := (1000 * aQuantity / delay asFloat) truncated.
 	aStream
+		lf;
 		cr;
 		nextPutAll: 'Read ';
 		nextPutAll: aQuantity asString;
@@ -97,13 +124,12 @@ MaplessMongoBenchmark class >> save: aQuantity peopleOn: aStream [
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save: aQuantity usersOn: aStream [
-	| guy user userIds delay savesPerSecond readsPerSecond mongoRepository |
+MaplessMongoBenchmark class >> save: aQuantity usersOn: aMaplessRepository printingOn: aStream [
+	| guy user userIds delay savesPerSecond readsPerSecond |
 	userIds := OrderedCollection new.
-	mongoRepository := MaplessMongoRepository for: 'Mapless-Tests'.
 	delay := Time
-		millisecondsToRun: [ mongoRepository
-				do: [ 1 to: aQuantity do: [ :i | 
+		millisecondsToRun: [ aMaplessRepository
+				readWriteDo: [ 1 to: aQuantity do: [ :i | 
 						guy := DummyPerson new
 							firstName: Character alphabet shuffled anyOne asString;
 							lastName: Character alphabet shuffled anyOne asString;
@@ -117,6 +143,7 @@ MaplessMongoBenchmark class >> save: aQuantity usersOn: aStream [
 						userIds add: user id ] ] ].
 	savesPerSecond := (1000 * aQuantity / delay asFloat) truncated.
 	aStream
+		lf;
 		cr;
 		nextPutAll: 'Saved ';
 		nextPutAll: aQuantity asString;
@@ -125,11 +152,12 @@ MaplessMongoBenchmark class >> save: aQuantity usersOn: aStream [
 		nextPutAll: ' ms ';
 		nextPutAll: '(~' , savesPerSecond asString , ' saves per second)';
 		flush.
-	mongoRepository
-		do: [ delay := Time
+	aMaplessRepository
+		readOnlyDo: [ delay := Time
 				millisecondsToRun: [ userIds do: [ :userId | user := DummyUser findId: userId ] ] ].
 	readsPerSecond := (1000 * aQuantity / delay asFloat) truncated.
 	aStream
+		lf;
 		cr;
 		nextPutAll: 'Read ';
 		nextPutAll: aQuantity asString;

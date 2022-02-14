@@ -369,7 +369,7 @@ MaplessMongoModelTest >> testUpsertHookOnSave [
 		yourself.
 	self assert: user beforeUpsert isNil.
 	self assert: user afterUpsert isNil.
-	self do: [ user save ].
+	self do: [ user upsert ].
 	self assert: user beforeUpsert.
 	self assert: user afterUpsert
 ]
