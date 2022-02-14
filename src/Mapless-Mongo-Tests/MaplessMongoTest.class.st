@@ -55,7 +55,8 @@ MaplessMongoTest >> newRepository [
 { #category : #'setUp-tearDown' }
 MaplessMongoTest >> setUp [
 	super setUp.
-	repository := self newRepository
+	repository := self newRepository.
+
 ]
 
 { #category : #'setUp-tearDown' }
@@ -71,8 +72,8 @@ MaplessMongoTest >> testComposedAccess [
 	"Test proxies and its on-demand-load and DNU mechanism"
 
 	| user guy |
-	self
-		do: [ user := DummyUser new
+	repository
+		readWriteDo: [ user := DummyUser new
 				userame: 'johnq';
 				yourself.
 			guy := DummyPerson new
@@ -81,7 +82,10 @@ MaplessMongoTest >> testComposedAccess [
 				yourself.
 			user person: guy.
 			guy save.
-			user save.
+			user save ].
+	repository
+		readOnlyDo: [ 
+			self waitABit.
 			self
 				assert: (DummyUser findId: user id) completeName
 				equals: 'john q'.
@@ -161,8 +165,8 @@ MaplessMongoTest >> testComposedDestroy [
 { #category : #tests }
 MaplessMongoTest >> testComposedResaveAndLoad [
 	| user guy loaded |
-	self
-		do: [ user := DummyUser new
+	repository
+		readWriteDo: [ user := DummyUser new
 				username: 'johnq';
 				yourself.
 			guy := DummyPerson new
@@ -171,7 +175,10 @@ MaplessMongoTest >> testComposedResaveAndLoad [
 				yourself.
 			user person: guy.
 			guy save.
-			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel.
+			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel ].
+	repository
+		readOnlyDo: [ 
+			self waitABit.
 			loaded := DummyUser findId: user id.
 			self assert: loaded person firstName equals: 'John'.
 			loaded person lastName: 'wayne'.
@@ -179,12 +186,14 @@ MaplessMongoTest >> testComposedResaveAndLoad [
 			loaded := DummyUser findId: user id.
 			self assert: loaded person lastName equals: 'wayne'.
 			loaded := DummyUser findId: user id.
-			self assert: loaded person firstName equals: 'John'.
-			loaded person lastName: 'Wayne'.
+			self assert: loaded person firstName equals: 'John' ].
+	repository
+		readWriteDo: [ loaded person lastName: 'Wayne'.
 			loaded person save.
 			loaded username: 'johnw'.
-			loaded save.
-			loaded := DummyUser findId: user id.
+			loaded save ].
+	repository
+		readOnlyDo: [ loaded := DummyUser findId: user id.
 			self assert: loaded username equals: 'johnw'.
 			self assert: loaded person firstName equals: 'John' ]
 ]
@@ -213,8 +222,8 @@ MaplessMongoTest >> testComposedSave [
 { #category : #tests }
 MaplessMongoTest >> testComposedSaveAndLoad [
 	| user guy loaded |
-	self
-		do: [ user := DummyUser new
+	repository
+		readWriteDo: [ user := DummyUser new
 				createdOn: DateAndTime now;
 				username: 'johnq';
 				yourself.
@@ -230,7 +239,9 @@ MaplessMongoTest >> testComposedSaveAndLoad [
 
 			"After saving that submodel"
 			guy save.
-			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel.
+			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel ].
+	repository
+		readOnlyDo: [ self waitABit.
 			loaded := DummyUser findId: user id.
 			self assert: loaded notNil.
 			self assert: loaded createdOn notNil.
@@ -272,106 +283,22 @@ MaplessMongoTest >> testComposition [
 { #category : #tests }
 MaplessMongoTest >> testDateAndTime [
 	| when guy loaded |
-	self
-		do: [ when := DateAndTime now asUTC.
+	repository
+		readWriteDo: [ when := DateAndTime now asUTC.
 			guy := DummyPerson new
 				firstName: 'john';
 				lastName: 'q';
 				createdOn: when;
 				yourself.
-			guy save.
+			guy save ].
+	repository
+		readOnlyDo: [ self waitABit.
 			loaded := DummyPerson findId: guy id.
 			self
 				assert: loaded createdOn asDate asString = when asDate asString.
 			self assert: loaded createdOn asTime hour = when asTime hour.
 			self assert: loaded createdOn asTime minutes = when asTime minutes.
 			self assert: loaded createdOn asTime seconds = when asTime seconds ]
-]
-
-{ #category : #tests }
-MaplessMongoTest >> testDefaultConcerns [
-	| concern |
-	concern := MongoWriteConcern new
-		j: true;
-		w: 'majority';
-		wtimeout: 5000;
-		yourself.
-	repository
-		defaultInsertConcern: concern;
-		defaultUpsertConcern: concern;
-		defaultUpdateConcern: concern;
-		defaultDeleteConcern: concern;
-		yourself.
-	self assert: repository defaultInsertConcern equals: concern.
-	self assert: repository defaultUpsertConcern equals: concern.
-	self assert: repository defaultUpdateConcern equals: concern.
-	self assert: repository defaultDeleteConcern equals: concern.
-	
-
-]
-
-{ #category : #tests }
-MaplessMongoTest >> testDefaultConcernsOnAMaplessClass [
-	| concern1 concern2 |
-	concern1 := MongoWriteConcern new
-		j: true;
-		w: 'majority';
-		wtimeout: 5000;
-		yourself.
-	concern2 := MongoWriteConcern new
-		j: true;
-		w: 1;
-		wtimeout: 10000;
-		yourself.
-	repository
-		defaultInsertConcern: concern2;
-		defaultUpsertConcern: concern2;
-		defaultUpdateConcern: concern2;
-		defaultDeleteConcern: concern2;
-		yourself.
-	repository insertConcern: concern1 for: DummyPerson.
-	repository upsertConcern: concern1 for: DummyPerson.
-	repository updateConcern: concern1 for: DummyPerson.
-	repository deleteConcern: concern1 for: DummyPerson.
-	self
-		assert: (repository insertConcernFor: DummyPerson)
-		equals: concern1.
-	self deny: (repository insertConcernFor: DummyUser) equals: concern1.
-	self deny: (repository upsertConcernFor: DummyUser) equals: concern1.
-	self deny: (repository updateConcernFor: DummyUser) equals: concern1.
-	self deny: (repository deleteConcernFor: DummyUser) equals: concern1.
-	self
-		assert: (repository insertConcernFor: DummyUser)
-		equals: concern2.
-	self
-		assert: (repository upsertConcernFor: DummyUser)
-		equals: concern2.
-	self
-		assert: (repository updateConcernFor: DummyUser)
-		equals: concern2.
-	self
-		assert: (repository deleteConcernFor: DummyUser)
-		equals: concern2.
-	self
-		deny: (repository insertConcernFor: DummyPerson)
-		equals: concern2.
-	self
-		deny: (repository upsertConcernFor: DummyPerson)
-		equals: concern2.
-	self
-		deny: (repository updateConcernFor: DummyPerson)
-		equals: concern2.
-	self
-		deny: (repository deleteConcernFor: DummyPerson)
-		equals: concern2
-]
-
-{ #category : #tests }
-MaplessMongoTest >> testDefaultNilConcerns [
-	self assert: repository defaultInsertConcern equals: nil.
-	self assert: repository defaultUpsertConcern equals: nil.
-	self assert: repository defaultUpdateConcern equals: nil.
-	self assert: repository defaultDeleteConcern equals: nil
 ]
 
 { #category : #tests }
@@ -415,9 +342,12 @@ MaplessMongoTest >> testDestroy [
 MaplessMongoTest >> testFindAll [
 	| found |
 	repository
-		do: [ (self newDummyPersonNamed: 'Peter') save.
+		readWriteDo: [ (self newDummyPersonNamed: 'Peter') save.
 			(self newDummyPersonNamed: 'Robert') save.
-			(self newDummyPersonNamed: 'John') save.
+			(self newDummyPersonNamed: 'John') save ].
+	repository
+		readOnlyDo: [ 
+			self waitABit.
 			found := DummyPerson findAll.
 			self assert: found notNil.
 			self assert: found size equals: 3 ]
@@ -427,9 +357,12 @@ MaplessMongoTest >> testFindAll [
 MaplessMongoTest >> testFindAllSorted [
 	| found |
 	repository
-		do: [ (self newDummyPersonNamed: 'Peter') save.
+		readWriteDo: [ (self newDummyPersonNamed: 'Peter') save.
 			(self newDummyPersonNamed: 'Robert') save.
-			(self newDummyPersonNamed: 'John') save.
+			(self newDummyPersonNamed: 'John') save ].
+	repository
+		readOnlyDo: [ 
+			self waitABit.
 			found := DummyPerson findAllSort: {(#firstName -> 1)} asDictionary.
 			self assert: found notNil.
 			self assert: found size equals: 3.
@@ -520,8 +453,8 @@ MaplessMongoTest >> testMultipleComposedComposables [
 { #category : #tests }
 MaplessMongoTest >> testMultipleComposedMixedSaveAndLoad [
 	| guy things loaded |
-	self
-		do: [ guy := DummyPerson new
+	repository
+		readWriteDo: [ guy := DummyPerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
@@ -544,7 +477,9 @@ MaplessMongoTest >> testMultipleComposedMixedSaveAndLoad [
 			guy things do: [ :each | each save ].
 			self
 				shouldnt: [ self do: [ guy save ] ]
-				raise: MaplessUnsavedSubmodel.
+				raise: MaplessUnsavedSubmodel ].
+	repository
+		readOnlyDo: [ self waitABit.
 			loaded := DummyPerson findId: guy id.
 			self assert: loaded notNil.
 			self assert: loaded firstName = 'john'.
@@ -561,8 +496,8 @@ MaplessMongoTest >> testMultipleComposedMixedSaveAndLoad [
 { #category : #tests }
 MaplessMongoTest >> testMultipleComposedSaveAndLoad [
 	| user guy tags loaded |
-	self
-		do: [ user := DummyUser new
+	repository
+		readWriteDo: [ user := DummyUser new
 				username: 'johnq';
 				yourself.
 			guy := DummyPerson new
@@ -586,7 +521,9 @@ MaplessMongoTest >> testMultipleComposedSaveAndLoad [
 				yourself.
 			tags do: [ :tag | tag save ].
 			guy save.
-			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel.
+			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel ].
+	repository
+		readOnlyDo: [ self waitABit.
 			loaded := DummyUser findId: user id.
 			self assert: loaded notNil.
 			self assert: loaded username = 'johnq'.
@@ -636,26 +573,6 @@ MaplessMongoTest >> testSaveSetsID [
 ]
 
 { #category : #tests }
-MaplessMongoTest >> testSetConcernsOnAMaplessClass [
-	| concern |
-	concern := MongoWriteConcern new
-		j: true;
-		w: 'majority';
-		wtimeout: 5000;
-		yourself.
-	self assert: repository defaultInsertConcern equals: nil.
-	self assert: repository defaultUpsertConcern equals: nil.
-	self assert: repository defaultUpdateConcern equals: nil.
-	self assert: repository defaultDeleteConcern equals: nil.
-	repository insertConcern: concern for: DummyPerson.
-	self
-		assert: (repository insertConcernFor: DummyPerson)
-		equals: concern.
-	self deny: (repository insertConcernFor: DummyUser) equals: concern.
-	self assert: (repository insertConcernFor: DummyUser) equals: nil
-]
-
-{ #category : #tests }
 MaplessMongoTest >> testSimpleSave [
 	| guy |
 	guy := DummyPerson new
@@ -672,8 +589,9 @@ MaplessMongoTest >> testSimpleSaveAndLoad [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self
-		do: [ guy save.
+	repository readWriteDo: [ guy save ].
+	repository
+		readOnlyDo: [ self waitABit.
 			loaded := DummyPerson findId: guy id ].
 	self assert: loaded notNil.
 	loaded data
@@ -685,20 +603,21 @@ MaplessMongoTest >> testSimpleSaveAndLoad [
 { #category : #tests }
 MaplessMongoTest >> testSimpleSaveAndUpdate [
 	| guy loaded reloaded |
-	self
-		do: [ guy := DummyPerson new
+	repository
+		readWriteDo: [ guy := DummyPerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
-			self
-				do: [ guy save.
-					loaded := DummyPerson findId: guy id ].
+			guy save ].
+	repository
+		readOnlyDo: [ self waitABit.
+			loaded := DummyPerson findId: guy id.
 			self assert: loaded firstName equals: 'john'.
 			self deny: loaded remember equals: 'this words'.
-			loaded remember: 'this words'.
-			self
-				do: [ loaded save.
-					reloaded := DummyPerson findId: guy id ].
+			loaded remember: 'this words' ].
+	repository
+		readWriteDo: [ loaded save.
+			reloaded := DummyPerson findId: guy id.
 			self assert: reloaded remember = 'this words' ]
 ]
 
@@ -738,32 +657,22 @@ MaplessMongoTest >> testUpsert [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self
-		do: [ guy upsert.
-			theId := guy id.
+	repository
+		readWriteDo: [ guy upsert.
+			theId := guy id ].
+	repository
+		readOnlyDo: [ self waitABit.
 			found := DummyPerson findId: theId.
 			self assert: found notNil equals: true.
 			self assert: found firstName equals: 'john'.
 			found firstName: 'John'.
-			found upsert.
-			freshFound := DummyPerson findId: theId.
+			found upsert ].
+	repository
+		readOnlyDo: [ freshFound := DummyPerson findId: theId.
 			self assert: freshFound firstName equals: 'John' ]
 ]
 
-{ #category : #tests }
-MaplessMongoTest >> testUseConcernsOnAMaplessClass [
-	| concern guy found |
-	concern := MongoWriteConcern new
-		j: true;
-		w: 'majority';
-		wtimeout: 5000;
-		yourself.
-	repository upsertConcern: concern for: DummyPerson.
-	guy := DummyPerson new
-		firstName: 'Steven';
-		yourself.
-	repository save: guy.
-	self assert: guy hasId.
-	found := repository findOne: DummyPerson atId: guy id.
-	self assert: found id equals: guy id
+{ #category : #actions }
+MaplessMongoTest >> waitABit [
+	400 milliseconds asDelay wait
 ]

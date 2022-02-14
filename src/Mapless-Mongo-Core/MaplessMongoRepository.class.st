@@ -420,7 +420,9 @@ MaplessMongoRepository >> save: aMapless writeConcern: aConcernOrNil [
 	"Storage this instance into the persistent collection"
 
 	self onBeforeSave: aMapless.
-	self upsert: aMapless writeConcern: aConcernOrNil.
+	(self isUnsaved: aMapless)
+		ifTrue: [ self insert: aMapless writeConcern: aConcernOrNil ]
+		ifFalse: [ self update: aMapless writeConcern: aConcernOrNil ].
 	self onAfterSave: aMapless
 ]
 
