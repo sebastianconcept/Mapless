@@ -698,6 +698,17 @@ MaplessMongoTest >> testSimpleSaveAndUpdate [
 ]
 
 { #category : #tests }
+MaplessMongoTest >> testSimpleSaveWithAByteSymbol [
+	| guy |
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		value: #thisByteSymbol;
+		yourself.
+	self do: [ self shouldnt: [ guy save ] raise: Error ]
+]
+
+{ #category : #tests }
 MaplessMongoTest >> testSubModelsFromReifiedJSON [
 	| user guy jsonString reified |
 	user := DummyUser new
