@@ -69,6 +69,15 @@ MaplessMongoReplicaSetPool class >> mongoUrls: someMongoUrls database: databaseN
 		yourself
 ]
 
+{ #category : #'instance creation' }
+MaplessMongoReplicaSetPool class >> test [
+	"Answers a new pool handly for testing"
+
+	^ self
+		mongoUrls: {'localhost:27021' . 'localhost:27022' . 'localhost:27023'}
+		database: 'Mapless-Test'
+]
+
 { #category : #accessing }
 MaplessMongoReplicaSetPool >> busyReadOnlyClients [
 	"Answers the bunch of read-only clients that are currently busy"
@@ -252,7 +261,6 @@ MaplessMongoReplicaSetPool >> makeClientWith: aMongoUrl [
 		ifTrue: [ isAuthenticated := self authenticate: newClient.
 			isAuthenticated
 				ifFalse: [ ^ self error: 'Authentication failed' ] ].
-	self logNewClient: newClient.
 	^ newClient
 ]
 

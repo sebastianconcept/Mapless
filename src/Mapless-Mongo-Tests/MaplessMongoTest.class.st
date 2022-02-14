@@ -45,12 +45,17 @@ MaplessMongoTest >> newDummyPersonNamed: aString [
 		yourself
 ]
 
+{ #category : #actions }
+MaplessMongoTest >> newRepository [
+	^ MaplessMongoRepository
+		for: 'Mapless-Test'
+		with: MaplessStandaloneMongoPool local
+]
+
 { #category : #'setUp-tearDown' }
 MaplessMongoTest >> setUp [
 	super setUp.
-	repository := MaplessMongoRepository
-		for: 'Mapless-Test'
-		with: MaplessStandaloneMongoPool local
+	repository := self newRepository
 ]
 
 { #category : #'setUp-tearDown' }

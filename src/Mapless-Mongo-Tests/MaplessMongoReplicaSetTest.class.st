@@ -7,6 +7,13 @@ Class {
 	#category : #'Mapless-Mongo-Tests-Tests'
 }
 
+{ #category : #actions }
+MaplessMongoReplicaSetTest >> newRepository [
+	^ MaplessMongoRepository
+		for: 'Mapless-Test'
+		with: MaplessMongoReplicaSetPool test
+]
+
 { #category : #tests }
 MaplessMongoReplicaSetTest >> testFailToFindPrimaryhenUnavailableForTooLong [
 ]
