@@ -160,7 +160,6 @@ MaplessStandaloneMongoPool >> makeClient [
 		ifTrue: [ isAuthenticated := self authenticate: newClient.
 			isAuthenticated
 				ifFalse: [ ^ self error: 'Authentication failed' ] ].
-	self logNewClient: newClient.
 	^ newClient
 ]
 
