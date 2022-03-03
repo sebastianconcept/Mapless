@@ -36,7 +36,6 @@ MaplessMongoReplicaSetTest >> setConcernsIn: aMaplessMongoRepository [
 	at least one secondary so that if there's a loss of primary the data isn't lost."
 
 	| concern |
-	"Let REST fail in case it can not be written, commit to the journal"
 	concern := MongoWriteConcern new
 		j: true;
 		w: 'majority';

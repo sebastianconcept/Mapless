@@ -410,19 +410,14 @@ MaplessMongoRepository >> readWriteDo: aBlock with: aDatabaseAccessor [
 MaplessMongoRepository >> save: aMapless [
 	"Storage this instance into the persistent collection"
 
-	self
-		save: aMapless
-		writeConcern: (self upsertConcernFor: aMapless class)
-]
-
-{ #category : #actions }
-MaplessMongoRepository >> save: aMapless writeConcern: aConcernOrNil [
-	"Storage this instance into the persistent collection"
-
 	self onBeforeSave: aMapless.
 	(self isUnsaved: aMapless)
-		ifTrue: [ self insert: aMapless writeConcern: aConcernOrNil ]
-		ifFalse: [ self update: aMapless writeConcern: aConcernOrNil ].
+		ifTrue: [ self
+				insert: aMapless
+				writeConcern: (self insertConcernFor: aMapless class) ]
+		ifFalse: [ self
+				update: aMapless
+				writeConcern: (self updateConcernFor: aMapless class) ].
 	self onAfterSave: aMapless
 ]
 
