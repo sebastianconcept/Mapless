@@ -1,4 +1,4 @@
-March 4, 2022 | v0.4.11-alpha | Jolly Adjustment
+March 4, 2022 | v0.4.12-alpha | Jolly Adjustment
 ===================================
 * Fixed usage of concerns in `MaplessMongoRepository>>save:`.
 
