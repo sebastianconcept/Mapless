@@ -1,3 +1,7 @@
+March 4, 2022 | v0.4.11-alpha | Jolly Adjustment
+===================================
+* Fixed usage of concerns in `MaplessMongoRepository>>save:`.
+
 February 14, 2022 | v0.4.10-alpha | Confidential Star
 ===================================
 * Implemented `save` using `insert` and `update` for `MongoDB` after reviewing subperforming benchmark results https://github.com/sebastianconcept/Mapless/issues/69
