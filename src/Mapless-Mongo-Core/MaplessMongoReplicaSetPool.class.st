@@ -74,7 +74,7 @@ MaplessMongoReplicaSetPool class >> test [
 	"Answers a new pool handly for testing"
 
 	^ self
-		mongoUrls: {'localhost:27021' . 'localhost:27022' . 'localhost:27023'}
+		mongoUrls: {'localhost:27017' . 'localhost:27019'}
 		database: 'Mapless-Test'
 ]
 
