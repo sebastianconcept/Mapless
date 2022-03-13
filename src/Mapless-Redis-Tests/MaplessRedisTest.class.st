@@ -108,11 +108,14 @@ MaplessRedisTest >> testComposedAccess [
 	repository save: guy.
 	repository save: user.
 	self
-		assert: (repository findOne: DummyUser atId: user id) completeName
-		equals: 'john q'.
+		assert: (repository findOne: DummyPerson atId: guy id) firstName
+		equals: 'john'.
 	self
 		assert: (repository findOne: DummyUser atId: user id) person class
 		equals: MaplessReference.
+	self
+		assert: (repository findOne: DummyUser atId: user id) completeName
+		equals: 'john q'.
 	self
 		assert: (repository findOne: DummyUser atId: user id) person model class
 		equals: DummyPerson.
@@ -199,6 +202,7 @@ MaplessRedisTest >> testComposedResaveAndLoad [
 		lastName: 'W';
 		yourself.
 	user person: guy.
+	self should: [ repository save: user ] raise: MaplessUnsavedSubmodel.
 	repository save: guy.
 	self
 		shouldnt: [ repository save: user ]
@@ -384,7 +388,8 @@ MaplessRedisTest >> testFindAll [
 	self
 		assert:
 			(Character alphabet
-				allSatisfy: [ :char | all anySatisfy: [ :user | user firstName = char asString ] ])
+				allSatisfy:
+					[ :char | all anySatisfy: [ :user | user person firstName = char asString ] ])
 ]
 
 { #category : #tests }

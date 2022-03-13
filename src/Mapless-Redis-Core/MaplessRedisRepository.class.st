@@ -20,7 +20,7 @@ MaplessRedisRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
 	self onBeforeDestroy: aMapless.
-	accessor redis deleteKey: aMapless id.
+	accessor redis deleteKey: (self namespacedIdOf: aMapless).
 	self onAfterDestroy: aMapless
 ]
 
@@ -31,7 +31,8 @@ MaplessRedisRepository >> drop [
 
 { #category : #testing }
 MaplessRedisRepository >> existsId: anId of: aMaplessClass [
-	^ accessor redis includesKey: anId
+	^ accessor redis
+		includesKey: (self namespacedIdOf: aMaplessClass valued: anId)
 ]
 
 { #category : #actions }
@@ -43,10 +44,22 @@ MaplessRedisRepository >> expires: aMapless in: seconds [
 MaplessRedisRepository >> find: aMaplessClass where: keysPattern [
 	"Answer a collection of instances of aMaplessClass that have keys matching the given conditions."
 
-	| values |
-	values := accessor redis valuesAtKeys: keysPattern.
-	^ values collect:[:each|
-		self makeMapless: aMaplessClass fromValue: each ]
+	| keys pairs found all |
+	keys := accessor redis keys: keysPattern.
+	pairs := Dictionary new.
+	all := OrderedCollection new.
+	keys
+		do: [ :key | 
+			found := accessor redis at: key.
+			found ifNotNil: [ pairs at: key put: found ] ].
+	pairs
+		keysAndValuesDo: [ :key :value | 
+			all
+				add:
+					((self makeMapless: aMaplessClass fromValue: value)
+						id: (self unnamespaced: 'id' in: key);
+						yourself) ].
+	^ all
 ]
 
 { #category : #accessing }
@@ -57,7 +70,8 @@ MaplessRedisRepository >> findAll: aMaplessClass [
 { #category : #accessing }
 MaplessRedisRepository >> findOne: aMaplessClass atId: anId [
 	| value |
-	value := accessor redis at: anId.
+	value := accessor redis
+		at: (self namespaced: 'id' of: aMaplessClass valued: anId).
 	^ value
 		ifNil: [ nil ]
 		ifNotNil: [ self makeMapless: aMaplessClass fromValue: value with: anId ]
@@ -72,13 +86,6 @@ MaplessRedisRepository >> findOne: aMaplessClass where: someConditions [
 	^ result isEmpty
 		ifTrue: [ nil ]
 		ifFalse: [ result first ]
-]
-
-{ #category : #accessing }
-MaplessRedisRepository >> idOf: aMapless [
-	| basicId |
-	basicId := super idOf: aMapless.
-	^ aMapless class name , ':id:' , basicId
 ]
 
 { #category : #accessing }
@@ -108,6 +115,27 @@ MaplessRedisRepository >> makeMapless: aMaplessClass fromValue: storedValue with
 		yourself
 ]
 
+{ #category : #accessing }
+MaplessRedisRepository >> namespaced: propertyName of: aMapless [
+	^ aMapless maplessClassName , ':' , propertyName , ':'
+		, (aMapless data at: propertyName)
+]
+
+{ #category : #accessing }
+MaplessRedisRepository >> namespaced: propertyName of: aMaplessClass valued: aValue [
+	^ aMaplessClass name , ':' , propertyName , ':' , aValue
+]
+
+{ #category : #accessing }
+MaplessRedisRepository >> namespacedIdOf: aMapless [
+	^ self namespaced: 'id' of: aMapless
+]
+
+{ #category : #accessing }
+MaplessRedisRepository >> namespacedIdOf: aMaplessClass valued: aValue [
+	^ aMaplessClass name , ':id:' , aValue
+]
+
 { #category : #reactions }
 MaplessRedisRepository >> onBeforeSave: aMapless [
 	self ensureIdOf: aMapless.
@@ -118,7 +146,7 @@ MaplessRedisRepository >> onBeforeSave: aMapless [
 MaplessRedisRepository >> save: aMapless [
 	| key storable serialized |
 	self onBeforeSave: aMapless.
-	key := self idOf: aMapless.
+	key := self namespacedIdOf: aMapless.
 	storable := resolver storableFor: aMapless in: self.
 	serialized := BSON write: storable.
 	accessor redis at: key put: serialized.
@@ -128,6 +156,14 @@ MaplessRedisRepository >> save: aMapless [
 { #category : #actions }
 MaplessRedisRepository >> setDatabase: aZeroBasedDbIndex [
 	accessor setDatabase: aZeroBasedDbIndex
+]
+
+{ #category : #accessing }
+MaplessRedisRepository >> unnamespaced: propertyName in: aNamespacedKey [
+	^ aNamespacedKey readStream
+		upTo: propertyName;
+		upTo: $:;
+		upToEnd
 ]
 
 { #category : #actions }

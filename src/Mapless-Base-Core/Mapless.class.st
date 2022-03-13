@@ -691,9 +691,9 @@ Mapless >> setSubModelReferencesAt: aKey with: anObject in: aMaplessRepository [
 
 	(aMaplessRepository canRepresentSubMapless: anObject)
 		ifTrue: [ ^ self
-				setReferenceFrom: anObject
+				setReferenceFrom: (JsonObject fromAssociations: anObject associations)
 				on: aKey
-				of: self data
+				of: self data asJsonObject
 				in: aMaplessRepository ].
 
 	"2. it's a collection of submodels"

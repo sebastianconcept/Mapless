@@ -132,6 +132,15 @@ MaplessReference >> model [
 	^ model ifNil: [ self initializeModel ]
 ]
 
+{ #category : #printing }
+MaplessReference >> printOn: aStream [
+	super printOn: aStream.
+	aStream
+		nextPut: $(;
+		nextPutAll: data _c;
+		nextPut: $)
+]
+
 { #category : #actions }
 MaplessReference >> unreferenced [
 	^ self model unreferenced
