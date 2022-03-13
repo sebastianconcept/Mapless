@@ -11,6 +11,7 @@ Class {
 MaplessRedisPool class >> local [
 	| rediStick |
 	rediStick := RsRediStick targetUrl: 'sync://localhost'.
+	rediStick connect.
 	^ self new
 		redis: (RsRedis on: rediStick);
 		yourself
@@ -50,6 +51,11 @@ MaplessRedisPool >> setDatabase: aZeroBasedDbIndex [
 
 { #category : #actions }
 MaplessRedisPool >> start [
+	^ self start: 1
+]
+
+{ #category : #actions }
+MaplessRedisPool >> start: anInteger [
 	^ redis stick connect
 ]
 

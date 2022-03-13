@@ -7,6 +7,15 @@ Class {
 	#category : #'Mapless-Redis-Tests'
 }
 
+{ #category : #'as yet unclassified' }
+MaplessRedisTest class >> databaseIndex [
+	"Out of the box, a Redis instance supports 16 logical databases. These databases are effectively siloed off from one another, and when you run a command in one database it doesn’t affect any of the data stored in other databases in your Redis instance.
+
+Redis databases are numbered from 0 to 15 and, by default, you connect to database 0 when you connect to your Redis instance. However, you can change the database you’re using with the select command after you connect."
+
+	^ 2
+]
+
 { #category : #history }
 MaplessRedisTest class >> lastStoredRun [
 	^ Dictionary new
@@ -30,10 +39,10 @@ MaplessRedisTest class >> lastStoredRun [
 
 { #category : #actions }
 MaplessRedisTest >> basicNewRepository [
-	| accessor |
-	accessor := MaplessRedisPool local.
-	accessor start.
-	^ MaplessRedisRepository with: accessor
+	^ MaplessRedisRepository
+		for: self class databaseIndex
+		with: MaplessRedisPool local
+		using: MaplessTrivialResolver new
 ]
 
 { #category : #tests }
@@ -49,7 +58,10 @@ MaplessRedisTest >> newRepository [
 	accessor := MaplessRedisPool local.
 	accessor start.
 	accessor auth: 'my_password'.
-	^ MaplessRedisRepository with: accessor
+	^ MaplessRedisRepository
+		for: self class databaseIndex
+		with: accessor
+		using: MaplessTrivialResolver new
 ]
 
 { #category : #'setUp-tearDown' }
@@ -71,10 +83,8 @@ MaplessRedisTest >> tearDown [
 MaplessRedisTest >> testAndGetInfo [
 	| info |
 	repository := self basicNewRepository.
-	self
-		should: [ info := repository accessor info ]
-		raise: RsGenericError.
-	repository accessor auth: 'my_password'.
+	self should: [ repository accessor info ] raise: RsGenericError.
+	repository auth: 'my_password'.
 	self
 		shouldnt: [ info := repository accessor info ]
 		raise: RsGenericError.
@@ -388,11 +398,12 @@ MaplessRedisTest >> testFindAllSorted [
 { #category : #tests }
 MaplessRedisTest >> testIsUnsaved [
 	| guy |
+	repository := self newRepository.
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self do: [ guy save ]
+	self assert: (repository isUnsaved: guy)
 ]
 
 { #category : #tests }
@@ -576,14 +587,14 @@ MaplessRedisTest >> testQueryUsers [
 { #category : #tests }
 MaplessRedisTest >> testSaveSetsID [
 	| guy |
+	repository := self newRepository.
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self
-		do: [ self deny: guy hasId.
-			guy save.
-			self assert: guy hasId ]
+	self deny: guy hasId.
+	repository save: guy.
+	self assert: guy hasId
 ]
 
 { #category : #tests }
@@ -595,24 +606,24 @@ MaplessRedisTest >> testSetCurrentDatabase [
 { #category : #tests }
 MaplessRedisTest >> testSimpleSave [
 	| guy |
+	repository := self newRepository.
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self do: [ guy save ]
+	self shouldnt: [ repository save: guy ] raise: Error
 ]
 
 { #category : #tests }
 MaplessRedisTest >> testSimpleSaveAndLoad [
 	| guy loaded |
+	repository := self newRepository.
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	repository readWriteDo: [ guy save ].
-	repository
-		readOnlyDo: [ self waitABit.
-			loaded := DummyPerson findId: guy id ].
+	repository save: guy.
+	loaded := repository findOne: DummyPerson atId: guy id.
 	self assert: loaded notNil.
 	loaded data
 		keysAndValuesDo: [ :k :v | 
@@ -623,38 +634,37 @@ MaplessRedisTest >> testSimpleSaveAndLoad [
 { #category : #tests }
 MaplessRedisTest >> testSimpleSaveAndUpdate [
 	| guy loaded reloaded |
-	repository
-		readWriteDo: [ guy := DummyPerson new
-				firstName: 'john';
-				lastName: 'q';
-				yourself.
-			guy save ].
-	repository
-		readOnlyDo: [ self waitABit.
-			loaded := DummyPerson findId: guy id.
-			self assert: loaded firstName equals: 'john'.
-			self deny: loaded remember equals: 'this words'.
-			loaded remember: 'this words' ].
-	repository
-		readWriteDo: [ loaded save.
-			reloaded := DummyPerson findId: guy id.
-			self assert: reloaded remember = 'this words' ]
+	repository := self newRepository.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	repository save: guy.
+	loaded := repository findOne: DummyPerson atId: guy id.
+	self assert: loaded firstName equals: 'john'.
+	self deny: loaded remember equals: 'this words'.
+	loaded remember: 'this words'.
+	repository save: loaded.
+	reloaded := repository findOne: DummyPerson atId: guy id.
+	self assert: reloaded remember = 'this words'
 ]
 
 { #category : #tests }
 MaplessRedisTest >> testSimpleSaveWithAByteSymbol [
 	| guy |
+	repository := self newRepository.
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
 		value: #thisByteSymbol;
 		yourself.
-	self do: [ self shouldnt: [ guy save ] raise: Error ]
+	self shouldnt: [ repository save: guy ] raise: Error
 ]
 
 { #category : #tests }
 MaplessRedisTest >> testSubModelsFromReifiedJSON [
 	| user guy jsonString reified |
+	repository := self newRepository.
 	user := DummyUser new
 		userame: 'johnq';
 		yourself.
@@ -663,31 +673,8 @@ MaplessRedisTest >> testSubModelsFromReifiedJSON [
 		lastName: 'q';
 		yourself.
 	user person: guy.
-	self
-		do: [ jsonString := user unreferenced asJSONString.
-			reified := DummyUser fromJSONString: jsonString ].
+	jsonString := user unreferenced asJSONString.
+	reified := DummyUser fromJSONString: jsonString in: repository.
 	self assert: reified person class equals: DummyPerson.
 	self assert: reified completeName equals: 'john q'
-]
-
-{ #category : #tests }
-MaplessRedisTest >> testUpsert [
-	| guy theId found freshFound |
-	guy := DummyPerson new
-		firstName: 'john';
-		lastName: 'q';
-		yourself.
-	repository
-		readWriteDo: [ guy upsert.
-			theId := guy id ].
-	repository
-		readOnlyDo: [ self waitABit.
-			found := DummyPerson findId: theId.
-			self assert: found notNil equals: true.
-			self assert: found firstName equals: 'john'.
-			found firstName: 'John'.
-			found upsert ].
-	repository
-		readOnlyDo: [ freshFound := DummyPerson findId: theId.
-			self assert: freshFound firstName equals: 'John' ]
 ]

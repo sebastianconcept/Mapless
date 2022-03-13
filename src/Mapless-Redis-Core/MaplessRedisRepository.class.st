@@ -5,25 +5,14 @@ Class {
 }
 
 { #category : #actions }
-MaplessRedisRepository class >> for: aDatabaseName with: aDatabaseAccessor [
-	^ self flag: #notImplementedYet
-]
-
-{ #category : #actions }
-MaplessRedisRepository class >> for: aDatabaseName with: aDatabaseAccessor using: aMaplessResolver [
-	^ self flag: #notImplementedYet
-]
-
-{ #category : #actions }
 MaplessRedisRepository class >> getNewId [
 	^ UUID new asString36
 ]
 
 { #category : #actions }
-MaplessRedisRepository class >> with: aDatabaseAccessor [
-	^ self new
-		accessor: aDatabaseAccessor;
-		yourself
+MaplessRedisRepository >> auth: aPassword [
+	accessor auth: aPassword.
+	self setDatabase: databaseName
 ]
 
 { #category : #actions }
@@ -138,10 +127,12 @@ MaplessRedisRepository >> find: aMaplessClass where: someConditions limit: aLimi
 ]
 
 { #category : #accessing }
-MaplessRedisRepository >> findOne: aMapless atId: anId [
-	^ self
-		findOne: aMapless
-		where: self idPropertyName , ' = ''' , anId , ''''
+MaplessRedisRepository >> findOne: aMaplessClass atId: anId [
+	| value deserialized |
+	value := (accessor redis at: anId) asByteArray.
+	^ (aMaplessClass fromBSONByteArray: value in: self)
+		id: anId;
+		yourself
 ]
 
 { #category : #accessing }
@@ -175,18 +166,19 @@ MaplessRedisRepository >> insert: aMapless [
 ]
 
 { #category : #reactions }
-MaplessRedisRepository >> onBeforeInsert: aMapless [
-	self flag: #review. "not supported at the moment"
-	aMapless ensurePrivateId.
-	super onBeforeInsert: aMapless
+MaplessRedisRepository >> onBeforeSave: aMapless [
+	self ensureIdOf: aMapless.
+	super onBeforeSave: aMapless
 ]
 
 { #category : #actions }
 MaplessRedisRepository >> save: aMapless [
-	"Storage this instance into the persistent collection"
-	self flag: #review. "use some sort of upsert?"
+	| key storable serialized |
 	self onBeforeSave: aMapless.
-	self upsert: aMapless.
+	key := self idOf: aMapless.
+	storable := resolver storableFor: aMapless in: self.
+	serialized := BSON write: storable.
+	accessor redis at: key put: serialized.
 	self onAfterSave: aMapless
 ]
 

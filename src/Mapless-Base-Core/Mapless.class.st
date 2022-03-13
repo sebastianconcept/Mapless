@@ -135,6 +135,14 @@ Mapless class >> first [
 ]
 
 { #category : #'instance creation' }
+Mapless class >> fromBSONByteArray: aByteArray in: aMaplessRepository [
+	| deserialized |
+	deserialized := OrderedJsonObject
+		fromAssociations: (BSON read: aByteArray readStream) associations.
+	^ self fromJSONObject: deserialized in: aMaplessRepository
+]
+
+{ #category : #'instance creation' }
 Mapless class >> fromJSONObject: aJsonObjectOrNilOrArray in: aMaplessRepository [
 	aJsonObjectOrNilOrArray ifNil: [ ^ nil ].
 	aJsonObjectOrNilOrArray isArray

@@ -138,8 +138,7 @@ MaplessRepository >> ensureCollectionNamed: aCollectionName [
 { #category : #actions }
 MaplessRepository >> ensureIdOf: aMapless [
 	aMapless hasId
-		ifFalse: [ aMapless id: self class getNewId ].
-	aMapless maplessData at: self idPropertyName put: aMapless id
+		ifFalse: [ aMapless id: self class getNewId ]
 ]
 
 { #category : #accessing }
