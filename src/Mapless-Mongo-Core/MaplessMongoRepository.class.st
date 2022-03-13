@@ -268,11 +268,7 @@ MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions [
 MaplessMongoRepository >> findOne: aMaplessClass atId: anId [
 	^ self
 		findOne: aMaplessClass
-		where:
-			(Dictionary
-				newFromPairs:
-					{self idPropertyName.
-					anId})
+		where: {(self idPropertyName -> anId)} asDictionary
 ]
 
 { #category : #accessing }
@@ -430,8 +426,18 @@ MaplessMongoRepository >> update: aMapless [
 
 { #category : #actions }
 MaplessMongoRepository >> update: aMapless writeConcern: aConcernOrNil [
+	| bsonFriendly |
 	self onBeforeUpdate: aMapless.
-	self upsert: aMapless writeConcern: aConcernOrNil.
+	bsonFriendly := resolver storableFor: aMapless in: self.
+	self
+		readWriteDo: [ self database
+				commandUpdate:
+					(Dictionary new
+						at: self idPropertyName put: aMapless id;
+						yourself)
+				with: bsonFriendly
+				collection: aMapless class collectionName
+				writeConcern: aConcernOrNil ].
 	self onAfterUpdate: aMapless
 ]
 
@@ -464,7 +470,7 @@ MaplessMongoRepository >> upsert: aMapless writeConcern: aConcernOrNil [
 		readWriteDo: [ self database
 				commandUpsert:
 					(Dictionary new
-						at: self idPropertyName put: (self idOf: aMapless);
+						at: self idPropertyName put: aMapless id;
 						yourself)
 				with: bsonFriendly
 				collection: aMapless class collectionName

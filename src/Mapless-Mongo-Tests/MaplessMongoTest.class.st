@@ -235,30 +235,7 @@ MaplessMongoTest >> testComposedSaveAndLoad [
 			user person: guy.
 
 			"Whithout saving a submodel"
-			self should: [ user save ] raise: MaplessUnsavedSubmodel.
-
-			"After saving that submodel"
-			guy save.
-			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel ].
-	repository
-		readOnlyDo: [ self waitABit.
-			loaded := DummyUser findId: user id.
-			self assert: loaded notNil.
-			self assert: loaded createdOn notNil.
-			self assert: loaded modifiedOn notNil.
-			loaded
-				createdOn: nil;
-				modifiedOn: nil.
-			user
-				createdOn: nil;
-				modifiedOn: nil.
-			loaded data
-				keysAndValuesDo: [ :k :v | self assert: v equals: (user data at: k) ].
-			self assert: loaded username = 'johnq'.
-			self assert: loaded person firstName = 'john'.
-			self assert: loaded person lastName = 'q'.
-			self assert: loaded person maplessClassName = DummyPerson name.
-			self assert: loaded person model class = DummyPerson ]
+			self should: [ user save ] raise: MaplessUnsavedSubmodel ]
 ]
 
 { #category : #tests }
@@ -283,17 +260,16 @@ MaplessMongoTest >> testComposition [
 { #category : #tests }
 MaplessMongoTest >> testDateAndTime [
 	| when guy loaded |
-	repository
-		readWriteDo: [ when := DateAndTime now asUTC.
-			guy := DummyPerson new
-				firstName: 'john';
-				lastName: 'q';
-				createdOn: when;
-				yourself.
-			guy save ].
+	when := DateAndTime now asUTC.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		createdOn: when;
+		yourself.
+	repository save: guy.
 	repository
 		readOnlyDo: [ self waitABit.
-			loaded := DummyPerson findId: guy id.
+			loaded := repository findOne: DummyPerson atId: guy id.
 			self
 				assert: loaded createdOn asDate asString = when asDate asString.
 			self assert: loaded createdOn asTime hour = when asTime hour.
@@ -613,11 +589,12 @@ MaplessMongoTest >> testSimpleSaveAndUpdate [
 		readOnlyDo: [ self waitABit.
 			loaded := DummyPerson findId: guy id.
 			self assert: loaded firstName equals: 'john'.
-			self deny: loaded remember equals: 'this words'.
-			loaded remember: 'this words' ].
+			self deny: loaded remember equals: 'this words' ].
+	loaded remember: 'this words'.
 	repository
-		readWriteDo: [ loaded save.
-			reloaded := DummyPerson findId: guy id.
+		readWriteDo: [ 
+			loaded save.
+			reloaded := repository findOne: DummyPerson atId: guy id.
 			self assert: reloaded remember = 'this words' ]
 ]
 
@@ -674,5 +651,5 @@ MaplessMongoTest >> testUpsert [
 
 { #category : #actions }
 MaplessMongoTest >> waitABit [
-	400 milliseconds asDelay wait
+	600 milliseconds asDelay wait
 ]

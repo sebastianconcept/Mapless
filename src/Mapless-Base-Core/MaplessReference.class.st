@@ -137,7 +137,7 @@ MaplessReference >> printOn: aStream [
 	super printOn: aStream.
 	aStream
 		nextPut: $(;
-		nextPutAll: data _c;
+		nextPutAll: self maplessClassName;
 		nextPut: $)
 ]
 

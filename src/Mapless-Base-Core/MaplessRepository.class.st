@@ -68,7 +68,8 @@ MaplessRepository >> asStorable: anObject [
 						ifTrue: [ (resolver asMaplessReferenceIn: anObject in: self)
 								asJsonObjectIn: self ]
 						ifFalse: [ anObject ] ]
-				ifTrue: [ anObject hasModel
+				ifTrue: [ 
+					anObject hasModel
 						ifTrue: [ resolver maplessReferenceAsJsonObject: anObject in: self ]
 						ifFalse: [ MaplessUnsavedSubmodel
 								signal:
@@ -137,8 +138,11 @@ MaplessRepository >> ensureCollectionNamed: aCollectionName [
 
 { #category : #actions }
 MaplessRepository >> ensureIdOf: aMapless [
+	| idValue |
 	aMapless hasId
-		ifFalse: [ aMapless id: self class getNewId ]
+		ifFalse: [ idValue := self class getNewId.
+			aMapless maplessData at: 'id' put: idValue.
+			aMapless maplessData at: self idPropertyName put: idValue ]
 ]
 
 { #category : #accessing }
@@ -179,7 +183,7 @@ MaplessRepository >> isUnsaved: aMapless [
 	then is because the application never used the backend to saved it."
 
 	^ (aMapless maplessData includesKey: self idPropertyName) not
-		and: [ aMapless id isNil ]
+		and: [ (aMapless maplessData includesKey: 'id') not ]
 ]
 
 { #category : #accessing }
