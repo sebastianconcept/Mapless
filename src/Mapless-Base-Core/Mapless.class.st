@@ -324,7 +324,7 @@ Mapless >> basicMaplessId [
 
 { #category : #actions }
 Mapless >> beDeleted [
-	self isDeleted: true
+	self deletedOn: DateAndTime now
 ]
 
 { #category : #actions }
@@ -464,9 +464,7 @@ Mapless >> insert [
 
 { #category : #testing }
 Mapless >> isDeleted [
-	| isDeleted |
-	isDeleted := self data at: 'isDeleted'.
-	^ isDeleted notNil and: [ isDeleted ]
+	^ self data includesKey: 'deletedOn'
 ]
 
 { #category : #testing }

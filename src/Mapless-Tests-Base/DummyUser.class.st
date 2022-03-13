@@ -8,11 +8,7 @@ Class {
 DummyUser class >> findUsername: anUsername [
 	^ self getRepository
 		findOne: self
-		where:
-			(JsonObject
-				newFromPairs:
-					{'username'.
-					anUsername})
+		where: {('username' -> anUsername)} asDictionary
 ]
 
 { #category : #accessing }

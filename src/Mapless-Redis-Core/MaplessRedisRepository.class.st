@@ -65,7 +65,7 @@ MaplessRedisRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
 	self onBeforeDestroy: aMapless.
-	self basicDestroy: (self storableFor: aMapless data).
+	accessor redis deleteKey: aMapless id.
 	self onAfterDestroy: aMapless
 ]
 
@@ -128,11 +128,13 @@ MaplessRedisRepository >> find: aMaplessClass where: someConditions limit: aLimi
 
 { #category : #accessing }
 MaplessRedisRepository >> findOne: aMaplessClass atId: anId [
-	| value deserialized |
-	value := (accessor redis at: anId) asByteArray.
-	^ (aMaplessClass fromBSONByteArray: value in: self)
-		id: anId;
-		yourself
+	| value |
+	value := accessor redis at: anId.
+	^ value
+		ifNil: [ nil ]
+		ifNotNil: [ (aMaplessClass fromBSONByteArray: value asByteArray in: self)
+				id: anId;
+				yourself ]
 ]
 
 { #category : #accessing }
