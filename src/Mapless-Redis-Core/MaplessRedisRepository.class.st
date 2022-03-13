@@ -16,51 +16,6 @@ MaplessRedisRepository >> auth: aPassword [
 ]
 
 { #category : #actions }
-MaplessRedisRepository >> basicDestroy: aBSONFriendlyObject [
-	^ database
-		do: [ :pg | 
-			| result |
-			result := pg
-				execute:
-					'DELETE FROM "' , aBSONFriendlyObject modelClass
-						,
-							'" * WHERE
-				"key" = ''' , aBSONFriendlyObject key , ''';' ]
-]
-
-{ #category : #actions }
-MaplessRedisRepository >> basicInsert: aBSONFriendlyObject [
-	^ database
-		do: [ :pg | 
-			| result |
-			result := pg
-				execute:
-					'INSERT INTO "' , aBSONFriendlyObject modelClass
-						,
-							'" VALUES (
-			''' , aBSONFriendlyObject key
-						,
-							''',
-			''' , aBSONFriendlyObject asJSONString , ''');' ]
-]
-
-{ #category : #actions }
-MaplessRedisRepository >> basicUpdate: aBSONFriendlyObject [
-	^ database
-		do: [ :pg | 
-			| result |
-			result := pg
-				execute:
-					'UPDATE "' , aBSONFriendlyObject modelClass
-						,
-							'" SET 
-			"value" = ''' , aBSONFriendlyObject asJSONString
-						,
-							''' WHERE
-				"key" = ''' , aBSONFriendlyObject key , ''';' ]
-]
-
-{ #category : #actions }
 MaplessRedisRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
@@ -74,56 +29,29 @@ MaplessRedisRepository >> drop [
 	^ accessor drop
 ]
 
-{ #category : #actions }
-MaplessRedisRepository >> ensureCollection [
-	self shouldBeImplemented
-]
-
 { #category : #testing }
 MaplessRedisRepository >> existsId: anId of: aMaplessClass [
-	^ (self findOne: aMaplessClass atId: anId) notNil
+	^ accessor redis includesKey: anId
+]
+
+{ #category : #actions }
+MaplessRedisRepository >> expires: aMapless in: seconds [
+	accessor redis expire: (self idOf: aMapless) in: seconds
 ]
 
 { #category : #accessing }
-MaplessRedisRepository >> find: aMaplessClass where: someConditions [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+MaplessRedisRepository >> find: aMaplessClass where: keysPattern [
+	"Answer a collection of instances of aMaplessClass that have keys matching the given conditions."
 
-	^ self
-		find: aMaplessClass
-		where: someConditions
-		limit: nil
-		offset: nil
+	| values |
+	values := accessor redis valuesAtKeys: keysPattern.
+	^ values collect:[:each|
+		self makeMapless: aMaplessClass fromValue: each ]
 ]
 
 { #category : #accessing }
-MaplessRedisRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
-
-	^ self
-		find: aMaplessClass
-		where: someConditions
-		limit: aLimitOrNil
-		offset: nil
-]
-
-{ #category : #accessing }
-MaplessRedisRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
-
-	^ database
-		do: [ :pg | 
-			| result |
-			result := pg
-				execute:
-					'SELECT VALUE FROM "' , aMaplessClass name , '" WHERE '
-						, someConditions , ';'.
-			(result isNil or: [ result resultSets isEmpty ])
-				ifTrue: [ #() ]
-				ifFalse: [ result resultSets first rows
-						collect: [ :row | 
-							| json |
-							json := Json readFrom: row data first readStream.
-							self onAfterRead: (aMaplessClass fromJSONObject: json) ] ] ]
+MaplessRedisRepository >> findAll: aMaplessClass [
+	^ self find: aMaplessClass where: aMaplessClass name, ':id:*'
 ]
 
 { #category : #accessing }
@@ -132,9 +60,7 @@ MaplessRedisRepository >> findOne: aMaplessClass atId: anId [
 	value := accessor redis at: anId.
 	^ value
 		ifNil: [ nil ]
-		ifNotNil: [ (aMaplessClass fromBSONByteArray: value asByteArray in: self)
-				id: anId;
-				yourself ]
+		ifNotNil: [ self makeMapless: aMaplessClass fromValue: value with: anId ]
 ]
 
 { #category : #accessing }
@@ -149,6 +75,13 @@ MaplessRedisRepository >> findOne: aMaplessClass where: someConditions [
 ]
 
 { #category : #accessing }
+MaplessRedisRepository >> idOf: aMapless [
+	| basicId |
+	basicId := super idOf: aMapless.
+	^ aMapless class name , ':id:' , basicId
+]
+
+{ #category : #accessing }
 MaplessRedisRepository >> idPropertyName [
 	"Answers'key' because we're using Postgres here 
 	and that's what we want Postgres to use as id."
@@ -158,13 +91,21 @@ MaplessRedisRepository >> idPropertyName [
 
 { #category : #actions }
 MaplessRedisRepository >> insert: aMapless [
-	| bsonFriendly |
 	self onBeforeInsert: aMapless.
-	[ bsonFriendly := self storableFor: aMapless data ]
-		ifCurtailed: [ aMapless data removeKey: self idPropertyName ifAbsent: [ nil ] ].
-	self ensureCollectionNamed: aMapless class name asString.
-	self basicInsert: bsonFriendly.
+	self save: aMapless.
 	self onAfterInsert: aMapless
+]
+
+{ #category : #actions }
+MaplessRedisRepository >> makeMapless: aMaplessClass fromValue: storedValue [
+	^ aMaplessClass fromBSONByteArray: storedValue asByteArray in: self
+]
+
+{ #category : #actions }
+MaplessRedisRepository >> makeMapless: aMaplessClass fromValue: storedValue with: anId [
+	^ (aMaplessClass fromBSONByteArray: storedValue asByteArray in: self)
+		id: anId;
+		yourself
 ]
 
 { #category : #reactions }
@@ -192,6 +133,6 @@ MaplessRedisRepository >> setDatabase: aZeroBasedDbIndex [
 { #category : #actions }
 MaplessRedisRepository >> update: aMapless [
 	self onBeforeUpdate: aMapless.
-	self basicUpdate: (self storableFor: aMapless data).
+	self save: aMapless.
 	self onAfterUpdate: aMapless
 ]

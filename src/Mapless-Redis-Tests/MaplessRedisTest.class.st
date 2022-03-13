@@ -363,21 +363,6 @@ MaplessRedisTest >> testDestroy [
 
 { #category : #tests }
 MaplessRedisTest >> testFindAll [
-	| found |
-	repository
-		readWriteDo: [ (self newDummyPersonNamed: 'Peter') save.
-			(self newDummyPersonNamed: 'Robert') save.
-			(self newDummyPersonNamed: 'John') save ].
-	repository
-		readOnlyDo: [ 
-			self waitABit.
-			found := DummyPerson findAll.
-			self assert: found notNil.
-			self assert: found size equals: 3 ]
-]
-
-{ #category : #tests }
-MaplessRedisTest >> testFindAllUsers [
 	| users all |
 	repository := self newRepository.
 	users := OrderedCollection new.
