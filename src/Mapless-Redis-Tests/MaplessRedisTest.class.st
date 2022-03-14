@@ -553,6 +553,30 @@ MaplessRedisTest >> testMultipleComposedSaveAndLoad [
 ]
 
 { #category : #tests }
+MaplessRedisTest >> testRemovingExpire [
+	| guy found howMuchWillItBeThere |
+	repository := self newRepository.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	repository save: guy.
+	found := repository findOne: DummyPerson atId: guy id.
+	self assert: found notNil.
+	repository expires: guy in: 900.
+	howMuchWillItBeThere := repository ttlFor: guy.
+	self assert: howMuchWillItBeThere > 0.
+	repository removeExpireFor: guy.
+	howMuchWillItBeThere := repository ttlFor: guy.
+	self
+		assert: (howMuchWillItBeThere = -1 or: [ howMuchWillItBeThere = -2 ]).
+	100 milliseconds wait.
+	found := repository findOne: DummyPerson atId: guy id.
+	self assert: found notNil.
+
+]
+
+{ #category : #tests }
 MaplessRedisTest >> testSaveSetsID [
 	| guy |
 	repository := self newRepository.
@@ -569,6 +593,24 @@ MaplessRedisTest >> testSaveSetsID [
 MaplessRedisTest >> testSetCurrentDatabase [
 	repository := self newRepository.
 	self shouldnt: [ repository setDatabase: 1 ] raise: Error
+]
+
+{ #category : #tests }
+MaplessRedisTest >> testSimpleExpire [
+	| guy found |
+	repository := self newRepository.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	repository save: guy.
+	found := repository findOne: DummyPerson atId: guy id.
+	self assert: found notNil.
+	repository expires: guy in: 50.
+	60 milliseconds wait.
+	found := repository findOne: DummyPerson atId: guy id.
+	self assert: found isNil.
+		 
 ]
 
 { #category : #tests }
@@ -645,4 +687,24 @@ MaplessRedisTest >> testSubModelsFromReifiedJSON [
 	reified := DummyUser fromJSONString: jsonString in: repository.
 	self assert: reified person class equals: DummyPerson.
 	self assert: reified completeName equals: 'john q'
+]
+
+{ #category : #tests }
+MaplessRedisTest >> testUpdatingExpire [
+	| guy found howMuchWillItBeThere newerTTL answer |
+	repository := self newRepository.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	repository save: guy.
+	found := repository findOne: DummyPerson atId: guy id.
+	self assert: found notNil.
+	repository expires: guy in: 900.
+	100 milliseconds wait.
+	howMuchWillItBeThere := repository ttlFor: guy.
+	self assert: howMuchWillItBeThere > 0.
+	answer := repository expires: guy in: 2500.
+	newerTTL := repository ttlFor: guy.
+	self assert: newerTTL > 1200
 ]

@@ -164,7 +164,7 @@ MaplessMongoBenchmark class >> save: aQuantity usersOn: aMaplessRepository print
 				do: [ :userId | 
 					delay := Time microsecondsToRun: [ user := DummyUser findId: userId ].
 					totalDelay := totalDelay + delay ] ].
-	readsPerSecond := (1000 * aQuantity / delay asFloat) truncated.
+	readsPerSecond := (1000000 * aQuantity / delay asFloat) truncated.
 	aStream
 		lf;
 		cr;

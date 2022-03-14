@@ -36,8 +36,10 @@ MaplessRedisRepository >> existsId: anId of: aMaplessClass [
 ]
 
 { #category : #actions }
-MaplessRedisRepository >> expires: aMapless in: seconds [
-	accessor redis expire: (self idOf: aMapless) in: seconds
+MaplessRedisRepository >> expires: aMapless in: millisecondsValue [
+	^ accessor redis endpoint
+		expire: (self namespacedIdOf: aMapless)
+		at: DateAndTime now + (Duration milliSeconds: millisecondsValue)
 ]
 
 { #category : #accessing }
@@ -143,6 +145,11 @@ MaplessRedisRepository >> onBeforeSave: aMapless [
 ]
 
 { #category : #actions }
+MaplessRedisRepository >> removeExpireFor: aMapless [
+	^ accessor redis endpoint persist: (self namespacedIdOf: aMapless)
+]
+
+{ #category : #actions }
 MaplessRedisRepository >> save: aMapless [
 	| key storable serialized |
 	self onBeforeSave: aMapless.
@@ -156,6 +163,11 @@ MaplessRedisRepository >> save: aMapless [
 { #category : #actions }
 MaplessRedisRepository >> setDatabase: aZeroBasedDbIndex [
 	accessor setDatabase: aZeroBasedDbIndex
+]
+
+{ #category : #actions }
+MaplessRedisRepository >> ttlFor: aMapless [
+	^ accessor redis endpoint pttl: (self namespacedIdOf: aMapless)
 ]
 
 { #category : #accessing }
