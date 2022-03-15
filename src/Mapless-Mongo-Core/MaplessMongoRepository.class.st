@@ -114,7 +114,7 @@ MaplessMongoRepository >> deleteConcernFor: aMaplessClass [
 
 { #category : #actions }
 MaplessMongoRepository >> destroy: aMapless [
-	"Removes aMapless from the persistent collection"
+	"Removes aMapless from its corresponding collection."
 
 	self
 		destroy: aMapless
@@ -123,19 +123,46 @@ MaplessMongoRepository >> destroy: aMapless [
 
 { #category : #actions }
 MaplessMongoRepository >> destroy: aMapless writeConcern: aConcernOrNil [
-	"Removes aMapless from the persistent collection"
+	"Removes aMapless from its corresponding collection."
 
-	| filter |
 	self onBeforeDestroy: aMapless.
-	filter := JsonObject new
-		at: self idPropertyName put: aMapless id;
-		yourself.
 	self
 		readWriteDo: [ (self databaseCollectionNamed: aMapless class collectionName)
-				commandDelete: filter
+				commandDelete: {(self idPropertyName -> aMapless id)} asDictionary
 				limit: 1
 				writeConcern: aConcernOrNil ].
 	self onAfterDestroy: aMapless
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> destroyAll: aMaplessClass where: filter writeConcern: aConcernOrNil [
+	"Removes the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
+
+	^ self
+		readWriteDo: [ (self databaseCollectionNamed: aMaplessClass collectionName)
+				commandDelete: filter
+				limit: 0
+				writeConcern: aConcernOrNil ]
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId [
+	"Removes the document anId from the MongoDB collection corresponding to aMaplessClass."
+
+	self
+		destroyOne: aMaplessClass
+		atId: anId
+		writeConcern: (self deleteConcernFor: aMaplessClass)
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId writeConcern: aConcernOrNil [
+	"Removes the document anId from the MongoDB collection corresponding to aMaplessClass."
+
+	self
+		destroyAll: aMaplessClass
+		where: {(self idPropertyName -> anId)} asDictionary
+		writeConcern: aConcernOrNil
 ]
 
 { #category : #actions }
@@ -173,33 +200,43 @@ MaplessMongoRepository >> existsId: anId of: aMaplessClass [
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil [
+MaplessMongoRepository >> findAll: aMaplessClass [
+	^ self findAll: aMaplessClass where: nil
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions [
+	^ self findAll: aMaplessClass where: nil sort: sortConditions
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
 	^ self
-		find: aMaplessClass
+		findAll: aMaplessClass
 		where: someConditionsOrNil
 		limit: nil
 		offset: nil
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil [
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
 	^ self
-		find: aMaplessClass
+		findAll: aMaplessClass
 		where: someConditionsOrNil
 		limit: aLimitOrNil
 		offset: nil
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil [
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
 	^ self
-		find: aMaplessClass
+		findAll: aMaplessClass
 		where: someConditionsOrNil
 		limit: aLimitOrNil
 		offset: anOffsetOrNil
@@ -207,7 +244,7 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: 
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
 	| command cursor |
@@ -231,11 +268,11 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: 
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil sort: sortConditions [
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil sort: sortConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
 	^ self
-		find: aMaplessClass
+		findAll: aMaplessClass
 		where: someConditionsOrNil
 		limit: aLimitOrNil
 		offset: nil
@@ -243,25 +280,15 @@ MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil limit: 
 ]
 
 { #category : #accessing }
-MaplessMongoRepository >> find: aMaplessClass where: someConditionsOrNil sort: sortConditions [
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil sort: sortConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
-		find: aMaplessClass
+		findAll: aMaplessClass
 		where: someConditionsOrNil
 		limit: nil
 		offset: nil
 		sort: sortConditions
-]
-
-{ #category : #accessing }
-MaplessMongoRepository >> findAll: aMaplessClass [
-	^ self find: aMaplessClass where: nil
-]
-
-{ #category : #accessing }
-MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions [
-	^ self find: aMaplessClass where: nil sort: sortConditions
 ]
 
 { #category : #accessing }
@@ -277,7 +304,7 @@ MaplessMongoRepository >> findOne: aMaplessClass where: someConditions [
 
 	| found |
 	found := self
-		find: aMaplessClass
+		findAll: aMaplessClass
 		where: someConditions
 		limit: 1
 		offset: 0

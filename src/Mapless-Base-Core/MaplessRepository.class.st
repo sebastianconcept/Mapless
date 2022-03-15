@@ -146,7 +146,7 @@ MaplessRepository >> ensureIdOf: aMapless [
 ]
 
 { #category : #accessing }
-MaplessRepository >> find: aMaplessClass where: someConditions [
+MaplessRepository >> findAll: aMaplessClass where: someConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self subclassResponsibility

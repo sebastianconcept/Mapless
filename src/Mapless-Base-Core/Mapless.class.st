@@ -56,13 +56,13 @@ Mapless class >> existsId: anId [
 Mapless class >> find: someConditions [
 	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
 
-	^ self getRepository find: self where: someConditions
+	^ self getRepository findAll: self where: someConditions
 ]
 
 { #category : #querying }
 Mapless class >> find: someConditions limit: toHowManyResults [
 	^ self getRepository
-		find: self
+		findAll: self
 		where: someConditions
 		limit: toHowManyResults
 ]
@@ -70,7 +70,7 @@ Mapless class >> find: someConditions limit: toHowManyResults [
 { #category : #querying }
 Mapless class >> find: someConditions limit: howManyResults offset: startingFromWhichResult [
 	^ self getRepository
-		find: self
+		findAll: self
 		where: someConditions
 		limit: howManyResults
 		offset: startingFromWhichResult
@@ -79,7 +79,7 @@ Mapless class >> find: someConditions limit: howManyResults offset: startingFrom
 { #category : #querying }
 Mapless class >> find: someConditions limit: howManyResults offset: startingFromWhichResult sort: sortConditions [
 	^ self getRepository
-		find: self
+		findAll: self
 		where: someConditions
 		limit: howManyResults
 		offset: startingFromWhichResult
@@ -89,7 +89,7 @@ Mapless class >> find: someConditions limit: howManyResults offset: startingFrom
 { #category : #querying }
 Mapless class >> find: someConditions limit: toHowManyResults sort: sortConditions [
 	^ self getRepository
-		find: self
+		findAll: self
 		where: someConditions
 		limit: toHowManyResults
 		sort: sortConditions
@@ -100,7 +100,7 @@ Mapless class >> find: someConditions sort: sortConditions [
 	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
 
 	^ self getRepository
-		find: self
+		findAll: self
 		where: someConditions
 		sort: sortConditions
 ]

@@ -57,7 +57,12 @@ MaplessRedisRepository >> expires: aMapless in: millisecondsValue [
 ]
 
 { #category : #accessing }
-MaplessRedisRepository >> find: aMaplessClass where: keysPattern [
+MaplessRedisRepository >> findAll: aMaplessClass [
+	^ self findAll: aMaplessClass where: aMaplessClass name, ':id:*'
+]
+
+{ #category : #accessing }
+MaplessRedisRepository >> findAll: aMaplessClass where: keysPattern [
 	"Answer a collection of instances of aMaplessClass that have keys matching the given conditions."
 
 	| keys pairs found all |
@@ -79,11 +84,6 @@ MaplessRedisRepository >> find: aMaplessClass where: keysPattern [
 ]
 
 { #category : #accessing }
-MaplessRedisRepository >> findAll: aMaplessClass [
-	^ self find: aMaplessClass where: aMaplessClass name, ':id:*'
-]
-
-{ #category : #accessing }
 MaplessRedisRepository >> findOne: aMaplessClass atId: anId [
 	| value |
 	value := accessor redis
@@ -98,7 +98,7 @@ MaplessRedisRepository >> findOne: aMaplessClass where: someConditions [
 	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
 
 	| result |
-	result := self find: aMaplessClass where: someConditions.
+	result := self findAll: aMaplessClass where: someConditions.
 	^ result isEmpty
 		ifTrue: [ nil ]
 		ifFalse: [ result first ]
