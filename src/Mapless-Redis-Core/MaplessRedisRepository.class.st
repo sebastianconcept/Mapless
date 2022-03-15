@@ -15,6 +15,20 @@ MaplessRedisRepository >> auth: aPassword [
 	self setDatabase: databaseName
 ]
 
+{ #category : #accessing }
+MaplessRedisRepository >> count: aMaplessClass [
+	^ self count: aMaplessClass where: aMaplessClass name , ':id:*'
+]
+
+{ #category : #accessing }
+MaplessRedisRepository >> count: aMaplessClass where: keyPattern [
+	"KEYS and the much preferred SCAN are both 'evil'.
+	Doing KEYS (or SCAN) in real time is very expensive 
+	in terms of performance - it means that you're iterating over the entire keyspace."
+
+	^ (accessor redis keys: keyPattern) size
+]
+
 { #category : #actions }
 MaplessRedisRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
