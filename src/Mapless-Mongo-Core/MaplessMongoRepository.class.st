@@ -135,10 +135,20 @@ MaplessMongoRepository >> destroy: aMapless writeConcern: aConcernOrNil [
 ]
 
 { #category : #actions }
-MaplessMongoRepository >> destroyAll: aMaplessClass where: filter writeConcern: aConcernOrNil [
-	"Removes the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
+MaplessMongoRepository >> destroyAll: aMaplessClass where: filter [
+	"Remove all the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
 
-	^ self
+	self
+		destroyAll: aMaplessClass
+		where: filter
+		writeConcern: (self deleteConcernFor: aMaplessClass)
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> destroyAll: aMaplessClass where: filter writeConcern: aConcernOrNil [
+	"Remove all the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
+
+	self
 		readWriteDo: [ (self databaseCollectionNamed: aMaplessClass collectionName)
 				commandDelete: filter
 				limit: 0
@@ -160,9 +170,10 @@ MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId writeConcern: aCo
 	"Removes the document anId from the MongoDB collection corresponding to aMaplessClass."
 
 	self
-		destroyAll: aMaplessClass
-		where: {(self idPropertyName -> anId)} asDictionary
-		writeConcern: aConcernOrNil
+		readWriteDo: [ (self databaseCollectionNamed: aMaplessClass collectionName)
+				commandDelete: {(self idPropertyName -> anId)} asDictionary
+				limit: 1
+				writeConcern: aConcernOrNil ]
 ]
 
 { #category : #actions }
