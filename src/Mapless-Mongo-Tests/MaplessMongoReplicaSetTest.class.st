@@ -148,6 +148,22 @@ MaplessMongoReplicaSetTest >> testFailToFindPrimaryhenUnavailableForTooLong [
 ]
 
 { #category : #tests }
+MaplessMongoReplicaSetTest >> testFindAllWithReadConcern [
+	| found |
+	repository
+		readWriteDo: [ (self newDummyPersonNamed: 'Peter') save.
+			(self newDummyPersonNamed: 'Robert') save.
+			(self newDummyPersonNamed: 'John') save ].
+	repository
+		readOnlyDo: [ self waitABit.
+			found := repository
+				findAll: DummyPerson
+				readConcern: MongoReadConcern local.
+			self assert: found notNil.
+			self assert: found size equals: 3 ]
+]
+
+{ #category : #tests }
 MaplessMongoReplicaSetTest >> testFindPrimaryAfterItChanged [
 ]
 

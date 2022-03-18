@@ -651,5 +651,5 @@ MaplessMongoTest >> testUpsert [
 
 { #category : #actions }
 MaplessMongoTest >> waitABit [
-	600 milliseconds asDelay wait
+	10 milliseconds asDelay wait
 ]
