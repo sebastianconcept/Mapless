@@ -229,8 +229,25 @@ MaplessMongoRepository >> findAll: aMaplessClass [
 ]
 
 { #category : #querying }
+MaplessMongoRepository >> findAll: aMaplessClass readConcern: aMongoReadConcernOrNil [
+	^ self
+		findAll: aMaplessClass
+		where: nil
+		readConcern: aMongoReadConcernOrNil
+]
+
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions [
 	^ self findAll: aMaplessClass where: nil sort: sortConditions
+]
+
+{ #category : #querying }
+MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions readConcern: aMongoReadConcernOrNil [
+	^ self
+		findAll: aMaplessClass
+		where: nil
+		sort: sortConditions
+		readConcern: aMongoReadConcernOrNil
 ]
 
 { #category : #querying }
@@ -265,6 +282,19 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limi
 		limit: aLimitOrNil
 		offset: anOffsetOrNil
 		sort: nil
+]
+
+{ #category : #querying }
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil readConcern: aMongoReadConcernOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
+
+	^ self
+		findAll: aMaplessClass
+		where: someConditionsOrNil
+		limit: aLimitOrNil
+		offset: anOffsetOrNil
+		sort: nil
+		readConcern: aMongoReadConcernOrNil
 ]
 
 { #category : #querying }
@@ -309,6 +339,18 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limi
 ]
 
 { #category : #querying }
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil readConcern: aMongoReadConcernOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
+
+	^ self
+		findAll: aMaplessClass
+		where: someConditionsOrNil
+		limit: aLimitOrNil
+		offset: nil
+		readConcern: aMongoReadConcernOrNil
+]
+
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil sort: sortConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
@@ -321,6 +363,18 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limi
 ]
 
 { #category : #querying }
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil readConcern: aMongoReadConcernOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
+
+	^ self
+		findAll: aMaplessClass
+		where: someConditionsOrNil
+		limit: nil
+		offset: nil
+		readConcern: aMongoReadConcernOrNil
+]
+
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil sort: sortConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
@@ -330,6 +384,19 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil sort
 		limit: nil
 		offset: nil
 		sort: sortConditions
+]
+
+{ #category : #querying }
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil sort: sortConditions readConcern: aMongoReadConcernOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
+
+	^ self
+		findAll: aMaplessClass
+		where: someConditionsOrNil
+		limit: nil
+		offset: nil
+		sort: sortConditions
+		readConcern: aMongoReadConcernOrNil
 ]
 
 { #category : #querying }
