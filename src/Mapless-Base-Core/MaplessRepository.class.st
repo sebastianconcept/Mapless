@@ -137,12 +137,17 @@ MaplessRepository >> ensureCollectionNamed: aCollectionName [
 ]
 
 { #category : #actions }
+MaplessRepository >> ensureId: anId for: aMapless [
+	aMapless maplessData
+		at: self idPropertyName
+		ifAbsent: [ aMapless maplessData
+				at: 'id' put: anId;
+				at: self idPropertyName put: anId ]
+]
+
+{ #category : #actions }
 MaplessRepository >> ensureIdOf: aMapless [
-	| idValue |
-	aMapless hasId
-		ifFalse: [ idValue := self class getNewId.
-			aMapless maplessData at: 'id' put: idValue.
-			aMapless maplessData at: self idPropertyName put: idValue ]
+	self ensureId: self class getNewId for: aMapless
 ]
 
 { #category : #accessing }
@@ -257,7 +262,6 @@ MaplessRepository >> onBeforeDestroy: aMapless [
 
 { #category : #hooks }
 MaplessRepository >> onBeforeInsert: aMapless [
-	self ensureIdOf: aMapless.
 	aMapless onBeforeInsert.
 	^ aMapless
 ]
@@ -276,7 +280,6 @@ MaplessRepository >> onBeforeUpdate: aMapless [
 
 { #category : #hooks }
 MaplessRepository >> onBeforeUpsert: aMapless [
-	self ensureIdOf: aMapless.
 	aMapless onBeforeUpsert.
 	^ aMapless
 ]

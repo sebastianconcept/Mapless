@@ -370,10 +370,14 @@ MaplessMongoRepository >> insert: aMapless writeConcern: aConcernOrNil [
 	| bsonFriendly |
 	self onBeforeInsert: aMapless.
 	bsonFriendly := resolver storableFor: aMapless in: self.
+	bsonFriendly
+		at: self idPropertyName
+		ifAbsent: [ bsonFriendly at: self idPropertyName put: self class getNewId ].
 	self
 		readWriteDo: [ (self databaseCollectionNamed: aMapless class collectionName)
 				commandInsert: bsonFriendly
 				writeConcern: aConcernOrNil ].
+	self ensureId: (bsonFriendly at: self idPropertyName) for: aMapless.
 	self onAfterInsert: aMapless
 ]
 
@@ -470,9 +474,8 @@ MaplessMongoRepository >> update: aMapless writeConcern: aConcernOrNil [
 	self
 		readWriteDo: [ self database
 				commandUpdate:
-					(Dictionary new
-						at: self idPropertyName put: aMapless id;
-						yourself)
+					{(self idPropertyName -> aMapless id)}
+						asDictionary
 				with: bsonFriendly
 				collection: aMapless class collectionName
 				writeConcern: aConcernOrNil ].
@@ -501,18 +504,19 @@ MaplessMongoRepository >> upsert: aMapless [
 
 { #category : #actions }
 MaplessMongoRepository >> upsert: aMapless writeConcern: aConcernOrNil [
-	| bsonFriendly |
+	| bsonFriendly idValue |
 	self onBeforeUpsert: aMapless.
 	bsonFriendly := resolver storableFor: aMapless in: self.
+	idValue := (self isUnsaved: aMapless)
+		ifTrue: [ bsonFriendly at: self idPropertyName put: self class getNewId ]
+		ifFalse: [ aMapless id ].
 	self
 		readWriteDo: [ self database
-				commandUpsert:
-					(Dictionary new
-						at: self idPropertyName put: aMapless id;
-						yourself)
+				commandUpsert: {(self idPropertyName -> idValue)} asDictionary
 				with: bsonFriendly
 				collection: aMapless class collectionName
 				writeConcern: aConcernOrNil ].
+	self ensureId: idValue for: aMapless.
 	self onAfterUpsert: aMapless
 ]
 

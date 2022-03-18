@@ -592,7 +592,7 @@ MaplessMongoTest >> testSimpleSaveAndUpdate [
 			self deny: loaded remember equals: 'this words' ].
 	loaded remember: 'this words'.
 	repository
-		readWriteDo: [ 
+		readWriteDo: [
 			loaded save.
 			reloaded := repository findOne: DummyPerson atId: guy id.
 			self assert: reloaded remember = 'this words' ]

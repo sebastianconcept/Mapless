@@ -23,8 +23,9 @@ MaplessVoyageWithMaplessSuffixResolver >> canRepresentSubMapless: anObject in: a
 MaplessVoyageWithMaplessSuffixResolver >> ensureVoyageMetadataIn: storableDocument for: aMapless in: aMaplessRepository [
 	"Makes sure aMapless has the metadata that would be expected by Voyage."
 
+	(aMaplessRepository isUnsaved: aMapless)
+		ifFalse: [ storableDocument at: '_id' put: aMapless id ].
 	storableDocument
-		at: '_id' put: aMapless id;
 		at: '#instanceOf' put: (self voyageClassNameFrom: aMapless);
 		yourself
 ]

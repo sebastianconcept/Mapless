@@ -207,7 +207,7 @@ MaplessMemoryRepository >> insert: aMapless [
 
 { #category : #actions }
 MaplessMemoryRepository >> onBeforeSave: aMapless [
-	aMapless ensureId.
+	self ensureIdOf: aMapless.
 	super onBeforeSave: aMapless
 ]
 
