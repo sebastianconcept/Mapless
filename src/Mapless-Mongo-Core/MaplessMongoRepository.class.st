@@ -26,14 +26,14 @@ MaplessMongoRepository >> concerns [
 	^ concerns ifNil: [ self initializeConcerns ]
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> count: aMaplessClass [
 	"Answer what's the number of instances of aMaplessClass in this repository."
 
 	^ self count: aMaplessClass where: {} asDictionary
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> count: aMaplessClass where: someConditions [
 	"Answer what's the number of instances of aMaplessClass in this repository."
 
@@ -77,6 +77,16 @@ MaplessMongoRepository >> defaultInsertConcern [
 { #category : #accessing }
 MaplessMongoRepository >> defaultInsertConcern: aConcernOrNil [
 	^ self defaultConcerns at: #insert put: aConcernOrNil
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> defaultReadConcern [
+	^ self defaultConcerns at: #read
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> defaultReadConcern: aConcernOrNil [
+	^ self defaultConcerns at: #read put: aConcernOrNil
 ]
 
 { #category : #accessing }
@@ -178,6 +188,9 @@ MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId writeConcern: aCo
 
 { #category : #actions }
 MaplessMongoRepository >> do: aBlock [
+	"Performs aBlock and providing access to a mongo client that will be in use during this thread to 
+	anyone calling MaplessCurrentRepository value."
+
 	^ self do: aBlock with: accessor
 ]
 
@@ -193,7 +206,7 @@ MaplessMongoRepository >> do: aBlock with: aDatabaseAccessor [
 				ensure: [ mongoClient := nil ] ]
 ]
 
-{ #category : #accessing }
+{ #category : #actions }
 MaplessMongoRepository >> drop [
 	^ self readWriteDo: [ self database drop ]
 ]
@@ -210,17 +223,17 @@ MaplessMongoRepository >> existsId: anId of: aMaplessClass [
 		where: {(self idPropertyName -> anId)} asDictionary) > 0
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass [
 	^ self findAll: aMaplessClass where: nil
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions [
 	^ self findAll: aMaplessClass where: nil sort: sortConditions
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
@@ -231,7 +244,7 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil [
 		offset: nil
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
@@ -242,7 +255,7 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limi
 		offset: nil
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
@@ -254,9 +267,22 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limi
 		sort: nil
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
+
+	^ self
+		findAll: aMaplessClass
+		where: someConditionsOrNil
+		limit: aLimitOrNil
+		offset: anOffsetOrNil
+		sort: sortConditionsOrNil
+		readConcern: (self readConcernFor: aMaplessClass)
+]
+
+{ #category : #querying }
+MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil readConcern: aMongoReadConcernOrNil [
+	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository using the optional aMongoReadConcernOrNil."
 
 	| command cursor |
 	command := OrderedDictionary new
@@ -269,6 +295,10 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limi
 	anOffsetOrNil ifNotNil: [ :offset | command at: 'skip' put: offset ].
 	sortConditionsOrNil
 		ifNotNil: [ :sort | command at: 'sort' put: sort ].
+	aMongoReadConcernOrNil
+		ifNotNil: [ command
+				at: 'readConcern'
+				put: aMongoReadConcernOrNil concernForCommand ].
 	^ self
 		readOnlyDo: [ cursor := self newCursorFor: command.
 			(aMaplessClass
@@ -278,7 +308,7 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limi
 				with: self) collect: [ :each | self onAfterRead: each ] ]
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil sort: sortConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditionsOrNil from the repository."
 
@@ -290,7 +320,7 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil limi
 		sort: sortConditions
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil sort: sortConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
@@ -302,14 +332,14 @@ MaplessMongoRepository >> findAll: aMaplessClass where: someConditionsOrNil sort
 		sort: sortConditions
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> findOne: aMaplessClass atId: anId [
 	^ self
 		findOne: aMaplessClass
 		where: {(self idPropertyName -> anId)} asDictionary
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessMongoRepository >> findOne: aMaplessClass where: someConditions [
 	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
 
@@ -341,6 +371,7 @@ MaplessMongoRepository >> idPropertyName [
 { #category : #initialization }
 MaplessMongoRepository >> initializeConcerns [
 	^ concerns := Dictionary new
+		at: #read put: Dictionary new;
 		at: #insert put: Dictionary new;
 		at: #upsert put: Dictionary new;
 		at: #update put: Dictionary new;
@@ -351,6 +382,7 @@ MaplessMongoRepository >> initializeConcerns [
 { #category : #initialization }
 MaplessMongoRepository >> initializeDefaultConcerns [
 	^ defaultConcerns := Dictionary new
+		at: #read put: nil;
 		at: #insert put: nil;
 		at: #upsert put: nil;
 		at: #update put: nil;
@@ -408,6 +440,19 @@ MaplessMongoRepository >> newCursorFor: aDictionary [
 	^ (MongoCommandCursor database: self database dictionary: aDictionary)
 		setFlagSlaveOk;
 		yourself
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> readConcern: aConcern for: aMaplessClass [
+	^ (self concerns at: #read) at: aMaplessClass put: aConcern
+]
+
+{ #category : #accessing }
+MaplessMongoRepository >> readConcernFor: aMaplessClass [
+	^ (self concerns at: #read)
+		at: aMaplessClass
+		ifPresent: [ :val | val ]
+		ifAbsent: [ self defaultReadConcern ]
 ]
 
 { #category : #actions }
