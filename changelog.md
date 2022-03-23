@@ -1,3 +1,10 @@
+March 23, 2022 | v0.5.0-alpha | Double Citadel
+===================================
+* Introduces `MaplessRedisRepository` via dependency on [RediStick](https://github.com/mumez/RediStick).
+* Extends API to use write concerns in all queries of `MaplessMongoRepository`
+* Introduces and extends existing API to use `MongoReadConcerns` in all queries.
+* Improves general API consistency.
+
 March 4, 2022 | v0.4.12-alpha | Jolly Adjustment
 ===================================
 * Fixed usage of concerns in `MaplessMongoRepository>>save:`.
