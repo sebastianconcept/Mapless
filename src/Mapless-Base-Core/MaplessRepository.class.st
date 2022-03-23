@@ -68,7 +68,8 @@ MaplessRepository >> asStorable: anObject [
 						ifTrue: [ (resolver asMaplessReferenceIn: anObject in: self)
 								asJsonObjectIn: self ]
 						ifFalse: [ anObject ] ]
-				ifTrue: [ anObject hasModel
+				ifTrue: [ 
+					anObject hasModel
 						ifTrue: [ resolver maplessReferenceAsJsonObject: anObject in: self ]
 						ifFalse: [ MaplessUnsavedSubmodel
 								signal:
@@ -136,14 +137,21 @@ MaplessRepository >> ensureCollectionNamed: aCollectionName [
 ]
 
 { #category : #actions }
+MaplessRepository >> ensureId: anId for: aMapless [
+	aMapless maplessData
+		at: self idPropertyName
+		ifAbsent: [ aMapless maplessData
+				at: 'id' put: anId;
+				at: self idPropertyName put: anId ]
+]
+
+{ #category : #actions }
 MaplessRepository >> ensureIdOf: aMapless [
-	aMapless hasId
-		ifFalse: [ aMapless id: self class getNewId ].
-	aMapless maplessData at: self idPropertyName put: aMapless id
+	self ensureId: self class getNewId for: aMapless
 ]
 
 { #category : #accessing }
-MaplessRepository >> find: aMaplessClass where: someConditions [
+MaplessRepository >> findAll: aMaplessClass where: someConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self subclassResponsibility
@@ -180,7 +188,7 @@ MaplessRepository >> isUnsaved: aMapless [
 	then is because the application never used the backend to saved it."
 
 	^ (aMapless maplessData includesKey: self idPropertyName) not
-		and: [ aMapless id isNil ]
+		and: [ (aMapless maplessData includesKey: 'id') not ]
 ]
 
 { #category : #accessing }
@@ -254,7 +262,6 @@ MaplessRepository >> onBeforeDestroy: aMapless [
 
 { #category : #hooks }
 MaplessRepository >> onBeforeInsert: aMapless [
-	self ensureIdOf: aMapless.
 	aMapless onBeforeInsert.
 	^ aMapless
 ]
@@ -273,7 +280,6 @@ MaplessRepository >> onBeforeUpdate: aMapless [
 
 { #category : #hooks }
 MaplessRepository >> onBeforeUpsert: aMapless [
-	self ensureIdOf: aMapless.
 	aMapless onBeforeUpsert.
 	^ aMapless
 ]

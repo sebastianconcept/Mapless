@@ -5,7 +5,7 @@ I'm optimistic to resolve which available clients to use and I handle the except
 "
 Class {
 	#name : #MaplessMongoReplicaSetPool,
-	#superclass : #MaplessAbstractPool,
+	#superclass : #MaplessAbstracMongoPool,
 	#instVars : [
 		'readOnlyProtection',
 		'readWriteProtection',

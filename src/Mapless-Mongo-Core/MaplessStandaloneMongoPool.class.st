@@ -5,7 +5,7 @@ When the max is reached, it will start throwing exceptions if the load wants to 
 "
 Class {
 	#name : #MaplessStandaloneMongoPool,
-	#superclass : #MaplessAbstractPool,
+	#superclass : #MaplessAbstracMongoPool,
 	#instVars : [
 		'maxClients',
 		'clientsMutex',

@@ -148,6 +148,30 @@ MaplessMongoReplicaSetTest >> testFailToFindPrimaryhenUnavailableForTooLong [
 ]
 
 { #category : #tests }
+MaplessMongoReplicaSetTest >> testFindAllWithReadConcern [
+	| found writeConcern |
+	writeConcern := MongoWriteConcern new
+		j: true;
+		w: 'majority';
+		yourself.
+	repository
+		insert: (self newDummyPersonNamed: 'Peter')
+		writeConcern: writeConcern.
+	repository
+		insert: (self newDummyPersonNamed: 'Robert')
+		writeConcern: writeConcern.
+	repository
+		insert: (self newDummyPersonNamed: 'John')
+		writeConcern: writeConcern.
+	repository
+		readOnlyDo: [ found := repository
+				findAll: DummyPerson
+				readConcern: MongoReadConcern majority.
+			self assert: found notNil.
+			self assert: found size equals: 3 ]
+]
+
+{ #category : #tests }
 MaplessMongoReplicaSetTest >> testFindPrimaryAfterItChanged [
 ]
 
@@ -205,13 +229,12 @@ MaplessMongoReplicaSetTest >> testUseConcernsOnAMaplessClass [
 		w: 'majority';
 		wtimeout: 5000;
 		yourself.
-	repository upsertConcern: concern for: DummyPerson.
+	repository insertConcern: concern for: DummyPerson.
 	guy := DummyPerson new
 		firstName: 'Steven';
 		yourself.
 	repository save: guy.
 	self assert: guy hasId.
-	self waitABit.
-	found := repository findOne: DummyPerson atId: guy id.
+	found := repository findOne: DummyPerson atId: guy id readConcern: MongoReadConcern majority.
 	self assert: found id equals: guy id
 ]

@@ -1,13 +1,27 @@
 Mapless
 =======
 
-*Obscenely simple persistence for Smalltalk.* Mapless is a small framework for storing objects in a key->value fashion (i.e.: noSQL databases) without requiring any kind of mapping definition. Supported backends are MongoDB and Redis.
+*Obscenely simple persistence for Smalltalk.* Mapless is a small framework for storing objects in a key->value fashion (i.e.: noSQL databases) without requiring any kind of mapping definitions. 
 
-*There are no instVars...*
-*There are no accessors...*
-*There is no object-mapping impedance...*
+Currently supported backends are `MongoDB` and `Redis`.
 
-*Only persistence.*
+## Loading
+
+By default `Mapless` will load `Memory`, `Mongo` and `Redis` backends:
+
+	Metacello new
+    	baseline: 'Mapless';
+    	repository: 'github://sebastianconcept/Mapless:master/src';
+    	load.
+
+## Design philosophy
+Without loosing pragmatism, here is a notion used as source of inspiration for Mapless' design:
+
+	*There are no instVars...*
+	*There are no accessors...*
+	*There is no object-mapping impedance...*
+
+	*Only persistence.*
 
 ### Applicability
 
@@ -16,48 +30,7 @@ Mapless can be used for Model persistence, object oriented shared cache, observe
 ### Motivation
 > "I wanted to persist objects with *low friction* and *low maintenance* but *high scaling* and *availability* capabilities so Mapless is totally biased towards that. This framework is what I came up with after incorporating my experience with [Aggregate](https://github.com/sebastianconcept/Aggregate) in [airflowing](http://airflowing.com)." ~ [Sebastian Sastre](http://sebastiansastre.co)
 
-### Loading
 
-If you want to use Pharo's UI, open an image and click for a **menu**, then **tools**, then **Configuration Browser** and search for **Mapless**. Click **Install Stable Version**
-
-However, it's recommended that you use Metacello to load your projects...
-
-Use this snippet to fetch the Baseline and load it in your [Pharo](http://www.pharo-project.org/home)* image:
-
-    Metacello new
-    	baseline: 'Mapless';
-    	repository: 'github://sebastianconcept/Mapless:master/src';
-    	get.
-
-To load Mapless alone, with no backend database (likely only for Mapless contributors):
-
-    Metacello new
-    	baseline: 'Mapless';
-    	repository: 'github://sebastianconcept/Mapless:master/src';
-    	load.
-
-There are many backend options you can load. Use the following snippet to load one or more backend database(s):
-
-	Metacello new
-    	baseline: 'Mapless';
-    	repository: 'github://sebastianconcept/Mapless:master/src';
-    	load: #('Mongo' 'Redis' 'Postgres' 'GemStone').
-
-NOTE: If you are running on the GemStone platform, the GemStone classes are automatically loaded along with Mapless.
-
-To load the both the database classes and the corresponding tests, use the following snippet:
-
-	Metacello new
-    	baseline: 'Mapless';
-    	repository: 'github://sebastianconcept/Mapless:master/src';
-    	load: #('Mongo Tests' 'Redis Tests' 'Postgres Tests' 'GemStone Tests').
-
-To load everything available for your platform, including the tests:
-
-	Metacello new
-    	baseline: 'Mapless';
-    	repository: 'github://sebastianconcept/Mapless:master/src';
-    	load: #('all').
 
 ### How does it look?
 

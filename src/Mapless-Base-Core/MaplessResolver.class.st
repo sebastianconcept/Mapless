@@ -9,6 +9,7 @@ Class {
 
 { #category : #converting }
 MaplessResolver >> asMaplessReferenceIn: anObject in: aMaplessRepository [
+
 	^ MaplessReference for: anObject in: aMaplessRepository
 ]
 
@@ -28,7 +29,7 @@ MaplessResolver >> canRepresentSubMapless: anObject in: aMaplessRepository [
 
 	^ anObject isDictionary
 		and: [ anObject size = 2
-				and: [ (anObject includesKey: '_id') and: [ anObject includesKey: '_c' ] ] ]
+				and: [ (anObject includesKey: aMaplessRepository idPropertyName ) and: [ anObject includesKey: '_c' ] ] ]
 ]
 
 { #category : #converting }
@@ -80,7 +81,8 @@ MaplessResolver >> onBeforeSave: aMapless [
 { #category : #accessing }
 MaplessResolver >> referenceDataFrom: aJsonObject in: aMaplessRepository [
 	^ JsonObject new
-		at: aMaplessRepository idPropertyName put: aJsonObject _id;
+		at: aMaplessRepository idPropertyName
+			put: (aJsonObject at: aMaplessRepository idPropertyName);
 		at: '_c' put: (aJsonObject at: '_c');
 		yourself
 ]

@@ -9,8 +9,7 @@ Class {
 		'hostname',
 		'port',
 		'username',
-		'password',
-		'authenticationDatabaseName'
+		'password'
 	],
 	#category : #'Mapless-Base-Core-Repositories'
 }
@@ -44,17 +43,6 @@ MaplessAbstractPool class >> local [
 ]
 
 { #category : #accessing }
-MaplessAbstractPool >> authenticationDatabaseName [
-	^ authenticationDatabaseName
-		ifNil: [ self initializeAuthenticationDatabaseName ]
-]
-
-{ #category : #accessing }
-MaplessAbstractPool >> authenticationDatabaseName: aString [
-	authenticationDatabaseName := aString
-]
-
-{ #category : #accessing }
 MaplessAbstractPool >> currentClientDynamicVariable [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
@@ -70,11 +58,6 @@ MaplessAbstractPool >> hostname [
 { #category : #accessing }
 MaplessAbstractPool >> hostname: anObject [
 	hostname := anObject
-]
-
-{ #category : #initialization }
-MaplessAbstractPool >> initializeAuthenticationDatabaseName [
-	^ authenticationDatabaseName := 'admin'
 ]
 
 { #category : #testing }
@@ -110,13 +93,6 @@ MaplessAbstractPool >> port [
 { #category : #accessing }
 MaplessAbstractPool >> port: anObject [
 	port := anObject
-]
-
-{ #category : #actions }
-MaplessAbstractPool >> returningUnusedClient [
-	Transcript
-		cr;
-		show: 'Warning: returning a client that is not in among the busy ones'
 ]
 
 { #category : #accessing }

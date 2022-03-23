@@ -92,29 +92,29 @@ MaplessPostgresRepository >> existsId: anId of: aMaplessClass [
 ]
 
 { #category : #accessing }
-MaplessPostgresRepository >> find: aMaplessClass where: someConditions [
+MaplessPostgresRepository >> findAll: aMaplessClass where: someConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
-		find: aMaplessClass
+		findAll: aMaplessClass
 		where: someConditions
 		limit: nil
 		offset: nil
 ]
 
 { #category : #accessing }
-MaplessPostgresRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil [
+MaplessPostgresRepository >> findAll: aMaplessClass where: someConditions limit: aLimitOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
-		find: aMaplessClass
+		findAll: aMaplessClass
 		where: someConditions
 		limit: aLimitOrNil
 		offset: nil
 ]
 
 { #category : #accessing }
-MaplessPostgresRepository >> find: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
+MaplessPostgresRepository >> findAll: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ database
@@ -145,7 +145,7 @@ MaplessPostgresRepository >> findOne: aMaplessClass where: someConditions [
 	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
 
 	| result |
-	result := self find: aMaplessClass where: someConditions.
+	result := self findAll: aMaplessClass where: someConditions.
 	^ result isEmpty
 		ifTrue: [ nil ]
 		ifFalse: [ result first ]

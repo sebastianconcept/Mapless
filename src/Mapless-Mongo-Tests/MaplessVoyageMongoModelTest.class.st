@@ -63,6 +63,7 @@ MaplessVoyageMongoModelTest >> testSaveWithVoyageMetadata [
 		username: 'buddy';
 		person: personFromMapless;
 		yourself.
+
 	repository save: personFromMapless.
 	repository save: userFromMapless.
 	found := repository

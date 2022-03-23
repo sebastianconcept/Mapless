@@ -56,13 +56,13 @@ Mapless class >> existsId: anId [
 Mapless class >> find: someConditions [
 	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
 
-	^ self getRepository find: self where: someConditions
+	^ self getRepository findAll: self where: someConditions
 ]
 
 { #category : #querying }
 Mapless class >> find: someConditions limit: toHowManyResults [
 	^ self getRepository
-		find: self
+		findAll: self
 		where: someConditions
 		limit: toHowManyResults
 ]
@@ -70,7 +70,7 @@ Mapless class >> find: someConditions limit: toHowManyResults [
 { #category : #querying }
 Mapless class >> find: someConditions limit: howManyResults offset: startingFromWhichResult [
 	^ self getRepository
-		find: self
+		findAll: self
 		where: someConditions
 		limit: howManyResults
 		offset: startingFromWhichResult
@@ -79,7 +79,7 @@ Mapless class >> find: someConditions limit: howManyResults offset: startingFrom
 { #category : #querying }
 Mapless class >> find: someConditions limit: howManyResults offset: startingFromWhichResult sort: sortConditions [
 	^ self getRepository
-		find: self
+		findAll: self
 		where: someConditions
 		limit: howManyResults
 		offset: startingFromWhichResult
@@ -89,7 +89,7 @@ Mapless class >> find: someConditions limit: howManyResults offset: startingFrom
 { #category : #querying }
 Mapless class >> find: someConditions limit: toHowManyResults sort: sortConditions [
 	^ self getRepository
-		find: self
+		findAll: self
 		where: someConditions
 		limit: toHowManyResults
 		sort: sortConditions
@@ -100,7 +100,7 @@ Mapless class >> find: someConditions sort: sortConditions [
 	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
 
 	^ self getRepository
-		find: self
+		findAll: self
 		where: someConditions
 		sort: sortConditions
 ]
@@ -132,6 +132,14 @@ Mapless class >> findOne: someConditions [
 { #category : #querying }
 Mapless class >> first [
 	^ self getRepository findOne: self where: Dictionary new
+]
+
+{ #category : #'instance creation' }
+Mapless class >> fromBSONByteArray: aByteArray in: aMaplessRepository [
+	| deserialized |
+	deserialized := OrderedJsonObject
+		fromAssociations: (BSON read: aByteArray readStream) associations.
+	^ self fromJSONObject: deserialized in: aMaplessRepository
 ]
 
 { #category : #'instance creation' }
@@ -316,7 +324,7 @@ Mapless >> basicMaplessId [
 
 { #category : #actions }
 Mapless >> beDeleted [
-	self isDeleted: true
+	self deletedOn: DateAndTime now
 ]
 
 { #category : #actions }
@@ -456,9 +464,7 @@ Mapless >> insert [
 
 { #category : #testing }
 Mapless >> isDeleted [
-	| isDeleted |
-	isDeleted := self data at: 'isDeleted'.
-	^ isDeleted notNil and: [ isDeleted ]
+	^ self data includesKey: 'deletedOn'
 ]
 
 { #category : #testing }
@@ -685,9 +691,9 @@ Mapless >> setSubModelReferencesAt: aKey with: anObject in: aMaplessRepository [
 
 	(aMaplessRepository canRepresentSubMapless: anObject)
 		ifTrue: [ ^ self
-				setReferenceFrom: anObject
+				setReferenceFrom: (JsonObject fromAssociations: anObject associations)
 				on: aKey
-				of: self data
+				of: self data asJsonObject
 				in: aMaplessRepository ].
 
 	"2. it's a collection of submodels"
