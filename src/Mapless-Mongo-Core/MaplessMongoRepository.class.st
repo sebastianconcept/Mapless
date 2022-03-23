@@ -407,6 +407,14 @@ MaplessMongoRepository >> findOne: aMaplessClass atId: anId [
 ]
 
 { #category : #querying }
+MaplessMongoRepository >> findOne: aMaplessClass atId: anId readConcern: aMongoReadConcernOrNil [
+	^ self
+		findOne: aMaplessClass
+		where: {(self idPropertyName -> anId)} asDictionary
+		readConcern: aMongoReadConcernOrNil
+]
+
+{ #category : #querying }
 MaplessMongoRepository >> findOne: aMaplessClass where: someConditions [
 	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
 
@@ -417,6 +425,23 @@ MaplessMongoRepository >> findOne: aMaplessClass where: someConditions [
 		limit: 1
 		offset: 0
 		sort: nil.
+	^ found isEmpty
+		ifTrue: [ nil ]
+		ifFalse: [ found first ]
+]
+
+{ #category : #querying }
+MaplessMongoRepository >> findOne: aMaplessClass where: someConditions readConcern: aMongoReadConcernOrNil [
+	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
+
+	| found |
+	found := self
+		findAll: aMaplessClass
+		where: someConditions
+		limit: 1
+		offset: 0
+		sort: nil
+		readConcern: aMongoReadConcernOrNil.
 	^ found isEmpty
 		ifTrue: [ nil ]
 		ifFalse: [ found first ]
