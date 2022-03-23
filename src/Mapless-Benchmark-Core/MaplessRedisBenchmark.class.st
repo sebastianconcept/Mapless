@@ -11,24 +11,24 @@ Convenience to run it logging to SomeLogFile.log:
 	MaplessMongoBenchmark runPrintingOn: stream ]  
 "
 Class {
-	#name : #MaplessMongoBenchmark,
+	#name : #MaplessRedisBenchmark,
 	#superclass : #Object,
 	#category : #'Mapless-Benchmark-Core'
 }
 
 { #category : #actions }
-MaplessMongoBenchmark class >> runOn: aMaplessRepository [
+MaplessRedisBenchmark class >> runOn: aMaplessRepository [
 	self runOn: aMaplessRepository printingOn: Stdio stdout
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> runOn: aMaplessRepository printingOn: aStream [
+MaplessRedisBenchmark class >> runOn: aMaplessRepository printingOn: aStream [
 	aStream
 		lf;
 		cr;
 		lf;
 		cr;
-		nextPutAll: 'Benchmarking Mapless on MongoDB...';
+		nextPutAll: 'Benchmarking Mapless on Redis...';
 		lf;
 		cr.
 	self save1KPeopleOn: aMaplessRepository printingOn: aStream.
@@ -38,65 +38,48 @@ MaplessMongoBenchmark class >> runOn: aMaplessRepository printingOn: aStream [
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> runOnLocalMongoDBReplicaSet [
-	self
-		runOn:
-			(MaplessMongoRepository
-				for: 'Mapless-Test'
-				with: MaplessMongoReplicaSetPool test)
-]
-
-{ #category : #actions }
-MaplessMongoBenchmark class >> runOnLocalStandaloneMongoDB [
-	self
-		runOn:
-			(MaplessMongoRepository
-				for: 'Mapless-Test'
-				with: MaplessStandaloneMongoPool local)
-]
-
-{ #category : #actions }
-MaplessMongoBenchmark class >> save10KPeopleOn: aMaplessRepository printingOn: aStream [
+MaplessRedisBenchmark class >> save10KPeopleOn: aMaplessRepository printingOn: aStream [
 	self save: 10000 peopleOn: aMaplessRepository printingOn: aStream
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save10KUsersOn: aMaplessRepository printingOn: aStream [
+MaplessRedisBenchmark class >> save10KUsersOn: aMaplessRepository printingOn: aStream [
 	self save: 10000 usersOn: aMaplessRepository printingOn: aStream
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save1KPeopleOn: aMaplessRepository printingOn: aStream [
+MaplessRedisBenchmark class >> save1KPeopleOn: aMaplessRepository printingOn: aStream [
 	self save: 1000 peopleOn: aMaplessRepository printingOn: aStream
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save1KUsersOn: aStream [
+MaplessRedisBenchmark class >> save1KUsersOn: aStream [
 	self save: 1000 usersOn: aStream
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save1KUsersOn: aMaplessRepository printingOn: aStream [
+MaplessRedisBenchmark class >> save1KUsersOn: aMaplessRepository printingOn: aStream [
 	self save: 1000 usersOn: aMaplessRepository printingOn: aStream
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save: aQuantity peopleOn: aMaplessRepository printingOn: aStream [
-	| firstNames lastNames delay savesPerSecond guysIds readsPerSecond totalDelay guy |
+MaplessRedisBenchmark class >> save: aQuantity peopleOn: aMaplessRepository printingOn: aStream [
+	| firstNames lastNames delay savesPerSecond guysIds readsPerSecond guy totalDelay |
 	firstNames := OrderedCollection new.
 	lastNames := OrderedCollection new.
 	guysIds := OrderedCollection new.
 	totalDelay := 0.
-	aMaplessRepository
-		readWriteDo: [ 1 to: aQuantity do: [ :i | 
-				guy := DummyPerson new
-					firstName: Character alphabet shuffled anyOne asString;
-					lastName: Character alphabet shuffled anyOne asString;
-					yourself.
-				delay := Time microsecondsToRun: [ guy save ].
-				totalDelay := totalDelay + delay.
-				guysIds add: guy id ] ].
-	savesPerSecond := (1000000 * aQuantity / totalDelay asFloat) rounded.
+	1 to: aQuantity do: [ :i | 
+		guy := DummyPerson new
+			firstName: Character alphabet shuffled anyOne asString;
+			lastName: Character alphabet shuffled anyOne asString;
+			yourself.
+		delay := Time
+			microsecondsToRun: [ aMaplessRepository save: guy.
+				guysIds add: guy id ].
+		totalDelay := totalDelay + delay ].
+	savesPerSecond := (1000000 * aQuantity / totalDelay asFloat)
+		truncated.
 	aStream
 		lf;
 		cr;
@@ -108,12 +91,13 @@ MaplessMongoBenchmark class >> save: aQuantity peopleOn: aMaplessRepository prin
 		nextPutAll: '(~' , savesPerSecond asString , ' saves per second)';
 		flush.
 	totalDelay := 0.
-	aMaplessRepository
-		readOnlyDo: [ guysIds
-				do: [ :guyId | 
-					delay := Time microsecondsToRun: [ guy := DummyPerson findId: guyId ].
-					totalDelay := totalDelay + delay ] ].
-	readsPerSecond := (1000000 * aQuantity / totalDelay asFloat) truncated.
+	guysIds
+		do: [ :guyId | 
+			delay := Time
+				microsecondsToRun: [ guy := aMaplessRepository findOne: DummyPerson atId: guyId ].
+			totalDelay := totalDelay + delay ].
+	readsPerSecond := (1000000 * aQuantity / totalDelay asFloat)
+		truncated.
 	aStream
 		lf;
 		cr;
@@ -127,27 +111,25 @@ MaplessMongoBenchmark class >> save: aQuantity peopleOn: aMaplessRepository prin
 ]
 
 { #category : #actions }
-MaplessMongoBenchmark class >> save: aQuantity usersOn: aMaplessRepository printingOn: aStream [
+MaplessRedisBenchmark class >> save: aQuantity usersOn: aMaplessRepository printingOn: aStream [
 	| guy user userIds delay savesPerSecond readsPerSecond totalDelay |
 	userIds := OrderedCollection new.
 	totalDelay := 0.
-	aMaplessRepository
-		readWriteDo: [ 1 to: aQuantity do: [ :i | 
-				guy := DummyPerson new
-					firstName: Character alphabet shuffled anyOne asString;
-					lastName: Character alphabet shuffled anyOne asString;
-					yourself.
-				user := DummyUser new
-					username: guy firstName;
-					person: guy;
-					yourself.
-				delay := Time
-					microsecondsToRun: [ user person save.
-						user save ].
-				totalDelay := totalDelay + delay.
-				userIds add: user id ] ].
-	savesPerSecond := (1000000 * aQuantity / totalDelay asFloat)
-		truncated.
+	1 to: aQuantity do: [ :i | 
+		guy := DummyPerson new
+			firstName: Character alphabet shuffled anyOne asString;
+			lastName: Character alphabet shuffled anyOne asString;
+			yourself.
+		user := DummyUser new
+			username: guy firstName;
+			person: guy;
+			yourself.
+		delay := Time
+			microsecondsToRun: [ aMaplessRepository save: user person.
+				aMaplessRepository save: user ].
+		totalDelay := totalDelay + delay.
+		userIds add: user id ].
+	savesPerSecond := (1000000 * aQuantity / totalDelay asFloat) truncated.
 	aStream
 		lf;
 		cr;
@@ -159,12 +141,12 @@ MaplessMongoBenchmark class >> save: aQuantity usersOn: aMaplessRepository print
 		nextPutAll: '(~' , savesPerSecond asString , ' saves per second)';
 		flush.
 	totalDelay := 0.
-	aMaplessRepository
-		readOnlyDo: [ userIds
-				do: [ :userId | 
-					delay := Time microsecondsToRun: [ user := DummyUser findId: userId ].
-					totalDelay := totalDelay + delay ] ].
-	readsPerSecond := (1000000 * aQuantity / delay asFloat) truncated.
+	userIds
+		do: [ :userId | 
+			delay := Time
+				microsecondsToRun: [ user := aMaplessRepository findOne: DummyUser atId: userId ].
+			totalDelay := totalDelay + delay ].
+	readsPerSecond := (1000000 * aQuantity / totalDelay asFloat) truncated.
 	aStream
 		lf;
 		cr;

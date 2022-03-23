@@ -9,30 +9,27 @@ BaselineOfMapless >> baseline: spec [
 	<baseline>
 	spec
 		for: #common
-		do: [ self setUpDependencies: spec.
+		do: [ self setUpBaseDependencies: spec.
 			self setUpPackages: spec.
 			spec
 				group: 'Core' with: #('Mapless-Base-Core');
 				group: 'Memory' with: #('Mapless-Memory-Tests');
 				group: 'Mongo' with: #('Mapless-Mongo-Tests');
+				group: 'Redis' with: #('Mapless-Redis-Tests');
 				group: 'Postgres' with: #('Mapless-Postgres-Tests');
 				group: 'Benchmark' with: #('Mapless-Benchmark-Core');
-				group: 'default' with: #('Mongo') ]
+				group: 'default' with: #('Memory' 'Mongo' 'Redis') ]
 ]
 
 { #category : #baseline }
-BaselineOfMapless >> setUpDependencies: spec [
+BaselineOfMapless >> setUpBaseDependencies: spec [
 	spec
 		baseline: 'JSONExtensions'
-		with: [ spec repository: 'github://sebastianconcept/JSONExtensions/src' ].
-	spec
-		baseline: 'MongoTalk'
-		with: [ spec repository: 'github://pharo-nosql/mongotalk:1.25/mc' ].
-	spec baseline: 'P3' with: [ spec repository: 'github://svenvc/P3' ]
+		with: [ spec repository: 'github://sebastianconcept/JSONExtensions/src' ]
 ]
 
 { #category : #baseline }
-BaselineOfMapless >> setUpPackages: spec [
+BaselineOfMapless >> setUpBasePackages: spec [
 	spec
 		package: 'Mapless-Base-Core'
 		with: [ spec requires: 'JSONExtensions' ].
@@ -45,6 +42,18 @@ BaselineOfMapless >> setUpPackages: spec [
 	spec
 		package: 'Mapless-Memory-Tests'
 		with: [ spec requires: #('Mapless-Memory-Core') ].
+
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpMongoDependencies: spec [
+	spec
+		baseline: 'MongoTalk'
+		with: [ spec repository: 'github://pharo-nosql/mongotalk:1.25/mc' ]
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpMongoPackages: spec [
 	spec
 		package: 'Mapless-Mongo-Core'
 		with: [ spec requires: #('Mapless-Base-Core' 'MongoTalk') ].
@@ -53,11 +62,54 @@ BaselineOfMapless >> setUpPackages: spec [
 		with: [ spec requires: #('Mapless-Mongo-Core' 'Mapless-Tests-Base') ].
 	spec
 		package: 'Mapless-Benchmark-Core'
-		with: [ spec requires: 'Mapless-Mongo-Tests' ].
+		with: [ spec requires: 'Mapless-Mongo-Tests' ]
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpPackages: spec [
+	self setUpBaseDependencies: spec.
+	self setUpBasePackages: spec.
+	
+	self setUpMongoDependencies: spec.
+	self setUpMongoPackages: spec.
+	
+	self setUpRedisDependencies: spec.
+	self setUpRedisPackages: spec.
+	
+	self setUpPostgresDependencies: spec.
+	self setUpPostgresPackages: spec
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpPostgresDependencies: spec [
+	spec baseline: 'P3' with: [ spec repository: 'github://svenvc/P3' ]
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpPostgresPackages: spec [
 	spec
 		package: 'Mapless-Postgres-Core'
 		with: [ spec requires: #('Mapless-Base-Core' 'P3') ].
 	spec
 		package: 'Mapless-Postgres-Tests'
 		with: [ spec requires: #('Mapless-Postgres-Core' 'Mapless-Tests-Base') ]
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpRedisDependencies: spec [
+	spec
+		baseline: 'RediStick'
+		with: [ spec
+				repository: 'github://mumez/RediStick/repository';
+				loads: #('Core' 'ConnectionPool') ]
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpRedisPackages: spec [
+	spec
+		package: 'Mapless-Redis-Core'
+		with: [ spec requires: #('Mapless-Base-Core' 'RediStick') ].
+	spec
+		package: 'Mapless-Redis-Tests'
+		with: [ spec requires: #('Mapless-Redis-Core' 'Mapless-Tests-Base') ]
 ]
