@@ -225,27 +225,32 @@ MaplessMongoRepository >> existsId: anId of: aMaplessClass [
 
 { #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass [
-	^ self findAll: aMaplessClass where: nil
+	^ self
+		findAll: aMaplessClass
+		where: (resolver conditionForClass: aMaplessClass)
 ]
 
 { #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass readConcern: aMongoReadConcernOrNil [
 	^ self
 		findAll: aMaplessClass
-		where: nil
+		where: (resolver conditionForClass: aMaplessClass)
 		readConcern: aMongoReadConcernOrNil
 ]
 
 { #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions [
-	^ self findAll: aMaplessClass where: nil sort: sortConditions
+	^ self
+		findAll: aMaplessClass
+		where: (resolver conditionForClass: aMaplessClass)
+		sort: sortConditions
 ]
 
 { #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions readConcern: aMongoReadConcernOrNil [
 	^ self
 		findAll: aMaplessClass
-		where: nil
+		where: (resolver conditionForClass: aMaplessClass)
 		sort: sortConditions
 		readConcern: aMongoReadConcernOrNil
 ]

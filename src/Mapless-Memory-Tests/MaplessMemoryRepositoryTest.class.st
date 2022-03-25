@@ -44,6 +44,7 @@ MaplessMemoryRepositoryTest >> setUp [
 	repository := MaplessMemoryRepository
 		for: 'Mapless-Test'
 		with: MaplessMemoryAccessor new
+		using: MaplessMemoryCollectionToClassNameResolver new
 ]
 
 { #category : #tests }
@@ -58,6 +59,7 @@ MaplessMemoryRepositoryTest >> testAccessorCreation [
 	repo := MaplessMongoRepository
 		for: 'Mapless-Test'
 		with: MaplessMemoryAccessor new
+		using: MaplessMemoryCollectionToClassNameResolver new
 ]
 
 { #category : #tests }

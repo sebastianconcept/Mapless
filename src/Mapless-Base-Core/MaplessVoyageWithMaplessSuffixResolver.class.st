@@ -19,6 +19,12 @@ MaplessVoyageWithMaplessSuffixResolver >> canRepresentSubMapless: anObject in: a
 		or: [ self isVoyageReference: anObject in: aMaplessRepository ]
 ]
 
+{ #category : #accessing }
+MaplessVoyageWithMaplessSuffixResolver >> conditionForClass: aMaplessClass [
+	^ {('#instanceOf' -> (self voyageClassNameFrom: aMaplessClass))}
+		asDictionary
+]
+
 { #category : #converting }
 MaplessVoyageWithMaplessSuffixResolver >> ensureVoyageMetadataIn: storableDocument for: aMapless in: aMaplessRepository [
 	"Makes sure aMapless has the metadata that would be expected by Voyage."

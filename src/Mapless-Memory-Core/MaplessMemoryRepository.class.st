@@ -84,14 +84,16 @@ MaplessMemoryRepository >> existsId: anId of: aMaplessClass [
 
 { #category : #accessing }
 MaplessMemoryRepository >> findAll: aMaplessClass [
-	^ self findAll: aMaplessClass where: [ :each | true ]
+	^ self
+		findAll: aMaplessClass
+		where: (resolver conditionForClass: aMaplessClass)
 ]
 
 { #category : #accessing }
 MaplessMemoryRepository >> findAll: aMaplessClass sort: sortConditions [
 	^ self
 		findAll: aMaplessClass
-		where: [ :each | true ]
+		where: (resolver conditionForClass: aMaplessClass)
 		sort: sortConditions
 ]
 
