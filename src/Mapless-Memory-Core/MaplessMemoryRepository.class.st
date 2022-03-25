@@ -93,7 +93,7 @@ MaplessMemoryRepository >> findAll: aMaplessClass [
 MaplessMemoryRepository >> findAll: aMaplessClass sort: sortConditions [
 	^ self
 		findAll: aMaplessClass
-		where: [ :each | true ]
+		where: (resolver conditionForClass: aMaplessClass)
 		sort: sortConditions
 ]
 
