@@ -32,6 +32,11 @@ MaplessResolver >> canRepresentSubMapless: anObject in: aMaplessRepository [
 				and: [ (anObject includesKey: aMaplessRepository idPropertyName ) and: [ anObject includesKey: '_c' ] ] ]
 ]
 
+{ #category : #accessing }
+MaplessResolver >> conditionForClass: aMaplessClass [
+	^ {('_c' -> aMaplessClass name)} asDictionary
+]
+
 { #category : #converting }
 MaplessResolver >> maplessAsStorable: aMapless in: aMaplessRepository [
 	^ aMaplessRepository asStorable: aMapless
