@@ -5,6 +5,8 @@ Mapless
 
 Currently supported backends are `MongoDB` and `Redis`.
 
+**Current best version tagged as:** v0.5.1-alpha
+
 ## Loading
 
 By default `Mapless` will load `Memory`, `Mongo` and `Redis` backends:

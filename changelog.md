@@ -1,3 +1,9 @@
+March 25, 2022 
+===================================
+* Using `(resolver conditionForClass: aMaplessClass)`  in all class based `MongoDB` queries, so the query doesn't bring any document in that collection that isn't strictly that `Mapless` class.
+* Fixed `MaplessMemoryRepository` to return its own general condition to query all mapless of a given class using its new `MaplessMemoryCollectionToClassNameResolver` in `resolver conditionForClass: aMaplessClass` expressions.
+* Adapted and fixed tests.
+
 March 23, 2022 | v0.5.0-alpha | Double Citadel
 ===================================
 * Introduces `MaplessRedisRepository` via dependency on [RediStick](https://github.com/mumez/RediStick).
