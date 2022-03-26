@@ -18,7 +18,7 @@ BaselineOfMapless >> baseline: spec [
 				group: 'Redis' with: #('Mapless-Redis-Tests');
 				group: 'Postgres' with: #('Mapless-Postgres-Tests');
 				group: 'Benchmark' with: #('Mapless-Benchmark-Core');
-				group: 'default' with: #('Memory' 'Mongo' 'Redis') ]
+				group: 'default' with: #('Memory' 'Mongo' 'Redis' 'Postgres') ]
 ]
 
 { #category : #baseline }
