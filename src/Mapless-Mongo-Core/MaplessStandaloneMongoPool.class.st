@@ -20,7 +20,7 @@ Class {
 MaplessStandaloneMongoPool class >> defaultMaxClients [
 	"Default maximum quantity of clients for the connection pool used in case no max was specified"
 
-	^ 50
+	^ 500
 ]
 
 { #category : #accessing }

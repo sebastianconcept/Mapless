@@ -217,3 +217,10 @@ MaplessPostgresRepository >> update: aMapless [
 	self basicUpdate: (self storableFor: aMapless data).
 	self onAfterUpdate: aMapless
 ]
+
+{ #category : #actions }
+MaplessPostgresRepository >> withClientDo: aBlock [
+	"Performs aBlock and providing access to the postgres client as aBlock argument."
+
+	^ accessor withClientDo: aBlock
+]
