@@ -29,8 +29,8 @@ MaplessStandaloneMongoPool >> allClients [
 ]
 
 { #category : #actions }
-MaplessStandaloneMongoPool >> authenticate: mongoClient [
-	^ mongoClient
+MaplessStandaloneMongoPool >> authenticate: aMongoClient [
+	^ aMongoClient
 		authenticateUsername: self username
 		password: self password
 		database: self authenticationDatabaseName
@@ -152,15 +152,15 @@ MaplessStandaloneMongoPool >> initializeMaxClients [
 MaplessStandaloneMongoPool >> makeClient [
 	"Returns a new client so it can be (re)used in the pool"
 
-	| newClient isAuthenticated |
-	newClient := (MongoAPI host: hostname port: port asInteger)
+	| newMongoClient isAuthenticated |
+	newMongoClient := (MongoAPI host: hostname port: port asInteger)
 		open;
 		yourself.
 	self isUsingAuth
-		ifTrue: [ isAuthenticated := self authenticate: newClient.
+		ifTrue: [ isAuthenticated := self authenticate: newMongoClient.
 			isAuthenticated
 				ifFalse: [ ^ self error: 'Authentication failed' ] ].
-	^ newClient
+	^ newMongoClient
 ]
 
 { #category : #accessing }
@@ -174,8 +174,8 @@ MaplessStandaloneMongoPool >> maxClients: anInteger [
 ]
 
 { #category : #reactions }
-MaplessStandaloneMongoPool >> onLogout: aMongo [
-	self remove: aMongo
+MaplessStandaloneMongoPool >> onLogout: aMongoClient [
+	self remove: aMongoClient
 ]
 
 { #category : #actions }
@@ -211,9 +211,9 @@ MaplessStandaloneMongoPool >> readWriteDo: aBlock [
 ]
 
 { #category : #actions }
-MaplessStandaloneMongoPool >> remove: aClient [
-	self idleClients remove: aClient ifAbsent: [ nil ].
-	self busyClients remove: aClient ifAbsent: [ nil ]
+MaplessStandaloneMongoPool >> remove: aMongoClient [
+	self idleClients remove: aMongoClient ifAbsent: [ nil ].
+	self busyClients remove: aMongoClient ifAbsent: [ nil ]
 ]
 
 { #category : #actions }
@@ -223,18 +223,18 @@ MaplessStandaloneMongoPool >> requestClient [
 	It's a thread safe operation."
 
 	^ self clientsMonitor
-		critical: [ | client |
-			client := self hasIdleClients
+		critical: [ | mongoClient |
+			mongoClient := self hasIdleClients
 				ifTrue: [ self idleClients anyOne ]
 				ifFalse: [ self hasMaxClients
 						ifTrue: [ ^ MaplessMaximumPoolClientsReached signal ].
 					self makeClient ].
-			(client notNil and: [ client isValid not ])
-				ifTrue: [ self remove: client.
-					client := self makeClient ].
-			self idleClients remove: client ifAbsent: [ nil ].
-			client ifNotNil: [ self busyClients add: client ].
-			client ]
+			(mongoClient notNil and: [ mongoClient isValid not ])
+				ifTrue: [ self remove: mongoClient.
+					mongoClient := self makeClient ].
+			self idleClients remove: mongoClient ifAbsent: [ nil ].
+			mongoClient ifNotNil: [ self busyClients add: mongoClient ].
+			mongoClient ]
 ]
 
 { #category : #actions }
@@ -250,16 +250,16 @@ MaplessStandaloneMongoPool >> reset [
 ]
 
 { #category : #actions }
-MaplessStandaloneMongoPool >> returnClient: aClient [
+MaplessStandaloneMongoPool >> returnClient: aMongoClient [
 	"Sends aClient to go from the busy ones to the idle ones
 	but only if it's still valid"
 
 	self clientsMonitor
 		critical: [ self busyClients
-				remove: aClient
+				remove: aMongoClient
 				ifAbsent: [ self returningUnusedClient ].
-			aClient isValid
-				ifTrue: [ self idleClients add: aClient ] ]
+			aMongoClient isValid
+				ifTrue: [ self idleClients add: aMongoClient ] ]
 ]
 
 { #category : #actions }
@@ -287,14 +287,14 @@ MaplessStandaloneMongoPool >> withClientDo: aBlock [
 	Other code could reach the client in use by accessing
 	the XXCurrentClient dynamic variable's value."
 
-	| client |
-	client := self requestClient.
+	| mongoClient |
+	mongoClient := self requestClient.
 	^ self currentClientDynamicVariable
-		value: client
-		during: [ [ [ aBlock value: client ]
+		value: mongoClient
+		during: [ [ [ aBlock value: mongoClient ]
 				on: Error
 				do: [ :x | 
-					client reset.
+					mongoClient reset.
 					x pass ] ]
-				ensure: [ self returnClient: client ] ]
+				ensure: [ self returnClient: mongoClient ] ]
 ]
