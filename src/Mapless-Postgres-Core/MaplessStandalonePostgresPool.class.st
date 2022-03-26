@@ -1,11 +1,23 @@
 Class {
-	#name : #MaplessPostgresPool,
+	#name : #MaplessStandalonePostgresPool,
 	#superclass : #MaplessAbstractPool,
+	#instVars : [
+		'databaseName'
+	],
 	#category : #'Mapless-Postgres-Core-Connections'
 }
 
+{ #category : #'instance creation' }
+MaplessStandalonePostgresPool class >> local [
+	^ self
+		hostname: 'localhost'
+		port: 5432
+		username: 'username'
+		password: 'password'
+]
+
 { #category : #actions }
-MaplessPostgresPool >> close: aPostgressConnection [
+MaplessStandalonePostgresPool >> close: aPostgressConnection [
 	aPostgressConnection isConnected
 		ifTrue: [ aPostgressConnection
 				flushAll;
@@ -13,15 +25,36 @@ MaplessPostgresPool >> close: aPostgressConnection [
 ]
 
 { #category : #accessing }
-MaplessPostgresPool >> currentClientDynamicVariable [
+MaplessStandalonePostgresPool >> currentClientDynamicVariable [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
 
 	^ PostgresCurrentClient
 ]
 
+{ #category : #accessing }
+MaplessStandalonePostgresPool >> databaseName [
+	^ databaseName
+]
+
+{ #category : #accessing }
+MaplessStandalonePostgresPool >> databaseName: anObject [
+	databaseName := anObject
+]
+
+{ #category : #accessing }
+MaplessStandalonePostgresPool >> getConnectionUrl [
+	^ ZnUrl new
+		scheme: 'psql';
+		host: hostname;
+		port: port;
+		username: username;
+		password: password;
+		/ databaseName
+]
+
 { #category : #actions }
-MaplessPostgresPool >> ifUnavailablePurge: aPostgressConnection [
+MaplessStandalonePostgresPool >> ifUnavailablePurge: aPostgressConnection [
 	"Tests aPostgressConnection and remove it from this pool if invalid."
 
 	aPostgressConnection isConnected
@@ -29,13 +62,12 @@ MaplessPostgresPool >> ifUnavailablePurge: aPostgressConnection [
 ]
 
 { #category : #actions }
-MaplessPostgresPool >> makeClient [
+MaplessStandalonePostgresPool >> makeClient [
 	"Returns a new client so it can be (re)used in the pool"
 
-	| connection |
-	self flag: #reimplementWithNewerClient.
-	"connection := PGConnection new."
-	self flag: #implementWithoutDependencyOnConfigurationFiles.
+	| postgresClient |
+self halt.
+	postgresClient := P3Client url: self getConnectionUrl.
 	"	connection
 		connectionArgs:
 			(PGConnectionArgs
@@ -45,16 +77,15 @@ MaplessPostgresPool >> makeClient [
 				userName: (ConfigurationFiles at: #Postgres at: #username)
 				password: (ConfigurationFiles at: #Postgres at: #password));
 		startup."
-	^ connection
 ]
 
 { #category : #reactions }
-MaplessPostgresPool >> onLogout: aRedisClient [
+MaplessStandalonePostgresPool >> onLogout: aRedisClient [
 	self remove: aRedisClient
 ]
 
 { #category : #actions }
-MaplessPostgresPool >> purgeUnavailable [
+MaplessStandalonePostgresPool >> purgeUnavailable [
 	"Removes any client that might be expired or unreacheable."
 
 	self busyClients copy do: [ :e | self ifUnavailablePurge: e ].
@@ -62,7 +93,7 @@ MaplessPostgresPool >> purgeUnavailable [
 ]
 
 { #category : #actions }
-MaplessPostgresPool >> remove: aRedisClient [
+MaplessStandalonePostgresPool >> remove: aRedisClient [
 	self close: aRedisClient.
 	super remove: aRedisClient
 ]

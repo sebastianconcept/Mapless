@@ -35,11 +35,7 @@ MaplessAbstractPool class >> hostname: aString port: anInteger username: anUsern
 
 { #category : #'instance creation' }
 MaplessAbstractPool class >> local [
-	^ self
-		hostname: 'localhost'
-		port: 27017
-		username: nil
-		password: nil
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }

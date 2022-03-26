@@ -5,13 +5,8 @@ Class {
 }
 
 { #category : #actions }
-MaplessPostgresRepository class >> databaseNamed: aDatabaseName [
-	"Returns the database found at aDatabaseName"
-
-	"Currently we are using Postgres in single database mode.
-	Which database is going to use is controlled by the Postgres configuration file."
-
-	^ MaplessPostgresPool instance
+MaplessPostgresRepository class >> getNewId [
+	^ OID nextOID
 ]
 
 { #category : #actions }
@@ -175,14 +170,25 @@ MaplessPostgresRepository >> idPropertyName [
 	^ 'key'
 ]
 
+{ #category : #initialization }
+MaplessPostgresRepository >> initializeOn: aDatabaseName with: aDatabaseAccessor using: aMaplessResolver [
+	super
+		initializeOn: aDatabaseName
+		with: aDatabaseAccessor
+		using: aMaplessResolver.
+	aDatabaseAccessor databaseName: aDatabaseName
+]
+
 { #category : #actions }
 MaplessPostgresRepository >> insert: aMapless [
 	| bsonFriendly |
 	self onBeforeInsert: aMapless.
-	[ bsonFriendly := self storableFor: aMapless data ]
-		ifCurtailed: [ aMapless data removeKey: self idPropertyName ifAbsent: [ nil ] ].
-	self ensureCollectionNamed: aMapless class name asString.
+	bsonFriendly := resolver storableFor: aMapless in: self.
+	bsonFriendly
+		at: self idPropertyName
+		ifAbsent: [ bsonFriendly at: self idPropertyName put: self class getNewId ].	
 	self basicInsert: bsonFriendly.
+	self ensureId: (bsonFriendly at: self idPropertyName) for: aMapless.
 	self onAfterInsert: aMapless
 ]
 
@@ -195,10 +201,13 @@ MaplessPostgresRepository >> onBeforeInsert: aMapless [
 
 { #category : #actions }
 MaplessPostgresRepository >> save: aMapless [
-	"Storage this instance into the persistent collection"
-	self flag: #review. "use some sort of upsert?"
+	"Storage this instance into the persistent collection.
+	It will insert or update accordingly."
+
 	self onBeforeSave: aMapless.
-	self upsert: aMapless.
+	(self isUnsaved: aMapless)
+		ifTrue: [ self insert: aMapless ]
+		ifFalse: [ self update: aMapless ].
 	self onAfterSave: aMapless
 ]
 

@@ -7,6 +7,15 @@ Class {
 	#category : #'Mapless-Mongo-Core-Connections'
 }
 
+{ #category : #'instance creation' }
+MaplessAbstracMongoPool class >> local [
+	^ self
+		hostname: 'localhost'
+		port: 27017
+		username: nil
+		password: nil
+]
+
 { #category : #accessing }
 MaplessAbstracMongoPool >> authenticationDatabaseName [
 	^ authenticationDatabaseName
