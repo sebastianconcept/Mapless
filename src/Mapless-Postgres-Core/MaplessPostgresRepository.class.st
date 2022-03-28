@@ -1,3 +1,6 @@
+"
+I prodvide mapless repository access using a PostgreSQL backend.
+"
 Class {
 	#name : #MaplessPostgresRepository,
 	#superclass : #MaplessRepository,
@@ -6,7 +9,7 @@ Class {
 
 { #category : #actions }
 MaplessPostgresRepository class >> getNewId [
-	^ OID nextOID
+	^ UUID new
 ]
 
 { #category : #actions }
@@ -36,19 +39,9 @@ MaplessPostgresRepository >> basicDestroy: aBSONFriendlyObject [
 ]
 
 { #category : #actions }
-MaplessPostgresRepository >> basicInsert: aBSONFriendlyObject [
-	^ database
-		do: [ :pg | 
-			| result |
-			result := pg
-				execute:
-					'INSERT INTO "' , aBSONFriendlyObject modelClass
-						,
-							'" VALUES (
-			''' , aBSONFriendlyObject key
-						,
-							''',
-			''' , aBSONFriendlyObject asJSONString , ''');' ]
+MaplessPostgresRepository >> basicInsert: aBSONFriendlyObject as: aMaplessClass [
+	self
+		withClientDo: [ :client | client insert: aBSONFriendlyObject as: aMaplessClass ]
 ]
 
 { #category : #actions }
@@ -68,6 +61,12 @@ MaplessPostgresRepository >> basicUpdate: aBSONFriendlyObject [
 ]
 
 { #category : #actions }
+MaplessPostgresRepository >> createDatabase [
+	self
+		withClientDo: [ :client | client createDatabaseNamed: databaseName ]
+]
+
+{ #category : #actions }
 MaplessPostgresRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
@@ -77,8 +76,43 @@ MaplessPostgresRepository >> destroy: aMapless [
 ]
 
 { #category : #actions }
+MaplessPostgresRepository >> destroyAll: aMaplessClass [
+	self withClientDo: [ :client | client truncate: aMaplessClass ]
+]
+
+{ #category : #actions }
+MaplessPostgresRepository >> destroyAll: aMaplessClass where: condition [
+	self
+		withClientDo: [ :client | client destroyAll: aMaplessClass where: condition ]
+]
+
+{ #category : #actions }
+MaplessPostgresRepository >> dropDatabase [
+	self
+		withClientDo: [ :client | client dropDatabaseNamed: databaseName ]
+]
+
+{ #category : #actions }
 MaplessPostgresRepository >> ensureCollection [
 	self shouldBeImplemented
+]
+
+{ #category : #actions }
+MaplessPostgresRepository >> ensureDatabase [
+	(MaplessPostgresRepository
+		for: 'postgres'
+		with: MaplessStandalonePostgresPool local)
+		withClientDo: [ :client | 
+			(client hasDatabaseNamed: databaseName)
+				ifFalse: [ client createDatabaseNamed: databaseName ] ]
+]
+
+{ #category : #actions }
+MaplessPostgresRepository >> ensureTableFor: aMaplessClass [
+	self
+		withClientDo: [ :client |
+			(client hasTableFor: aMaplessClass)
+				ifFalse: [ client createTableFor: aMaplessClass ] ]
 ]
 
 { #category : #testing }
@@ -147,27 +181,21 @@ MaplessPostgresRepository >> findOne: aMaplessClass where: someConditions [
 ]
 
 { #category : #testing }
-MaplessPostgresRepository >> hasCollectionNamed: aCollectionName [
-	"Answers true if a table named aCollectionName exists in the postgres database.
-	False otherwise."
+MaplessPostgresRepository >> hasDatabase [
+	"Answers true if the database was already created."
 
-	^ database
-		do: [ :pg | 
-			| result |
-			result := pg
-				execute:
-					'SELECT EXISTS (
-			SELECT * FROM pg_tables WHERE
-	tablename = ''' , aCollectionName , ''');'.
-			result rows notEmpty and: [ result rows first data first ] ]
+	^ self
+		withClientDo: [ :client | client hasDatabaseNamed: databaseName ]
+]
+
+{ #category : #testing }
+MaplessPostgresRepository >> hasTableFor: aMaplessClass [
+	^ self withClientDo: [ :client | client hasTableFor: aMaplessClass ]
 ]
 
 { #category : #accessing }
 MaplessPostgresRepository >> idPropertyName [
-	"Answers'key' because we're using Postgres here 
-	and that's what we want Postgres to use as id."
-
-	^ 'key'
+	^ MaplessPostgresClient idPropertyName
 ]
 
 { #category : #initialization }
@@ -181,15 +209,29 @@ MaplessPostgresRepository >> initializeOn: aDatabaseName with: aDatabaseAccessor
 
 { #category : #actions }
 MaplessPostgresRepository >> insert: aMapless [
-	| bsonFriendly |
+	| maplessData storable |
 	self onBeforeInsert: aMapless.
-	bsonFriendly := resolver storableFor: aMapless in: self.
-	bsonFriendly
+	maplessData := resolver storableFor: aMapless in: self.
+	storable := Dictionary new.
+	maplessData
 		at: self idPropertyName
-		ifAbsent: [ bsonFriendly at: self idPropertyName put: self class getNewId ].	
-	self basicInsert: bsonFriendly.
-	self ensureId: (bsonFriendly at: self idPropertyName) for: aMapless.
+		ifAbsent: [ storable
+				at: self idPropertyName
+				put: self class getNewId ].
+	maplessData
+		removeKey: self idPropertyName
+		ifAbsent: [  ].
+	storable
+		at: self maplessDataPropertyName
+		put: maplessData.
+	self basicInsert: storable as: aMapless class.
+	self ensureId: (storable at: self idPropertyName) for: aMapless.
 	self onAfterInsert: aMapless
+]
+
+{ #category : #accessing }
+MaplessPostgresRepository >> maplessDataPropertyName [
+	^ MaplessPostgresClient maplessDataPropertyName
 ]
 
 { #category : #reactions }

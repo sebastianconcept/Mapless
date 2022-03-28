@@ -2,7 +2,6 @@ Class {
 	#name : #MaplessPostgresTest,
 	#superclass : #MaplessTestCase,
 	#instVars : [
-		'pool',
 		'repository'
 	],
 	#category : #'Mapless-Postgres-Tests-Tests'
@@ -29,9 +28,22 @@ MaplessPostgresTest class >> lastStoredRun [
 		yourself
 ]
 
+{ #category : #history }
+MaplessPostgresTest class >> maplessClasses [
+	^ {DummyPerson.
+	DummyUser.
+	DummyTag}
+]
+
 { #category : #actions }
-MaplessPostgresTest >> do: aBlock [
-	^ repository do: aBlock
+MaplessPostgresTest >> resetDatabase [
+	"Remove all objects so the database is clean for any test to be run."
+
+	self class maplessClasses
+		do: [ :each | 
+			(repository hasTableFor: each)
+				ifTrue: [ repository destroyAll: each ]
+				ifFalse: [ repository ensureTableFor: each ] ]
 ]
 
 { #category : #'setUp-tearDown' }
@@ -39,14 +51,15 @@ MaplessPostgresTest >> setUp [
 	super setUp.
 	repository := MaplessPostgresRepository
 		for: 'Mapless-Tests'
-		with: MaplessStandalonePostgresPool new
+		with: MaplessStandalonePostgresPool local.
+	repository ensureDatabase.
+	self resetDatabase
 ]
 
 { #category : #'setUp-tearDown' }
 MaplessPostgresTest >> tearDown [
 	super tearDown.
-	pool reset.
-	pool := nil.
+	repository ifNotNil: [ repository shutDown ].
 	repository := nil
 ]
 
@@ -504,7 +517,7 @@ MaplessPostgresTest >> testSimpleSave [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self do: [ guy save ]
+	self shouldnt: [ repository save: guy ] raise: Error
 ]
 
 { #category : #tests }

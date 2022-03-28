@@ -42,14 +42,6 @@ MaplessStandalonePostgresPool >> clientsMonitor [
 	^ clientsMonitor ifNil: [ self initializeClientsMonitor ]
 ]
 
-{ #category : #actions }
-MaplessStandalonePostgresPool >> close: aPostgressConnection [
-	aPostgressConnection isConnected
-		ifTrue: [ aPostgressConnection
-				flushAll;
-				quit ]
-]
-
 { #category : #accessing }
 MaplessStandalonePostgresPool >> currentClientDynamicVariable [
 	"Answers the class of the dynamic variable that will
@@ -80,6 +72,13 @@ MaplessStandalonePostgresPool >> getConnectionUrl [
 ]
 
 { #category : #testing }
+MaplessStandalonePostgresPool >> hasBusyClients [
+	"Answers true if this pool has, at least one, busy client"
+
+	^ self busyClients notEmpty
+]
+
+{ #category : #testing }
 MaplessStandalonePostgresPool >> hasIdleClients [
 	"Answers true if this pool has, at least one, idle client"
 
@@ -99,11 +98,11 @@ MaplessStandalonePostgresPool >> idleClients [
 ]
 
 { #category : #actions }
-MaplessStandalonePostgresPool >> ifUnavailablePurge: aP3Client [
-	"Tests aP3Client and remove it from this pool if invalid."
+MaplessStandalonePostgresPool >> ifUnavailablePurge: aMaplessPostgresClient [
+	"Tests aMaplessPostgresClient and remove it from this pool if invalid."
 
-	aP3Client isConnected
-		ifFalse: [ self remove: aP3Client ]
+	aMaplessPostgresClient isValid
+		ifFalse: [ self remove: aMaplessPostgresClient ]
 ]
 
 { #category : #initialization }
@@ -130,7 +129,7 @@ MaplessStandalonePostgresPool >> initializeMaxClients [
 MaplessStandalonePostgresPool >> makeClient [
 	"Returns a new client so it can be (re)used in the pool"
 
-	^ (P3Client url: self getConnectionUrl) connect
+	^ (MaplessPostgresClient url: self getConnectionUrl) connect
 ]
 
 { #category : #accessing }
@@ -139,8 +138,8 @@ MaplessStandalonePostgresPool >> maxClients [
 ]
 
 { #category : #reactions }
-MaplessStandalonePostgresPool >> onLogout: aP3Client [
-	self remove: aP3Client
+MaplessStandalonePostgresPool >> onLogout: aMaplessPostgresClient [
+	self remove: aMaplessPostgresClient
 ]
 
 { #category : #actions }
@@ -149,7 +148,7 @@ MaplessStandalonePostgresPool >> printOn: aStream [
 	aStream
 		nextPutAll:
 			'(' , self busyClients size asString , ' busy, '
-				, self idleClients size asString , ' idle)'
+				, self idleClients size asString , ' idle @' , databaseName , ')'
 ]
 
 { #category : #actions }
@@ -166,14 +165,15 @@ MaplessStandalonePostgresPool >> quantityOfClients [
 ]
 
 { #category : #actions }
-MaplessStandalonePostgresPool >> remove: aP3Client [
-	self close: aP3Client.
-	super remove: aP3Client
+MaplessStandalonePostgresPool >> remove: aMaplessPostgresClient [
+	aMaplessPostgresClient disconnect.
+	self idleClients remove: aMaplessPostgresClient ifAbsent: [ nil ].
+	self busyClients remove: aMaplessPostgresClient ifAbsent: [ nil ]
 ]
 
 { #category : #actions }
 MaplessStandalonePostgresPool >> requestClient [
-	"Answers a aClient instance taken from the idle clients.
+	"Answers a postgresClient instance taken from the idle clients.
 	It'll create a new one if needed.
 	It's a thread safe operation."
 
@@ -184,7 +184,7 @@ MaplessStandalonePostgresPool >> requestClient [
 				ifFalse: [ self hasMaxClients
 						ifTrue: [ ^ MaplessMaximumPoolClientsReached signal ].
 					self makeClient ].
-			(postgresClient notNil and: [ postgresClient isConnected not ])
+			(postgresClient notNil and: [ postgresClient isValid not ])
 				ifTrue: [ self remove: postgresClient.
 					postgresClient := self makeClient ].
 			self idleClients remove: postgresClient ifAbsent: [ nil ].
@@ -193,16 +193,16 @@ MaplessStandalonePostgresPool >> requestClient [
 ]
 
 { #category : #actions }
-MaplessStandalonePostgresPool >> returnClient: aP3Client [
-	"Sends aP3Client to go from the busy ones to the idle ones
+MaplessStandalonePostgresPool >> returnClient: aMaplessPostgresClient [
+	"Sends aMaplessPostgresClient to go from the busy ones to the idle ones
 	but only if it's still valid"
 
 	self clientsMonitor
 		critical: [ self busyClients
-				remove: aP3Client
+				remove: aMaplessPostgresClient
 				ifAbsent: [ self returningUnusedClient ].
-			aP3Client isConnected
-				ifTrue: [ self idleClients add: aP3Client ] ]
+			aMaplessPostgresClient isValid
+				ifTrue: [ self idleClients add: aMaplessPostgresClient ] ]
 ]
 
 { #category : #actions }
@@ -210,6 +210,14 @@ MaplessStandalonePostgresPool >> returningUnusedClient [
 	Transcript
 		cr;
 		show: 'Warning: returning a client that is not in among the busy ones'
+]
+
+{ #category : #actions }
+MaplessStandalonePostgresPool >> stop [
+	self idleClients do: [ :each | each close ].
+	[ self hasBusyClients ]
+		whileTrue: [ 1 second wait.
+			self stop ]
 ]
 
 { #category : #actions }
