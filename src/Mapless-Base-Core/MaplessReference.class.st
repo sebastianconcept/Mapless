@@ -101,9 +101,9 @@ MaplessReference >> initializeModel [
 ]
 
 { #category : #initialization }
-MaplessReference >> initializeOnData: aJSONObject in: aRepository [
-	data := aJSONObject.
-	repository := aRepository
+MaplessReference >> initializeOnData: aJsonObject in: aMaplessRepository [
+	data := self withNormalizedId: aJsonObject in: aMaplessRepository.
+	repository := aMaplessRepository
 ]
 
 { #category : #initialization }
@@ -146,4 +146,14 @@ MaplessReference >> printOn: aStream [
 { #category : #actions }
 MaplessReference >> unreferenced [
 	^ self model unreferenced
+]
+
+{ #category : #initialization }
+MaplessReference >> withNormalizedId: aJsonObject in: aMaplessRepository [
+	^ aJsonObject
+		at: aMaplessRepository idPropertyName
+			put:
+			(aMaplessRepository
+				withNormalizedId: (aJsonObject at: aMaplessRepository idPropertyName));
+		yourself
 ]

@@ -300,3 +300,8 @@ MaplessPostgresRepository >> withClientDo: aBlock [
 
 	^ accessor withClientDo: aBlock
 ]
+
+{ #category : #actions }
+MaplessPostgresRepository >> withNormalizedId: aValue [
+	^ UUID newFrom: aValue 
+]

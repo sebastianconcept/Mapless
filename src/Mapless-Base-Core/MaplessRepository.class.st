@@ -308,3 +308,8 @@ MaplessRepository >> shutDown [
 MaplessRepository >> startUp: anInteger [
 	accessor start: anInteger
 ]
+
+{ #category : #actions }
+MaplessRepository >> withNormalizedId: aValue [
+	^ aValue
+]
