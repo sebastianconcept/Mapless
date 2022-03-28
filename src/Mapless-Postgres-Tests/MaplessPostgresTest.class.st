@@ -502,10 +502,10 @@ MaplessPostgresTest >> testSaveSetsID [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self
-		do: [ self deny: guy hasId.
-			guy save.
-			self assert: guy hasId ]
+	self deny: guy hasId.
+	repository save: guy.
+	self assert: (guy maplessData at: 'id') notNil.
+	self assert: guy hasId
 ]
 
 { #category : #tests }
