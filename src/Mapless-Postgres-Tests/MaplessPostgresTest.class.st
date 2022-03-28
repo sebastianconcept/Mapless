@@ -243,25 +243,6 @@ MaplessPostgresTest >> testComposition [
 ]
 
 { #category : #tests }
-MaplessPostgresTest >> testDateAndTime [
-	| when guy loaded |
-	when := DateAndTime now.
-	guy := DummyPerson new
-		firstName: 'john';
-		lastName: 'q';
-		createdOn: when;
-		yourself.
-	self
-		do: [ guy save.
-			loaded := DummyPerson findId: guy id.
-			self
-				assert: loaded createdOn asDate asString = when asDate asString.
-			self assert: loaded createdOn asLocal = when asLocal.
-			self assert: loaded createdOn asTime minutes = when asTime minutes.
-			self assert: loaded createdOn asTime seconds = when asTime seconds ]
-]
-
-{ #category : #tests }
 MaplessPostgresTest >> testDelete [
 	| people |
 	self
@@ -315,155 +296,147 @@ MaplessPostgresTest >> testIsUnsaved [
 { #category : #tests }
 MaplessPostgresTest >> testMultipleComposedComposables [
 	| tags tagsOfTags tagsOfTagsOfTags loaded |
+	tags := OrderedCollection new.
+	tagsOfTags := OrderedCollection new.
+	tagsOfTagsOfTags := OrderedCollection new.
+	tags
+		add:
+			(DummyTag new
+				label: 'is this';
+				yourself);
+		add:
+			(DummyTag new
+				label: 'multiply';
+				yourself);
+		add:
+			(DummyTag new
+				label: 'composable?';
+				yourself);
+		yourself.
+	tagsOfTags
+		add:
+			(DummyTag new
+				label: 'like';
+				yourself);
+		add:
+			(DummyTag new
+				label: 'really?';
+				yourself);
+		yourself.
+	tagsOfTagsOfTags
+		add:
+			(DummyTag new
+				label: 'wow';
+				yourself);
+		add:
+			(DummyTag new
+				label: 'nice';
+				yourself);
+		yourself.
+	tagsOfTagsOfTags do: [ :tag | repository save: tag ].
+	tagsOfTags first tags: tagsOfTagsOfTags.
+	tagsOfTags second tags: tagsOfTagsOfTags.
 	self
-		do: [ tags := OrderedCollection new.
-			tagsOfTags := OrderedCollection new.
-			tagsOfTagsOfTags := OrderedCollection new.
-			tags
-				add:
-					(DummyTag new
-						label: 'is this';
-						yourself);
-				add:
-					(DummyTag new
-						label: 'multiply';
-						yourself);
-				add:
-					(DummyTag new
-						label: 'composable?';
-						yourself);
-				yourself.
-			tagsOfTags
-				add:
-					(DummyTag new
-						label: 'like';
-						yourself);
-				add:
-					(DummyTag new
-						label: 'really?';
-						yourself);
-				yourself.
-			tagsOfTagsOfTags
-				add:
-					(DummyTag new
-						label: 'wow';
-						yourself);
-				add:
-					(DummyTag new
-						label: 'nice';
-						yourself);
-				yourself.
-			self do: [ tagsOfTagsOfTags do: [ :tag | tag save ] ].
-			tagsOfTags first tags: tagsOfTagsOfTags.
-			tagsOfTags second tags: tagsOfTagsOfTags.
-			self
-				shouldnt: [ self do: [ tagsOfTags do: [ :tag | tag save ] ] ]
-				raise: MaplessUnsavedSubmodel.
-			tags first tags: tagsOfTags.
-			tags second tags: tagsOfTags.
-			tags third tags: tagsOfTags.
-			self
-				shouldnt: [ self do: [ tags do: [ :e | e save ] ] ]
-				raise: MaplessUnsavedSubmodel.
-			self
-				do: [ loaded := DummyTag findId: tags first id.
-					self assert: loaded notNil.
-					self assert: loaded label = 'is this'.
-					self assert: loaded tags isCollection.
-					self assert: loaded tags notEmpty.
-					self assert: loaded tags isCollection.
-					self deny: loaded tags first tags isEmpty.
-					self assert: loaded tags first label = 'like'.
-					self assert: loaded tags second label = 'really?'.
-					self assert: loaded tags size = 2.
-					self deny: loaded tags first tags isEmpty.
-					self assert: loaded tags first tags size = 2.
-					self assert: loaded tags first tags first label = 'wow'.
-					self assert: loaded tags first tags second label = 'nice' ] ]
+		shouldnt: [ tagsOfTags do: [ :tag | repository save: tag ] ]
+		raise: MaplessUnsavedSubmodel.
+	tags first tags: tagsOfTags.
+	tags second tags: tagsOfTags.
+	tags third tags: tagsOfTags.
+	self
+		shouldnt: [ tags do: [ :e | repository save: e ] ]
+		raise: MaplessUnsavedSubmodel.
+	loaded := repository findOne: DummyTag atId: tags first id.
+	self assert: loaded notNil.
+	self assert: loaded label = 'is this'.
+	self assert: loaded tags isCollection.
+	self assert: loaded tags notEmpty.
+	self assert: loaded tags isCollection.
+	self deny: loaded tags first tags isEmpty.
+	self assert: loaded tags first label = 'like'.
+	self assert: loaded tags second label = 'really?'.
+	self assert: loaded tags size = 2.
+	self deny: loaded tags first tags isEmpty.
+	self assert: loaded tags first tags size = 2.
+	self assert: loaded tags first tags first label = 'wow'.
+	self assert: loaded tags first tags second label = 'nice'
 ]
 
 { #category : #tests }
 MaplessPostgresTest >> testMultipleComposedMixedSaveAndLoad [
 	| guy things loaded |
-	self
-		do: [ guy := DummyPerson new
-				firstName: 'john';
-				lastName: 'q';
-				yourself.
-			guy things: OrderedCollection new.
-			guy things
-				add:
-					(DummyTag new
-						label: 'cool';
-						yourself);
-				add:
-					(DummyTag new
-						label: 'stuff';
-						yourself);
-				add:
-					(DummyUser new
-						info: 'also this';
-						yourself);
-				yourself.
-			things := guy things.
-			self do: [ guy things do: [ :each | each save ] ].
-			self
-				shouldnt: [ self do: [ guy save ] ]
-				raise: MaplessUnsavedSubmodel.
-			self
-				do: [ loaded := DummyPerson findId: guy id.
-					self assert: loaded notNil.
-					self assert: loaded firstName = 'john'.
-					self assert: loaded things isCollection.
-					self assert: loaded things notEmpty.
-					loaded things
-						do: [ :each | self assert: (things anySatisfy: [ :t | t id = each id ]) ].
-					loaded unreferenced.
-					self assert: loaded things first class = DummyTag.
-					self assert: loaded things second class = DummyTag.
-					self assert: loaded things third class = DummyUser ] ]
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	guy things: OrderedCollection new.
+	guy things
+		add:
+			(DummyTag new
+				label: 'cool';
+				yourself);
+		add:
+			(DummyTag new
+				label: 'stuff';
+				yourself);
+		add:
+			(DummyUser new
+				info: 'also this';
+				yourself);
+		yourself.
+	things := guy things.
+	guy things do: [ :each | repository save: each ].
+	self shouldnt: [ repository save: guy ] raise: MaplessUnsavedSubmodel.
+	loaded := repository findOne: DummyPerson atId: guy id.
+	self assert: loaded notNil.
+	self assert: loaded firstName = 'john'.
+	self assert: loaded things isCollection.
+	self assert: loaded things notEmpty.
+	loaded things
+		do: [ :each | self assert: (things anySatisfy: [ :t | t id = each id ]) ].
+	loaded unreferenced.
+	self assert: loaded things first class = DummyTag.
+	self assert: loaded things second class = DummyTag.
+	self assert: loaded things third class = DummyUser
 ]
 
 { #category : #tests }
 MaplessPostgresTest >> testMultipleComposedSaveAndLoad [
 	| user guy tags loaded |
+	user := DummyUser new
+		username: 'johnq';
+		yourself.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	tags := OrderedCollection new.
+	tags
+		add:
+			(DummyTag new
+				label: 'cool';
+				yourself);
+		add:
+			(DummyTag new
+				label: 'stuff';
+				yourself);
+		yourself.
+	user
+		person: guy;
+		tags: tags;
+		yourself.
+	tags do: [ :tag | repository save: tag ].
+	repository save: guy.
 	self
-		do: [ user := DummyUser new
-				username: 'johnq';
-				yourself.
-			guy := DummyPerson new
-				firstName: 'john';
-				lastName: 'q';
-				yourself.
-			tags := OrderedCollection new.
-			tags
-				add:
-					(DummyTag new
-						label: 'cool';
-						yourself);
-				add:
-					(DummyTag new
-						label: 'stuff';
-						yourself);
-				yourself.
-			user
-				person: guy;
-				tags: tags;
-				yourself.
-			self do: [ tags do: [ :tag | tag save ] ].
-			self do: [ guy save ].
-			self
-				shouldnt: [ self do: [ user save ] ]
-				raise: MaplessUnsavedSubmodel.
-			self
-				do: [ loaded := DummyUser findId: user id.
-					self assert: loaded notNil.
-					self assert: loaded username = 'johnq'.
-					self assert: loaded tags isCollection.
-					self assert: loaded tags notEmpty.
-					self assert: loaded tags isCollection.
-					loaded tags
-						do: [ :tag | self assert: (tags anySatisfy: [ :t | t id = tag id ]) ] ] ]
+		shouldnt: [ repository save: user ]
+		raise: MaplessUnsavedSubmodel.
+	loaded := repository findOne: DummyUser atId: user id.
+	self assert: loaded notNil.
+	self assert: loaded username = 'johnq'.
+	self assert: loaded tags isCollection.
+	self assert: loaded tags notEmpty.
+	self assert: loaded tags isCollection.
+	loaded tags
+		do: [ :tag | self assert: (tags anySatisfy: [ :t | t id = tag id ]) ]
 ]
 
 { #category : #tests }
