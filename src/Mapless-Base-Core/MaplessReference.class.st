@@ -69,11 +69,13 @@ MaplessReference >> getMongoModel [
 	| class |
 	class := Smalltalk
 		at: self maplessClassName asSymbol
-		ifAbsent: [ self
-				error:
-					'This image does not have ' , self maplessClassName asString
-						, ' class' ].
-	^ repository findOne: class atId: (data at: repository idPropertyName)
+		ifAbsent: [ MaplessClassNotFound
+				signal:
+					('The {1} class was not found in this image'
+						format: {self maplessClassName asString}) ].
+	^ repository
+		findOne: class
+		atId: (data at: repository idPropertyName)
 ]
 
 { #category : #testing }

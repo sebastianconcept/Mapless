@@ -539,6 +539,13 @@ MaplessMongoRepository >> newCursorFor: aDictionary [
 		yourself
 ]
 
+{ #category : #actions }
+MaplessMongoRepository >> normalizeIdOfOn: aJsonObject [
+	aJsonObject at: 'id' put: (aJsonObject at: self idPropertyName).
+	aJsonObject removeKey: self idPropertyName ifAbsent: [ nil ].
+	^ aJsonObject
+]
+
 { #category : #accessing }
 MaplessMongoRepository >> readConcern: aConcern for: aMaplessClass [
 	^ (self concerns at: #read) at: aMaplessClass put: aConcern

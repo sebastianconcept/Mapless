@@ -12,6 +12,22 @@ MaplessPostgresRepository class >> getNewId [
 	^ UUID new
 ]
 
+{ #category : #accessing }
+MaplessPostgresRepository class >> idPropertyName [
+	"Answers 'id' and we're using it as Postgres 
+	primary key for the Mapless table of any given Mapless class."
+
+	^ 'id'
+]
+
+{ #category : #accessing }
+MaplessPostgresRepository class >> maplessDataPropertyName [
+	"Answers'maplessData' as the column name 
+	where we're going to use the Postgres JSON blob."
+
+	^ 'maplessData'
+]
+
 { #category : #actions }
 MaplessPostgresRepository >> addCollection: aCollectionName [
 	^ database
@@ -41,7 +57,8 @@ MaplessPostgresRepository >> basicDestroy: aBSONFriendlyObject [
 { #category : #actions }
 MaplessPostgresRepository >> basicInsert: aBSONFriendlyObject as: aMaplessClass [
 	self
-		withClientDo: [ :client | client insert: aBSONFriendlyObject as: aMaplessClass ]
+		withClientDo:
+			[ :client | client insert: aBSONFriendlyObject as: aMaplessClass in: self ]
 ]
 
 { #category : #actions }
@@ -120,7 +137,7 @@ MaplessPostgresRepository >> existsId: anId of: aMaplessClass [
 	^ (self findOne: aMaplessClass atId: anId) notNil
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessPostgresRepository >> findAll: aMaplessClass where: someConditions [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
@@ -131,7 +148,7 @@ MaplessPostgresRepository >> findAll: aMaplessClass where: someConditions [
 		offset: nil
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessPostgresRepository >> findAll: aMaplessClass where: someConditions limit: aLimitOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
@@ -142,39 +159,48 @@ MaplessPostgresRepository >> findAll: aMaplessClass where: someConditions limit:
 		offset: nil
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessPostgresRepository >> findAll: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
 	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
-	^ database
-		do: [ :pg | 
-			| result |
-			result := pg
-				execute:
-					'SELECT VALUE FROM "' , aMaplessClass name , '" WHERE '
-						, someConditions , ';'.
-			(result isNil or: [ result resultSets isEmpty ])
-				ifTrue: [ #() ]
-				ifFalse: [ result resultSets first rows
-						collect: [ :row | 
-							| json |
-							json := Json readFrom: row data first readStream.
-							self onAfterRead: (aMaplessClass fromJSONObject: json) ] ] ]
+	^ self
+		findAll: aMaplessClass
+		where: someConditions
+		limit: aLimitOrNil
+		offset: anOffsetOrNil
+		sort: nil
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
+MaplessPostgresRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
+	^ self
+		withClientDo: [ :client | 
+			client
+				findAll: aMaplessClass
+				where: someConditionsOrNil
+				limit: aLimitOrNil
+				offset: anOffsetOrNil
+				sort: sortConditionsOrNil
+				in: self ]
+]
+
+{ #category : #querying }
 MaplessPostgresRepository >> findOne: aMapless atId: anId [
 	^ self
 		findOne: aMapless
-		where: self idPropertyName , ' = ''' , anId , ''''
+		where:
+			('{1} = ''{2}'''
+				format:
+					{self idPropertyName.
+					anId})
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 MaplessPostgresRepository >> findOne: aMaplessClass where: someConditions [
 	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
 
 	| result |
-	result := self findAll: aMaplessClass where: someConditions.
+	result := self findAll: aMaplessClass where: someConditions limit: 1.
 	^ result isEmpty
 		ifTrue: [ nil ]
 		ifFalse: [ result first ]
@@ -195,7 +221,7 @@ MaplessPostgresRepository >> hasTableFor: aMaplessClass [
 
 { #category : #accessing }
 MaplessPostgresRepository >> idPropertyName [
-	^ MaplessPostgresClient idPropertyName
+	^ self class idPropertyName
 ]
 
 { #category : #initialization }
@@ -231,7 +257,15 @@ MaplessPostgresRepository >> insert: aMapless [
 
 { #category : #accessing }
 MaplessPostgresRepository >> maplessDataPropertyName [
-	^ MaplessPostgresClient maplessDataPropertyName
+	^ self class maplessDataPropertyName
+]
+
+{ #category : #actions }
+MaplessPostgresRepository >> normalizeIdOfOn: aJsonObject [
+self halt.
+	"aJsonObject at: 'id' put: (aJsonObject at: self idPropertyName).
+	aJsonObject removeKey: self idPropertyName ifAbsent: [ nil ].
+	^ aJsonObject"
 ]
 
 { #category : #reactions }

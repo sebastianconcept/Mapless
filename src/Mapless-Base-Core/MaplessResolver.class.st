@@ -50,8 +50,9 @@ MaplessResolver >> maplessClassFor: aJsonObject in: aMaplessRepository [
 		in: aMaplessRepository.
 	^ Smalltalk
 		at: className asSymbol
-		ifAbsent: [ self
-				error: 'The resolver could not find ' , className , ' in this image.' ]
+		ifAbsent: [ MaplessClassNotFound
+				signal:
+					('The {1} class was not found in this image' format: {className}) ]
 ]
 
 { #category : #accessing }
@@ -65,17 +66,6 @@ MaplessResolver >> maplessReferenceAsJsonObject: aMaplessReference in: aMaplessR
 		at: '_c' put: aMaplessReference maplessClassName;
 		at: aMaplessRepository idPropertyName put: aMaplessReference id;
 		yourself
-]
-
-{ #category : #actions }
-MaplessResolver >> normalizeIdOfOn: aJsonObject in: aMaplessRepository [
-	aJsonObject
-		at: 'id'
-		put: (aJsonObject at: aMaplessRepository idPropertyName).
-	aJsonObject
-		removeKey: aMaplessRepository idPropertyName
-		ifAbsent: [ nil ].
-	^ aJsonObject
 ]
 
 { #category : #hooks }

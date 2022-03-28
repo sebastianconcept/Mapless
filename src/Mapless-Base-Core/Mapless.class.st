@@ -722,11 +722,13 @@ Mapless >> setSubModelReferencesIn: aMaplessRepository [
 Mapless >> setSubModelsAt: aKey with: anObject in: aMaplessRepository [
 	"one submapless"
 
-	| maplessClass newSubMapless |
+	| maplessClass newSubMapless className |
 	(aMaplessRepository canBeMapless: anObject)
-		ifTrue: [ maplessClass := Smalltalk
-				at: (anObject at: '_c') asSymbol
-				ifAbsent: [ self error: 'Could not find that class' ].
+		ifTrue: [ className := anObject at: '_c'.
+			maplessClass := Smalltalk
+				at: className asSymbol
+				ifAbsent: [ MaplessClassNotFound
+						signal: ('The {1} class was not found in this image' format: {className}) ].
 			newSubMapless := maplessClass
 				fromJSONObject: anObject
 				in: aMaplessRepository.
@@ -734,14 +736,16 @@ Mapless >> setSubModelsAt: aKey with: anObject in: aMaplessRepository [
 			self data at: aKey put: newSubMapless ].
 
 	"many submapless"
-	(anObject isCollection
+	((anObject isCollection and: [ anObject isString not ])
 		and: [ anObject anySatisfy: [ :e | aMaplessRepository canBeMapless: e ] ])
 		ifTrue: [ | subMapless |
 			subMapless := anObject
 				collect: [ :each | 
+					className := anObject at: '_c'.
 					maplessClass := Smalltalk
-						at: (each at: '_c') asSymbol
-						ifAbsent: [ self error: 'Could not find that class' ].
+						at: className asSymbol
+						ifAbsent: [ MaplessClassNotFound
+								signal: ('The {1} class was not found in this image' format: {className}) ].
 					newSubMapless := maplessClass
 						fromJSONObject: each
 						in: aMaplessRepository.

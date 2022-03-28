@@ -203,7 +203,7 @@ MaplessRepository >> maplessReferenceAsJsonObject: aMaplessReference [
 
 { #category : #actions }
 MaplessRepository >> normalizeIdOfOn: aJsonObject [
-	^ resolver normalizeIdOfOn: aJsonObject in: self
+	^ self subclassResponsibility
 ]
 
 { #category : #hooks }

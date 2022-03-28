@@ -231,22 +231,20 @@ MaplessPostgresTest >> testComposedSaveAndLoad [
 { #category : #tests }
 MaplessPostgresTest >> testComposition [
 	| user guy |
+	user := DummyUser new
+		userame: 'johnq';
+		yourself.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	user person: guy.
 	self
-		do: [ user := DummyUser new
-				userame: 'johnq';
-				yourself.
-			guy := DummyPerson new
-				firstName: 'john';
-				lastName: 'q';
-				yourself.
-			user person: guy.
-			self assert: (user data at: 'person') class equals: DummyPerson.
-			self
-				assert: (user data at: 'person') modelClass
-				equals: #DummyPerson.
-			self assert: user id isNil.
-			self assert: (user data at: 'person') id isNil.
-			self assert: user completeName equals: 'john q' ]
+		assert: (user maplessData at: 'person') class
+		equals: DummyPerson.
+	self assert: user id isNil.
+	self assert: (user maplessData at: 'person') id isNil.
+	self assert: user completeName equals: 'john q'
 ]
 
 { #category : #tests }
@@ -527,12 +525,12 @@ MaplessPostgresTest >> testSimpleSaveAndLoad [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self do: [ guy save ].
-	self do: [ loaded := DummyPerson findId: guy id ].
+	repository save: guy.
+	loaded := repository findOne: DummyPerson atId: guy id.
 	self assert: loaded notNil.
 	loaded modifiedOn: nil.
 	guy modifiedOn: nil.
-	loaded data
+	loaded maplessData
 		keysAndValuesDo: [ :k :v | 
 			((loaded data at: k) isKindOf: DateAndTime) not
 				ifTrue: [ self assert: (loaded data at: k) = (guy data at: k) ] ]
