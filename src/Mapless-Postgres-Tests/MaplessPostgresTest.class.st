@@ -68,34 +68,31 @@ MaplessPostgresTest >> testComposedAccess [
 	"Test proxies and its on-demand-load and DNU mechanism"
 
 	| user guy |
+	user := DummyUser new
+		userame: 'johnq';
+		yourself.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	user person: guy.
+	repository save: guy.
+	repository save: user.
 	self
-		do: [ user := DummyUser new
-				userame: 'johnq';
-				yourself.
-			guy := DummyPerson new
-				firstName: 'john';
-				lastName: 'q';
-				yourself.
-			user person: guy.
-			self
-				do: [ guy save.
-					user save ].
-			self
-				do: [ self
-						assert: (DummyUser findId: user id) completeName
-						equals: 'john q'.
-					self
-						assert: (DummyUser findId: user id) person class
-						equals: MaplessReference.
-					self
-						assert: (DummyUser findId: user id) person model class
-						equals: DummyPerson.
-					self
-						assert: (DummyUser findId: user id) person firstName
-						equals: 'john'.
-					self
-						assert: (DummyUser findId: user id) person lastName
-						equals: 'q' ] ]
+		assert: (repository findOne: DummyUser atId: user id) completeName
+		equals: 'john q'.
+	self
+		assert: (repository findOne: DummyUser atId: user id) person class
+		equals: MaplessReference.
+	self
+		assert: (repository findOne: DummyUser atId: user id) person model class
+		equals: DummyPerson.
+	self
+		assert: (repository findOne: DummyUser atId: user id) person firstName
+		equals: 'john'.
+	self
+		assert: (repository findOne: DummyUser atId: user id) person lastName
+		equals: 'q'
 ]
 
 { #category : #tests }
@@ -163,26 +160,23 @@ MaplessPostgresTest >> testComposedDestroy [
 { #category : #tests }
 MaplessPostgresTest >> testComposedSave [
 	| user guy |
+	user := DummyUser new
+		userame: 'johnq';
+		yourself.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	user person: guy.
+
+	"Whithout saving a submodel"
+	self should: [ repository save: user ] raise: MaplessUnsavedSubmodel.
+
+	"After saving that submodel"
+	repository save: guy.
 	self
-		do: [ user := DummyUser new
-				userame: 'johnq';
-				yourself.
-			guy := DummyPerson new
-				firstName: 'john';
-				lastName: 'q';
-				yourself.
-			user person: guy.
-
-			"Whithout saving a submodel"
-			self
-				should: [ self do: [ user save ] ]
-				raise: MaplessUnsavedSubmodel.
-
-			"After saving that submodel"
-			self do: [ guy save ].
-			self
-				shouldnt: [ self do: [ user save ] ]
-				raise: MaplessUnsavedSubmodel ]
+		shouldnt: [ repository save: user ]
+		raise: MaplessUnsavedSubmodel
 ]
 
 { #category : #tests }
