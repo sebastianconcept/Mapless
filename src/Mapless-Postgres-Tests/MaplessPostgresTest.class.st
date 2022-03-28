@@ -310,10 +310,11 @@ MaplessPostgresTest >> testIsUnsaved [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self
-		do: [ self deny: guy hasId.
-			guy save.
-			self assert: guy hasId ]
+	self deny: guy hasId.
+	self assert: (repository isUnsaved: guy).
+	repository save: guy.
+	self assert: guy hasId.
+	self deny: (repository isUnsaved: guy)
 ]
 
 { #category : #tests }
