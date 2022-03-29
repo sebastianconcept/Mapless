@@ -190,3 +190,19 @@ MaplessPostgresClient >> truncate: aMaplessClass [
 		execute:
 			('TRUNCATE {1}' format: {(self tableNameFor: aMaplessClass)})
 ]
+
+{ #category : #actions }
+MaplessPostgresClient >> update: aBSONFriendlyObject as: aMaplessClass in: aMaplessPostgresRepository [
+	^ p3Client
+		execute:
+			('UPDATE {1} SET {2} = ''{3}'' WHERE {4} = ''{5}'''
+				format:
+					{(self tableNameFor: aMaplessClass).
+					aMaplessPostgresRepository maplessDataPropertyName.
+					(aBSONFriendlyObject
+						at: aMaplessPostgresRepository maplessDataPropertyName)
+						asJSONString.
+					aMaplessPostgresRepository idPropertyName.
+					(aBSONFriendlyObject
+						at: aMaplessPostgresRepository idPropertyName)})
+]

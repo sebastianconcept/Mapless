@@ -29,19 +29,6 @@ MaplessPostgresRepository class >> maplessDataPropertyName [
 ]
 
 { #category : #actions }
-MaplessPostgresRepository >> addCollection: aCollectionName [
-	^ database
-		do: [ :pg | 
-			pg
-				execute:
-					'CREATE TABLE "' , aCollectionName
-						,
-							'" (
-			key varchar(36) PRIMARY KEY, 
-			value json);' ]
-]
-
-{ #category : #actions }
 MaplessPostgresRepository >> basicDestroy: aBSONFriendlyObject [
 	^ database
 		do: [ :pg | 
@@ -62,19 +49,10 @@ MaplessPostgresRepository >> basicInsert: aBSONFriendlyObject as: aMaplessClass 
 ]
 
 { #category : #actions }
-MaplessPostgresRepository >> basicUpdate: aBSONFriendlyObject [
-	^ database
-		do: [ :pg | 
-			| result |
-			result := pg
-				execute:
-					'UPDATE "' , aBSONFriendlyObject modelClass
-						,
-							'" SET 
-			"value" = ''' , aBSONFriendlyObject asJSONString
-						,
-							''' WHERE
-				"key" = ''' , aBSONFriendlyObject key , ''';' ]
+MaplessPostgresRepository >> basicUpdate: aBSONFriendlyObject as: aMaplessClass [
+	self
+		withClientDo:
+			[ :client | client update: aBSONFriendlyObject as: aMaplessClass in: self ]
 ]
 
 { #category : #actions }
@@ -289,8 +267,14 @@ MaplessPostgresRepository >> save: aMapless [
 
 { #category : #actions }
 MaplessPostgresRepository >> update: aMapless [
+	| maplessData storable |
 	self onBeforeUpdate: aMapless.
-	self basicUpdate: (self storableFor: aMapless data).
+	maplessData := resolver storableFor: aMapless in: self.
+	storable := Dictionary new.
+	storable at: self idPropertyName put: aMapless id.
+	maplessData removeKey: self idPropertyName ifAbsent: [  ].
+	storable at: self maplessDataPropertyName put: maplessData.
+	self basicUpdate: storable as: aMapless class.
 	self onAfterUpdate: aMapless
 ]
 

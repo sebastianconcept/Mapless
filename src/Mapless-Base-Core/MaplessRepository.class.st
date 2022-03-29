@@ -52,11 +52,6 @@ MaplessRepository >> accessor: anObject [
 ]
 
 { #category : #actions }
-MaplessRepository >> addCollection: aCollectionName [
-	^ self database addCollection: aCollectionName
-]
-
-{ #category : #actions }
 MaplessRepository >> asStorable: anObject [
 	^ anObject isCollection
 		ifTrue: [ anObject class = OrderedJsonObject
@@ -126,14 +121,6 @@ MaplessRepository >> do: aBlock [
 	anyone calling CurrentMongoDatabase value."
 
 	MaplessCurrentRepository value: self during: [ ^ aBlock value ]
-]
-
-{ #category : #actions }
-MaplessRepository >> ensureCollectionNamed: aCollectionName [
-	"Makes sure there is a collection for this kind of models."
-
-	(self hasCollectionNamed: aCollectionName)
-		ifFalse: [ self addCollection: aCollectionName ]
 ]
 
 { #category : #actions }

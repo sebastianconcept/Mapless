@@ -513,35 +513,37 @@ MaplessPostgresTest >> testSimpleSaveAndLoad [
 { #category : #tests }
 MaplessPostgresTest >> testSimpleSaveAndUpdate [
 	| guy loaded reloaded |
-	self
-		do: [ guy := DummyPerson new
-				firstName: 'john';
-				lastName: 'q';
-				yourself.
-			self do: [ guy save ].
-			self do: [ loaded := DummyPerson findId: guy id ].
-			self assert: loaded firstName = 'john'.
-			self deny: loaded remember = 'this words'.
-			loaded remember: 'this words'.
-			self do: [ loaded save ].
-			self do: [ reloaded := DummyPerson findId: guy id ].
-			self assert: reloaded remember = 'this words' ]
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	repository save: guy.
+	loaded := repository findOne: DummyPerson atId: guy id.
+	self assert: loaded firstName = 'john'.
+	self deny: loaded remember = 'this words'.
+	loaded firstName: loaded firstName capitalized.
+	loaded remember: 'this words'.
+	repository save: loaded.
+	reloaded := repository findOne: DummyPerson atId: guy id.
+	self assert: reloaded remember = 'this words'
 ]
 
 { #category : #tests }
 MaplessPostgresTest >> testSubModelsFromReifiedJSON [
-	| user guy jsonString reified |
-	self
-		do: [ user := DummyUser new
-				userame: 'johnq';
-				yourself.
-			guy := DummyPerson new
-				firstName: 'john';
-				lastName: 'q';
-				yourself.
-			user person: guy.
-			jsonString := user unreferenced asJSONString.
-			reified := DummyUser fromJSONString: jsonString.
-			self assert: reified person class equals: DummyPerson.
-			self assert: reified completeName equals: 'john q' ]
+	| user guy jsonString reified loaded |
+	user := DummyUser new
+		userame: 'johnq';
+		yourself.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	user person: guy.
+	repository save: guy.
+	repository save: user.
+	loaded := repository findOne: DummyUser atId: user id.
+	jsonString := loaded unreferenced asJSONString.
+	reified := DummyUser fromJSONString: jsonString in: repository.
+	self assert: reified person class equals: DummyPerson.
+	self assert: reified completeName equals: 'john q'
 ]
