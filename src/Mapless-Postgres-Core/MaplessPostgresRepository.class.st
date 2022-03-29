@@ -126,7 +126,13 @@ MaplessPostgresRepository >> ensureTableFor: aMaplessClass [
 
 { #category : #testing }
 MaplessPostgresRepository >> existsId: anId of: aMaplessClass [
-	^ (self findOne: aMaplessClass atId: anId) notNil
+	^ (self
+		count: aMaplessClass
+		where:
+			('{1} = ''{2}'''
+				format:
+					{self idPropertyName.
+					anId})) > 0
 ]
 
 { #category : #querying }

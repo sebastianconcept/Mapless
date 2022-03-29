@@ -345,6 +345,17 @@ MaplessPostgresTest >> testDestroy [
 ]
 
 { #category : #tests }
+MaplessPostgresTest >> testExists [
+	| guy loaded |
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	repository save: guy.
+	self assert: (repository existsId: guy id of: DummyPerson)
+]
+
+{ #category : #tests }
 MaplessPostgresTest >> testIsUnsaved [
 	| guy |
 	guy := DummyPerson new
