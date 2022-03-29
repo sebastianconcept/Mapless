@@ -248,6 +248,28 @@ MaplessPostgresTest >> testComposition [
 ]
 
 { #category : #tests }
+MaplessPostgresTest >> testCount [
+	| users |
+	users := OrderedCollection new.
+	Character alphabet
+		do: [ :char | 
+			users
+				add:
+					(DummyUser new
+						username: char asString;
+						person:
+							(DummyPerson new
+								firstName: char asString;
+								yourself);
+						yourself) ].
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+	self
+		assert: (repository count: DummyUser)
+		equals: Character alphabet size
+]
+
+{ #category : #tests }
 MaplessPostgresTest >> testDelete [
 	| people |
 	people := OrderedCollection new.

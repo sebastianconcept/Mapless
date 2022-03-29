@@ -42,6 +42,17 @@ MaplessPostgresRepository >> basicUpdate: aBSONFriendlyObject as: aMaplessClass 
 			[ :client | client update: aBSONFriendlyObject as: aMaplessClass in: self ]
 ]
 
+{ #category : #querying }
+MaplessPostgresRepository >> count: aMaplessClass [
+	^ self count: aMaplessClass where: nil
+]
+
+{ #category : #querying }
+MaplessPostgresRepository >> count: aMaplessClass where: conditions [
+	^ self
+		withClientDo: [ :client | client count: aMaplessClass where: conditions in: self ]
+]
+
 { #category : #actions }
 MaplessPostgresRepository >> createDatabase [
 	self

@@ -26,6 +26,14 @@ MaplessPostgresClient >> connect [
 	p3Client connect
 ]
 
+{ #category : #querying }
+MaplessPostgresClient >> count: aMaplessClass where: someConditionsOrNil in: aMaplessPostgresRepository [
+	| sql result |
+	sql := self sqlForCount: aMaplessClass where: someConditionsOrNil.
+	result := p3Client query: sql.
+	^ result firstFieldOfFirstRecord
+]
+
 { #category : #actions }
 MaplessPostgresClient >> createDatabaseNamed: aString [
 	self p3 execute: 'CREATE DATABASE "' , aString , '"'
@@ -72,8 +80,7 @@ MaplessPostgresClient >> findAll: aMaplessClass where: someConditionsOrNil limit
 		where: someConditionsOrNil
 		limit: aLimitOrNil
 		offset: anOffsetOrNil
-		sort: sortConditionsOrNil
-		in: aMaplessPostgresRepository.
+		sort: sortConditionsOrNil.
 	result := p3Client query: sql.
 	^ result data
 		collect:
@@ -164,7 +171,19 @@ MaplessPostgresClient >> reset [
 ]
 
 { #category : #accessing }
-MaplessPostgresClient >> sqlForFindAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil in: aMaplessPostgresRepository [
+MaplessPostgresClient >> sqlForCount: aMaplessClass where: someConditionsOrNil [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				<<
+					('SELECT COUNT(*) FROM {1}'
+						format: {(self tableNameFor: aMaplessClass)}).
+			someConditionsOrNil
+				ifNotNil: [ stream << (' WHERE {1}' format: {someConditionsOrNil}) ] ]
+]
+
+{ #category : #accessing }
+MaplessPostgresClient >> sqlForFindAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [ 
 	^ String
 		streamContents: [ :stream | 
 			stream
