@@ -29,19 +29,6 @@ MaplessPostgresRepository class >> maplessDataPropertyName [
 ]
 
 { #category : #actions }
-MaplessPostgresRepository >> basicDestroy: aBSONFriendlyObject [
-	^ database
-		do: [ :pg | 
-			| result |
-			result := pg
-				execute:
-					'DELETE FROM "' , aBSONFriendlyObject modelClass
-						,
-							'" * WHERE
-				"key" = ''' , aBSONFriendlyObject key , ''';' ]
-]
-
-{ #category : #actions }
 MaplessPostgresRepository >> basicInsert: aBSONFriendlyObject as: aMaplessClass [
 	self
 		withClientDo:
@@ -62,11 +49,27 @@ MaplessPostgresRepository >> createDatabase [
 ]
 
 { #category : #actions }
+MaplessPostgresRepository >> delete: aMapless [
+	self onBeforeDelete: aMapless.
+	aMapless deletedOn: DateAndTime now.
+	(self isUnsaved: aMapless)
+		ifTrue: [ self insert: aMapless ]
+		ifFalse: [ self update: aMapless ].
+	self onAfterDelete: aMapless
+]
+
+{ #category : #actions }
 MaplessPostgresRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
 	self onBeforeDestroy: aMapless.
-	self basicDestroy: (self storableFor: aMapless data).
+	self
+		destroyAll: aMapless class
+		where:
+			('{1} = ''{2}'''
+				format:
+					{self idPropertyName.
+					aMapless id}).
 	self onAfterDestroy: aMapless
 ]
 

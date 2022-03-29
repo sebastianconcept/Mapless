@@ -99,62 +99,67 @@ MaplessPostgresTest >> testComposedAccess [
 MaplessPostgresTest >> testComposedDelete [
 	| users |
 	users := OrderedCollection new.
+	Character alphabet
+		do: [ :char | 
+			users
+				add:
+					(DummyUser new
+						userame: char asString;
+						person:
+							(DummyPerson new
+								firstName: char asString;
+								yourself);
+						yourself) ].
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+	self assert: (users allSatisfy: [ :user | user isDeleted not ]).
 	self
-		do: [ Character alphabet
-				do: [ :char | 
-					users
-						add:
-							(DummyUser new
-								userame: char asString;
-								person:
-									(DummyPerson new
-										firstName: char asString;
-										yourself);
-								yourself) ].
-			self do: [ users do: [ :user | user person save ] ].
-			self do: [ users do: [ :user | user save ] ].
-			self assert: (users allSatisfy: [ :user | user isDeleted not ]).
-			self
-				assert: (users allSatisfy: [ :user | user person isDeleted not ]).
-			self do: [ users do: [ :user | user person delete ] ].
-			self assert: (users allSatisfy: [ :user | user person isDeleted ]).
-			self assert: (users allSatisfy: [ :user | user isDeleted not ]).
-			self do: [ users do: [ :user | user delete ] ].
-			self assert: (users allSatisfy: [ :user | user person isDeleted ]).
-			self assert: (users allSatisfy: [ :user | user isDeleted ]) ]
+		assert: (users allSatisfy: [ :user | user person isDeleted not ]).
+	users do: [ :user | repository delete: user person ].
+	self assert: (users allSatisfy: [ :user | user person isDeleted ]).
+	self assert: (users allSatisfy: [ :user | user isDeleted not ]).
+	users do: [ :user | repository delete: user ].
+	self assert: (users allSatisfy: [ :user | user person isDeleted ]).
+	self assert: (users allSatisfy: [ :user | user isDeleted ])
 ]
 
 { #category : #tests }
 MaplessPostgresTest >> testComposedDestroy [
 	| users |
+	users := OrderedCollection new.
+	Character alphabet
+		do: [ :char | 
+			users
+				add:
+					(DummyUser new
+						userame: char asString;
+						person:
+							(DummyPerson new
+								firstName: char asString;
+								yourself);
+						yourself) ].
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
 	self
-		do: [ users := OrderedCollection new.
-			Character alphabet
-				do: [ :char | 
-					users
-						add:
-							(DummyUser new
-								userame: char asString;
-								person:
-									(DummyPerson new
-										firstName: char asString;
-										yourself);
-								yourself) ].
-			self do: [ users do: [ :user | user person save ] ].
-			self do: [ users do: [ :user | user save ] ].
-			self do: [ users do: [ :user | user person destroy ] ].
-			self
-				do: [ self
-						assert:
-							(users
-								allSatisfy: [ :user | (DummyPerson existsId: user person id) not ]).
-					self
-						assert: (users allSatisfy: [ :user | DummyUser existsId: user id ]) ].
-			self do: [ users do: [ :user | user destroy ] ].
-			self
-				assert:
-					(self
-						do: [ users allSatisfy: [ :user | (DummyUser existsId: user id) not ] ]) ]
+		assert:
+			(users
+				allSatisfy:
+					[ :user | (repository findOne: DummyPerson atId: user person id) notNil ]).
+	users do: [ :user | repository destroy: user person ].
+	self
+		assert:
+			(users
+				allSatisfy:
+					[ :user | (repository findOne: DummyPerson atId: user person id) isNil ]).
+	self
+		assert:
+			(users
+				allSatisfy: [ :user | (repository findOne: DummyUser atId: user id) notNil ]).
+	users do: [ :user | repository destroy: user ].
+	self
+		assert:
+			(users
+				allSatisfy: [ :user | (repository findOne: DummyUser atId: user id) isNil ])
 ]
 
 { #category : #tests }
@@ -245,38 +250,38 @@ MaplessPostgresTest >> testComposition [
 { #category : #tests }
 MaplessPostgresTest >> testDelete [
 	| people |
-	self
-		do: [ people := OrderedCollection new.
-			Character alphabet
-				do: [ :char | 
-					people
-						add:
-							(DummyPerson new
-								firstName: char asString;
-								yourself) ].
-			people do: [ :guy | guy save ].
-			self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
-			people do: [ :guy | guy delete ].
-			self assert: (people allSatisfy: [ :guy | guy isDeleted ]) ]
+	people := OrderedCollection new.
+	Character alphabet
+		do: [ :char | 
+			people
+				add:
+					(DummyPerson new
+						firstName: char asString;
+						yourself) ].
+	people do: [ :guy | repository save: guy ].
+	self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
+	people do: [ :guy | repository delete: guy ].
+	self assert: (people allSatisfy: [ :guy | guy isDeleted ])
 ]
 
 { #category : #tests }
 MaplessPostgresTest >> testDestroy [
 	| people |
+	people := OrderedCollection new.
+	Character alphabet
+		do: [ :char | 
+			people
+				add:
+					(DummyPerson new
+						firstName: char asString;
+						yourself) ].
+	people do: [ :guy | repository save: guy ].
+	self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
+	people do: [ :guy | repository destroy: guy ].
 	self
-		do: [ people := OrderedCollection new.
-			Character alphabet
-				do: [ :char | 
-					people
-						add:
-							(DummyPerson new
-								firstName: char asString;
-								yourself) ].
-			people do: [ :guy | guy save ].
-			self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
-			people do: [ :guy | guy destroy ].
-			self
-				assert: (people allSatisfy: [ :guy | (DummyPerson existsId: guy id) not ]) ]
+		assert:
+			(people
+				allSatisfy: [ :guy | (repository findOne: DummyPerson atId: guy id) isNil ])
 ]
 
 { #category : #tests }
