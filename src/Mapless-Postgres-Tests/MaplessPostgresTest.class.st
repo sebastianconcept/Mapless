@@ -46,6 +46,15 @@ MaplessPostgresTest >> resetDatabase [
 				ifFalse: [ repository ensureTableFor: each ] ]
 ]
 
+{ #category : #actions }
+MaplessPostgresTest >> savePersonNamed: aString [
+	repository
+		save:
+			(DummyPerson new
+				firstName: aString;
+				yourself)
+]
+
 { #category : #'setUp-tearDown' }
 MaplessPostgresTest >> setUp [
 	super setUp.
@@ -245,6 +254,35 @@ MaplessPostgresTest >> testComposition [
 	self assert: user id isNil.
 	self assert: (user maplessData at: 'person') id isNil.
 	self assert: user completeName equals: 'john q'
+]
+
+{ #category : #tests }
+MaplessPostgresTest >> testConditionalCount [
+	| users firstNames sqlCondition |
+	users := OrderedCollection new.
+	Character alphabet
+		do: [ :char | 
+			users
+				add:
+					(DummyUser new
+						username: char asString;
+						person:
+							(DummyPerson new
+								firstName: char asString;
+								yourself);
+						yourself) ].
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+	firstNames := {'John' . 'Peter' . 'Alice' . 'Linda'}.
+	firstNames do: [ :firstName | self savePersonNamed: firstName ].
+	sqlCondition := '{1}->>''{2}'' IN ({3})'
+		format:
+			{'maplessData'.
+			'firstName'.
+			firstNames asJSONString allButFirst allButLast replaceAll: $" with: $'}.
+	self
+		assert: (repository count: DummyPerson where: sqlCondition)
+		equals: firstNames size
 ]
 
 { #category : #tests }
