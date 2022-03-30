@@ -6,7 +6,7 @@ Class {
 	#name : #MaplessPostgresClient,
 	#superclass : #Object,
 	#instVars : [
-		'p3Client'
+		'postgresClient'
 	],
 	#category : #'Mapless-Postgres-Core-Connections'
 }
@@ -23,20 +23,20 @@ MaplessPostgresClient >> close [
 
 { #category : #actions }
 MaplessPostgresClient >> connect [
-	p3Client connect
+	postgresClient connect
 ]
 
 { #category : #querying }
 MaplessPostgresClient >> count: aMaplessClass where: someConditionsOrNil in: aMaplessPostgresRepository [
 	| sql result |
 	sql := self sqlForCount: aMaplessClass where: someConditionsOrNil.
-	result := p3Client query: sql.
+	result := postgresClient query: sql.
 	^ result firstFieldOfFirstRecord
 ]
 
 { #category : #actions }
 MaplessPostgresClient >> createDatabaseNamed: aString [
-	self p3 execute: 'CREATE DATABASE "' , aString , '"'
+	self postgresClient execute: 'CREATE DATABASE "' , aString , '"'
 ]
 
 { #category : #actions }
@@ -46,7 +46,7 @@ MaplessPostgresClient >> createTableFor: aMaplessClass [
 
 { #category : #actions }
 MaplessPostgresClient >> createTableNamed: aString [
-	p3Client
+	postgresClient
 		execute:
 			('CREATE TABLE {1} (id UUID PRIMARY KEY, maplessData jsonb) WITH (OIDS = FALSE)'
 				format: {aString})
@@ -54,7 +54,7 @@ MaplessPostgresClient >> createTableNamed: aString [
 
 { #category : #actions }
 MaplessPostgresClient >> destroyAll: aMaplessClass where: condition [
-	self p3
+	self postgresClient
 		execute:
 			('DELETE FROM {1} WHERE {2}'
 				format:
@@ -64,12 +64,12 @@ MaplessPostgresClient >> destroyAll: aMaplessClass where: condition [
 
 { #category : #actions }
 MaplessPostgresClient >> disconnect [
-	p3Client ifNotNil: [ p3Client close ]
+	postgresClient ifNotNil: [ postgresClient close ]
 ]
 
 { #category : #actions }
 MaplessPostgresClient >> dropDatabaseNamed: aString [
-	self p3 execute: 'DROP DATABASE IF EXISTS "' , aString , '"'
+	self postgresClient execute: 'DROP DATABASE IF EXISTS "' , aString , '"'
 ]
 
 { #category : #querying }
@@ -81,7 +81,7 @@ MaplessPostgresClient >> findAll: aMaplessClass where: someConditionsOrNil limit
 		limit: aLimitOrNil
 		offset: anOffsetOrNil
 		sort: sortConditionsOrNil.
-	result := p3Client query: sql.
+	result := postgresClient query: sql.
 	^ result data
 		collect:
 			[ :resultData | self maplessFromResult: resultData in: aMaplessPostgresRepository ]
@@ -91,12 +91,12 @@ MaplessPostgresClient >> findAll: aMaplessClass where: someConditionsOrNil limit
 MaplessPostgresClient >> getTableNames [
 	"Answers the names of the existing tables in the database."
 
-	^ p3Client listTablesInSchema: 'public'
+	^ postgresClient listTablesInSchema: 'public'
 ]
 
 { #category : #testing }
 MaplessPostgresClient >> hasDatabaseNamed: aString [
-	^ p3Client listDatabases includes: aString
+	^ postgresClient listDatabases includes: aString
 ]
 
 { #category : #testing }
@@ -111,12 +111,12 @@ MaplessPostgresClient >> hasTableNamed: aString [
 
 { #category : #initialization }
 MaplessPostgresClient >> initializeOn: anUrlOrUrlString [
-	p3Client := P3Client url: anUrlOrUrlString
+	postgresClient := P3Client url: anUrlOrUrlString
 ]
 
 { #category : #actions }
 MaplessPostgresClient >> insert: aBSONFriendlyObject as: aMaplessClass in: aMaplessPostgresRepository [
-	^ p3Client
+	^ postgresClient
 		execute:
 			('INSERT INTO {1} VALUES (''{2}'', ''{3}'')'
 				format:
@@ -130,24 +130,7 @@ MaplessPostgresClient >> insert: aBSONFriendlyObject as: aMaplessClass in: aMapl
 
 { #category : #testing }
 MaplessPostgresClient >> isValid [
-	^ p3Client isConnected
-]
-
-{ #category : #actions }
-MaplessPostgresClient >> maplessFromResult: anArray [
-	| id maplessData maplessClass |
-	id := anArray first.
-	maplessData := JsonObject
-		fromAssociations: anArray second associations.
-	maplessClass := Smalltalk
-		at: maplessData _c asSymbol
-		ifAbsent: [ MaplessClassNotFound
-				signal:
-					('The {1} class was not found in this image'
-						format: {maplessData _c asString}) ].
-					
-	self halt.
-	^ maplessClass 
+	^ postgresClient isConnected
 ]
 
 { #category : #actions }
@@ -161,13 +144,13 @@ MaplessPostgresClient >> maplessFromResult: anArray in: aMaplessPostgresReposito
 ]
 
 { #category : #accessing }
-MaplessPostgresClient >> p3 [
-	^ p3Client
+MaplessPostgresClient >> postgresClient [
+	^ postgresClient
 ]
 
 { #category : #actions }
 MaplessPostgresClient >> reset [
-	p3Client reset
+	postgresClient reset
 ]
 
 { #category : #accessing }
@@ -205,14 +188,14 @@ MaplessPostgresClient >> tableNameFor: aMaplessClass [
 
 { #category : #actions }
 MaplessPostgresClient >> truncate: aMaplessClass [
-	self p3
+	self postgresClient
 		execute:
 			('TRUNCATE {1}' format: {(self tableNameFor: aMaplessClass)})
 ]
 
 { #category : #actions }
 MaplessPostgresClient >> update: aBSONFriendlyObject as: aMaplessClass in: aMaplessPostgresRepository [
-	^ p3Client
+	^ postgresClient
 		execute:
 			('UPDATE {1} SET {2} = ''{3}'' WHERE {4} = ''{5}'''
 				format:
