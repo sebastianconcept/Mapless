@@ -75,8 +75,10 @@ MaplessVoyageWithMaplessSuffixResolver >> maplessClassFor: aJsonObject in: aMapl
 		in: aMaplessRepository.
 	^ Smalltalk
 		at: className asSymbol
-		ifAbsent: [ self
-				error: 'The resolver could not find ' , className , ' in this image.' ]
+		ifAbsent: [ MaplessClassNotFound
+				signal:
+					('The {1} class was not found in this image'
+						format: {self maplessClassName asString}) ]
 ]
 
 { #category : #accessing }

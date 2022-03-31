@@ -69,11 +69,13 @@ MaplessReference >> getMongoModel [
 	| class |
 	class := Smalltalk
 		at: self maplessClassName asSymbol
-		ifAbsent: [ self
-				error:
-					'This image does not have ' , self maplessClassName asString
-						, ' class' ].
-	^ repository findOne: class atId: (data at: repository idPropertyName)
+		ifAbsent: [ MaplessClassNotFound
+				signal:
+					('The {1} class was not found in this image'
+						format: {self maplessClassName asString}) ].
+	^ repository
+		findOne: class
+		atId: (data at: repository idPropertyName)
 ]
 
 { #category : #testing }
@@ -99,9 +101,9 @@ MaplessReference >> initializeModel [
 ]
 
 { #category : #initialization }
-MaplessReference >> initializeOnData: aJSONObject in: aRepository [
-	data := aJSONObject.
-	repository := aRepository
+MaplessReference >> initializeOnData: aJsonObject in: aMaplessRepository [
+	data := self withNormalizedId: aJsonObject in: aMaplessRepository.
+	repository := aMaplessRepository
 ]
 
 { #category : #initialization }
@@ -144,4 +146,14 @@ MaplessReference >> printOn: aStream [
 { #category : #actions }
 MaplessReference >> unreferenced [
 	^ self model unreferenced
+]
+
+{ #category : #initialization }
+MaplessReference >> withNormalizedId: aJsonObject in: aMaplessRepository [
+	^ aJsonObject
+		at: aMaplessRepository idPropertyName
+			put:
+			(aMaplessRepository
+				withNormalizedId: (aJsonObject at: aMaplessRepository idPropertyName));
+		yourself
 ]

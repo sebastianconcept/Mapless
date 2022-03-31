@@ -52,11 +52,6 @@ MaplessRepository >> accessor: anObject [
 ]
 
 { #category : #actions }
-MaplessRepository >> addCollection: aCollectionName [
-	^ self database addCollection: aCollectionName
-]
-
-{ #category : #actions }
 MaplessRepository >> asStorable: anObject [
 	^ anObject isCollection
 		ifTrue: [ anObject class = OrderedJsonObject
@@ -129,14 +124,6 @@ MaplessRepository >> do: aBlock [
 ]
 
 { #category : #actions }
-MaplessRepository >> ensureCollectionNamed: aCollectionName [
-	"Makes sure there is a collection for this kind of models."
-
-	(self hasCollectionNamed: aCollectionName)
-		ifFalse: [ self addCollection: aCollectionName ]
-]
-
-{ #category : #actions }
 MaplessRepository >> ensureId: anId for: aMapless [
 	aMapless maplessData
 		at: self idPropertyName
@@ -203,7 +190,7 @@ MaplessRepository >> maplessReferenceAsJsonObject: aMaplessReference [
 
 { #category : #actions }
 MaplessRepository >> normalizeIdOfOn: aJsonObject [
-	^ resolver normalizeIdOfOn: aJsonObject in: self
+	^ self subclassResponsibility
 ]
 
 { #category : #hooks }
@@ -307,4 +294,9 @@ MaplessRepository >> shutDown [
 { #category : #actions }
 MaplessRepository >> startUp: anInteger [
 	accessor start: anInteger
+]
+
+{ #category : #actions }
+MaplessRepository >> withNormalizedId: aValue [
+	^ aValue
 ]

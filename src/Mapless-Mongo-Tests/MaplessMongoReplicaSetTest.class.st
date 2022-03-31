@@ -163,12 +163,12 @@ MaplessMongoReplicaSetTest >> testFindAllWithReadConcern [
 	repository
 		insert: (self newDummyPersonNamed: 'John')
 		writeConcern: writeConcern.
-	repository
-		readOnlyDo: [ found := repository
-				findAll: DummyPerson
-				readConcern: MongoReadConcern majority.
-			self assert: found notNil.
-			self assert: found size equals: 3 ]
+	1000 milliseconds wait.
+	found := repository
+		findAll: DummyPerson
+		readConcern: MongoReadConcern majority.
+	self assert: found notNil.
+	self assert: found size equals: 3
 ]
 
 { #category : #tests }

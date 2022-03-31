@@ -1,3 +1,9 @@
+March 30, 2022 
+===================================
+* Introducing `MaplessPostgresRepository` via dependency on [P3](https://github.com/svenvc/P3).
+* Adds all minimal coverage.
+* All tests green.
+
 March 25, 2022 
 ===================================
 * Using `(resolver conditionForClass: aMaplessClass)`  in all class based `MongoDB` queries, so the query doesn't bring any document in that collection that isn't strictly that `Mapless` class.
