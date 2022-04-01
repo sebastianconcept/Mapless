@@ -38,18 +38,17 @@ MaplessUnQLiteRepository >> basicFindOne: aMaplessClass atId: anId in: aMaplessR
 	| result key |
 	key := self namespaced: 'id' of: aMaplessClass valued: anId.
 	result := anUnQLiteClient at: key ifAbsent: [ nil ].
-	result
-		ifNotNil: [ ^ self maplessFromResult: (BSON read: result readStream) ].
+	result ifNotNil: [ ^ self makeMaplessFrom: result withId: anId ].
 	^ nil
 ]
 
 { #category : #actions }
 MaplessUnQLiteRepository >> basicSave: aMapless [
-	| key storable serialized |
+	| key storable |
 	key := self namespacedIdOf: aMapless.
 	storable := resolver storableFor: aMapless in: self.
-	serialized := BSON write: storable.
-	self withClientDo: [ :client | client at: key put: serialized ].
+	self
+		withClientDo: [ :client | client at: key put: (self serialize: storable) ].
 	self onAfterSave: aMapless
 ]
 
@@ -72,6 +71,11 @@ MaplessUnQLiteRepository >> delete: aMapless [
 		ifTrue: [ self insert: aMapless ]
 		ifFalse: [ self update: aMapless ].
 	self onAfterDelete: aMapless
+]
+
+{ #category : #actions }
+MaplessUnQLiteRepository >> deserialize: aByteArray [
+	^ self maplessFromResult: (BSON read: aByteArray readStream)
 ]
 
 { #category : #actions }
@@ -205,6 +209,13 @@ MaplessUnQLiteRepository >> insert: aMapless [
 	self onAfterInsert: aMapless
 ]
 
+{ #category : #querying }
+MaplessUnQLiteRepository >> makeMaplessFrom: aByteArray withId: anId [
+	^ (self deserialize: aByteArray)
+		id: anId;
+		yourself
+]
+
 { #category : #accessing }
 MaplessUnQLiteRepository >> maplessDataPropertyName [
 	^ self class maplessDataPropertyName
@@ -273,6 +284,11 @@ MaplessUnQLiteRepository >> save: aMapless [
 		ifTrue: [ self insert: aMapless ]
 		ifFalse: [ self update: aMapless ].
 	self onAfterSave: aMapless
+]
+
+{ #category : #actions }
+MaplessUnQLiteRepository >> serialize: aStorable [
+	^ BSON write: aStorable
 ]
 
 { #category : #actions }
