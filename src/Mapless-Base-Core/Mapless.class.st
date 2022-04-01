@@ -275,7 +275,7 @@ Mapless >> asDictionary [
 	dic at: self class name asString put: attributes.
 	self data
 		associationsDo: [ :assoc | 
-			assoc value isPersistentModel
+			assoc value isMapless
 				ifTrue: [ attributes at: assoc key put: assoc value asDictionary ]
 				ifFalse: [ attributes at: assoc key put: assoc value ] ].
 	dic ] value: OrderedJsonObject new
@@ -468,7 +468,7 @@ Mapless >> isDeleted [
 ]
 
 { #category : #testing }
-Mapless >> isPersistentModel [
+Mapless >> isMapless [
 	^ true
 ]
 

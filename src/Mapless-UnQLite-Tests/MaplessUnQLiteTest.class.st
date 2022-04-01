@@ -1,3 +1,6 @@
+"
+Cover basic functionality
+"
 Class {
 	#name : #MaplessUnQLiteTest,
 	#superclass : #MaplessTestCase,
@@ -276,7 +279,7 @@ MaplessUnQLiteTest >> testCount [
 	users do: [ :user | repository save: user ].
 	self
 		assert: (repository count: DummyUser)
-		equals: Character alphabet size
+		equals: Character alphabet size * 2
 ]
 
 { #category : #tests }

@@ -52,6 +52,16 @@ MaplessUnQLiteRepository >> basicSave: aMapless [
 	self onAfterSave: aMapless
 ]
 
+{ #category : #actions }
+MaplessUnQLiteRepository >> bsonDeserialize: aByteArray [
+	^ self maplessFromResult: (BSON read: aByteArray readStream)
+]
+
+{ #category : #actions }
+MaplessUnQLiteRepository >> bsonSerialize: aStorable [
+	^ BSON write: aStorable
+]
+
 { #category : #querying }
 MaplessUnQLiteRepository >> count: aMaplessClass [
 	^ self count: aMaplessClass where: nil
@@ -75,7 +85,7 @@ MaplessUnQLiteRepository >> delete: aMapless [
 
 { #category : #actions }
 MaplessUnQLiteRepository >> deserialize: aByteArray [
-	^ self maplessFromResult: (BSON read: aByteArray readStream)
+	^ self bsonDeserialize: aByteArray
 ]
 
 { #category : #actions }
@@ -228,6 +238,16 @@ MaplessUnQLiteRepository >> maplessFromResult: aDictionarish [
 		in: self
 ]
 
+{ #category : #actions }
+MaplessUnQLiteRepository >> messagePackedDeserialize: aByteArray [
+	^ self maplessFromResult: (Object fromMessagePack: aByteArray)
+]
+
+{ #category : #actions }
+MaplessUnQLiteRepository >> messagePackedSerialize: aStorable [
+	^ aStorable asDictionary messagePacked
+]
+
 { #category : #accessing }
 MaplessUnQLiteRepository >> namespaced: propertyName of: aStorable [
 	^ '{1}:{2}:{3}'
@@ -288,7 +308,7 @@ MaplessUnQLiteRepository >> save: aMapless [
 
 { #category : #actions }
 MaplessUnQLiteRepository >> serialize: aStorable [
-	^ BSON write: aStorable
+	^ self bsonSerialize: aStorable
 ]
 
 { #category : #actions }
