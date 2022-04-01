@@ -309,6 +309,10 @@ MaplessUnQLiteTest >> testDestroy [
 						yourself) ].
 	people do: [ :guy | repository save: guy ].
 	self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
+	self
+		assert:
+			(people
+				allSatisfy: [ :guy | (repository findOne: DummyPerson atId: guy id) notNil ]).
 	people do: [ :guy | repository destroy: guy ].
 	self
 		assert:

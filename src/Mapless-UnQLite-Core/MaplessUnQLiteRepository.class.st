@@ -14,7 +14,7 @@ MaplessUnQLiteRepository class >> for: aFilePathString [
 
 { #category : #actions }
 MaplessUnQLiteRepository class >> getNewId [
-	^ UUID new
+	^ UUID new asString36
 ]
 
 { #category : #accessing }
@@ -33,18 +33,24 @@ MaplessUnQLiteRepository class >> maplessDataPropertyName [
 	^ 'maplessData'
 ]
 
-{ #category : #actions }
-MaplessUnQLiteRepository >> basicInsert: aBSONFriendlyObject as: aMaplessClass [
-	self
-		withClientDo:
-			[ :client | client insert: aBSONFriendlyObject as: aMaplessClass in: self ]
+{ #category : #querying }
+MaplessUnQLiteRepository >> basicFindOne: aMaplessClass atId: anId in: aMaplessRepository using: anUnQLiteClient [
+	| result key |
+	key := self namespaced: 'id' of: aMaplessClass valued: anId.
+	result := anUnQLiteClient at: key ifAbsent: [ nil ].
+	result
+		ifNotNil: [ ^ self maplessFromResult: (BSON read: result readStream) ].
+	^ nil
 ]
 
 { #category : #actions }
-MaplessUnQLiteRepository >> basicUpdate: aBSONFriendlyObject as: aMaplessClass [
-	self
-		withClientDo:
-			[ :client | client update: aBSONFriendlyObject as: aMaplessClass in: self ]
+MaplessUnQLiteRepository >> basicSave: aMapless [
+	| key storable serialized |
+	key := self namespacedIdOf: aMapless.
+	storable := resolver storableFor: aMapless in: self.
+	serialized := BSON write: storable.
+	self withClientDo: [ :client | client at: key put: serialized ].
+	self onAfterSave: aMapless
 ]
 
 { #category : #querying }
@@ -72,8 +78,12 @@ MaplessUnQLiteRepository >> delete: aMapless [
 MaplessUnQLiteRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
+	| key |
 	self onBeforeDestroy: aMapless.
-	self withClientDo: [ :client | client destroy: aMapless ].
+	self
+		withClientDo: [ :client | 
+			key := self namespacedIdOf: aMapless.
+			client removeKey: key ifAbsent: [ nil ] ].
 	self onAfterDestroy: aMapless
 ]
 
@@ -96,13 +106,9 @@ MaplessUnQLiteRepository >> dropDatabase [
 
 { #category : #testing }
 MaplessUnQLiteRepository >> existsId: anId of: aMaplessClass [
-	^ (self
-		count: aMaplessClass
-		where:
-			('{1} = ''{2}'''
-				format:
-					{self idPropertyName.
-					anId})) > 0
+	^ self
+		withClientDo:
+			[ :client | client includesKey: (self namespacedIdOf: aMaplessClass valued: anId) ]
 ]
 
 { #category : #querying }
@@ -155,7 +161,12 @@ MaplessUnQLiteRepository >> findAll: aMaplessClass where: someConditionsOrNil li
 { #category : #querying }
 MaplessUnQLiteRepository >> findOne: aMaplessClass atId: anId [
 	^ self
-		withClientDo: [ :client | client findOne: aMaplessClass atId: anId in: self ]
+		withClientDo: [ :client | 
+			self
+				basicFindOne: aMaplessClass
+				atId: anId
+				in: self
+				using: client ]
 ]
 
 { #category : #querying }
@@ -189,20 +200,49 @@ MaplessUnQLiteRepository >> idPropertyName [
 
 { #category : #actions }
 MaplessUnQLiteRepository >> insert: aMapless [
-	| storable |
 	self onBeforeInsert: aMapless.
-	storable := resolver storableFor: aMapless in: self.
-	storable
-		at: self idPropertyName
-		ifAbsent: [ storable at: self idPropertyName put: self class getNewId asString ].
-	self basicInsert: storable as: aMapless class.
-	self ensureId: (storable at: self idPropertyName) for: aMapless.
+	self basicSave: aMapless.
 	self onAfterInsert: aMapless
 ]
 
 { #category : #accessing }
 MaplessUnQLiteRepository >> maplessDataPropertyName [
 	^ self class maplessDataPropertyName
+]
+
+{ #category : #querying }
+MaplessUnQLiteRepository >> maplessFromResult: aDictionarish [
+	^ Mapless
+		fromJSONObject: (JsonObject fromAssociations: aDictionarish associations)
+		in: self
+]
+
+{ #category : #accessing }
+MaplessUnQLiteRepository >> namespaced: propertyName of: aStorable [
+	^ '{1}:{2}:{3}'
+		format:
+			{(aStorable at: '_c').
+			propertyName.
+			(aStorable at: propertyName)}
+]
+
+{ #category : #accessing }
+MaplessUnQLiteRepository >> namespaced: propertyName of: aMaplessClass valued: aValue [
+	^ '{1}:{2}:{3}'
+		format:
+			{aMaplessClass name.
+			propertyName.
+			aValue}
+]
+
+{ #category : #accessing }
+MaplessUnQLiteRepository >> namespacedIdOf: aStorable [
+	^ self namespaced: 'id' of: aStorable
+]
+
+{ #category : #accessing }
+MaplessUnQLiteRepository >> namespacedIdOf: aMaplessClass valued: aValue [
+	^ self namespaced: 'id' of: aMaplessClass valued: aValue
 ]
 
 { #category : #actions }
@@ -215,6 +255,12 @@ MaplessUnQLiteRepository >> onBeforeInsert: aMapless [
 	self flag: #review. "not supported at the moment"
 	aMapless ensurePrivateId.
 	super onBeforeInsert: aMapless
+]
+
+{ #category : #actions }
+MaplessUnQLiteRepository >> onBeforeSave: aMapless [
+	self ensureIdOf: aMapless.
+	super onBeforeSave: aMapless
 ]
 
 { #category : #actions }
@@ -231,14 +277,8 @@ MaplessUnQLiteRepository >> save: aMapless [
 
 { #category : #actions }
 MaplessUnQLiteRepository >> update: aMapless [
-	| maplessData storable |
 	self onBeforeUpdate: aMapless.
-	maplessData := resolver storableFor: aMapless in: self.
-	storable := Dictionary new.
-	storable at: self idPropertyName put: aMapless id.
-	maplessData removeKey: self idPropertyName ifAbsent: [  ].
-	storable at: self maplessDataPropertyName put: maplessData.
-	self basicUpdate: storable as: aMapless class.
+	self basicSave: aMapless.
 	self onAfterUpdate: aMapless
 ]
 
@@ -251,5 +291,5 @@ MaplessUnQLiteRepository >> withClientDo: aBlock [
 
 { #category : #actions }
 MaplessUnQLiteRepository >> withNormalizedId: aValue [
-	^ UUID newFrom: aValue 
+	^ aValue 
 ]

@@ -18,29 +18,33 @@ MaplessUnQLiteClient class >> on: aDatabaseFileName [
 ]
 
 { #category : #actions }
+MaplessUnQLiteClient >> at: key [
+	^ unqliteClient at: key
+]
+
+{ #category : #actions }
+MaplessUnQLiteClient >> at: key ifAbsent: aBlock [
+	^ unqliteClient at: key ifAbsent: aBlock
+]
+
+{ #category : #actions }
+MaplessUnQLiteClient >> at: key ifAbsentPut: aBlock [
+	^ unqliteClient at: key ifAbsentPut: aBlock
+]
+
+{ #category : #actions }
+MaplessUnQLiteClient >> at: key ifPresent: aBlock [
+	^ unqliteClient at: key ifPresent: aBlock
+]
+
+{ #category : #actions }
+MaplessUnQLiteClient >> at: key put: value [
+	^ unqliteClient at: key put: value
+]
+
+{ #category : #actions }
 MaplessUnQLiteClient >> close [
 	unqliteClient ifNotNil: [ unqliteClient close ]
-]
-
-{ #category : #querying }
-MaplessUnQLiteClient >> count: aMaplessClass where: someConditionsOrNil in: aMaplessPostgresRepository [
-	| sql result |
-	sql := self sqlForCount: aMaplessClass where: someConditionsOrNil.
-	result := unqliteClient query: sql.
-	^ result firstFieldOfFirstRecord
-]
-
-{ #category : #actions }
-MaplessUnQLiteClient >> destroy: aMapless [
-	unqliteClient deleteAt: (self namespacedIdOf: aMapless)
-]
-
-{ #category : #actions }
-MaplessUnQLiteClient >> destroyAll: aMaplessClass where: condition [
-
-	self flag: #review.
-	"can be implemented in bulk?"
-	self halt
 ]
 
 { #category : #actions }
@@ -48,18 +52,14 @@ MaplessUnQLiteClient >> disconnect [
 	self close
 ]
 
-{ #category : #querying }
-MaplessUnQLiteClient >> findOne: aMaplessClass atId: anId in: aMaplessPostgresRepository [
-	| result key |
-
-	key := self namespaced: 'id' of: aMaplessClass valued: anId.
-	result := unqliteClient at: key.
-	^ self maplessFromResult: (BSON read: result readStream) in: aMaplessPostgresRepository 
-]
-
 { #category : #testing }
 MaplessUnQLiteClient >> hasDatabaseNamed: aDatabaseFileName [
 	^ aDatabaseFileName asFileReference exists
+]
+
+{ #category : #testing }
+MaplessUnQLiteClient >> includesKey: key [
+	^ unqliteClient includesKey: key
 ]
 
 { #category : #initialization }
@@ -67,52 +67,31 @@ MaplessUnQLiteClient >> initializeOn: aDatabaseFileName [
 	unqliteClient := PqDatabase open: aDatabaseFileName
 ]
 
-{ #category : #actions }
-MaplessUnQLiteClient >> insert: aBSONFriendlyObject as: aMaplessClass in: aMaplessPostgresRepository [
-	| key postgresClient serialized |
-	key := self namespacedIdOf: aBSONFriendlyObject.
-	serialized := BSON write: aBSONFriendlyObject.
-	^ unqliteClient at: key put: serialized
-]
-
 { #category : #testing }
 MaplessUnQLiteClient >> isValid [
 	^ unqliteClient isOpen
 ]
 
+{ #category : #accessing }
+MaplessUnQLiteClient >> keys [
+	^ unqliteClient keys
+]
+
 { #category : #actions }
-MaplessUnQLiteClient >> maplessFromResult: aDictionarish in: aMaplessPostgresRepository [
+MaplessUnQLiteClient >> maplessFromResult: aDictionarish in: aMaplessRepository [
 	^ Mapless
 		fromJSONObject: (JsonObject fromAssociations: aDictionarish associations)
-		in: aMaplessPostgresRepository
+		in: aMaplessRepository
 ]
 
-{ #category : #accessing }
-MaplessUnQLiteClient >> namespaced: propertyName of: aStorable [
-	^ '{1}:{2}:{3}'
-		format:
-			{(aStorable at: '_c').
-			propertyName.
-			(aStorable at: propertyName)}
+{ #category : #actions }
+MaplessUnQLiteClient >> removeKey: key [
+	^ unqliteClient removeKey: key
 ]
 
-{ #category : #accessing }
-MaplessUnQLiteClient >> namespaced: propertyName of: aMaplessClass valued: aValue [
-	^ '{1}:{2}:{3}'
-		format:
-			{aMaplessClass name.
-			propertyName.
-			aValue}
-]
-
-{ #category : #accessing }
-MaplessUnQLiteClient >> namespacedIdOf: aStorable [
-	^ self namespaced: 'id' of: aStorable
-]
-
-{ #category : #accessing }
-MaplessUnQLiteClient >> namespacedIdOf: aMaplessClass valued: aValue [
-	^ self namespaced: 'id' of: aMaplessClass valued: aValue
+{ #category : #actions }
+MaplessUnQLiteClient >> removeKey: key ifAbsent: aBlock [
+	^ unqliteClient removeKey: key ifAbsent: aBlock
 ]
 
 { #category : #actions }
@@ -120,11 +99,9 @@ MaplessUnQLiteClient >> reset [
 	unqliteClient close
 ]
 
-{ #category : #actions }
-MaplessUnQLiteClient >> truncate: aMaplessClass [
-	self postgresClient
-		execute:
-			('TRUNCATE {1}' format: {(self tableNameFor: aMaplessClass)})
+{ #category : #accessing }
+MaplessUnQLiteClient >> size [
+	^ unqliteClient size
 ]
 
 { #category : #accessing }
@@ -133,17 +110,6 @@ MaplessUnQLiteClient >> unqliteClient [
 ]
 
 { #category : #actions }
-MaplessUnQLiteClient >> update: aBSONFriendlyObject as: aMaplessClass in: aMaplessPostgresRepository [
-	^ unqliteClient
-		execute:
-			('UPDATE {1} SET {2} = ''{3}'' WHERE {4} = ''{5}'''
-				format:
-					{(self tableNameFor: aMaplessClass).
-					aMaplessPostgresRepository maplessDataPropertyName.
-					(aBSONFriendlyObject
-						at: aMaplessPostgresRepository maplessDataPropertyName)
-						asJSONString.
-					aMaplessPostgresRepository idPropertyName.
-					(aBSONFriendlyObject
-						at: aMaplessPostgresRepository idPropertyName)})
+MaplessUnQLiteClient >> values [
+	unqliteClient values
 ]
