@@ -2,12 +2,12 @@ Class {
 	#name : #MaplessUnQLitePool,
 	#superclass : #MaplessAbstractPool,
 	#instVars : [
-		'databaseName',
 		'clientsMonitor',
 		'busyClients',
 		'idleClients',
 		'clientsMutex',
-		'maxClients'
+		'maxClients',
+		'databaseFileName'
 	],
 	#category : #'Mapless-UnQLite-Core-Connections'
 }
@@ -21,11 +21,14 @@ MaplessUnQLitePool class >> defaultMaxClients [
 
 { #category : #'instance creation' }
 MaplessUnQLitePool class >> local [
-	^ self
-		hostname: 'localhost'
-		port: 5432
-		username: 'username'
-		password: 'password'
+	^ self shouldNotImplement
+]
+
+{ #category : #'instance creation' }
+MaplessUnQLitePool class >> on: aFilePathString [
+	^ self new
+		databaseFileName: aFilePathString;
+		yourself
 ]
 
 { #category : #accessing }
@@ -47,28 +50,17 @@ MaplessUnQLitePool >> currentClientDynamicVariable [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
 
-	^ PostgresCurrentClient
+	^ MaplessUnQLiteCurrentClient
 ]
 
 { #category : #accessing }
-MaplessUnQLitePool >> databaseName [
-	^ databaseName
+MaplessUnQLitePool >> databaseFileName [
+	^ databaseFileName
 ]
 
 { #category : #accessing }
-MaplessUnQLitePool >> databaseName: anObject [
-	databaseName := anObject
-]
-
-{ #category : #accessing }
-MaplessUnQLitePool >> getConnectionUrl [
-	^ ZnUrl new
-		scheme: 'psql';
-		host: hostname;
-		port: port;
-		username: username;
-		password: password;
-		/ databaseName
+MaplessUnQLitePool >> databaseFileName: anObject [
+	databaseFileName := anObject
 ]
 
 { #category : #testing }
@@ -129,7 +121,7 @@ MaplessUnQLitePool >> initializeMaxClients [
 MaplessUnQLitePool >> makeClient [
 	"Returns a new client so it can be (re)used in the pool"
 
-	^ (MaplessPostgresClient url: self getConnectionUrl) connect
+	^ MaplessUnQLiteClient on: self databaseFileName
 ]
 
 { #category : #accessing }
@@ -138,8 +130,8 @@ MaplessUnQLitePool >> maxClients [
 ]
 
 { #category : #reactions }
-MaplessUnQLitePool >> onLogout: aMaplessPostgresClient [
-	self remove: aMaplessPostgresClient
+MaplessUnQLitePool >> onLogout: aMaplessUnQLiteClient [
+	self remove: aMaplessUnQLiteClient
 ]
 
 { #category : #actions }
@@ -147,8 +139,11 @@ MaplessUnQLitePool >> printOn: aStream [
 	super printOn: aStream.
 	aStream
 		nextPutAll:
-			'(' , self busyClients size asString , ' busy, '
-				, self idleClients size asString , ' idle @' , databaseName , ')'
+			('({1} busy, {2} idle @ {3})'
+				format:
+					{self busyClients size asString.
+					self idleClients size asString.
+					databaseFileName asFileReference basename})
 ]
 
 { #category : #actions }
@@ -173,36 +168,36 @@ MaplessUnQLitePool >> remove: aMaplessPostgresClient [
 
 { #category : #actions }
 MaplessUnQLitePool >> requestClient [
-	"Answers a postgresClient instance taken from the idle clients.
+	"Answers a unqliteClient instance taken from the idle clients.
 	It'll create a new one if needed.
 	It's a thread safe operation."
 
 	^ self clientsMonitor
-		critical: [ | postgresClient |
-			postgresClient := self hasIdleClients
+		critical: [ | unqliteClient |
+			unqliteClient := self hasIdleClients
 				ifTrue: [ self idleClients anyOne ]
 				ifFalse: [ self hasMaxClients
 						ifTrue: [ ^ MaplessMaximumPoolClientsReached signal ].
 					self makeClient ].
-			(postgresClient notNil and: [ postgresClient isValid not ])
-				ifTrue: [ self remove: postgresClient.
-					postgresClient := self makeClient ].
-			self idleClients remove: postgresClient ifAbsent: [ nil ].
-			postgresClient ifNotNil: [ self busyClients add: postgresClient ].
-			postgresClient ]
+			(unqliteClient notNil and: [ unqliteClient isValid not ])
+				ifTrue: [ self remove: unqliteClient.
+					unqliteClient := self makeClient ].
+			self idleClients remove: unqliteClient ifAbsent: [ nil ].
+			unqliteClient ifNotNil: [ self busyClients add: unqliteClient ].
+			unqliteClient ]
 ]
 
 { #category : #actions }
-MaplessUnQLitePool >> returnClient: aMaplessPostgresClient [
-	"Sends aMaplessPostgresClient to go from the busy ones to the idle ones
+MaplessUnQLitePool >> returnClient: aMaplessUnQLiteClient [
+	"Sends aMaplessUnQLiteClient to go from the busy ones to the idle ones
 	but only if it's still valid"
 
 	self clientsMonitor
 		critical: [ self busyClients
-				remove: aMaplessPostgresClient
+				remove: aMaplessUnQLiteClient
 				ifAbsent: [ self returningUnusedClient ].
-			aMaplessPostgresClient isValid
-				ifTrue: [ self idleClients add: aMaplessPostgresClient ] ]
+			aMaplessUnQLiteClient isValid
+				ifTrue: [ self idleClients add: aMaplessUnQLiteClient ] ]
 ]
 
 { #category : #actions }
@@ -227,14 +222,14 @@ MaplessUnQLitePool >> withClientDo: aBlock [
 	Other code could reach the client in use by accessing
 	the XXCurrentClient dynamic variable's value."
 
-	| postgresClient |
-	postgresClient := self requestClient.
+	| unqliteClient |
+	unqliteClient := self requestClient.
 	^ self currentClientDynamicVariable
-		value: postgresClient
-		during: [ [ [ aBlock value: postgresClient ]
+		value: unqliteClient
+		during: [ [ [ aBlock value: unqliteClient ]
 				on: Error
 				do: [ :x | 
-					postgresClient reset.
+					unqliteClient reset.
 					x pass ] ]
-				ensure: [ self returnClient: postgresClient ] ]
+				ensure: [ self returnClient: unqliteClient ] ]
 ]

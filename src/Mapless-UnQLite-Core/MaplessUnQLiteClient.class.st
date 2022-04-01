@@ -1,3 +1,6 @@
+"
+I'm the facade of the concrete library that will give us access to UnQLite
+"
 Class {
 	#name : #MaplessUnQLiteClient,
 	#superclass : #Object,
@@ -8,64 +11,41 @@ Class {
 }
 
 { #category : #accessing }
-MaplessUnQLiteClient class >> local [
+MaplessUnQLiteClient class >> on: aDatabaseFileName [
 	^ self new
+		initializeOn: aDatabaseFileName;
+		yourself
 ]
 
 { #category : #actions }
 MaplessUnQLiteClient >> close [
-	self disconnect
-]
-
-{ #category : #actions }
-MaplessUnQLiteClient >> connect [
-	postgresClient connect
+	unqliteClient ifNotNil: [ unqliteClient close ]
 ]
 
 { #category : #querying }
 MaplessUnQLiteClient >> count: aMaplessClass where: someConditionsOrNil in: aMaplessPostgresRepository [
 	| sql result |
 	sql := self sqlForCount: aMaplessClass where: someConditionsOrNil.
-	result := postgresClient query: sql.
+	result := unqliteClient query: sql.
 	^ result firstFieldOfFirstRecord
 ]
 
 { #category : #actions }
-MaplessUnQLiteClient >> createDatabaseNamed: aString [
-	self postgresClient execute: 'CREATE DATABASE "' , aString , '"'
-]
-
-{ #category : #actions }
-MaplessUnQLiteClient >> createTableFor: aMaplessClass [
-	self createTableNamed: (self tableNameFor: aMaplessClass)
-]
-
-{ #category : #actions }
-MaplessUnQLiteClient >> createTableNamed: aString [
-	postgresClient
-		execute:
-			('CREATE TABLE {1} (id UUID PRIMARY KEY, maplessData jsonb) WITH (OIDS = FALSE)'
-				format: {aString})
+MaplessUnQLiteClient >> destroy: aMapless [
+	unqliteClient deleteAt: (self namespacedIdOf: aMapless)
 ]
 
 { #category : #actions }
 MaplessUnQLiteClient >> destroyAll: aMaplessClass where: condition [
-	self postgresClient
-		execute:
-			('DELETE FROM {1} WHERE {2}'
-				format:
-					{(self tableNameFor: aMaplessClass).
-					condition})
+
+	self flag: #review.
+	"can be implemented in bulk?"
+	self halt
 ]
 
 { #category : #actions }
 MaplessUnQLiteClient >> disconnect [
-	postgresClient ifNotNil: [ postgresClient close ]
-]
-
-{ #category : #actions }
-MaplessUnQLiteClient >> dropDatabaseNamed: aString [
-	self postgresClient execute: 'DROP DATABASE IF EXISTS "' , aString , '"'
+	self close
 ]
 
 { #category : #querying }
@@ -83,50 +63,27 @@ MaplessUnQLiteClient >> findAll: aMaplessClass where: someConditionsOrNil limit:
 			[ :resultData | self maplessFromResult: resultData in: aMaplessPostgresRepository ]
 ]
 
-{ #category : #accessing }
-MaplessUnQLiteClient >> getTableNames [
-	"Answers the names of the existing tables in the database."
-
-	^ postgresClient listTablesInSchema: 'public'
-]
-
 { #category : #testing }
-MaplessUnQLiteClient >> hasDatabaseNamed: aString [
-	^ postgresClient listDatabases includes: aString
-]
-
-{ #category : #testing }
-MaplessUnQLiteClient >> hasTableFor: aMaplessClass [
-	^ self hasTableNamed: (self tableNameFor: aMaplessClass)
-]
-
-{ #category : #testing }
-MaplessUnQLiteClient >> hasTableNamed: aString [
-	^ self getTableNames includes: aString asLowercase
+MaplessUnQLiteClient >> hasDatabaseNamed: aDatabaseFileName [
+	^ aDatabaseFileName asFileReference exists
 ]
 
 { #category : #initialization }
-MaplessUnQLiteClient >> initializeOn: anUrlOrUrlString [
-	postgresClient := P3Client url: anUrlOrUrlString
+MaplessUnQLiteClient >> initializeOn: aDatabaseFileName [
+	unqliteClient := PqDatabase open: aDatabaseFileName
 ]
 
 { #category : #actions }
 MaplessUnQLiteClient >> insert: aBSONFriendlyObject as: aMaplessClass in: aMaplessPostgresRepository [
-	^ postgresClient
-		execute:
-			('INSERT INTO {1} VALUES (''{2}'', ''{3}'')'
-				format:
-					{(self tableNameFor: aMaplessClass).
-					(aBSONFriendlyObject
-						at: aMaplessPostgresRepository idPropertyName).
-					(aBSONFriendlyObject
-						at: aMaplessPostgresRepository maplessDataPropertyName)
-						asJSONString})
+	| key postgresClient serialized |
+	key := self namespacedIdOf: aBSONFriendlyObject.
+	serialized := BSON write: aBSONFriendlyObject.
+	^ unqliteClient at: key put: serialized
 ]
 
 { #category : #testing }
 MaplessUnQLiteClient >> isValid [
-	^ postgresClient isConnected
+	^ unqliteClient isOpen
 ]
 
 { #category : #actions }
@@ -140,46 +97,22 @@ MaplessUnQLiteClient >> maplessFromResult: anArray in: aMaplessPostgresRepositor
 ]
 
 { #category : #accessing }
-MaplessUnQLiteClient >> postgresClient [
-	^ postgresClient
+MaplessUnQLiteClient >> namespaced: propertyName of: aStorable [
+	^ '{1}:{2}:{3}'
+		format:
+			{(aStorable at: '_c').
+			propertyName.
+			(aStorable at: propertyName)}
+]
+
+{ #category : #accessing }
+MaplessUnQLiteClient >> namespacedIdOf: aStorable [
+	^ self namespaced: 'id' of: aStorable
 ]
 
 { #category : #actions }
 MaplessUnQLiteClient >> reset [
-	postgresClient reset
-]
-
-{ #category : #accessing }
-MaplessUnQLiteClient >> sqlForCount: aMaplessClass where: someConditionsOrNil [
-	^ String
-		streamContents: [ :stream | 
-			stream
-				<<
-					('SELECT COUNT(*) FROM {1}'
-						format: {(self tableNameFor: aMaplessClass)}).
-			someConditionsOrNil
-				ifNotNil: [ stream << (' WHERE {1}' format: {someConditionsOrNil}) ] ]
-]
-
-{ #category : #accessing }
-MaplessUnQLiteClient >> sqlForFindAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [ 
-	^ String
-		streamContents: [ :stream | 
-			stream
-				<< ('SELECT * FROM {1}' format: {(self tableNameFor: aMaplessClass)}).
-			someConditionsOrNil
-				ifNotNil: [ stream << (' WHERE {1}' format: {someConditionsOrNil}) ].
-			sortConditionsOrNil
-				ifNotNil: [ stream << (' ORDER BY {1}' format: {sortConditionsOrNil}) ].
-			aLimitOrNil
-				ifNotNil: [ stream << (' LIMIT {1}' format: {aLimitOrNil}) ].
-			anOffsetOrNil
-				ifNotNil: [ stream << (' OFFSET {1}' format: {anOffsetOrNil}) ] ]
-]
-
-{ #category : #accessing }
-MaplessUnQLiteClient >> tableNameFor: aMaplessClass [
-	^ aMaplessClass collectionName
+	unqliteClient close
 ]
 
 { #category : #actions }
@@ -189,9 +122,14 @@ MaplessUnQLiteClient >> truncate: aMaplessClass [
 			('TRUNCATE {1}' format: {(self tableNameFor: aMaplessClass)})
 ]
 
+{ #category : #accessing }
+MaplessUnQLiteClient >> unqliteClient [
+	^ unqliteClient
+]
+
 { #category : #actions }
 MaplessUnQLiteClient >> update: aBSONFriendlyObject as: aMaplessClass in: aMaplessPostgresRepository [
-	^ postgresClient
+	^ unqliteClient
 		execute:
 			('UPDATE {1} SET {2} = ''{3}'' WHERE {4} = ''{5}'''
 				format:

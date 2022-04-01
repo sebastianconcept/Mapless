@@ -5,6 +5,14 @@ Class {
 }
 
 { #category : #actions }
+MaplessUnQLiteRepository class >> for: aFilePathString [
+	^ self
+		for: aFilePathString
+		with: (MaplessUnQLitePool on: aFilePathString)
+		using: MaplessCollectionToClassNameResolver new
+]
+
+{ #category : #actions }
 MaplessUnQLiteRepository class >> getNewId [
 	^ UUID new
 ]
@@ -51,12 +59,6 @@ MaplessUnQLiteRepository >> count: aMaplessClass where: conditions [
 ]
 
 { #category : #actions }
-MaplessUnQLiteRepository >> createDatabase [
-	self
-		withClientDo: [ :client | client createDatabaseNamed: databaseName ]
-]
-
-{ #category : #actions }
 MaplessUnQLiteRepository >> delete: aMapless [
 	self onBeforeDelete: aMapless.
 	aMapless deletedOn: DateAndTime now.
@@ -71,19 +73,13 @@ MaplessUnQLiteRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
 	self onBeforeDestroy: aMapless.
-	self
-		destroyAll: aMapless class
-		where:
-			('{1} = ''{2}'''
-				format:
-					{self idPropertyName.
-					aMapless id}).
+	self withClientDo: [ :client | client destroy: aMapless ].
 	self onAfterDestroy: aMapless
 ]
 
 { #category : #actions }
 MaplessUnQLiteRepository >> destroyAll: aMaplessClass [
-	self withClientDo: [ :client | client truncate: aMaplessClass ]
+	self destroyAll: aMaplessClass where: '*'
 ]
 
 { #category : #actions }
@@ -96,29 +92,6 @@ MaplessUnQLiteRepository >> destroyAll: aMaplessClass where: condition [
 MaplessUnQLiteRepository >> dropDatabase [
 	self
 		withClientDo: [ :client | client dropDatabaseNamed: databaseName ]
-]
-
-{ #category : #actions }
-MaplessUnQLiteRepository >> ensureCollection [
-	self shouldBeImplemented
-]
-
-{ #category : #actions }
-MaplessUnQLiteRepository >> ensureDatabase [
-	(MaplessPostgresRepository
-		for: 'postgres'
-		with: MaplessStandalonePostgresPool local)
-		withClientDo: [ :client | 
-			(client hasDatabaseNamed: databaseName)
-				ifFalse: [ client createDatabaseNamed: databaseName ] ]
-]
-
-{ #category : #actions }
-MaplessUnQLiteRepository >> ensureTableFor: aMaplessClass [
-	self
-		withClientDo: [ :client |
-			(client hasTableFor: aMaplessClass)
-				ifFalse: [ client createTableFor: aMaplessClass ] ]
 ]
 
 { #category : #testing }
@@ -219,32 +192,14 @@ MaplessUnQLiteRepository >> idPropertyName [
 	^ self class idPropertyName
 ]
 
-{ #category : #initialization }
-MaplessUnQLiteRepository >> initializeOn: aDatabaseName with: aDatabaseAccessor using: aMaplessResolver [
-	super
-		initializeOn: aDatabaseName
-		with: aDatabaseAccessor
-		using: aMaplessResolver.
-	aDatabaseAccessor databaseName: aDatabaseName
-]
-
 { #category : #actions }
 MaplessUnQLiteRepository >> insert: aMapless [
-	| maplessData storable |
+	| storable |
 	self onBeforeInsert: aMapless.
-	maplessData := resolver storableFor: aMapless in: self.
-	storable := Dictionary new.
-	maplessData
-		at: self idPropertyName
-		ifAbsent: [ storable
-				at: self idPropertyName
-				put: self class getNewId ].
-	maplessData
-		removeKey: self idPropertyName
-		ifAbsent: [  ].
+	storable := resolver storableFor: aMapless in: self.
 	storable
-		at: self maplessDataPropertyName
-		put: maplessData.
+		at: self idPropertyName
+		ifAbsent: [ storable at: self idPropertyName put: self class getNewId asString ].
 	self basicInsert: storable as: aMapless class.
 	self ensureId: (storable at: self idPropertyName) for: aMapless.
 	self onAfterInsert: aMapless
@@ -257,10 +212,7 @@ MaplessUnQLiteRepository >> maplessDataPropertyName [
 
 { #category : #actions }
 MaplessUnQLiteRepository >> normalizeIdOfOn: aJsonObject [
-self halt.
-	"aJsonObject at: 'id' put: (aJsonObject at: self idPropertyName).
-	aJsonObject removeKey: self idPropertyName ifAbsent: [ nil ].
-	^ aJsonObject"
+	"No need to normalize it"
 ]
 
 { #category : #reactions }

@@ -32,8 +32,9 @@ MaplessRepository class >> for: aDatabaseName with: aDatabaseAccessor [
 MaplessRepository class >> for: aDatabaseName with: aDatabaseAccessor using: aMaplessResolver [
 	^ self new
 		initializeOn: aDatabaseName
-		with: aDatabaseAccessor
-		using: aMaplessResolver
+			with: aDatabaseAccessor
+			using: aMaplessResolver;
+		yourself
 ]
 
 { #category : #actions }

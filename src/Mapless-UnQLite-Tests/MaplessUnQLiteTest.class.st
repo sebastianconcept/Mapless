@@ -8,27 +8,6 @@ Class {
 }
 
 { #category : #history }
-MaplessUnQLiteTest class >> lastStoredRun [
-	^ Dictionary new
-		add:
-			#passed
-				->
-					(Set new
-						add: #testDefaultCategoryCleanUp;
-						add: #testPackageCleanUp;
-						add: #testSingleClassCreation;
-						add: #testClassCreationInDifferentCategories;
-						add: #testClassFastCreationInDifferentCategories;
-						add: #testMultipleClassCreation;
-						add: #testSingleClassFastCreation;
-						yourself);
-		add: #timeStamp -> '22 November 2008 10:11:35 pm';
-		add: #failures -> Set new;
-		add: #errors -> Set new;
-		yourself
-]
-
-{ #category : #history }
 MaplessUnQLiteTest class >> maplessClasses [
 	^ {DummyPerson.
 	DummyUser.
@@ -36,14 +15,8 @@ MaplessUnQLiteTest class >> maplessClasses [
 ]
 
 { #category : #actions }
-MaplessUnQLiteTest >> resetDatabase [
-	"Remove all objects so the database is clean for any test to be run."
-
-	self class maplessClasses
-		do: [ :each | 
-			(repository hasTableFor: each)
-				ifTrue: [ repository destroyAll: each ]
-				ifFalse: [ repository ensureTableFor: each ] ]
+MaplessUnQLiteTest >> dropDatabase: aDatabaseFileName [
+	aDatabaseFileName asFileReference deleteIfAbsent: [  ]
 ]
 
 { #category : #actions }
@@ -57,12 +30,11 @@ MaplessUnQLiteTest >> savePersonNamed: aString [
 
 { #category : #'setUp-tearDown' }
 MaplessUnQLiteTest >> setUp [
+	| dbFilename |
 	super setUp.
-	repository := MaplessUnQLiteRepository
-		for: 'Mapless-Tests'
-		with: MaplessUnQLiteClient local.
-	repository ensureDatabase.
-	self resetDatabase
+	dbFilename := FileSystem workingDirectory / 'Mapless-Tests.db'.
+	self dropDatabase: dbFilename.
+	repository := MaplessUnQLiteRepository for: dbFilename pathString
 ]
 
 { #category : #'setUp-tearDown' }

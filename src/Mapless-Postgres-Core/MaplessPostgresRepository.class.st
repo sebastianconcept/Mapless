@@ -260,10 +260,7 @@ MaplessPostgresRepository >> maplessDataPropertyName [
 
 { #category : #actions }
 MaplessPostgresRepository >> normalizeIdOfOn: aJsonObject [
-self halt.
-	"aJsonObject at: 'id' put: (aJsonObject at: self idPropertyName).
-	aJsonObject removeKey: self idPropertyName ifAbsent: [ nil ].
-	^ aJsonObject"
+	"No need to normalize it"
 ]
 
 { #category : #reactions }
