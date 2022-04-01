@@ -1,7 +1,7 @@
 Class {
 	#name : #MaplessRedisRepository,
 	#superclass : #MaplessRepository,
-	#category : #'Mapless-Redis-Core-Connections'
+	#category : #'Mapless-Redis-Core-Core'
 }
 
 { #category : #actions }

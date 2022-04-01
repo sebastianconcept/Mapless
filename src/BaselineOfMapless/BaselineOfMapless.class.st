@@ -1,3 +1,21 @@
+"
+I can load the Mapless project with the default or optional modules pulling the right dependencies.
+
+For Memory, Mongo and Redis backends you can load its default: 
+
+Metacello new
+	baseline: 'Mapless';
+	repository: 'github://sebastianconcept/Mapless:master/src';
+	load.
+	
+Or if you want, for example Memory and Postgres:
+
+Metacello new
+	baseline: 'Mapless';
+	repository: 'github://sebastianconcept/Mapless:master/src';
+	load: #('Memory' 'Postgres')
+
+"
 Class {
 	#name : #BaselineOfMapless,
 	#superclass : #BaselineOf,
@@ -17,8 +35,9 @@ BaselineOfMapless >> baseline: spec [
 				group: 'Mongo' with: #('Mapless-Mongo-Tests');
 				group: 'Redis' with: #('Mapless-Redis-Tests');
 				group: 'Postgres' with: #('Mapless-Postgres-Tests');
+				group: 'UnQLite' with: #('Mapless-UnQLite-Tests');
 				group: 'Benchmark' with: #('Mapless-Benchmark-Core');
-				group: 'default' with: #('Memory' 'Mongo' 'Redis' 'Postgres') ]
+				group: 'default' with: #('Memory' 'Mongo') ]
 ]
 
 { #category : #baseline }
@@ -77,7 +96,10 @@ BaselineOfMapless >> setUpPackages: spec [
 	self setUpRedisPackages: spec.
 	
 	self setUpPostgresDependencies: spec.
-	self setUpPostgresPackages: spec
+	self setUpPostgresPackages: spec.
+	
+	self setUpUnQLiteDependencies: spec.
+	self setUpUnQLitePackages: spec
 ]
 
 { #category : #baseline }
@@ -112,4 +134,23 @@ BaselineOfMapless >> setUpRedisPackages: spec [
 	spec
 		package: 'Mapless-Redis-Tests'
 		with: [ spec requires: #('Mapless-Redis-Core' 'Mapless-Tests-Base') ]
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpUnQLiteDependencies: spec [
+	spec
+		baseline: 'PunQLite'
+		with: [ spec
+				repository: 'github://mumez/PunQLite/repository';
+				loads: #('Core') ]
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpUnQLitePackages: spec [
+	spec
+		package: 'Mapless-UnQLite-Core'
+		with: [ spec requires: #('Mapless-Base-Core' 'PunQLite') ].
+	spec
+		package: 'Mapless-UnQLite-Tests'
+		with: [ spec requires: #('Mapless-UnQLite-Core' 'Mapless-Tests-Base') ]
 ]
