@@ -153,14 +153,9 @@ MaplessUnQLiteRepository >> findAll: aMaplessClass where: someConditionsOrNil li
 ]
 
 { #category : #querying }
-MaplessUnQLiteRepository >> findOne: aMapless atId: anId [
+MaplessUnQLiteRepository >> findOne: aMaplessClass atId: anId [
 	^ self
-		findOne: aMapless
-		where:
-			('{1} = ''{2}'''
-				format:
-					{self idPropertyName.
-					anId})
+		withClientDo: [ :client | client findOne: aMaplessClass atId: anId in: self ]
 ]
 
 { #category : #querying }

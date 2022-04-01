@@ -49,18 +49,12 @@ MaplessUnQLiteClient >> disconnect [
 ]
 
 { #category : #querying }
-MaplessUnQLiteClient >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil in: aMaplessPostgresRepository [
-	| sql result |
-	sql := self
-		sqlForFindAll: aMaplessClass
-		where: someConditionsOrNil
-		limit: aLimitOrNil
-		offset: anOffsetOrNil
-		sort: sortConditionsOrNil.
-	result := postgresClient query: sql.
-	^ result data
-		collect:
-			[ :resultData | self maplessFromResult: resultData in: aMaplessPostgresRepository ]
+MaplessUnQLiteClient >> findOne: aMaplessClass atId: anId in: aMaplessPostgresRepository [
+	| result key |
+
+	key := self namespaced: 'id' of: aMaplessClass valued: anId.
+	result := unqliteClient at: key.
+	^ self maplessFromResult: (BSON read: result readStream) in: aMaplessPostgresRepository 
 ]
 
 { #category : #testing }
@@ -87,13 +81,10 @@ MaplessUnQLiteClient >> isValid [
 ]
 
 { #category : #actions }
-MaplessUnQLiteClient >> maplessFromResult: anArray in: aMaplessPostgresRepository [
-	| id maplessData |
-	id := anArray first.
-	maplessData := JsonObject
-		fromAssociations: anArray second associations.
-	maplessData at: aMaplessPostgresRepository idPropertyName put: id.
-	^ Mapless fromJSONObject: maplessData in: aMaplessPostgresRepository
+MaplessUnQLiteClient >> maplessFromResult: aDictionarish in: aMaplessPostgresRepository [
+	^ Mapless
+		fromJSONObject: (JsonObject fromAssociations: aDictionarish associations)
+		in: aMaplessPostgresRepository
 ]
 
 { #category : #accessing }
@@ -106,8 +97,22 @@ MaplessUnQLiteClient >> namespaced: propertyName of: aStorable [
 ]
 
 { #category : #accessing }
+MaplessUnQLiteClient >> namespaced: propertyName of: aMaplessClass valued: aValue [
+	^ '{1}:{2}:{3}'
+		format:
+			{aMaplessClass name.
+			propertyName.
+			aValue}
+]
+
+{ #category : #accessing }
 MaplessUnQLiteClient >> namespacedIdOf: aStorable [
 	^ self namespaced: 'id' of: aStorable
+]
+
+{ #category : #accessing }
+MaplessUnQLiteClient >> namespacedIdOf: aMaplessClass valued: aValue [
+	^ self namespaced: 'id' of: aMaplessClass valued: aValue
 ]
 
 { #category : #actions }

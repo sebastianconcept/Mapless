@@ -142,7 +142,11 @@ MaplessRedisRepository >> namespaced: propertyName of: aMapless [
 
 { #category : #accessing }
 MaplessRedisRepository >> namespaced: propertyName of: aMaplessClass valued: aValue [
-	^ aMaplessClass name , ':' , propertyName , ':' , aValue
+	^ '{1}:{2}:{3}'
+		format:
+			{aMaplessClass name.
+			propertyName.
+			aValue}
 ]
 
 { #category : #accessing }
@@ -152,7 +156,7 @@ MaplessRedisRepository >> namespacedIdOf: aMapless [
 
 { #category : #accessing }
 MaplessRedisRepository >> namespacedIdOf: aMaplessClass valued: aValue [
-	^ aMaplessClass name , ':id:' , aValue
+	^ self namespaced: 'id' of: aMaplessClass valued: aValue
 ]
 
 { #category : #actions }
