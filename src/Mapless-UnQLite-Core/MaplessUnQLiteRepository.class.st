@@ -161,15 +161,7 @@ MaplessUnQLiteRepository >> findAll: aMaplessClass where: someConditions limit: 
 
 { #category : #querying }
 MaplessUnQLiteRepository >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
-	^ self
-		withClientDo: [ :client | 
-			client
-				findAll: aMaplessClass
-				where: someConditionsOrNil
-				limit: aLimitOrNil
-				offset: anOffsetOrNil
-				sort: sortConditionsOrNil
-				in: self ]
+	self shouldBeImplemented
 ]
 
 { #category : #querying }

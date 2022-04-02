@@ -160,10 +160,10 @@ MaplessUnQLitePool >> quantityOfClients [
 ]
 
 { #category : #actions }
-MaplessUnQLitePool >> remove: aMaplessPostgresClient [
-	aMaplessPostgresClient disconnect.
-	self idleClients remove: aMaplessPostgresClient ifAbsent: [ nil ].
-	self busyClients remove: aMaplessPostgresClient ifAbsent: [ nil ]
+MaplessUnQLitePool >> remove: aMaplessUnQLiteClient [
+	aMaplessUnQLiteClient disconnect.
+	self idleClients remove: aMaplessUnQLiteClient ifAbsent: [ nil ].
+	self busyClients remove: aMaplessUnQLiteClient ifAbsent: [ nil ]
 ]
 
 { #category : #actions }
@@ -205,6 +205,11 @@ MaplessUnQLitePool >> returningUnusedClient [
 	Transcript
 		cr;
 		show: 'Warning: returning a client that is not in among the busy ones'
+]
+
+{ #category : #accessing }
+MaplessUnQLitePool >> start: anInteger [
+	anInteger timesRepeat: [ self idleClients add: self makeClient ]
 ]
 
 { #category : #actions }

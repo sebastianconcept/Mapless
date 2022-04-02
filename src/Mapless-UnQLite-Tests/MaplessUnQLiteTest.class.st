@@ -232,57 +232,6 @@ MaplessUnQLiteTest >> testComposition [
 ]
 
 { #category : #tests }
-MaplessUnQLiteTest >> testConditionalCount [
-	| users firstNames sqlCondition |
-	users := OrderedCollection new.
-	Character alphabet
-		do: [ :char | 
-			users
-				add:
-					(DummyUser new
-						username: char asString;
-						person:
-							(DummyPerson new
-								firstName: char asString;
-								yourself);
-						yourself) ].
-	users do: [ :user | repository save: user person ].
-	users do: [ :user | repository save: user ].
-	firstNames := {'John' . 'Peter' . 'Alice' . 'Linda'}.
-	firstNames do: [ :firstName | self savePersonNamed: firstName ].
-	sqlCondition := '{1}->>''{2}'' IN ({3})'
-		format:
-			{'maplessData'.
-			'firstName'.
-			firstNames asJSONString allButFirst allButLast replaceAll: $" with: $'}.
-	self
-		assert: (repository count: DummyPerson where: sqlCondition)
-		equals: firstNames size
-]
-
-{ #category : #tests }
-MaplessUnQLiteTest >> testCount [
-	| users |
-	users := OrderedCollection new.
-	Character alphabet
-		do: [ :char | 
-			users
-				add:
-					(DummyUser new
-						username: char asString;
-						person:
-							(DummyPerson new
-								firstName: char asString;
-								yourself);
-						yourself) ].
-	users do: [ :user | repository save: user person ].
-	users do: [ :user | repository save: user ].
-	self
-		assert: (repository count: DummyUser)
-		equals: Character alphabet size * 2
-]
-
-{ #category : #tests }
 MaplessUnQLiteTest >> testDelete [
 	| people |
 	people := OrderedCollection new.
@@ -492,36 +441,6 @@ MaplessUnQLiteTest >> testMultipleComposedSaveAndLoad [
 	self assert: loaded tags isCollection.
 	loaded tags
 		do: [ :tag | self assert: (tags anySatisfy: [ :t | t id = tag id ]) ]
-]
-
-{ #category : #tests }
-MaplessUnQLiteTest >> testQueryUsers [
-	| users |
-	users := OrderedCollection new.
-	Character alphabet
-		do: [ :char | 
-			users
-				add:
-					(DummyUser new
-						username: char asString;
-						person:
-							(DummyPerson new
-								firstName: char asString;
-								yourself);
-						yourself) ].
-	users do: [ :user | repository save: user person ].
-	users do: [ :user | repository save: user ].
-	self
-		assert:
-			(Character alphabet
-				allSatisfy: [ :char | 
-					(repository
-						findOne: DummyUser
-						where:
-							('maplessData->>''{1}'' = ''{2}'''
-								format:
-									{'username'.
-									char asString})) notNil ])
 ]
 
 { #category : #tests }
