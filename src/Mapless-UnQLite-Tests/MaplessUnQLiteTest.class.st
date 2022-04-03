@@ -232,6 +232,29 @@ MaplessUnQLiteTest >> testComposition [
 ]
 
 { #category : #tests }
+MaplessUnQLiteTest >> testCursorDoEach [
+	| people found |
+	people := OrderedCollection new.
+	Character alphabet
+		do: [ :char | 
+			people
+				add:
+					(DummyPerson new
+						firstName: char asString;
+						yourself) ].
+	people do: [ :guy | repository save: guy ].
+	repository
+		withCursorDo: [ :cursor | 
+			cursor
+				doEach: [ :each | 
+					self assert: each isMapless.
+					self assert: each class equals: DummyPerson.
+					found := people detect: [ :e | e id = each id ] ifNone: [ nil ].
+					self deny: found equals: nil.
+					self assert: found firstName equals: each firstName ] ]
+]
+
+{ #category : #tests }
 MaplessUnQLiteTest >> testDelete [
 	| people |
 	people := OrderedCollection new.

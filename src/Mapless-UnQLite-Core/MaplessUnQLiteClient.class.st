@@ -85,6 +85,11 @@ MaplessUnQLiteClient >> maplessFromResult: aDictionarish in: aMaplessRepository 
 ]
 
 { #category : #actions }
+MaplessUnQLiteClient >> newCursor [
+	^ unqliteClient newCursor
+]
+
+{ #category : #actions }
 MaplessUnQLiteClient >> removeKey: key [
 	^ unqliteClient removeKey: key
 ]

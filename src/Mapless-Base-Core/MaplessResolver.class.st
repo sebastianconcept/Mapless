@@ -84,8 +84,9 @@ MaplessResolver >> referenceDataFrom: aJsonObject in: aMaplessRepository [
 
 { #category : #converting }
 MaplessResolver >> storableFor: aMapless in: aMaplessRepository [
-	"Returns a new JsonObject that's the BSON friendly version of the jsonObject of aMapless.
-	It does that by visiting to cast all the values. 
+	"Returns a new JsonObject that's a serializable friendly 
+	version of the jsonObject of aMapless.
+	It does that by deep visiting and casting all its values. 
 	It will complain if sub models are not previously saved."
 
 	| storableDocument storablePart |

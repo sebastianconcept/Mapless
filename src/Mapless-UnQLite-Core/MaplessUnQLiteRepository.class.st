@@ -9,7 +9,7 @@ MaplessUnQLiteRepository class >> for: aFilePathString [
 	^ self
 		for: aFilePathString
 		with: (MaplessUnQLitePool on: aFilePathString)
-		using: MaplessCollectionToClassNameResolver new
+		using: MaplessUnQLiteResolver new
 ]
 
 { #category : #actions }
@@ -315,6 +315,13 @@ MaplessUnQLiteRepository >> withClientDo: aBlock [
 	"Performs aBlock and providing access to the postgres client as aBlock argument."
 
 	^ accessor withClientDo: aBlock
+]
+
+{ #category : #accessing }
+MaplessUnQLiteRepository >> withCursorDo: aBlock [
+	^ self
+		withClientDo:
+			[ :client | aBlock value: (MaplessUnQLiteCursor on: client newCursor in: self) ]
 ]
 
 { #category : #actions }
