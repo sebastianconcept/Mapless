@@ -251,7 +251,40 @@ MaplessUnQLiteTest >> testCursorDoEach [
 					self assert: each class equals: DummyPerson.
 					found := people detect: [ :e | e id = each id ] ifNone: [ nil ].
 					self deny: found equals: nil.
-					self assert: found firstName equals: each firstName ] ]
+					self assert: found firstName equals: each firstName ] ].
+
+]
+
+{ #category : #tests }
+MaplessUnQLiteTest >> testCursorDoEachFollowsSortingOrder [
+	| people i |
+	people := OrderedCollection new.
+	1 to: 10 do: [ :index | 
+		people
+			add:
+				(DummyPerson new
+					id: index;
+					firstName: 'guy-' , index asString;
+					yourself) ].
+	people do: [ :guy | repository save: guy ].
+	repository
+		withCursorDo: [ :cursor | 
+			cursor first.
+			i := 10.
+			cursor
+				fromCurrentDoEach: [ :each | 
+					"Transcript crShow: 'guy-' , i asString."					
+					self assert: each firstName equals: 'guy-' , i asString.
+					i := i - 1 ] ].
+	repository
+		withCursorDo: [ :cursor | 
+			cursor last.
+			i := 1.
+			cursor
+				fromCurrentReverseDoEach: [ :each | 
+					"Transcript crShow: 'guy-' , i asString."
+					self assert: each firstName equals: 'guy-' , i asString.
+					i := i + 1 ] ]
 ]
 
 { #category : #tests }
@@ -477,6 +510,54 @@ MaplessUnQLiteTest >> testSaveSetsID [
 	repository save: guy.
 	self assert: (guy maplessData at: 'id') notNil.
 	self assert: guy hasId
+]
+
+{ #category : #tests }
+MaplessUnQLiteTest >> testSeekGreaterThan [
+	| people i |
+	people := OrderedCollection new.
+	1 to: 10 do: [ :index | 
+		people
+			add:
+				(DummyPerson new
+					id: index;
+					firstName: 'guy-' , index asString;
+					yourself) ].
+	people do: [ :guy | repository save: guy ].
+	repository
+		withCursorDo: [ :cursor | 
+			| key |
+			key := repository namespaced: 'id' of: DummyPerson valued: 7.
+			cursor seekGreaterThan: key.
+			i := 7.
+			cursor
+				fromCurrentReverseDoEach: [ :each | 
+					self assert: each firstName equals: 'guy-' , i asString.
+					i := i + 1 ] ]
+]
+
+{ #category : #tests }
+MaplessUnQLiteTest >> testSeekLessThan [
+| people i |
+	people := OrderedCollection new.
+	1 to: 10 do: [ :index | 
+		people
+			add:
+				(DummyPerson new
+					id: index;
+					firstName: 'guy-' , index asString;
+					yourself) ].
+	people do: [ :guy | repository save: guy ].
+	repository
+		withCursorDo: [ :cursor | 
+			| key |
+			key := repository namespaced: 'id' of: DummyPerson valued: 7.
+			cursor seekGreaterThan: key.
+			i := 7.
+			cursor
+				fromCurrentDoEach: [ :each | 
+					self assert: each firstName equals: 'guy-' , i asString.
+					i := i - 1 ] ]
 ]
 
 { #category : #tests }
