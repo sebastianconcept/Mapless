@@ -1,3 +1,10 @@
+April 3, 2022 
+===================================
+* Adds `MaplessUnQLiteCursor` to provide basic navigation of the database treating values as `Mapless`. 
+* Adds `testSeekGreaterThan` and `testSeekGreaterThan` for cursor positioning.
+* Adds `fromCurrentDoEach:` and  `fromCurrentReverseDoEach:` for iterating `Mapless` objects.
+* All tests green.
+
 March 30, 2022 
 ===================================
 * Introducing `MaplessPostgresRepository` via dependency on [P3](https://github.com/svenvc/P3).
