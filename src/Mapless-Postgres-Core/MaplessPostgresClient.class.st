@@ -134,13 +134,13 @@ MaplessPostgresClient >> isValid [
 ]
 
 { #category : #actions }
-MaplessPostgresClient >> maplessFromResult: anArray in: aMaplessPostgresRepository [
+MaplessPostgresClient >> maplessFromResult: anArray in: aMaplessRepository [
 	| id maplessData |
 	id := anArray first.
 	maplessData := JsonObject
 		fromAssociations: anArray second associations.
-	maplessData at: aMaplessPostgresRepository idPropertyName put: id.
-	^ Mapless fromJSONObject: maplessData in: aMaplessPostgresRepository
+	maplessData at: aMaplessRepository idPropertyName put: id.
+	^ Mapless fromJSONObject: maplessData in: aMaplessRepository
 ]
 
 { #category : #accessing }

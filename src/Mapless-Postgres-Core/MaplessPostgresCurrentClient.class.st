@@ -1,5 +1,5 @@
 Class {
-	#name : #PostgresCurrentClient,
+	#name : #MaplessPostgresCurrentClient,
 	#superclass : #DynamicVariable,
 	#category : #'Mapless-Postgres-Core-Connections'
 }
