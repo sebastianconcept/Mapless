@@ -2,15 +2,12 @@
 
 Schema-less persistence for Smalltalk with support for multiple backends.
 
-<p align="left">
-	<a href="https://github.com/sebastianconcept/Mapless/releases" alt="Releases">
-		<img src="https://img.shields.io/github/v/tag/sebastianconcept/Mapless?label=release" /></a>
-	<img src="https://img.shields.io/badge/tests-178-green" />
-	<a href="https://github.com/sebastianconcept/Mapless/blob/develop/LICENSE" alt="License">
-		<img src="https://img.shields.io/github/license/sebastianconcept/Mapless" /></a>
-	<img src="https://img.shields.io/github/stars/sebastianconcept/Mapless?style=social" />
-	<img src="https://img.shields.io/github/forks/sebastianconcept/Mapless?style=social" />
-</p>
+[![Release](https://img.shields.io/github/v/tag/sebastianconcept/Mapless?label=release)](https://github.com/sebastianconcept/Mapless/releases)
+![Tests](https://img.shields.io/badge/tests-178-green)
+[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE.txt)
+
+[![Social](https://img.shields.io/github/stars/sebastianconcept/Mapless?style=social)]()
+[![Forks](https://img.shields.io/github/forks/sebastianconcept/Mapless?style=sociall)]()
 
 ___
 
