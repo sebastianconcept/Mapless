@@ -1,6 +1,7 @@
 April 6, 2022 
 ===================================
-* Removed the docker directory with a replica set docker-compose.yml. This is better done when using your own or https://github.com/sebastianconcept/mongo-rs
+* Removed the docker directory with a replica set docker-compose.yml. This is better done when using your own or https://github.com/sebastianconcept/mongo-rs.
+* Starting to improve README based on https://github.com/sebastianconcept/Mapless/issues/87.
 
 April 3, 2022 
 ===================================
