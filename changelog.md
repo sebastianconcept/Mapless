@@ -1,3 +1,7 @@
+April 6, 2022 
+===================================
+* Removed the docker directory with a replica set docker-compose.yml. This is better done when using your own or https://github.com/sebastianconcept/mongo-rs
+
 April 3, 2022 
 ===================================
 * Adds `MaplessUnQLiteCursor` to provide basic navigation of the database treating values as `Mapless`. 
