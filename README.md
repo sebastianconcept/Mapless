@@ -91,10 +91,10 @@ identified := repository findOne: DummyPerson atId: guy id.
 all := repository findAll: DummyPerson.
 
 "Query to load all the instances that match the condition (or receive an empty collection)."
-some := repository findAll: DummyPerson where: [ :each | lastName = 'Peterson' ].
+some := repository findAll: DummyPerson where: [ :each | each lastName = 'Peterson' ].
 
 "Conditionally loading one instance (or nil)."
-one := repository findOne: DummyPerson where: [ :each | lastName = 'Peterson' ].
+one := repository findOne: DummyPerson where: [ :each | each lastName = 'Peterson' ].
 ```
 
 ## Installation
