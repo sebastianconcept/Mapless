@@ -1,6 +1,6 @@
 # Mapless
 
-Multi-backend schema-less persistence for Smalltalk.
+Schema-less persistence for Smalltalk with support for multiple backends.
 
 <p align="left">
 	<a href="https://github.com/sebastianconcept/Mapless/releases" alt="Releases">
@@ -13,8 +13,6 @@ Multi-backend schema-less persistence for Smalltalk.
 </p>
 
 ___
-
-## Mapless most **important features** are:
 
 - Intuitive API for frictionless persistence.
 - No need to create and maintain schemas.
@@ -34,47 +32,6 @@ ___
 
 ## Examples
 
-### Creating repositories
-
-```Smalltalk
-"MongoDB standalone"
-mongoRepository := MaplessMongoRepository
-	for: 'Mapless-Test'
-	with: MaplessStandaloneMongoPool local.
-```
-
-```Smalltalk
-"MongoDB Replica Set"
-databaseName := 'Mapless-Test'.
-mongoRepository := MaplessMongoRepository
-	for: databaseName
-	with: (MaplessMongoReplicaSetPool mongoUrls: {
-		'localhost:27017'. 
-		'localhost:27019'
-		}
-		database: databaseName)
-```
-
-```Smalltalk
-"Redis"
-"Since Redis doesn't use database names, 
-we use one of its 0-15 index."
-databaseIndex := 3.
-accessor := MaplessRedisPool local.
-accessor start.
-accessor auth: 'my_password'.
-redisRepository := MaplessRedisRepository
-	for: databaseIndex
-	with: accessor
-	using: MaplessTrivialResolver new
-```
-```Smalltalk
-"UnQLite"
-dbFilename := FileSystem workingDirectory / 'Mapless-Tests.db'.
-unqliteRepository := MaplessUnQLiteRepository for: dbFilename pathString
-```
-
-### Saving and loading a mapless object
 
 ```Smalltalk
 "Instanciates a mapless object."
@@ -84,16 +41,24 @@ genius := DummyPerson new
 
 "Saves it."
 repository save: genius.	
+```
 
+```Smalltalk
 "Loads one by known ID."
 identified := repository findOne: DummyPerson atId: genius id.
+```
 
+```Smalltalk
 "Loads all instances of that class that were stored in that database."
 allOrEmpty := repository findAll: DummyPerson.
+```
 
+```Smalltalk
 "Query to load all the instances that match the condition."
 someOrEmpty := repository findAll: DummyPerson where: [ :each | each lastName = 'Peterson' ].
+```
 
+```Smalltalk
 "Conditionally loading the first matching instance."
 oneOrNil := repository findOne: DummyPerson where: [ :each | each lastName = 'Peterson' ].
 ```
@@ -108,7 +73,7 @@ Open a Pharo workspace and evaluate:
 		load
 
 ## Include as dependency
-Add it like this your own project's BaselineOf or ConfigurationOf 
+In BaselineOf or ConfigurationOf it can be added in this way:
 
 	spec
 		baseline: 'Mapless'
