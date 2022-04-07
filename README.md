@@ -88,13 +88,13 @@ repository save: guy.
 identified := repository findOne: DummyPerson atId: guy id.
 
 "Loads all instances of that class that were stored in that database."
-all := repository findAll: DummyPerson.
+allOrEmpty := repository findAll: DummyPerson.
 
-"Query to load all the instances that match the condition (or receive an empty collection)."
-some := repository findAll: DummyPerson where: [ :each | each lastName = 'Peterson' ].
+"Query to load all the instances that match the condition."
+someOrEmpty := repository findAll: DummyPerson where: [ :each | each lastName = 'Peterson' ].
 
-"Conditionally loading one instance (or nil)."
-one := repository findOne: DummyPerson where: [ :each | each lastName = 'Peterson' ].
+"Conditionally loading the first matching instance."
+oneOrNil := repository findOne: DummyPerson where: [ :each | each lastName = 'Peterson' ].
 ```
 
 ## Installation
