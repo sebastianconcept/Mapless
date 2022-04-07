@@ -77,15 +77,15 @@ unqliteRepository := MaplessUnQLiteRepository for: dbFilename pathString
 
 ```Smalltalk
 "Instanciates a mapless object."
-guy := DummyPerson new
+genius := DummyPerson new
 	firstName: 'Aristotle';
 	yourself.
 
 "Saves it."
-repository save: guy.	
+repository save: genius.	
 
 "Loads one by known ID."
-identified := repository findOne: DummyPerson atId: guy id.
+identified := repository findOne: DummyPerson atId: genius id.
 
 "Loads all instances of that class that were stored in that database."
 allOrEmpty := repository findAll: DummyPerson.
