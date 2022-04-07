@@ -14,6 +14,7 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 
 ___
 
+## Features
 - Intuitive API for frictionless persistence.
 - No need to create and maintain schemas.
 - Composable.
@@ -22,6 +23,10 @@ ___
 - Multiple backends to chose from.
 - Enables smooth data migration/interoperation among backends.
 - Via Redis PUB/SUB, scalable observer-pattern functionality across images.
+
+## Ambition
+
+Mapless gives you performant state plasticity and high availability in a scale that goes beyond one Smalltalk image and without backend vendor locking nor object-mapping impedance mismatch.
 
 ## Supported backends
 1. MongoDB
@@ -80,3 +85,4 @@ In BaselineOf or ConfigurationOf it can be added in this way:
 		with: [ spec
 				repository: 'github://sebastianconcept/Mapless:v0.5.0-alpha/src';
 				loads: #('Core' 'Mongo' 'Memory' 'Redis' 'UnQLite') ]
+
