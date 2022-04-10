@@ -8,7 +8,7 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 
 [![Social](https://img.shields.io/github/stars/sebastianconcept/Mapless?style=social)]()
 [![Forks](https://img.shields.io/github/forks/sebastianconcept/Mapless?style=sociall)]()
-
+[![](https://img.shields.io/reddit/subreddit-subscribers/mapless_data?style=social)](https://www.reddit.com/r/mapless_data/)
 ___
 
 ## Features
