@@ -1,3 +1,8 @@
+April 15, 2022 
+===================================
+* Added `MaplessUnQLiteRepository>>inMemory` methods to make use of RAM based storage offered by UnQLite.
+* Added `testSimpleSaveAndLoadInMemory` for elemental coverage.
+
 April 6, 2022 
 ===================================
 * Removed the docker directory with a replica set docker-compose.yml. This is better done when using your own or https://github.com/sebastianconcept/mongo-rs.
