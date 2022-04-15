@@ -6,6 +6,7 @@ Class {
 
 { #category : #actions }
 MaplessUnQLiteBenchmark class >> runOn: aMaplessRepository [
+	self save: 1 peopleOn: aMaplessRepository printingOn: NullStream new.
 	self runOn: aMaplessRepository printingOn: Stdio stdout
 ]
 

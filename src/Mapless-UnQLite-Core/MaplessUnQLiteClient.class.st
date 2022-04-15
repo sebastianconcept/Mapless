@@ -10,6 +10,11 @@ Class {
 	#category : #'Mapless-UnQLite-Core-Connections'
 }
 
+{ #category : #actions }
+MaplessUnQLiteClient class >> inMemory [
+	^ self on: ':mem:'
+]
+
 { #category : #accessing }
 MaplessUnQLiteClient class >> on: aDatabaseFileName [
 	^ self new
@@ -64,7 +69,9 @@ MaplessUnQLiteClient >> includesKey: key [
 
 { #category : #initialization }
 MaplessUnQLiteClient >> initializeOn: aDatabaseFileName [
-	unqliteClient := PqDatabase open: aDatabaseFileName
+	unqliteClient := aDatabaseFileName = ':mem:'
+		ifTrue: [ PqDatabase openOnMemory ]
+		ifFalse: [ PqDatabase open: aDatabaseFileName ]
 ]
 
 { #category : #testing }

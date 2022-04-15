@@ -589,6 +589,25 @@ MaplessUnQLiteTest >> testSimpleSaveAndLoad [
 ]
 
 { #category : #tests }
+MaplessUnQLiteTest >> testSimpleSaveAndLoadInMemory [
+	| guy loaded memoryRepository |
+	memoryRepository := MaplessUnQLiteRepository inMemory.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	memoryRepository save: guy.
+	loaded := memoryRepository findOne: DummyPerson atId: guy id.
+	self assert: loaded notNil.
+	loaded modifiedOn: nil.
+	guy modifiedOn: nil.
+	loaded maplessData
+		keysAndValuesDo: [ :k :v | 
+			((loaded data at: k) isKindOf: DateAndTime) not
+				ifTrue: [ self assert: (loaded data at: k) = (guy data at: k) ] ]
+]
+
+{ #category : #tests }
 MaplessUnQLiteTest >> testSimpleSaveAndUpdate [
 	| guy loaded reloaded |
 	guy := DummyPerson new

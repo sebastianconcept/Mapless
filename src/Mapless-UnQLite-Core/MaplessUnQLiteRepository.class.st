@@ -25,6 +25,14 @@ MaplessUnQLiteRepository class >> idPropertyName [
 	^ 'id'
 ]
 
+{ #category : #actions }
+MaplessUnQLiteRepository class >> inMemory [
+	^ self
+		for: nil
+		with: MaplessUnQLitePool inMemory
+		using: MaplessUnQLiteResolver new
+]
+
 { #category : #accessing }
 MaplessUnQLiteRepository class >> maplessDataPropertyName [
 	"Answers'maplessData' as the column name 
