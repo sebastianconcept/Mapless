@@ -20,6 +20,11 @@ MaplessUnQLitePool class >> defaultMaxClients [
 ]
 
 { #category : #'instance creation' }
+MaplessUnQLitePool class >> inMemory [
+	^ self on: ':mem:'
+]
+
+{ #category : #'instance creation' }
 MaplessUnQLitePool class >> local [
 	^ self shouldNotImplement
 ]
@@ -121,7 +126,9 @@ MaplessUnQLitePool >> initializeMaxClients [
 MaplessUnQLitePool >> makeClient [
 	"Returns a new client so it can be (re)used in the pool"
 
-	^ MaplessUnQLiteClient on: self databaseFileName
+	^ databaseFileName = ':mem:'
+		ifTrue: [ MaplessUnQLiteClient inMemory ]
+		ifFalse: [ MaplessUnQLiteClient on: self databaseFileName ]
 ]
 
 { #category : #accessing }
