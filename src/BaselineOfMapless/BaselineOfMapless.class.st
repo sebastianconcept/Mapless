@@ -35,6 +35,7 @@ BaselineOfMapless >> baseline: spec [
 				group: 'Mongo' with: #('Mapless-Mongo-Tests');
 				group: 'Redis' with: #('Mapless-Redis-Tests');
 				group: 'Postgres' with: #('Mapless-Postgres-Tests');
+				group: 'SQLite' with: #('Mapless-SQLite-Tests');
 				group: 'UnQLite' with: #('Mapless-UnQLite-Tests');
 				group: 'Benchmark' with: #('Mapless-Benchmark-Core');
 				group: 'default' with: #('Memory' 'Mongo') ]
@@ -104,6 +105,9 @@ BaselineOfMapless >> setUpPackages: spec [
 	self setUpPostgresDependencies: spec.
 	self setUpPostgresPackages: spec.
 	
+	self setUpSQLiteDependencies: spec.
+	self setUpSQLitePackages: spec.
+
 	self setUpUnQLiteDependencies: spec.
 	self setUpUnQLitePackages: spec
 ]
@@ -140,6 +144,25 @@ BaselineOfMapless >> setUpRedisPackages: spec [
 	spec
 		package: 'Mapless-Redis-Tests'
 		with: [ spec requires: #('Mapless-Redis-Core' 'Mapless-Tests-Base') ]
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpSQLiteDependencies: spec [
+	spec
+		baseline: 'SQLite3'
+		with: [ spec
+				repository: 'github://pharo-rdbms/Pharo-SQLite3/src';
+				loads: #('Core') ]
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpSQLitePackages: spec [
+	spec
+		package: 'Mapless-SQLite-Core'
+		with: [ spec requires: #('Mapless-Base-Core' 'PunQLite') ].
+	spec
+		package: 'Mapless-SQLite-Tests'
+		with: [ spec requires: #('Mapless-SQLite-Core' 'Mapless-Tests-Base') ]
 ]
 
 { #category : #baseline }
