@@ -124,7 +124,7 @@ MaplessUnQLitePool >> initializeMaxClients [
 
 { #category : #actions }
 MaplessUnQLitePool >> makeClient [
-	"Returns a new client so it can be (re)used in the pool"
+	"Returns a new client that can be (re)used in the pool"
 
 	^ databaseFileName = ':mem:'
 		ifTrue: [ MaplessUnQLiteClient inMemory ]
