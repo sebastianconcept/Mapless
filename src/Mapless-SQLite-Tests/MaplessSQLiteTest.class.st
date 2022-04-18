@@ -565,7 +565,6 @@ MaplessSQLiteTest >> testSimpleSave [
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-		self halt.
 	self shouldnt: [ repository save: guy ] raise: Error
 ]
 
