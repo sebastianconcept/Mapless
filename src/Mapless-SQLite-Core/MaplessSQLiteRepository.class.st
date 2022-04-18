@@ -6,7 +6,7 @@ Class {
 
 { #category : #actions }
 MaplessSQLiteRepository class >> getNewId [
-	^ UUID new
+	^ UUID new asString36
 ]
 
 { #category : #accessing }
@@ -26,10 +26,10 @@ MaplessSQLiteRepository class >> maplessDataPropertyName [
 ]
 
 { #category : #actions }
-MaplessSQLiteRepository >> basicInsert: aBSONFriendlyObject as: aMaplessClass [
+MaplessSQLiteRepository >> basicInsert: serializableObject as: aMaplessClass [
 	self
 		withClientDo:
-			[ :client | client insert: aBSONFriendlyObject as: aMaplessClass in: self ]
+			[ :client | client insert: serializableObject as: aMaplessClass in: self ]
 ]
 
 { #category : #actions }

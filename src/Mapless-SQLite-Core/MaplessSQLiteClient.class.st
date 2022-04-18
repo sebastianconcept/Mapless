@@ -44,7 +44,7 @@ MaplessSQLiteClient >> createTableFor: aMaplessClass [
 MaplessSQLiteClient >> createTableNamed: aString [
 	sqliteClient
 		execute:
-			('CREATE TABLE {1} (id INTEGER PRIMARY KEY, maplessData TEXT)'
+			('CREATE TABLE {1} (id TEXT PRIMARY KEY, maplessData TEXT)'
 				format: {aString})
 ]
 
