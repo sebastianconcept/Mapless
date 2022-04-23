@@ -1,3 +1,7 @@
+April 23, 2022 
+===================================
+* Added a nice README header thanks to Luis Poletti.
+
 April 15, 2022 
 ===================================
 * Added `MaplessUnQLiteRepository>>inMemory` methods to make use of RAM based storage offered by UnQLite.

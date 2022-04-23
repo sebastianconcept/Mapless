@@ -1,3 +1,5 @@
+![Mapless](./header.png)
+
 # Mapless
 
 Schema-less persistence for Smalltalk with support for multiple backends.
