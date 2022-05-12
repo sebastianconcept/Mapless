@@ -650,17 +650,22 @@ MaplessMongoRepository >> update: aMapless [
 
 { #category : #actions }
 MaplessMongoRepository >> update: aMapless writeConcern: aConcernOrNil [
-	| bsonFriendly |
+	| serializable |
 	self onBeforeUpdate: aMapless.
-	bsonFriendly := resolver storableFor: aMapless in: self.
+	serializable := resolver storableFor: aMapless in: self.
 	self
 		readWriteDo: [ self database
-				commandUpdate:
-					{(self idPropertyName -> aMapless id)}
-						asDictionary
-				with: bsonFriendly
+				commandUpdate: {(self idPropertyName -> aMapless id)} asDictionary
+				with: serializable
 				collection: aMapless class collectionName
-				writeConcern: aConcernOrNil ].
+				writeConcern: aConcernOrNil.
+			self
+				triggerEvent: #maplessMongoUpdateOf:serializable:writeConcern:in:
+				withArguments:
+					{aMapless.
+					serializable.
+					aConcernOrNil.
+					self} ].
 	self onAfterUpdate: aMapless
 ]
 
