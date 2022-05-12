@@ -80,6 +80,9 @@ BaselineOfMapless >> setUpMongoPackages: spec [
 		package: 'Mapless-Mongo-Tests'
 		with: [ spec requires: #('Mapless-Mongo-Core' 'Mapless-Tests-Base') ].
 	spec
+		package: 'Mapless-Mongo-Log'
+		with: [ spec requires: 'Mapless-Mongo-Tests' ].
+	spec
 		package: 'Mapless-Benchmark-Core'
 		with: [ spec requires: 'Mapless-Mongo-Tests' ]
 ]

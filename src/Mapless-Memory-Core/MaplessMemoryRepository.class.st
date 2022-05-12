@@ -86,7 +86,7 @@ MaplessMemoryRepository >> existsId: anId of: aMaplessClass [
 MaplessMemoryRepository >> findAll: aMaplessClass [
 	^ self
 		findAll: aMaplessClass
-		where: (resolver conditionForClass: aMaplessClass)
+		where: [ :each | each class = aMaplessClass ]
 ]
 
 { #category : #accessing }
