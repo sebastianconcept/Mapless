@@ -83,7 +83,7 @@ MaplessMongoObserver >> mongoDeleteOf: aMapless writeConcern: aWriteConcern in: 
 	mongoChange := MongoChange new
 		collectionName: aMapless class collectionName;
 		sequenceNumber: self nextSequenceNumber;
-		type: #delete;
+		type: #delete asUppercase;
 		mongoCommand: mongoDeleteOneCommand;
 		yourself.
 	logRepository save: mongoChange
@@ -105,7 +105,7 @@ MaplessMongoObserver >> mongoInsertOf: aMapless serializable: aSerializable writ
 	mongoChange := MongoChange new
 		collectionName: aMapless class collectionName;
 		sequenceNumber: self nextSequenceNumber;
-		type: #insert;
+		type: #insert asUppercase;
 		mongoCommand: mongoInsertOneCommand;
 		jsonish: jsonish;
 		yourself.
@@ -129,7 +129,7 @@ MaplessMongoObserver >> mongoUpdateOf: aMapless serializable: aSerializable writ
 	mongoChange := MongoChange new
 		collectionName: aMapless class collectionName;
 		sequenceNumber: self nextSequenceNumber;
-		type: #update;
+		type: #update asUppercase;
 		mongoCommand: mongoUpdateOneCommand;
 		jsonish: jsonishString;
 		yourself.

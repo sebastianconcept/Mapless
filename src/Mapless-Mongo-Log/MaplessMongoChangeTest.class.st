@@ -71,7 +71,7 @@ MaplessMongoChangeTest >> testDoubleUpdateLog [
 	self assert: (logRepository count: MongoChange) equals: 1.
 	self
 		assert: (logRepository findAll: MongoChange) first type
-		equals: #insert.
+		equals: #insert asUppercase.
 	self
 		assert: (logRepository findAll: MongoChange) first sequenceNumber
 		equals: 1.
@@ -81,12 +81,12 @@ MaplessMongoChangeTest >> testDoubleUpdateLog [
 	self
 		assert:
 			((logRepository findAll: MongoChange)
-				detect: [ :e | e type = #update ]
+				detect: [ :e | e type = #update asUppercase ]
 				ifNone: [ nil ]) notNil.
 	self
 		assert:
 			((logRepository findAll: MongoChange)
-				detect: [ :e | e type = #update ]) sequenceNumber
+				detect: [ :e | e type = #update asUppercase ]) sequenceNumber
 		equals: 2.
 	self assert: (repository existsId: guy id of: DummyPerson).
 
@@ -102,9 +102,9 @@ MaplessMongoChangeTest >> testDoubleUpdateLog [
 	mongoChange := (logRepository
 		findAll: MongoChange
 		sort: {(#sequenceNumber -> -1)} asDictionary)
-		detect: [ :e | e type = #update ].
+		detect: [ :e | e type = #update asUppercase ].
 	self assert: mongoChange mongoCommand notNil.
-	self assert: mongoChange type equals: #update.
+	self assert: mongoChange type equals: #update asUppercase.
 	serializedUpdated := '\{"_c":"DummyPerson","lastName":"Q","_id":ObjectId("{1}"),"modifiedOn":ISODate("{2}"),"firstName":"John","profession":"Carpenter"\}'
 		format:
 			{(guy id value hex allButFirst: 3) asLowercase.
@@ -175,11 +175,11 @@ MaplessMongoChangeTest >> testSimpleDeleteLog [
 	self deny: (repository existsId: guy id of: DummyPerson).
 	self assert: (logRepository count: MongoChange) equals: 2.
 	mongoChange := (logRepository findAll: MongoChange)
-		detect: [ :e | e type = #delete ].
+		detect: [ :e | e type = #delete asUppercase ].
 	expectation := 'db.DummyPerson.deleteOne(\{"_id": ObjectId("{1}")\})'
 		format: {(guy id value hex allButFirst: 3) asLowercase}.
 	self assert: mongoChange mongoCommand notNil.
-	self assert: mongoChange type equals: #delete.
+	self assert: mongoChange type equals: #delete asUppercase.
 	self assert: mongoChange mongoCommand equals: expectation
 ]
 
@@ -198,7 +198,7 @@ MaplessMongoChangeTest >> testSimpleInsertLog [
 			{(guy id value hex allButFirst: 3) asLowercase.
 			guy modifiedOn asString}.
 	self assert: mongoChange mongoCommand notNil.
-	self assert: mongoChange type equals: #insert.
+	self assert: mongoChange type equals: #insert asUppercase.
 	self assert: mongoChange jsonish notNil.
 	self assert: mongoChange mongoCommand equals: expectation
 ]
@@ -217,7 +217,7 @@ MaplessMongoChangeTest >> testSimpleUpdateLog [
 		assert:
 			(logRepository
 				count: MongoChange
-				where: {(#type -> #insert)} asDictionary)
+				where: {(#type -> #insert asUppercase)} asDictionary)
 		equals: 1.
 	self assert: (repository existsId: guy id of: DummyPerson).
 
@@ -232,9 +232,9 @@ MaplessMongoChangeTest >> testSimpleUpdateLog [
 	self assert: (repository existsId: guy id of: DummyPerson).
 	self assert: (logRepository count: MongoChange) equals: 2.
 	mongoChange := (logRepository findAll: MongoChange)
-		detect: [ :e | e type = #update ].
+		detect: [ :e | e type = #update asUppercase ].
 	self assert: mongoChange mongoCommand notNil.
-	self assert: mongoChange type equals: #update.
+	self assert: mongoChange type equals: #update asUppercase.
 	serializedUpdated := '\{"_c":"DummyPerson","lastName":"Q","_id":ObjectId("{1}"),"modifiedOn":ISODate("{2}"),"firstName":"John","profession":"Carpenter"\}'
 		format:
 			{(guy id value hex allButFirst: 3) asLowercase.
