@@ -44,7 +44,10 @@ BaselineOfMapless >> baseline: spec [
 BaselineOfMapless >> setUpBaseDependencies: spec [
 	spec
 		baseline: 'JSONExtensions'
-		with: [ spec repository: 'github://sebastianconcept/JSONExtensions/src' ]
+		with: [ spec repository: 'github://sebastianconcept/JSONExtensions/src' ].
+	spec
+		baseline: 'NeoJSON'
+		with: [ spec repository: 'github://svenvc/NeoJSON:master/repository' ]
 ]
 
 { #category : #baseline }
@@ -81,7 +84,7 @@ BaselineOfMapless >> setUpMongoPackages: spec [
 		with: [ spec requires: #('Mapless-Mongo-Core' 'Mapless-Tests-Base') ].
 	spec
 		package: 'Mapless-Mongo-Log'
-		with: [ spec requires: 'Mapless-Mongo-Tests' ].
+		with: [ spec requires: #('Mapless-Mongo-Tests' 'NeoJSON') ].
 	spec
 		package: 'Mapless-Benchmark-Core'
 		with: [ spec requires: 'Mapless-Mongo-Tests' ]
