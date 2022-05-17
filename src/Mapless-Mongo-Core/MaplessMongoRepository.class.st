@@ -154,7 +154,7 @@ MaplessMongoRepository >> destroy: aMapless writeConcern: aConcernOrNil [
 MaplessMongoRepository >> destroyAll: aMaplessClass [
 	"Remove all the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
 
-	self
+	^ self
 		destroyAll: aMaplessClass
 		where: {} asDictionary
 		writeConcern: (self deleteConcernFor: aMaplessClass)
@@ -164,7 +164,7 @@ MaplessMongoRepository >> destroyAll: aMaplessClass [
 MaplessMongoRepository >> destroyAll: aMaplessClass where: filter [
 	"Remove all the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
 
-	self
+	^ self
 		destroyAll: aMaplessClass
 		where: filter
 		writeConcern: (self deleteConcernFor: aMaplessClass)
@@ -174,7 +174,7 @@ MaplessMongoRepository >> destroyAll: aMaplessClass where: filter [
 MaplessMongoRepository >> destroyAll: aMaplessClass where: filter writeConcern: aConcernOrNil [
 	"Remove all the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
 
-	self
+	^ self
 		readWriteDo: [ (self databaseCollectionNamed: aMaplessClass collectionName)
 				commandDelete: filter
 				limit: 0
@@ -185,7 +185,7 @@ MaplessMongoRepository >> destroyAll: aMaplessClass where: filter writeConcern: 
 MaplessMongoRepository >> destroyAll: aMaplessClass writeConcern: aWriteConcern [
 	"Remove all the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
 
-	self
+	^ self
 		destroyAll: aMaplessClass
 		where: {} asDictionary
 		writeConcern: aWriteConcern
@@ -195,7 +195,7 @@ MaplessMongoRepository >> destroyAll: aMaplessClass writeConcern: aWriteConcern 
 MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId [
 	"Removes the document anId from the MongoDB collection corresponding to aMaplessClass."
 
-	self
+	^ self
 		destroyOne: aMaplessClass
 		atId: anId
 		writeConcern: (self deleteConcernFor: aMaplessClass)
@@ -205,7 +205,7 @@ MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId [
 MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId writeConcern: aConcernOrNil [
 	"Removes the document anId from the MongoDB collection corresponding to aMaplessClass."
 
-	self
+	^ self
 		readWriteDo: [ (self databaseCollectionNamed: aMaplessClass collectionName)
 				commandDelete: {(self idPropertyName -> anId)} asDictionary
 				limit: 1
