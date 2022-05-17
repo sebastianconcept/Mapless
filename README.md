@@ -11,9 +11,11 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 [![Social](https://img.shields.io/github/stars/sebastianconcept/Mapless?style=social)]()
 [![Forks](https://img.shields.io/github/forks/sebastianconcept/Mapless?style=sociall)]()
 [![](https://img.shields.io/reddit/subreddit-subscribers/mapless_data?style=social)](https://www.reddit.com/r/mapless_data/)
-___
+
+---
 
 ## Features
+
 - Intuitive API for frictionless persistence.
 - No need to create and maintain schemas.
 - Composable.
@@ -28,6 +30,7 @@ ___
 Mapless gives you performant state plasticity and high availability in a scale that goes beyond one Smalltalk image and without backend vendor locking nor object-mapping impedance mismatch.
 
 ## Supported backends
+
 1. MongoDB
 2. Redis
 3. Memory
@@ -36,7 +39,6 @@ Mapless gives you performant state plasticity and high availability in a scale t
 
 ## Examples
 
-
 ```Smalltalk
 "Instanciates a mapless object."
 genius := DummyPerson new
@@ -44,7 +46,7 @@ genius := DummyPerson new
 	yourself.
 
 "Saves it."
-repository save: genius.	
+repository save: genius.
 ```
 
 ```Smalltalk
@@ -71,17 +73,21 @@ oneOrNil := repository findOne: DummyPerson where: [ :each | each lastName = 'Pe
 
 Open a Pharo workspace and evaluate:
 
-	Metacello new
-		baseline: 'Mapless';
-		repository: 'github://sebastianconcept/Mapless:v0.5.0-alpha/src';
-		load
+```smalltalk
+Metacello new
+	baseline: 'Mapless';
+	repository: 'github://sebastianconcept/Mapless:v0.5.0-alpha/src';
+	load
+```
 
 ## Include as dependency
+
 In BaselineOf or ConfigurationOf it can be added in this way:
 
-	spec
-		baseline: 'Mapless'
-		with: [ spec
-				repository: 'github://sebastianconcept/Mapless:v0.5.0-alpha/src';
-				loads: #('Core' 'Mongo' 'Memory' 'Redis' 'UnQLite') ]
-
+```smalltalk
+spec
+	baseline: 'Mapless'
+	with: [ spec
+		repository: 'github://sebastianconcept/Mapless:v0.5.0-alpha/src';
+		loads: #('Core' 'Mongo' 'Memory' 'Redis' 'UnQLite') ]
+```
