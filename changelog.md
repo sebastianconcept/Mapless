@@ -1,4 +1,8 @@
 
+May 17, 2022 | v0.5.2-alpha | Major Bird
+===================================
+- `MongoChange` `type` is now uppercase for client convenience.
+
 May 11, 2022 | v0.5.1-alpha | Tense Eagle
 ===================================
 * Added `MaplessMongoObserver` to give to the Mongo repositories, the capability of logging database changes. It will use an auto-incremented `MongoChangeSequence` to log `MongoChange` that can later be used to synchronize database state in different installations. `MongoChange` would have an entry only for `insert`, `update` and `delete` events. No other Mongo command will be logged.
