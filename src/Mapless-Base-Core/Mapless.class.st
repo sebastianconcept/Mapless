@@ -478,6 +478,11 @@ Mapless >> jsonWriteOn: aStream [
 ]
 
 { #category : #accessing }
+Mapless >> maplessClass [
+	^ self class
+]
+
+{ #category : #accessing }
 Mapless >> maplessClassName [
 	^ self class maplessClassName
 ]

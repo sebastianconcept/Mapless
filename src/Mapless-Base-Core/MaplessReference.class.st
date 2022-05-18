@@ -66,15 +66,8 @@ MaplessReference >> doesNotUnderstand: aMessage [
 
 { #category : #accessing }
 MaplessReference >> getMongoModel [
-	| class |
-	class := Smalltalk
-		at: self maplessClassName asSymbol
-		ifAbsent: [ MaplessClassNotFound
-				signal:
-					('The {1} class was not found in this image'
-						format: {self maplessClassName asString}) ].
 	^ repository
-		findOne: class
+		findOne: self maplessClass
 		atId: (data at: repository idPropertyName)
 ]
 
@@ -120,6 +113,16 @@ MaplessReference >> isKindOf: aClasss [
 { #category : #actions }
 MaplessReference >> jsonWriteOn: aStream [
 	(self asJsonObjectIn: repository) jsonWriteOn: aStream
+]
+
+{ #category : #accessing }
+MaplessReference >> maplessClass [
+	^ Smalltalk
+		at: self maplessClassName asSymbol
+		ifAbsent: [ MaplessClassNotFound
+				signal:
+					('The {1} class was not found in this image'
+						format: {self maplessClassName asString}) ]
 ]
 
 { #category : #accessing }
