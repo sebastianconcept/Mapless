@@ -1,7 +1,8 @@
 
-May 17, 2022 | v0.5.2-alpha | Major Bird
+May 18, 2022 | v0.5.2-alpha | Major Bird
 ===================================
 - `MongoChange` `type` is now uppercase for client convenience.
+- Added `maplessClass` accessor in `Mapless` and `MaplessReference`.
 
 May 11, 2022 | v0.5.1-alpha | Tense Eagle
 ===================================
