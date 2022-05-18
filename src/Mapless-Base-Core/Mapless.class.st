@@ -275,7 +275,7 @@ Mapless >> asDictionary [
 	dic at: self class name asString put: attributes.
 	self data
 		associationsDo: [ :assoc | 
-			assoc value isPersistentModel
+			assoc value isMapless
 				ifTrue: [ attributes at: assoc key put: assoc value asDictionary ]
 				ifFalse: [ attributes at: assoc key put: assoc value ] ].
 	dic ] value: OrderedJsonObject new
@@ -468,13 +468,18 @@ Mapless >> isDeleted [
 ]
 
 { #category : #testing }
-Mapless >> isPersistentModel [
+Mapless >> isMapless [
 	^ true
 ]
 
 { #category : #json }
 Mapless >> jsonWriteOn: aStream [
 	self maplessData jsonWriteOn: aStream
+]
+
+{ #category : #accessing }
+Mapless >> maplessClass [
+	^ self class
 ]
 
 { #category : #accessing }
@@ -722,11 +727,13 @@ Mapless >> setSubModelReferencesIn: aMaplessRepository [
 Mapless >> setSubModelsAt: aKey with: anObject in: aMaplessRepository [
 	"one submapless"
 
-	| maplessClass newSubMapless |
+	| maplessClass newSubMapless className |
 	(aMaplessRepository canBeMapless: anObject)
-		ifTrue: [ maplessClass := Smalltalk
-				at: (anObject at: '_c') asSymbol
-				ifAbsent: [ self error: 'Could not find that class' ].
+		ifTrue: [ className := anObject at: '_c'.
+			maplessClass := Smalltalk
+				at: className asSymbol
+				ifAbsent: [ MaplessClassNotFound
+						signal: ('The {1} class was not found in this image' format: {className}) ].
 			newSubMapless := maplessClass
 				fromJSONObject: anObject
 				in: aMaplessRepository.
@@ -734,14 +741,16 @@ Mapless >> setSubModelsAt: aKey with: anObject in: aMaplessRepository [
 			self data at: aKey put: newSubMapless ].
 
 	"many submapless"
-	(anObject isCollection
+	((anObject isCollection and: [ anObject isString not ])
 		and: [ anObject anySatisfy: [ :e | aMaplessRepository canBeMapless: e ] ])
 		ifTrue: [ | subMapless |
 			subMapless := anObject
 				collect: [ :each | 
+					className := anObject at: '_c'.
 					maplessClass := Smalltalk
-						at: (each at: '_c') asSymbol
-						ifAbsent: [ self error: 'Could not find that class' ].
+						at: className asSymbol
+						ifAbsent: [ MaplessClassNotFound
+								signal: ('The {1} class was not found in this image' format: {className}) ].
 					newSubMapless := maplessClass
 						fromJSONObject: each
 						in: aMaplessRepository.

@@ -4,3 +4,10 @@ Extension { #name : #OrderedJsonObject }
 OrderedJsonObject >> asJsonObjectIn: aMaplessRepository [
 	^ self
 ]
+
+{ #category : #'*Mapless-Base-Core' }
+OrderedJsonObject >> mpWriteSelector [
+	self class == OrderedJsonObject
+		ifTrue: [ ^ #writeMap: ].
+	^ nil
+]

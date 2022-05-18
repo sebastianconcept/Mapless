@@ -135,20 +135,39 @@ MaplessMongoRepository >> destroy: aMapless [
 MaplessMongoRepository >> destroy: aMapless writeConcern: aConcernOrNil [
 	"Removes aMapless from its corresponding collection."
 
+	| serializable |
 	self onBeforeDestroy: aMapless.
+	serializable := resolver storableFor: aMapless in: self.
 	self
 		readWriteDo: [ (self databaseCollectionNamed: aMapless class collectionName)
 				commandDelete: {(self idPropertyName -> aMapless id)} asDictionary
 				limit: 1
-				writeConcern: aConcernOrNil ].
+				writeConcern: aConcernOrNil.
+			self
+				triggerEvent: #maplessMongoDeleteOf:serializable:writeConcern:in:
+				withArguments:
+					{aMapless.
+					serializable.
+					aConcernOrNil.
+					self} ].
 	self onAfterDestroy: aMapless
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> destroyAll: aMaplessClass [
+	"Remove all the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
+
+	^ self
+		destroyAll: aMaplessClass
+		where: {} asDictionary
+		writeConcern: (self deleteConcernFor: aMaplessClass)
 ]
 
 { #category : #actions }
 MaplessMongoRepository >> destroyAll: aMaplessClass where: filter [
 	"Remove all the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
 
-	self
+	^ self
 		destroyAll: aMaplessClass
 		where: filter
 		writeConcern: (self deleteConcernFor: aMaplessClass)
@@ -158,7 +177,7 @@ MaplessMongoRepository >> destroyAll: aMaplessClass where: filter [
 MaplessMongoRepository >> destroyAll: aMaplessClass where: filter writeConcern: aConcernOrNil [
 	"Remove all the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
 
-	self
+	^ self
 		readWriteDo: [ (self databaseCollectionNamed: aMaplessClass collectionName)
 				commandDelete: filter
 				limit: 0
@@ -166,10 +185,20 @@ MaplessMongoRepository >> destroyAll: aMaplessClass where: filter writeConcern: 
 ]
 
 { #category : #actions }
+MaplessMongoRepository >> destroyAll: aMaplessClass writeConcern: aWriteConcern [
+	"Remove all the documents matching the filter criteria from the MongoDB collection corresponding to aMaplessClass."
+
+	^ self
+		destroyAll: aMaplessClass
+		where: {} asDictionary
+		writeConcern: aWriteConcern
+]
+
+{ #category : #actions }
 MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId [
 	"Removes the document anId from the MongoDB collection corresponding to aMaplessClass."
 
-	self
+	^ self
 		destroyOne: aMaplessClass
 		atId: anId
 		writeConcern: (self deleteConcernFor: aMaplessClass)
@@ -179,7 +208,7 @@ MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId [
 MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId writeConcern: aConcernOrNil [
 	"Removes the document anId from the MongoDB collection corresponding to aMaplessClass."
 
-	self
+	^ self
 		readWriteDo: [ (self databaseCollectionNamed: aMaplessClass collectionName)
 				commandDelete: {(self idPropertyName -> anId)} asDictionary
 				limit: 1
@@ -225,27 +254,32 @@ MaplessMongoRepository >> existsId: anId of: aMaplessClass [
 
 { #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass [
-	^ self findAll: aMaplessClass where: nil
+	^ self
+		findAll: aMaplessClass
+		where: (resolver conditionForClass: aMaplessClass)
 ]
 
 { #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass readConcern: aMongoReadConcernOrNil [
 	^ self
 		findAll: aMaplessClass
-		where: nil
+		where: (resolver conditionForClass: aMaplessClass)
 		readConcern: aMongoReadConcernOrNil
 ]
 
 { #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions [
-	^ self findAll: aMaplessClass where: nil sort: sortConditions
+	^ self
+		findAll: aMaplessClass
+		where: (resolver conditionForClass: aMaplessClass)
+		sort: sortConditions
 ]
 
 { #category : #querying }
 MaplessMongoRepository >> findAll: aMaplessClass sort: sortConditions readConcern: aMongoReadConcernOrNil [
 	^ self
 		findAll: aMaplessClass
-		where: nil
+		where: (resolver conditionForClass: aMaplessClass)
 		sort: sortConditions
 		readConcern: aMongoReadConcernOrNil
 ]
@@ -491,17 +525,24 @@ MaplessMongoRepository >> insert: aMapless [
 
 { #category : #actions }
 MaplessMongoRepository >> insert: aMapless writeConcern: aConcernOrNil [
-	| bsonFriendly |
+	| serializable |
 	self onBeforeInsert: aMapless.
-	bsonFriendly := resolver storableFor: aMapless in: self.
-	bsonFriendly
+	serializable := resolver storableFor: aMapless in: self.
+	serializable
 		at: self idPropertyName
-		ifAbsent: [ bsonFriendly at: self idPropertyName put: self class getNewId ].
+		ifAbsent: [ serializable at: self idPropertyName put: self class getNewId ].
 	self
 		readWriteDo: [ (self databaseCollectionNamed: aMapless class collectionName)
-				commandInsert: bsonFriendly
-				writeConcern: aConcernOrNil ].
-	self ensureId: (bsonFriendly at: self idPropertyName) for: aMapless.
+				commandInsert: serializable
+				writeConcern: aConcernOrNil.
+			self
+				triggerEvent: #maplessMongoInsertOf:serializable:writeConcern:in:
+				withArguments:
+					{aMapless.
+					serializable.
+					aConcernOrNil.
+					self} ].
+	self ensureId: (serializable at: self idPropertyName) for: aMapless.
 	self onAfterInsert: aMapless
 ]
 
@@ -532,6 +573,13 @@ MaplessMongoRepository >> newCursorFor: aDictionary [
 	^ (MongoCommandCursor database: self database dictionary: aDictionary)
 		setFlagSlaveOk;
 		yourself
+]
+
+{ #category : #actions }
+MaplessMongoRepository >> normalizeIdOfOn: aJsonObject [
+	aJsonObject at: 'id' put: (aJsonObject at: self idPropertyName).
+	aJsonObject removeKey: self idPropertyName ifAbsent: [ nil ].
+	^ aJsonObject
 ]
 
 { #category : #accessing }
@@ -605,17 +653,22 @@ MaplessMongoRepository >> update: aMapless [
 
 { #category : #actions }
 MaplessMongoRepository >> update: aMapless writeConcern: aConcernOrNil [
-	| bsonFriendly |
+	| serializable |
 	self onBeforeUpdate: aMapless.
-	bsonFriendly := resolver storableFor: aMapless in: self.
+	serializable := resolver storableFor: aMapless in: self.
 	self
 		readWriteDo: [ self database
-				commandUpdate:
-					{(self idPropertyName -> aMapless id)}
-						asDictionary
-				with: bsonFriendly
+				commandUpdate: {(self idPropertyName -> aMapless id)} asDictionary
+				with: serializable
 				collection: aMapless class collectionName
-				writeConcern: aConcernOrNil ].
+				writeConcern: aConcernOrNil.
+			self
+				triggerEvent: #maplessMongoUpdateOf:serializable:writeConcern:in:
+				withArguments:
+					{aMapless.
+					serializable.
+					aConcernOrNil.
+					self} ].
 	self onAfterUpdate: aMapless
 ]
 

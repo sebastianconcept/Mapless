@@ -19,6 +19,12 @@ MaplessVoyageWithMaplessSuffixResolver >> canRepresentSubMapless: anObject in: a
 		or: [ self isVoyageReference: anObject in: aMaplessRepository ]
 ]
 
+{ #category : #accessing }
+MaplessVoyageWithMaplessSuffixResolver >> conditionForClass: aMaplessClass [
+	^ {('#instanceOf' -> (self voyageClassNameFrom: aMaplessClass))}
+		asDictionary
+]
+
 { #category : #converting }
 MaplessVoyageWithMaplessSuffixResolver >> ensureVoyageMetadataIn: storableDocument for: aMapless in: aMaplessRepository [
 	"Makes sure aMapless has the metadata that would be expected by Voyage."
@@ -69,8 +75,10 @@ MaplessVoyageWithMaplessSuffixResolver >> maplessClassFor: aJsonObject in: aMapl
 		in: aMaplessRepository.
 	^ Smalltalk
 		at: className asSymbol
-		ifAbsent: [ self
-				error: 'The resolver could not find ' , className , ' in this image.' ]
+		ifAbsent: [ MaplessClassNotFound
+				signal:
+					('The {1} class was not found in this image'
+						format: {self maplessClassName asString}) ]
 ]
 
 { #category : #accessing }

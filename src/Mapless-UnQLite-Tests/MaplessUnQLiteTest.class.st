@@ -1,102 +1,57 @@
+"
+Cover basic functionality
+"
 Class {
-	#name : #MaplessRedisTest,
+	#name : #MaplessUnQLiteTest,
 	#superclass : #MaplessTestCase,
 	#instVars : [
 		'repository'
 	],
-	#category : #'Mapless-Redis-Tests'
+	#category : #'Mapless-UnQLite-Tests-Tests'
 }
 
-{ #category : #'as yet unclassified' }
-MaplessRedisTest class >> databaseIndex [
-	"Out of the box, a Redis instance supports 16 logical databases. These databases are effectively siloed off from one another, and when you run a command in one database it doesn’t affect any of the data stored in other databases in your Redis instance.
-
-Redis databases are numbered from 0 to 15 and, by default, you connect to database 0 when you connect to your Redis instance. However, you can change the database you’re using with the select command after you connect."
-
-	^ 2
-]
-
 { #category : #history }
-MaplessRedisTest class >> lastStoredRun [
-	^ Dictionary new
-		add:
-			#passed
-				->
-					(Set new
-						add: #testDefaultCategoryCleanUp;
-						add: #testPackageCleanUp;
-						add: #testSingleClassCreation;
-						add: #testClassCreationInDifferentCategories;
-						add: #testClassFastCreationInDifferentCategories;
-						add: #testMultipleClassCreation;
-						add: #testSingleClassFastCreation;
-						yourself);
-		add: #timeStamp -> '22 November 2008 10:11:35 pm';
-		add: #failures -> Set new;
-		add: #errors -> Set new;
-		yourself
+MaplessUnQLiteTest class >> maplessClasses [
+	^ {DummyPerson.
+	DummyUser.
+	DummyTag}
 ]
 
 { #category : #actions }
-MaplessRedisTest >> basicNewRepository [
-	^ MaplessRedisRepository
-		for: self class databaseIndex
-		with: MaplessRedisPool local
-		using: MaplessTrivialResolver new
-]
-
-{ #category : #tests }
-MaplessRedisTest >> newDummyPersonNamed: aString [
-	^ DummyPerson new
-		firstName: aString;
-		yourself
+MaplessUnQLiteTest >> dropDatabase: aDatabaseFileName [
+	aDatabaseFileName asFileReference deleteIfAbsent: [  ]
 ]
 
 { #category : #actions }
-MaplessRedisTest >> newRepository [
-	| accessor |
-	accessor := MaplessRedisPool local.
-	accessor start.
-	accessor auth: 'my_password'.
-	^ MaplessRedisRepository
-		for: self class databaseIndex
-		with: accessor
-		using: MaplessTrivialResolver new
-]
-
-{ #category : #'setUp-tearDown' }
-MaplessRedisTest >> setUp [
-	super setUp.
-
-
-]
-
-{ #category : #'setUp-tearDown' }
-MaplessRedisTest >> tearDown [
-	super tearDown.
+MaplessUnQLiteTest >> savePersonNamed: aString [
 	repository
-		ifNotNil: [ repository drop.
-			repository accessor stop ]
+		save:
+			(DummyPerson new
+				firstName: aString;
+				yourself)
+]
+
+{ #category : #'setUp-tearDown' }
+MaplessUnQLiteTest >> setUp [
+	| dbFilename |
+	super setUp.
+	dbFilename := FileSystem workingDirectory / 'Mapless-Tests.db'.
+	self dropDatabase: dbFilename.
+	repository := MaplessUnQLiteRepository for: dbFilename pathString
+]
+
+{ #category : #'setUp-tearDown' }
+MaplessUnQLiteTest >> tearDown [
+	super tearDown.
+	repository ifNotNil: [ repository shutDown ].
+	repository := nil
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testAndGetInfo [
-	| info |
-	repository := self basicNewRepository.
-	self should: [ repository accessor info ] raise: RsGenericError.
-	repository auth: 'my_password'.
-	self
-		shouldnt: [ info := repository accessor info ]
-		raise: RsGenericError.
-	self assert: info notNil
-]
-
-{ #category : #tests }
-MaplessRedisTest >> testComposedAccess [
+MaplessUnQLiteTest >> testComposedAccess [
 	"Test proxies and its on-demand-load and DNU mechanism"
 
 	| user guy |
-	repository := self newRepository.
 	user := DummyUser new
 		userame: 'johnq';
 		yourself.
@@ -108,14 +63,11 @@ MaplessRedisTest >> testComposedAccess [
 	repository save: guy.
 	repository save: user.
 	self
-		assert: (repository findOne: DummyPerson atId: guy id) firstName
-		equals: 'john'.
+		assert: (repository findOne: DummyUser atId: user id) completeName
+		equals: 'john q'.
 	self
 		assert: (repository findOne: DummyUser atId: user id) person class
 		equals: MaplessReference.
-	self
-		assert: (repository findOne: DummyUser atId: user id) completeName
-		equals: 'john q'.
 	self
 		assert: (repository findOne: DummyUser atId: user id) person model class
 		equals: DummyPerson.
@@ -128,9 +80,8 @@ MaplessRedisTest >> testComposedAccess [
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testComposedDelete [
+MaplessUnQLiteTest >> testComposedDelete [
 	| users |
-	repository := self newRepository.
 	users := OrderedCollection new.
 	Character alphabet
 		do: [ :char | 
@@ -157,9 +108,8 @@ MaplessRedisTest >> testComposedDelete [
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testComposedDestroy [
+MaplessUnQLiteTest >> testComposedDestroy [
 	| users |
-	repository := self newRepository.
 	users := OrderedCollection new.
 	Character alphabet
 		do: [ :char | 
@@ -174,60 +124,31 @@ MaplessRedisTest >> testComposedDestroy [
 						yourself) ].
 	users do: [ :user | repository save: user person ].
 	users do: [ :user | repository save: user ].
+	self
+		assert:
+			(users
+				allSatisfy:
+					[ :user | (repository findOne: DummyPerson atId: user person id) notNil ]).
 	users do: [ :user | repository destroy: user person ].
 	self
 		assert:
 			(users
-				allSatisfy: [ :user | (repository existsId: user person id of: DummyPerson) not ]).
+				allSatisfy:
+					[ :user | (repository findOne: DummyPerson atId: user person id) isNil ]).
 	self
 		assert:
 			(users
-				allSatisfy: [ :user | repository existsId: user id of: DummyUser ]).
+				allSatisfy: [ :user | (repository findOne: DummyUser atId: user id) notNil ]).
 	users do: [ :user | repository destroy: user ].
 	self
 		assert:
 			(users
-				allSatisfy: [ :user | (repository existsId: user id of: DummyUser) not ])
+				allSatisfy: [ :user | (repository findOne: DummyUser atId: user id) isNil ])
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testComposedResaveAndLoad [
-	| user guy loaded |
-	repository := self newRepository.
-	user := DummyUser new
-		username: 'johnq';
-		yourself.
-	guy := DummyPerson new
-		firstName: 'John';
-		lastName: 'W';
-		yourself.
-	user person: guy.
-	self should: [ repository save: user ] raise: MaplessUnsavedSubmodel.
-	repository save: guy.
-	self
-		shouldnt: [ repository save: user ]
-		raise: MaplessUnsavedSubmodel.
-	loaded := repository findOne: DummyUser atId: user id.
-	self assert: loaded person firstName equals: 'John'.
-	loaded person lastName: 'wayne'.
-	repository save: loaded person.
-	loaded := repository findOne: DummyUser atId: user id.
-	self assert: loaded person lastName equals: 'wayne'.
-	loaded := repository findOne: DummyUser atId: user id.
-	self assert: loaded person firstName equals: 'John'.
-	loaded person lastName: 'Wayne'.
-	repository save: loaded person.
-	loaded username: 'johnw'.
-	repository save: loaded.
-	loaded := repository findOne: DummyUser atId: user id.
-	self assert: loaded username equals: 'johnw'.
-	self assert: loaded person firstName equals: 'John'
-]
-
-{ #category : #tests }
-MaplessRedisTest >> testComposedSave [
+MaplessUnQLiteTest >> testComposedSave [
 	| user guy |
-	repository := self newRepository.
 	user := DummyUser new
 		userame: 'johnq';
 		yourself.
@@ -248,15 +169,15 @@ MaplessRedisTest >> testComposedSave [
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testComposedSaveAndLoad [
-	| user guy loaded |
-	repository := self newRepository.
+MaplessUnQLiteTest >> testComposedSaveAndLoad [
+	| user guy loaded when |
+	when := DateAndTime now asUTC.
 	user := DummyUser new
-		createdOn: DateAndTime now;
+		createdOn: when;
 		username: 'johnq';
 		yourself.
 	guy := DummyPerson new
-		createdOn: DateAndTime now;
+		createdOn: when;
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -281,18 +202,19 @@ MaplessRedisTest >> testComposedSaveAndLoad [
 		createdOn: nil;
 		modifiedOn: nil.
 	loaded data
-		keysAndValuesDo: [ :k :v | self assert: v equals: (user data at: k) ].
+		keysAndValuesDo: [ :k :v | 
+			((loaded data at: k) isKindOf: DateAndTime) not
+				ifTrue: [ self assert: (loaded maplessData at: k) = (user maplessData at: k) ] ].
 	self assert: loaded username = 'johnq'.
 	self assert: loaded person firstName = 'john'.
 	self assert: loaded person lastName = 'q'.
-	self assert: loaded person maplessClassName = DummyPerson name.
+	self assert: loaded person maplessClassName = #DummyPerson.
 	self assert: loaded person model class = DummyPerson
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testComposition [
+MaplessUnQLiteTest >> testComposition [
 	| user guy |
-	repository := self newRepository.
 	user := DummyUser new
 		userame: 'johnq';
 		yourself.
@@ -301,35 +223,73 @@ MaplessRedisTest >> testComposition [
 		lastName: 'q';
 		yourself.
 	user person: guy.
-	self assert: (user data at: 'person') class equals: DummyPerson.
-	self assert: (user data at: 'person') _c equals: #DummyPerson.
+	self
+		assert: (user maplessData at: 'person') class
+		equals: DummyPerson.
 	self assert: user id isNil.
-	self assert: (user data at: 'person') id isNil.
+	self assert: (user maplessData at: 'person') id isNil.
 	self assert: user completeName equals: 'john q'
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testDateAndTime [
-	| when guy loaded |
-	repository := self newRepository.
-	when := DateAndTime now asUTC.
-	guy := DummyPerson new
-		firstName: 'john';
-		lastName: 'q';
-		createdOn: when;
-		yourself.
-	repository save: guy.
-	loaded := repository findOne: DummyPerson atId: guy id.
-	self assert: loaded createdOn asDate asString = when asDate asString.
-	self assert: loaded createdOn asTime hour = when asTime hour.
-	self assert: loaded createdOn asTime minutes = when asTime minutes.
-	self assert: loaded createdOn asTime seconds = when asTime seconds
+MaplessUnQLiteTest >> testCursorDoEach [
+	| people found |
+	people := OrderedCollection new.
+	Character alphabet
+		do: [ :char | 
+			people
+				add:
+					(DummyPerson new
+						firstName: char asString;
+						yourself) ].
+	people do: [ :guy | repository save: guy ].
+	repository
+		withCursorDo: [ :cursor | 
+			cursor
+				doEach: [ :each | 
+					self assert: each isMapless.
+					self assert: each class equals: DummyPerson.
+					found := people detect: [ :e | e id = each id ] ifNone: [ nil ].
+					self deny: found equals: nil.
+					self assert: found firstName equals: each firstName ] ].
+
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testDelete [
+MaplessUnQLiteTest >> testCursorDoEachFollowsSortingOrder [
+	| people i |
+	people := OrderedCollection new.
+	1 to: 10 do: [ :index | 
+		people
+			add:
+				(DummyPerson new
+					id: index;
+					firstName: 'guy-' , index asString;
+					yourself) ].
+	people do: [ :guy | repository save: guy ].
+	repository
+		withCursorDo: [ :cursor | 
+			cursor first.
+			i := 10.
+			cursor
+				fromCurrentDoEach: [ :each | 
+					"Transcript crShow: 'guy-' , i asString."					
+					self assert: each firstName equals: 'guy-' , i asString.
+					i := i - 1 ] ].
+	repository
+		withCursorDo: [ :cursor | 
+			cursor last.
+			i := 1.
+			cursor
+				fromCurrentReverseDoEach: [ :each | 
+					"Transcript crShow: 'guy-' , i asString."
+					self assert: each firstName equals: 'guy-' , i asString.
+					i := i + 1 ] ]
+]
+
+{ #category : #tests }
+MaplessUnQLiteTest >> testDelete [
 	| people |
-	repository := self newRepository.
 	people := OrderedCollection new.
 	Character alphabet
 		do: [ :char | 
@@ -345,9 +305,8 @@ MaplessRedisTest >> testDelete [
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testDestroy [
+MaplessUnQLiteTest >> testDestroy [
 	| people |
-	repository := self newRepository.
 	people := OrderedCollection new.
 	Character alphabet
 		do: [ :char | 
@@ -358,55 +317,45 @@ MaplessRedisTest >> testDestroy [
 						yourself) ].
 	people do: [ :guy | repository save: guy ].
 	self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
+	self
+		assert:
+			(people
+				allSatisfy: [ :guy | (repository findOne: DummyPerson atId: guy id) notNil ]).
 	people do: [ :guy | repository destroy: guy ].
 	self
 		assert:
 			(people
-				allSatisfy: [ :guy | (repository existsId: guy id of: DummyPerson) not ])
+				allSatisfy: [ :guy | (repository findOne: DummyPerson atId: guy id) isNil ])
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testFindAll [
-	| users all |
-	repository := self newRepository.
-	users := OrderedCollection new.
-	Character alphabet
-		do: [ :char | 
-			users
-				add:
-					(DummyUser new
-						username: char asString;
-						person:
-							(DummyPerson new
-								firstName: char asString;
-								yourself);
-						yourself) ].
-	users do: [ :user | repository save: user person ].
-	users do: [ :user | repository save: user ].
-	all := repository findAll: DummyUser.
-	self assert: users size equals: all size.
-	self
-		assert:
-			(Character alphabet
-				allSatisfy:
-					[ :char | all anySatisfy: [ :user | user person firstName = char asString ] ])
-]
-
-{ #category : #tests }
-MaplessRedisTest >> testIsUnsaved [
-	| guy |
-	repository := self newRepository.
+MaplessUnQLiteTest >> testExists [
+	| guy loaded |
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
-	self assert: (repository isUnsaved: guy)
+	repository save: guy.
+	self assert: (repository existsId: guy id of: DummyPerson)
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testMultipleComposedComposables [
+MaplessUnQLiteTest >> testIsUnsaved [
+	| guy |
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	self deny: guy hasId.
+	self assert: (repository isUnsaved: guy).
+	repository save: guy.
+	self assert: guy hasId.
+	self deny: (repository isUnsaved: guy)
+]
+
+{ #category : #tests }
+MaplessUnQLiteTest >> testMultipleComposedComposables [
 	| tags tagsOfTags tagsOfTagsOfTags loaded |
-	repository := self newRepository.
 	tags := OrderedCollection new.
 	tagsOfTags := OrderedCollection new.
 	tagsOfTagsOfTags := OrderedCollection new.
@@ -473,9 +422,8 @@ MaplessRedisTest >> testMultipleComposedComposables [
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testMultipleComposedMixedSaveAndLoad [
-	| guy loaded things |
-	repository := self newRepository.
+MaplessUnQLiteTest >> testMultipleComposedMixedSaveAndLoad [
+	| guy things loaded |
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
@@ -512,9 +460,8 @@ MaplessRedisTest >> testMultipleComposedMixedSaveAndLoad [
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testMultipleComposedSaveAndLoad [
+MaplessUnQLiteTest >> testMultipleComposedSaveAndLoad [
 	| user guy tags loaded |
-	repository := self newRepository.
 	user := DummyUser new
 		username: 'johnq';
 		yourself.
@@ -553,70 +500,69 @@ MaplessRedisTest >> testMultipleComposedSaveAndLoad [
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testRemovingExpire [
-	| guy found howMuchWillItBeThere |
-	repository := self newRepository.
-	guy := DummyPerson new
-		firstName: 'john';
-		lastName: 'q';
-		yourself.
-	repository save: guy.
-	found := repository findOne: DummyPerson atId: guy id.
-	self assert: found notNil.
-	repository expires: guy in: 900.
-	howMuchWillItBeThere := repository ttlFor: guy.
-	self assert: howMuchWillItBeThere > 0.
-	repository removeExpireFor: guy.
-	howMuchWillItBeThere := repository ttlFor: guy.
-	self
-		assert: (howMuchWillItBeThere = -1 or: [ howMuchWillItBeThere = -2 ]).
-	100 milliseconds wait.
-	found := repository findOne: DummyPerson atId: guy id.
-	self assert: found notNil.
-
-]
-
-{ #category : #tests }
-MaplessRedisTest >> testSaveSetsID [
+MaplessUnQLiteTest >> testSaveSetsID [
 	| guy |
-	repository := self newRepository.
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	self deny: guy hasId.
 	repository save: guy.
+	self assert: (guy maplessData at: 'id') notNil.
 	self assert: guy hasId
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testSetCurrentDatabase [
-	repository := self newRepository.
-	self shouldnt: [ repository setDatabase: 1 ] raise: Error
+MaplessUnQLiteTest >> testSeekGreaterThan [
+	| people i |
+	people := OrderedCollection new.
+	1 to: 10 do: [ :index | 
+		people
+			add:
+				(DummyPerson new
+					id: index;
+					firstName: 'guy-' , index asString;
+					yourself) ].
+	people do: [ :guy | repository save: guy ].
+	repository
+		withCursorDo: [ :cursor | 
+			| key |
+			key := repository namespaced: 'id' of: DummyPerson valued: 7.
+			cursor seekGreaterThan: key.
+			i := 7.
+			cursor
+				fromCurrentReverseDoEach: [ :each | 
+					self assert: each firstName equals: 'guy-' , i asString.
+					i := i + 1 ] ]
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testSimpleExpire [
-	| guy found |
-	repository := self newRepository.
-	guy := DummyPerson new
-		firstName: 'john';
-		lastName: 'q';
-		yourself.
-	repository save: guy.
-	found := repository findOne: DummyPerson atId: guy id.
-	self assert: found notNil.
-	repository expires: guy in: 50.
-	60 milliseconds wait.
-	found := repository findOne: DummyPerson atId: guy id.
-	self assert: found isNil.
-		 
+MaplessUnQLiteTest >> testSeekLessThan [
+| people i |
+	people := OrderedCollection new.
+	1 to: 10 do: [ :index | 
+		people
+			add:
+				(DummyPerson new
+					id: index;
+					firstName: 'guy-' , index asString;
+					yourself) ].
+	people do: [ :guy | repository save: guy ].
+	repository
+		withCursorDo: [ :cursor | 
+			| key |
+			key := repository namespaced: 'id' of: DummyPerson valued: 7.
+			cursor seekGreaterThan: key.
+			i := 7.
+			cursor
+				fromCurrentDoEach: [ :each | 
+					self assert: each firstName equals: 'guy-' , i asString.
+					i := i - 1 ] ]
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testSimpleSave [
+MaplessUnQLiteTest >> testSimpleSave [
 	| guy |
-	repository := self newRepository.
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
@@ -625,9 +571,8 @@ MaplessRedisTest >> testSimpleSave [
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testSimpleSaveAndLoad [
+MaplessUnQLiteTest >> testSimpleSaveAndLoad [
 	| guy loaded |
-	repository := self newRepository.
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
@@ -635,24 +580,45 @@ MaplessRedisTest >> testSimpleSaveAndLoad [
 	repository save: guy.
 	loaded := repository findOne: DummyPerson atId: guy id.
 	self assert: loaded notNil.
-	loaded data
+	loaded modifiedOn: nil.
+	guy modifiedOn: nil.
+	loaded maplessData
 		keysAndValuesDo: [ :k :v | 
 			((loaded data at: k) isKindOf: DateAndTime) not
 				ifTrue: [ self assert: (loaded data at: k) = (guy data at: k) ] ]
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testSimpleSaveAndUpdate [
+MaplessUnQLiteTest >> testSimpleSaveAndLoadInMemory [
+	| guy loaded memoryRepository |
+	memoryRepository := MaplessUnQLiteRepository inMemory.
+	guy := DummyPerson new
+		firstName: 'john';
+		lastName: 'q';
+		yourself.
+	memoryRepository save: guy.
+	loaded := memoryRepository findOne: DummyPerson atId: guy id.
+	self assert: loaded notNil.
+	loaded modifiedOn: nil.
+	guy modifiedOn: nil.
+	loaded maplessData
+		keysAndValuesDo: [ :k :v | 
+			((loaded data at: k) isKindOf: DateAndTime) not
+				ifTrue: [ self assert: (loaded data at: k) = (guy data at: k) ] ]
+]
+
+{ #category : #tests }
+MaplessUnQLiteTest >> testSimpleSaveAndUpdate [
 	| guy loaded reloaded |
-	repository := self newRepository.
 	guy := DummyPerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	repository save: guy.
 	loaded := repository findOne: DummyPerson atId: guy id.
-	self assert: loaded firstName equals: 'john'.
-	self deny: loaded remember equals: 'this words'.
+	self assert: loaded firstName = 'john'.
+	self deny: loaded remember = 'this words'.
+	loaded firstName: loaded firstName capitalized.
 	loaded remember: 'this words'.
 	repository save: loaded.
 	reloaded := repository findOne: DummyPerson atId: guy id.
@@ -660,21 +626,8 @@ MaplessRedisTest >> testSimpleSaveAndUpdate [
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testSimpleSaveWithAByteSymbol [
-	| guy |
-	repository := self newRepository.
-	guy := DummyPerson new
-		firstName: 'john';
-		lastName: 'q';
-		value: #thisByteSymbol;
-		yourself.
-	self shouldnt: [ repository save: guy ] raise: Error
-]
-
-{ #category : #tests }
-MaplessRedisTest >> testSubModelsFromReifiedJSON [
-	| user guy jsonString reified |
-	repository := self newRepository.
+MaplessUnQLiteTest >> testSubModelsFromReifiedJSON [
+	| user guy jsonString reified loaded |
 	user := DummyUser new
 		userame: 'johnq';
 		yourself.
@@ -683,28 +636,11 @@ MaplessRedisTest >> testSubModelsFromReifiedJSON [
 		lastName: 'q';
 		yourself.
 	user person: guy.
-	jsonString := user unreferenced asJSONString.
+	repository save: guy.
+	repository save: user.
+	loaded := repository findOne: DummyUser atId: user id.
+	jsonString := loaded unreferenced asJSONString.
 	reified := DummyUser fromJSONString: jsonString in: repository.
 	self assert: reified person class equals: DummyPerson.
 	self assert: reified completeName equals: 'john q'
-]
-
-{ #category : #tests }
-MaplessRedisTest >> testUpdatingExpire [
-	| guy found howMuchWillItBeThere newerTTL answer |
-	repository := self newRepository.
-	guy := DummyPerson new
-		firstName: 'john';
-		lastName: 'q';
-		yourself.
-	repository save: guy.
-	found := repository findOne: DummyPerson atId: guy id.
-	self assert: found notNil.
-	repository expires: guy in: 900.
-	10 milliseconds wait.
-	howMuchWillItBeThere := repository ttlFor: guy.
-	self assert: howMuchWillItBeThere > 0.
-	answer := repository expires: guy in: 2500.
-	newerTTL := repository ttlFor: guy.
-	self assert: newerTTL > 1200
 ]

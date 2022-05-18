@@ -32,6 +32,11 @@ MaplessResolver >> canRepresentSubMapless: anObject in: aMaplessRepository [
 				and: [ (anObject includesKey: aMaplessRepository idPropertyName ) and: [ anObject includesKey: '_c' ] ] ]
 ]
 
+{ #category : #accessing }
+MaplessResolver >> conditionForClass: aMaplessClass [
+	^ {('_c' -> aMaplessClass name)} asDictionary
+]
+
 { #category : #converting }
 MaplessResolver >> maplessAsStorable: aMapless in: aMaplessRepository [
 	^ aMaplessRepository asStorable: aMapless
@@ -45,8 +50,9 @@ MaplessResolver >> maplessClassFor: aJsonObject in: aMaplessRepository [
 		in: aMaplessRepository.
 	^ Smalltalk
 		at: className asSymbol
-		ifAbsent: [ self
-				error: 'The resolver could not find ' , className , ' in this image.' ]
+		ifAbsent: [ MaplessClassNotFound
+				signal:
+					('The {1} class was not found in this image' format: {className}) ]
 ]
 
 { #category : #accessing }
@@ -60,17 +66,6 @@ MaplessResolver >> maplessReferenceAsJsonObject: aMaplessReference in: aMaplessR
 		at: '_c' put: aMaplessReference maplessClassName;
 		at: aMaplessRepository idPropertyName put: aMaplessReference id;
 		yourself
-]
-
-{ #category : #actions }
-MaplessResolver >> normalizeIdOfOn: aJsonObject in: aMaplessRepository [
-	aJsonObject
-		at: 'id'
-		put: (aJsonObject at: aMaplessRepository idPropertyName).
-	aJsonObject
-		removeKey: aMaplessRepository idPropertyName
-		ifAbsent: [ nil ].
-	^ aJsonObject
 ]
 
 { #category : #hooks }
@@ -89,8 +84,9 @@ MaplessResolver >> referenceDataFrom: aJsonObject in: aMaplessRepository [
 
 { #category : #converting }
 MaplessResolver >> storableFor: aMapless in: aMaplessRepository [
-	"Returns a new JsonObject that's the BSON friendly version of the jsonObject of aMapless.
-	It does that by visiting to cast all the values. 
+	"Returns a new JsonObject that's a serializable friendly 
+	version of the jsonObject of aMapless.
+	It does that by deep visiting and casting all its values. 
 	It will complain if sub models are not previously saved."
 
 	| storableDocument storablePart |

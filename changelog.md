@@ -1,3 +1,52 @@
+
+May 18, 2022 | v0.5.3-beta | Proud Falcon
+===================================
+- Declaring stable API for beta version.
+
+May 18, 2022 | v0.5.2-alpha | Major Bird
+===================================
+- `MongoChange` `type` is now uppercase for client convenience.
+- Added `maplessClass` accessor in `Mapless` and `MaplessReference`.
+- Added `unobservable` accessor to prevent recursive changes log.
+- Fixes `DELETE` missing jsonish in the `MongoChange` object.
+
+May 11, 2022 | v0.5.1-alpha | Tense Eagle
+===================================
+* Added `MaplessMongoObserver` to give to the Mongo repositories, the capability of logging database changes. It will use an auto-incremented `MongoChangeSequence` to log `MongoChange` that can later be used to synchronize database state in different installations. `MongoChange` would have an entry only for `insert`, `update` and `delete` events. No other Mongo command will be logged.
+
+April 23, 2022 
+===================================
+* Added a nice README header thanks to Luis Poletti.
+
+April 15, 2022 
+===================================
+* Added `MaplessUnQLiteRepository>>inMemory` methods to make use of RAM based storage offered by UnQLite.
+* Added `testSimpleSaveAndLoadInMemory` for elemental coverage.
+
+April 6, 2022 
+===================================
+* Removed the docker directory with a replica set docker-compose.yml. This is better done when using your own or https://github.com/sebastianconcept/mongo-rs.
+* Starting to improve README based on https://github.com/sebastianconcept/Mapless/issues/87.
+
+April 3, 2022 
+===================================
+* Adds `MaplessUnQLiteCursor` to provide basic navigation of the database treating values as `Mapless`. 
+* Adds `testSeekGreaterThan` and `testSeekGreaterThan` for cursor positioning.
+* Adds `fromCurrentDoEach:` and  `fromCurrentReverseDoEach:` for iterating `Mapless` objects.
+* All tests green.
+
+March 30, 2022 
+===================================
+* Introducing `MaplessPostgresRepository` via dependency on [P3](https://github.com/svenvc/P3).
+* Adds all minimal coverage.
+* All tests green.
+
+March 25, 2022 
+===================================
+* Using `(resolver conditionForClass: aMaplessClass)`  in all class based `MongoDB` queries, so the query doesn't bring any document in that collection that isn't strictly that `Mapless` class.
+* Fixed `MaplessMemoryRepository` to return its own general condition to query all mapless of a given class using its new `MaplessMemoryCollectionToClassNameResolver` in `resolver conditionForClass: aMaplessClass` expressions.
+* Adapted and fixed tests.
+
 March 23, 2022 | v0.5.0-alpha | Double Citadel
 ===================================
 * Introduces `MaplessRedisRepository` via dependency on [RediStick](https://github.com/mumez/RediStick).

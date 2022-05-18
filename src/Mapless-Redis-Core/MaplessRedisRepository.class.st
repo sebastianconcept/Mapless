@@ -1,7 +1,7 @@
 Class {
 	#name : #MaplessRedisRepository,
 	#superclass : #MaplessRepository,
-	#category : #'Mapless-Redis-Core-Connections'
+	#category : #'Mapless-Redis-Core-Core'
 }
 
 { #category : #actions }
@@ -133,13 +133,20 @@ MaplessRedisRepository >> makeMapless: aMaplessClass fromValue: storedValue with
 
 { #category : #accessing }
 MaplessRedisRepository >> namespaced: propertyName of: aMapless [
-	^ aMapless maplessClassName , ':' , propertyName , ':'
-		, (aMapless data at: propertyName)
+	^ '{1}:{2}:{3}'
+		format:
+			{aMapless maplessClassName.
+			propertyName.
+			(aMapless data at: propertyName)}
 ]
 
 { #category : #accessing }
 MaplessRedisRepository >> namespaced: propertyName of: aMaplessClass valued: aValue [
-	^ aMaplessClass name , ':' , propertyName , ':' , aValue
+	^ '{1}:{2}:{3}'
+		format:
+			{aMaplessClass name.
+			propertyName.
+			aValue}
 ]
 
 { #category : #accessing }
@@ -149,7 +156,12 @@ MaplessRedisRepository >> namespacedIdOf: aMapless [
 
 { #category : #accessing }
 MaplessRedisRepository >> namespacedIdOf: aMaplessClass valued: aValue [
-	^ aMaplessClass name , ':id:' , aValue
+	^ self namespaced: 'id' of: aMaplessClass valued: aValue
+]
+
+{ #category : #actions }
+MaplessRedisRepository >> normalizeIdOfOn: aJsonObject [
+	"No need to normalize it"
 ]
 
 { #category : #reactions }
