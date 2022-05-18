@@ -135,16 +135,19 @@ MaplessMongoRepository >> destroy: aMapless [
 MaplessMongoRepository >> destroy: aMapless writeConcern: aConcernOrNil [
 	"Removes aMapless from its corresponding collection."
 
+	| serializable |
 	self onBeforeDestroy: aMapless.
+	serializable := resolver storableFor: aMapless in: self.
 	self
 		readWriteDo: [ (self databaseCollectionNamed: aMapless class collectionName)
 				commandDelete: {(self idPropertyName -> aMapless id)} asDictionary
 				limit: 1
 				writeConcern: aConcernOrNil.
 			self
-				triggerEvent: #maplessMongoDeleteOf:writeConcern:in:
+				triggerEvent: #maplessMongoDeleteOf:serializable:writeConcern:in:
 				withArguments:
 					{aMapless.
+					serializable.
 					aConcernOrNil.
 					self} ].
 	self onAfterDestroy: aMapless

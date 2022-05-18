@@ -5,7 +5,8 @@ Class {
 	#name : #MaplessMongoObserver,
 	#superclass : #Object,
 	#instVars : [
-		'logRepository'
+		'logRepository',
+		'unobservable'
 	],
 	#category : #'Mapless-Mongo-Log-Core'
 }
@@ -20,6 +21,12 @@ MaplessMongoObserver class >> on: aMaplessMongoRepository loggingIn: aMaplessRep
 	^ self new
 		initializeOn: aMaplessMongoRepository loggingIn: aMaplessRepository;
 		yourself
+]
+
+{ #category : #accessing }
+MaplessMongoObserver class >> unobservableMaplessClasses [
+	^ {MongoChange.
+	MongoChangeSequence}
 ]
 
 { #category : #converting }
@@ -68,9 +75,17 @@ MaplessMongoObserver >> initializeOn: aMaplessMongoRepository loggingIn: aMaples
 						yourself) ]
 ]
 
+{ #category : #initialization }
+MaplessMongoObserver >> initializeUnobservable [
+	^ unobservable := self class unobservableMaplessClasses
+]
+
 { #category : #reactions }
-MaplessMongoObserver >> mongoDeleteOf: aMapless writeConcern: aWriteConcern in: aMaplessMongoRepository [
-	| mongoChange mongoDeleteOneCommand |
+MaplessMongoObserver >> mongoDeleteOf: aMapless serializable: aSerializable writeConcern: aWriteConcern in: aMaplessMongoRepository [
+	| mongoChange mongoDeleteOneCommand jsonish |
+	(self unobservable includes: aMapless maplessClass)
+		ifTrue: [ ^ self ].
+	jsonish := self asJSONishString: aSerializable.
 	mongoDeleteOneCommand := String
 		streamContents: [ :stream | 
 			stream
@@ -85,6 +100,7 @@ MaplessMongoObserver >> mongoDeleteOf: aMapless writeConcern: aWriteConcern in: 
 		sequenceNumber: self nextSequenceNumber;
 		type: #delete asUppercase;
 		mongoCommand: mongoDeleteOneCommand;
+		jsonish: jsonish;
 		yourself.
 	logRepository save: mongoChange
 ]
@@ -150,11 +166,18 @@ MaplessMongoObserver >> observe: aMaplessMongoRepository [
 		when: #maplessMongoInsertOf:serializable:writeConcern:in:
 			send: #mongoInsertOf:serializable:writeConcern:in:
 			to: self;
-		when: #maplessMongoDeleteOf:writeConcern:in:
-			send: #mongoDeleteOf:writeConcern:in:
+		when: #maplessMongoDeleteOf:serializable:writeConcern:in:
+			send: #mongoDeleteOf:serializable:writeConcern:in:
 			to: self;
 		when: #maplessMongoUpdateOf:serializable:writeConcern:in:
 			send: #mongoUpdateOf:serializable:writeConcern:in:
 			to: self;
 		yourself
+]
+
+{ #category : #accessing }
+MaplessMongoObserver >> unobservable [
+	"Answer the Mapless classes of objects which changes will be unobservable."
+
+	^ unobservable ifNil: [ self initializeUnobservable ]
 ]
