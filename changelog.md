@@ -3,6 +3,8 @@ May 18, 2022 | v0.5.2-alpha | Major Bird
 ===================================
 - `MongoChange` `type` is now uppercase for client convenience.
 - Added `maplessClass` accessor in `Mapless` and `MaplessReference`.
+- Added `unobservable` accessor to prevent recursive changes log.
+- Fixes `DELETE` missing jsonish in the `MongoChange` object.
 
 May 11, 2022 | v0.5.1-alpha | Tense Eagle
 ===================================
