@@ -1,4 +1,8 @@
 
+May 18, 2022 | v0.5.3-beta | Proud Falcon
+===================================
+- Declaring stable API for beta version.
+
 May 18, 2022 | v0.5.2-alpha | Major Bird
 ===================================
 - `MongoChange` `type` is now uppercase for client convenience.
