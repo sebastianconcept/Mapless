@@ -133,6 +133,13 @@ MaplessReference >> maplessClassName [
 ]
 
 { #category : #accessing }
+MaplessReference >> maplessData [
+	^ self hasModel
+		ifTrue: [ model maplessData ]
+		ifFalse: [ data ]
+]
+
+{ #category : #accessing }
 MaplessReference >> model [
 	^ model ifNil: [ self initializeModel ]
 ]

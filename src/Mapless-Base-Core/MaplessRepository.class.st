@@ -57,7 +57,7 @@ MaplessRepository >> asStorable: anObject [
 	^ anObject isCollection
 		ifTrue: [ anObject class = OrderedJsonObject
 				ifTrue: [ (JsonObject fromAssociations: anObject associations)
-						collect: [ :e | self resolver maplessAsStorable: e in: self ] ]
+						collect: [ :e | resolver maplessAsStorable: e in: self ] ]
 				ifFalse: [ anObject collect: [ :e | self asStorable: e ] ] ]
 		ifFalse: [ anObject class = MaplessReference
 				ifFalse: [ (anObject isKindOf: Mapless)
