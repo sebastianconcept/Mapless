@@ -59,12 +59,13 @@ MaplessVoyageWithMaplessSuffixResolver >> isVoyageReference: anObject in: aMaple
 ]
 
 { #category : #converting }
-MaplessVoyageWithMaplessSuffixResolver >> maplessAsStorable: aMapless in: aMaplessRepository [
-	aMapless maplessData
-		at: '_id' put: aMapless id;
-		at: '#instanceOf' put: aMapless class maplessClassName;
-		yourself.
-	^ super maplessAsStorable: aMapless in: aMaplessRepository
+MaplessVoyageWithMaplessSuffixResolver >> maplessAsStorable: anObject in: aMaplessRepository [
+	anObject isMapless
+		ifTrue: [ anObject maplessData
+				at: '_id' put: anObject id;
+				at: '#instanceOf' put: anObject class maplessClassName;
+				yourself ].
+	^ super maplessAsStorable: anObject in: aMaplessRepository
 ]
 
 { #category : #accessing }

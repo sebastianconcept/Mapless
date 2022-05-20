@@ -220,6 +220,11 @@ Mapless class >> keysToExclude [
 ]
 
 { #category : #accessing }
+Mapless class >> maplessClass [
+	^ self
+]
+
+{ #category : #accessing }
 Mapless class >> maplessClassName [
 	^ self name
 ]
