@@ -75,9 +75,9 @@ Open a Pharo workspace and evaluate:
 
 ```smalltalk
 Metacello new
-	baseline: 'Mapless';
-	repository: 'github://sebastianconcept/Mapless:v0.5.0-alpha/src';
-	load
+  baseline: 'Mapless';
+  repository: 'github://sebastianconcept/Mapless:v0.5.4-beta/src';
+  load
 ```
 
 ## Include as dependency
@@ -86,8 +86,8 @@ In BaselineOf or ConfigurationOf it can be added in this way:
 
 ```smalltalk
 spec
-	baseline: 'Mapless'
-	with: [ spec
-		repository: 'github://sebastianconcept/Mapless:v0.5.0-alpha/src';
-		loads: #('Core' 'Mongo' 'Memory' 'Redis' 'UnQLite') ]
+  baseline: 'Mapless'
+    with: [ spec
+    repository: 'github://sebastianconcept/Mapless:v0.5.0-alpha/src';
+    loads: #('Core' 'Mongo' 'Memory' 'Redis' 'UnQLite') ]
 ```

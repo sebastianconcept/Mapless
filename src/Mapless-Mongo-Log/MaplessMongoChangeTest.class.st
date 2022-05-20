@@ -199,7 +199,7 @@ MaplessMongoChangeTest >> testSimpleInsertLog [
 			guy modifiedOn asString}.
 	self assert: mongoChange mongoCommand notNil.
 	self assert: mongoChange type equals: #insert asUppercase.
-	self assert: mongoChange jsonish notNil.
+	self assert: mongoChange document notNil.
 	self assert: mongoChange mongoCommand equals: expectation
 ]
 

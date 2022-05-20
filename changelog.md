@@ -1,3 +1,7 @@
+May 19, 2022 | v0.5.4-beta | Humble Falcon
+===================================
+- `MongoChange` is now using MongoDB `document` instead of `jsonish`.
+- Version bump.
 
 May 18, 2022 | v0.5.3-beta | Proud Falcon
 ===================================

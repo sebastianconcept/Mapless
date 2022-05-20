@@ -82,10 +82,10 @@ MaplessMongoObserver >> initializeUnobservable [
 
 { #category : #reactions }
 MaplessMongoObserver >> mongoDeleteOf: aMapless serializable: aSerializable writeConcern: aWriteConcern in: aMaplessMongoRepository [
-	| mongoChange mongoDeleteOneCommand jsonish |
+	| mongoChange mongoDeleteOneCommand jsonishString |
 	(self unobservable includes: aMapless maplessClass)
 		ifTrue: [ ^ self ].
-	jsonish := self asJSONishString: aSerializable.
+	jsonishString := self asJSONishString: aSerializable.
 	mongoDeleteOneCommand := String
 		streamContents: [ :stream | 
 			stream
@@ -100,15 +100,17 @@ MaplessMongoObserver >> mongoDeleteOf: aMapless serializable: aSerializable writ
 		sequenceNumber: self nextSequenceNumber;
 		type: #delete asUppercase;
 		mongoCommand: mongoDeleteOneCommand;
-		jsonish: jsonish;
+		document: aSerializable;		
 		yourself.
 	logRepository save: mongoChange
 ]
 
 { #category : #reactions }
 MaplessMongoObserver >> mongoInsertOf: aMapless serializable: aSerializable writeConcern: aWriteConcern in: aMaplessMongoRepository [
-	| mongoInsertOneCommand mongoChange jsonish |
-	jsonish := self asJSONishString: aSerializable.
+	| mongoInsertOneCommand mongoChange jsonishString |
+	(self unobservable includes: aMapless maplessClass)
+		ifTrue: [ ^ self ].
+	jsonishString := self asJSONishString: aSerializable.
 	mongoInsertOneCommand := String
 		streamContents: [ :stream | 
 			stream
@@ -117,13 +119,13 @@ MaplessMongoObserver >> mongoInsertOf: aMapless serializable: aSerializable writ
 						format:
 							{(aMaplessMongoRepository
 								databaseCollectionNamed: aMapless class collectionName).
-							jsonish}) ].
+							jsonishString}) ].
 	mongoChange := MongoChange new
 		collectionName: aMapless class collectionName;
 		sequenceNumber: self nextSequenceNumber;
 		type: #insert asUppercase;
 		mongoCommand: mongoInsertOneCommand;
-		jsonish: jsonish;
+		document: aSerializable;
 		yourself.
 	logRepository save: mongoChange
 ]
@@ -131,6 +133,8 @@ MaplessMongoObserver >> mongoInsertOf: aMapless serializable: aSerializable writ
 { #category : #reactions }
 MaplessMongoObserver >> mongoUpdateOf: aMapless serializable: aSerializable writeConcern: aWriteConcern in: aMaplessMongoRepository [
 	| mongoUpdateOneCommand mongoChange jsonishString |
+	(self unobservable includes: aMapless maplessClass)
+		ifTrue: [ ^ self ].
 	jsonishString := self asJSONishString: aSerializable.
 	mongoUpdateOneCommand := String
 		streamContents: [ :stream | 
@@ -147,7 +151,7 @@ MaplessMongoObserver >> mongoUpdateOf: aMapless serializable: aSerializable writ
 		sequenceNumber: self nextSequenceNumber;
 		type: #update asUppercase;
 		mongoCommand: mongoUpdateOneCommand;
-		jsonish: jsonishString;
+		document: aSerializable;
 		yourself.
 	logRepository save: mongoChange
 ]
