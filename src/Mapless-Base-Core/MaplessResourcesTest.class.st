@@ -76,6 +76,39 @@ MaplessResourcesTest >> test30And70Chance [
 ]
 
 { #category : #tests }
+MaplessResourcesTest >> testEqualChanceWithoutWeightSpecification [
+	| someMongoUrls counters client repeats lowerBound upperBound |
+	someMongoUrls := {'127.0.0.1:27017' . '127.0.0.1:27019'.
+	'127.0.0.1:27020' . '127.0.0.1:27021' . '127.0.0.1:27022'}.
+	counters := Dictionary new.
+	repository := MaplessMongoRepository
+		for: 'Mapless-Test'
+		with:
+			(MaplessMongoReplicaSetPool
+				mongoUrls: someMongoUrls
+				database: 'Mapless-Test').
+	repository accessor
+		minReadOnlyClients: 10;
+		minReadWriteClients: 10;
+		start.
+	someMongoUrls do: [ :url | counters at: url asMongoUrl put: 0 ].
+	counters
+		removeKey: repository accessor getIdleReadWriteClient asMongoUrl.
+	repeats := 1000.
+	repeats
+		timesRepeat: [ client := repository accessor getIdleReadOnlyClient.
+			counters
+				at: client asMongoUrl
+				put: (counters at: client asMongoUrl) + 1 ].
+	lowerBound := (repeats / counters size) - (repeats * 0.05).
+	upperBound := (repeats / counters size) + (repeats * 0.05).
+	counters values
+		do: [ :each | 
+			self assert: each > lowerBound.
+			self assert: upperBound > each ]
+]
+
+{ #category : #tests }
 MaplessResourcesTest >> testHalfHalfChance [
 	| wr n1 n2 i j latest |
 	i := 0.

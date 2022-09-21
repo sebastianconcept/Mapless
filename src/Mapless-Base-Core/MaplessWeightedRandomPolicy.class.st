@@ -13,6 +13,16 @@ Class {
 }
 
 { #category : #'instance creation' }
+MaplessWeightedRandomPolicy class >> fromDictionary: weights seed: aRandomSeedValue [
+	| newOne |
+	newOne := self seed: aRandomSeedValue.
+	weights
+		keysAndValuesDo:
+			[ :key :value | newOne addNode: (MaplessWeightedNode weight: value value: key) ].
+	^ newOne
+]
+
+{ #category : #'instance creation' }
 MaplessWeightedRandomPolicy class >> new [
 	^ self seed: DateAndTime now asUnixTime
 ]
@@ -55,6 +65,14 @@ MaplessWeightedRandomPolicy >> next [
 	^ self getNext: totalWeight * random next
 ]
 
+{ #category : #actions }
+MaplessWeightedRandomPolicy >> nextAmong: values [
+	| nextOne |
+	[ nextOne isNil or: [ (values includes: nextOne value) not ] ]
+		whileTrue: [ nextOne := self next ].
+	^ nextOne value
+]
+
 { #category : #accessing }
 MaplessWeightedRandomPolicy >> nodes [
 	^ nodes ifNil: [ self initializeNodes ]
@@ -63,6 +81,11 @@ MaplessWeightedRandomPolicy >> nodes [
 { #category : #accessing }
 MaplessWeightedRandomPolicy >> nodes: anObject [
 	nodes := anObject
+]
+
+{ #category : #accessing }
+MaplessWeightedRandomPolicy >> random [
+	^ random
 ]
 
 { #category : #actions }

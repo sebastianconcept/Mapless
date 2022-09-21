@@ -13,6 +13,14 @@ Class {
 	#category : #'Mapless-Base-Core-Resources'
 }
 
+{ #category : #'instance creation' }
+MaplessWeightedNode class >> weight: aNumber value: aValue [
+	^ self new
+		weight: aNumber;
+		value: aValue;
+		yourself
+]
+
 { #category : #accessing }
 MaplessWeightedNode >> bottom [
 	^ bottom
