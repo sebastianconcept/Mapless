@@ -17,7 +17,8 @@ Class {
 		'minReadWriteClients',
 		'minReadOnlyClients',
 		'maxReadWriteClients',
-		'maxReadOnlyClients'
+		'maxReadOnlyClients',
+		'loadBalancer'
 	],
 	#category : #'Mapless-Mongo-Core-Connections'
 }
@@ -51,6 +52,24 @@ MaplessMongoReplicaSetPool class >> defaultMinReadWriteClients [
 ]
 
 { #category : #'instance creation' }
+MaplessMongoReplicaSetPool class >> fromString: aStringOfOptionalWeigthsAndMongoUrls database: databaseName [
+	| parts weights mongoUrls url weight |
+	weights := Dictionary new.
+	parts := aStringOfOptionalWeigthsAndMongoUrls substrings: ','.
+	parts := parts collect: [ :each | each substrings: '@' ].
+	parts
+		do: [ :each | 
+			each size > 1
+				ifTrue: [ url := each second.
+					weight := each first asNumber ]
+				ifFalse: [ url := each first.
+					weight := 1 ].
+			weights at: url asMongoUrl put: weight ].
+	mongoUrls := weights keys.
+	^ self mongoUrls: mongoUrls weights: weights database: databaseName
+]
+
+{ #category : #'instance creation' }
 MaplessMongoReplicaSetPool class >> mongoUrls: someMongoUrls database: databaseName [
 	^ self
 		mongoUrls: someMongoUrls asOrderedCollection
@@ -63,6 +82,27 @@ MaplessMongoReplicaSetPool class >> mongoUrls: someMongoUrls database: databaseN
 MaplessMongoReplicaSetPool class >> mongoUrls: someMongoUrls database: databaseName username: aUserName password: aPassword [
 	^ self basicNew
 		initializeMongoUrls: (someMongoUrls collect: #asMongoUrl)
+			database: databaseName
+			username: aUserName
+			password: aPassword;
+		yourself
+]
+
+{ #category : #'instance creation' }
+MaplessMongoReplicaSetPool class >> mongoUrls: someMongoUrls weights: weightsDictionary database: databaseName [
+	^ self
+		mongoUrls: someMongoUrls
+		weights: weightsDictionary
+		database: databaseName
+		username: ''
+		password: ''
+]
+
+{ #category : #'instance creation' }
+MaplessMongoReplicaSetPool class >> mongoUrls: someMongoUrls weights: weightsDictionary database: databaseName username: aUserName password: aPassword [
+	^ self basicNew
+		initializeMongoUrls: (someMongoUrls collect: #asMongoUrl)
+			weights: weightsDictionary
 			database: databaseName
 			username: aUserName
 			password: aPassword;
@@ -142,6 +182,27 @@ MaplessMongoReplicaSetPool >> getCurrentPrimaryMongoUrl [
 	
 	self mongoUrls
 
+]
+
+{ #category : #actions }
+MaplessMongoReplicaSetPool >> getIdleReadOnlyClient [
+	"Answer the next mongo client among the idle read only one regarding to the load balancer.
+	Or nil that can't be found."
+
+	| idleReadOnlyClientUrls selectedUrl |
+	idleReadOnlyClientUrls := idleReadOnlyClients
+		collect: [ :each | each asMongoUrl ].
+	idleReadOnlyClientUrls ifEmpty: [ ^ nil ].
+	selectedUrl := loadBalancer
+		nextAmong: (Set newFrom: idleReadOnlyClientUrls).
+	^ idleReadOnlyClients
+		detect: [ :e | e asMongoUrl = selectedUrl ]
+		ifNone: [ nil ]
+]
+
+{ #category : #actions }
+MaplessMongoReplicaSetPool >> getIdleReadWriteClient [
+	^ idleReadWriteClients atRandom: loadBalancer random
 ]
 
 { #category : #accessing }
@@ -244,7 +305,24 @@ MaplessMongoReplicaSetPool >> initializeMongoUrls: someMongoUrls database: datab
 	self initialize.
 	username := aUserName.
 	password := aPassword.
-	resolver := MaplessMongoResolver fromMongoUrls: someMongoUrls
+	resolver := MaplessMongoResolver fromMongoUrls: someMongoUrls.
+	loadBalancer := self newTrivialLoadBalancer
+]
+
+{ #category : #initialization }
+MaplessMongoReplicaSetPool >> initializeMongoUrls: someMongoUrls weights: weightsDictionary database: databaseName username: aUserName password: aPassword [
+	self initialize.
+	username := aUserName.
+	password := aPassword.
+	resolver := MaplessMongoResolver fromMongoUrls: someMongoUrls.
+	loadBalancer := MaplessWeightedRandomPolicy
+		fromDictionary: weightsDictionary
+		seed: DateAndTime now asUnixTime
+]
+
+{ #category : #accessing }
+MaplessMongoReplicaSetPool >> loadBalancer [
+	^ loadBalancer
 ]
 
 { #category : #actions }
@@ -318,6 +396,20 @@ MaplessMongoReplicaSetPool >> minReadWriteClients: anObject [
 	minReadWriteClients := anObject
 ]
 
+{ #category : #actions }
+MaplessMongoReplicaSetPool >> newTrivialLoadBalancer [
+	"Answers a new load balancer that will have equal chances of 
+	selecting any client (weight 1 for all urls)."
+
+	| weights |
+	weights := [ :dic | 
+	resolver mongoUrls do: [ :url | dic at: url asMongoUrl put: 1 ].
+	dic ] value: Dictionary new.
+	^ MaplessWeightedRandomPolicy
+		fromDictionary: weights
+		seed: DateAndTime now asUnixTime
+]
+
 { #category : #reactions }
 MaplessMongoReplicaSetPool >> onNotPrimaryReadWriteAttempt: aBlock using: aMongoAPI [
 	self removeInvalidClients.
@@ -327,11 +419,12 @@ MaplessMongoReplicaSetPool >> onNotPrimaryReadWriteAttempt: aBlock using: aMongo
 
 { #category : #reactions }
 MaplessMongoReplicaSetPool >> onPrimaryFound: aMongoAPI [
-
 	self removeInvalidClients.
 	self ensureMinimumQuantityOfReadOnlyClients.
 	self ensureMinimumQuantityOfReadWriteClients.
-	
+	loadBalancer nodes
+		detect: [ :node | node value = resolver getPrimaryMongoUrl ]
+		ifFound: [ :found | loadBalancer removeNode: found ]
 ]
 
 { #category : #actions }
@@ -492,7 +585,7 @@ MaplessMongoReplicaSetPool >> requestReadOnlyClient [
 			self hasPrimary
 				ifFalse: [ self findPrimary ].
 			client := self hasIdleReadOnlyClients
-				ifTrue: [ self idleReadOnlyClients anyOne ]
+				ifTrue: [ self getIdleReadOnlyClient ]
 				ifFalse: [ self hasMaxReadOnlyClients
 						ifTrue: [ ^ MaplessMaximumReadWritePoolClientsReached signal ].
 					self makeReadOnlyClient ].
@@ -511,7 +604,7 @@ MaplessMongoReplicaSetPool >> requestReadWriteClient [
 			self hasPrimary
 				ifFalse: [ self findPrimary ].
 			client := self hasIdleReadWriteClients
-				ifTrue: [ self idleReadWriteClients anyOne ]
+				ifTrue: [ self getIdleReadWriteClient ]
 				ifFalse: [ self hasMaxReadWriteClients
 						ifTrue: [ ^ MaplessMaximumReadWritePoolClientsReached signal ].
 					self makeReadWriteClient ].
@@ -545,6 +638,11 @@ MaplessMongoReplicaSetPool >> returnReadWriteClient: aMongoAPIOrNil [
 		critical: [ self busyReadWriteClients remove: aMongoAPIOrNil ifAbsent: [ nil ].
 			(aMongoAPIOrNil isValid and: [ aMongoAPIOrNil isPrimary ])
 				ifTrue: [ self idleReadWriteClients add: aMongoAPIOrNil ] ]
+]
+
+{ #category : #accessing }
+MaplessMongoReplicaSetPool >> secondaryMongoUrls [
+	^ resolver secondaryMongoUrls contents
 ]
 
 { #category : #actions }
