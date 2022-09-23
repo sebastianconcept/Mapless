@@ -100,5 +100,13 @@ MaplessWeightedRandomPolicy >> recalculateWeight [
 
 { #category : #actions }
 MaplessWeightedRandomPolicy >> removeNode: aNode [
-	^ self nodes remove: aNode ifAbsent: [ nil ]
+	| target |
+	target := self nodes remove: aNode ifAbsent: [ nil ].
+	self recalculateWeight.
+	^ target
+]
+
+{ #category : #accessing }
+MaplessWeightedRandomPolicy >> totalWeight [
+	^ totalWeight
 ]

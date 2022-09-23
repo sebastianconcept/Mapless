@@ -52,6 +52,24 @@ MaplessMongoReplicaSetPool class >> defaultMinReadWriteClients [
 ]
 
 { #category : #'instance creation' }
+MaplessMongoReplicaSetPool class >> fromString: aStringOfOptionalWeigthsAndMongoUrls database: databaseName [
+	| parts weights mongoUrls url weight |
+	weights := Dictionary new.
+	parts := aStringOfOptionalWeigthsAndMongoUrls substrings: ','.
+	parts := parts collect: [ :each | each substrings: '@' ].
+	parts
+		do: [ :each | 
+			each size > 1
+				ifTrue: [ url := each second.
+					weight := each first asNumber ]
+				ifFalse: [ url := each first.
+					weight := 1 ].
+			weights at: url asMongoUrl put: weight ].
+	mongoUrls := weights keys.
+	^ self mongoUrls: mongoUrls weights: weights database: databaseName
+]
+
+{ #category : #'instance creation' }
 MaplessMongoReplicaSetPool class >> mongoUrls: someMongoUrls database: databaseName [
 	^ self
 		mongoUrls: someMongoUrls asOrderedCollection
@@ -302,6 +320,11 @@ MaplessMongoReplicaSetPool >> initializeMongoUrls: someMongoUrls weights: weight
 		seed: DateAndTime now asUnixTime
 ]
 
+{ #category : #accessing }
+MaplessMongoReplicaSetPool >> loadBalancer [
+	^ loadBalancer
+]
+
 { #category : #actions }
 MaplessMongoReplicaSetPool >> makeClientWith: aMongoUrl [
 	"Answers a new open MongoAPI client or nil if there is a network error."
@@ -380,7 +403,7 @@ MaplessMongoReplicaSetPool >> newTrivialLoadBalancer [
 
 	| weights |
 	weights := [ :dic | 
-	resolver mongoUrls do: [ :url | dic at: url put: 1 ].
+	resolver mongoUrls do: [ :url | dic at: url asMongoUrl put: 1 ].
 	dic ] value: Dictionary new.
 	^ MaplessWeightedRandomPolicy
 		fromDictionary: weights
@@ -396,11 +419,12 @@ MaplessMongoReplicaSetPool >> onNotPrimaryReadWriteAttempt: aBlock using: aMongo
 
 { #category : #reactions }
 MaplessMongoReplicaSetPool >> onPrimaryFound: aMongoAPI [
-
 	self removeInvalidClients.
 	self ensureMinimumQuantityOfReadOnlyClients.
 	self ensureMinimumQuantityOfReadWriteClients.
-	
+	loadBalancer nodes
+		detect: [ :node | node value = resolver getPrimaryMongoUrl ]
+		ifFound: [ :found | loadBalancer removeNode: found ]
 ]
 
 { #category : #actions }
