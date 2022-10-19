@@ -1,10 +1,7 @@
 Class {
 	#name : #MaplessResourcesTest,
 	#superclass : #MaplessTestCase,
-	#instVars : [
-		'repository'
-	],
-	#category : #'Mapless-Mongo-Tests-Tests'
+	#category : #'Mapless-Tests-Base-Tests'
 }
 
 { #category : #tests }

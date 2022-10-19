@@ -1,6 +1,6 @@
 Class {
 	#name : #MaplessMongoResourcesTest,
-	#superclass : #MaplessResourcesTest,
+	#superclass : #MaplessMongoTest,
 	#category : #'Mapless-Mongo-Tests-Tests'
 }
 
