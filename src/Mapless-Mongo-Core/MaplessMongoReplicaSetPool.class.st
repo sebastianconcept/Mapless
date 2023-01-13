@@ -320,6 +320,34 @@ MaplessMongoReplicaSetPool >> initializeMongoUrls: someMongoUrls weights: weight
 		seed: DateAndTime now asUnixTime
 ]
 
+{ #category : #testing }
+MaplessMongoReplicaSetPool >> isReadOnlyHealthy: aMongoUrl [
+	"Answers true if aMongoUrl can be used as a healthy read-only connection."
+
+	| client |
+	client := self makeClientWith: aMongoUrl.
+	^ [ client notNil
+		and: [ client isValid
+				and: [ client isSecondary
+						and:
+							[ (MongoDatabase root: client name: 'admin') collectionNames notEmpty ] ] ] ]
+		ensure: [ client ifNotNil: [ client close ] ]
+]
+
+{ #category : #testing }
+MaplessMongoReplicaSetPool >> isReadWriteHealthy: aMongoUrl [
+	"Answers true if aMongoUrl can be used as a healthy read-write connection."
+
+	| client |
+	client := self makeClientWith: aMongoUrl.
+	^ [ client notNil
+		and: [ client isValid
+				and: [ client isPrimary
+						and:
+							[ (MongoDatabase root: client name: 'admin') collectionNames notEmpty ] ] ] ]
+		ensure: [ client ifNotNil: [ client close ] ]
+]
+
 { #category : #accessing }
 MaplessMongoReplicaSetPool >> loadBalancer [
 	^ loadBalancer
@@ -419,6 +447,7 @@ MaplessMongoReplicaSetPool >> onNotPrimaryReadWriteAttempt: aBlock using: aMongo
 
 { #category : #reactions }
 MaplessMongoReplicaSetPool >> onPrimaryFound: aMongoAPI [
+	self replicaSetCongifurationHealthcheck.
 	self removeInvalidClients.
 	self ensureMinimumQuantityOfReadOnlyClients.
 	self ensureMinimumQuantityOfReadWriteClients.
@@ -570,6 +599,62 @@ MaplessMongoReplicaSetPool >> removeReadOnlyClient: aMongoAPI ifAbsent: aBlock [
 { #category : #actions }
 MaplessMongoReplicaSetPool >> removeReadWriteClient: aMongoAPI ifAbsent: aBlock [
 	self idleReadWriteClients remove: aMongoAPI ifAbsent: aBlock
+]
+
+{ #category : #actions }
+MaplessMongoReplicaSetPool >> replicaSetCongifurationHealthcheck [
+	"1. Connect to a sec End of statement list encountered -> End of statement list encountered ->ondary node in the replica set.
+	2. Verify that the list of nodes in the replica set configuration is the same as the one found.
+	3. Confirm that the primary node identified by the pool matches the one reported in the replica set status.
+	4. Ensure that the secondary nodes match those reported in the replica set configuration.
+	5. Raise an exception if any inconsistencies are detected, otherwise proceed silently."
+
+	| client secondaryUrls membersUrls rsStatus rsPrimaryUrl rsSecondaryUrls |
+	"1. Connect to a secondary node in the replica set."
+	secondaryUrls := resolver secondaryMongoUrls contents.
+	secondaryUrls
+		detect: [ :mongoUrl | 
+			client := self makeClientWith: mongoUrl.
+			client notNil ]
+		ifNone: [ MaplessNoSecondariesFound signal ].
+	rsStatus := client replicaSetStatus.
+
+	"2. Verify that the list of nodes in the replica set configuration is the same as the one found."
+	membersUrls := rsStatus members collect: [ :e | e name asMongoUrl ].
+	((membersUrls includesAll: resolver mongoUrls)
+		and: [ resolver mongoUrls includesAll: membersUrls ])
+		ifFalse: [ MaplessReplicaSetInconsistentConfiguration
+				signal:
+					'The nodes informed by the replica set do not match the ones configured in this pool' ].
+
+	"3. Confirm that the primary node identified by the pool matches the one reported in the replica set status."
+	rsPrimaryUrl := rsStatus members
+		detect: [ :e | e isPrimary ]
+		ifNone: [ MaplessMongoPrimaryUnavailable
+				signal:
+					('Unable to find a primary in replica set named "{1}"'
+						format: {rsStatus name}) ].
+
+	"4. Ensure that the secondary nodes match those reported in the replica set configuration."
+	rsSecondaryUrls := rsStatus members
+		select: [ :e | e isSecondary ]
+		thenCollect: [ :e | e name asMongoUrl ].
+	((rsSecondaryUrls includesAll: secondaryUrls)
+		and: [ secondaryUrls includesAll: rsSecondaryUrls ])
+		ifFalse: [ MaplessReplicaSetInconsistentConfiguration
+				signal:
+					'The secondary nodes informed by the replica set do not match the ones configured in this pool' ].
+
+	"All good so far, last health check, the client should be able to get an answer from querying collection names."
+	[ [ (MongoDatabase root: client name: 'admin') collectionNames
+		notEmpty ]
+		on: Error
+		do: [ :x | 
+			MaplessReadOnlyOperationFailed
+				signal: 'Secondary node could not query the "admin" database' ] ]
+		ensure: [ client ifNotNil: [ client close ] ].
+		
+	"5. Raise an exception if any inconsistencies are detected, otherwise proceed silently."
 ]
 
 { #category : #actions }
