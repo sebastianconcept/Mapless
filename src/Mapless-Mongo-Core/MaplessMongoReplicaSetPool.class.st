@@ -168,6 +168,28 @@ MaplessMongoReplicaSetPool >> ensureReadWrite: anInteger [
 					client ifNotNil: [ self idleReadWriteClients add: client ] ] ]
 ]
 
+{ #category : #healthcheck }
+MaplessMongoReplicaSetPool >> ensureTopology [
+	"Makes sure the resolver topology matches the one informed by the replica set,
+	following this procedure:
+	1. If it doesn't know the primary, find it.
+	2. If it knows the primary but a client can't reach it, raise an exception.
+	3. Ask the replica set about its members status.
+	4. If the primary node is not the one the resolver has, make the resolver update itself.
+	5. Update the resolver about the addresses of the secondaries."
+
+	| client primaryUrl rsStatus |
+	resolver hasPrimary
+		ifFalse: [ resolver findPrimaryFor: self ].
+	primaryUrl := resolver primaryUrl.
+	client := self makeClientWith: primaryUrl.
+	client
+		ifNil: [ resolver resetRoles.
+			ReplicaSetPrimaryNotFound
+				signal: 'Primary node could not be reached.' ].
+	resolver updateStatusFrom: client.
+]
+
 { #category : #actions }
 MaplessMongoReplicaSetPool >> findPrimary [
 	"Find the primary of the replica set"
@@ -175,19 +197,10 @@ MaplessMongoReplicaSetPool >> findPrimary [
 	^ resolver findPrimaryFor: self
 ]
 
-{ #category : #accessing }
-MaplessMongoReplicaSetPool >> getCurrentPrimaryMongoUrl [
-	"1. Does it have clients for each address? Use them to ask if it's primary 
-	2. doesn't have clients to an address? Create one and ask if primary."
-	
-	self mongoUrls
-
-]
-
 { #category : #actions }
 MaplessMongoReplicaSetPool >> getIdleReadOnlyClient [
-	"Answer the next mongo client among the idle read only one regarding to the load balancer.
-	Or nil that can't be found."
+	"Answer the next mongo client among the idle read only ones regarding to the load balancer.
+	Or nil when can't be found."
 
 	| idleReadOnlyClientUrls selectedUrl |
 	idleReadOnlyClientUrls := idleReadOnlyClients
@@ -206,13 +219,17 @@ MaplessMongoReplicaSetPool >> getIdleReadWriteClient [
 ]
 
 { #category : #accessing }
-MaplessMongoReplicaSetPool >> getReadOnlyMongoUrl [
-	^ resolver getSecondaryMongoUrl
+MaplessMongoReplicaSetPool >> getPrimaryUrl [
+
+	^ resolver primaryUrl
 ]
 
 { #category : #accessing }
-MaplessMongoReplicaSetPool >> getReadWriteMongoUrl [
-	^ resolver getPrimaryMongoUrl
+MaplessMongoReplicaSetPool >> getSecondaryUrl [
+	"Answers a MongoURL to a secondary.
+	It chooses which one based on what the load balancer says."
+
+	^ loadBalancer nextAmong: (Set newFrom: resolver secondaryUrls)
 ]
 
 { #category : #testing }
@@ -305,7 +322,7 @@ MaplessMongoReplicaSetPool >> initializeMongoUrls: someMongoUrls database: datab
 	self initialize.
 	username := aUserName.
 	password := aPassword.
-	resolver := MaplessMongoResolver fromMongoUrls: someMongoUrls.
+	resolver := MaplessMongoReplicaSetResolver fromMongoUrls: someMongoUrls.
 	loadBalancer := self newTrivialLoadBalancer
 ]
 
@@ -314,7 +331,7 @@ MaplessMongoReplicaSetPool >> initializeMongoUrls: someMongoUrls weights: weight
 	self initialize.
 	username := aUserName.
 	password := aPassword.
-	resolver := MaplessMongoResolver fromMongoUrls: someMongoUrls.
+	resolver := MaplessMongoReplicaSetResolver fromMongoUrls: someMongoUrls.
 	loadBalancer := MaplessWeightedRandomPolicy
 		fromDictionary: weightsDictionary
 		seed: DateAndTime now asUnixTime
@@ -373,14 +390,14 @@ MaplessMongoReplicaSetPool >> makeClientWith: aMongoUrl [
 { #category : #actions }
 MaplessMongoReplicaSetPool >> makeReadOnlyClient [
 	^ self hasPrimary
-		ifTrue: [ self makeClientWith: resolver getSecondaryMongoUrl ]
+		ifTrue: [ self makeClientWith: self getSecondaryUrl ]
 		ifFalse: [ nil ]
 ]
 
 { #category : #actions }
 MaplessMongoReplicaSetPool >> makeReadWriteClient [
 	^ self hasPrimary
-		ifTrue: [ self makeClientWith: resolver getPrimaryMongoUrl ]
+		ifTrue: [ self makeClientWith: self getPrimaryUrl ]
 		ifFalse: [ nil ]
 ]
 
@@ -447,13 +464,42 @@ MaplessMongoReplicaSetPool >> onNotPrimaryReadWriteAttempt: aBlock using: aMongo
 
 { #category : #reactions }
 MaplessMongoReplicaSetPool >> onPrimaryFound: aMongoAPI [
-	self replicaSetCongifurationHealthcheck.
+	self replicaSetAvailabilityHealthcheck.
 	self removeInvalidClients.
 	self ensureMinimumQuantityOfReadOnlyClients.
 	self ensureMinimumQuantityOfReadWriteClients.
-	loadBalancer nodes
-		detect: [ :node | node value = resolver getPrimaryMongoUrl ]
-		ifFound: [ :found | loadBalancer removeNode: found ]
+]
+
+{ #category : #healthcheck }
+MaplessMongoReplicaSetPool >> primaryAvailabilityHealthcheck [
+	"Raise proper exceptions (to be handled) if any of these check fails:
+	1. Primary can be reached.
+	2. Primary can be used."
+
+	| client primaryUrl adminDb usersCollection |
+	"1. Primary can be reached."
+	resolver hasPrimary
+		ifFalse: [ resolver findPrimaryFor: self ].
+	primaryUrl := resolver primaryUrl.
+	client := self makeClientWith: primaryUrl.
+	client
+		ifNil: [ resolver resetRoles.
+			ReplicaSetPrimaryNotFound
+				signal: 'Primary node could not be reached.' ].
+
+	"2. Primary can be used.
+	The client should be able to get an answer from querying the users collection in the admin database."
+	[ [ adminDb := MongoDatabase root: client name: 'admin'.
+	usersCollection := MongoCollection
+		database: adminDb
+		name: 'system.users'.
+	usersCollection size
+	"If it can evaluate the size we know it can receive answers from queries." ]
+		on: Error
+		do: [ :x | 
+			MaplessReadWriteOperationFailed
+				signal: 'Primary node could not query the "admin" database' ] ]
+		ensure: [ client ifNotNil: [ client close ] ]
 ]
 
 { #category : #actions }
@@ -571,13 +617,13 @@ MaplessMongoReplicaSetPool >> removeInvalidClients [
 MaplessMongoReplicaSetPool >> removeInvalidReadOnlyClients [
 	"Removes read-only clients that might be opened using the current address of a primary."
 
-	| readOnlyUrls |
-	readOnlyUrls := resolver secondaryMongoUrls contents.
 	readOnlyProtection
 		critical: [ self idleReadOnlyClients copy
 				do: [ :each | 
-					(each isAt: resolver primaryMongoUrl)
-						ifTrue: [ self idleReadOnlyClients remove: each ifAbsent: [ nil ] ] ] ]
+					(each isAt: resolver primaryUrl)
+						ifTrue: [ 
+							self silentlyClose: each.
+							self idleReadOnlyClients remove: each ifAbsent: [ nil ] ] ] ]
 ]
 
 { #category : #actions }
@@ -587,8 +633,10 @@ MaplessMongoReplicaSetPool >> removeInvalidReadWriteClients [
 	readWriteProtection
 		critical: [ self idleReadWriteClients copy
 				do: [ :each | 
-					(each isAt: resolver primaryMongoUrl)
-						ifFalse: [ self idleReadWriteClients remove: each ifAbsent: [ nil ] ] ] ]
+					(each isAt: resolver primaryUrl)
+						ifFalse: [ 
+							self silentlyClose: each.
+							self idleReadWriteClients remove: each ifAbsent: [ nil ] ] ] ]
 ]
 
 { #category : #actions }
@@ -601,17 +649,29 @@ MaplessMongoReplicaSetPool >> removeReadWriteClient: aMongoAPI ifAbsent: aBlock 
 	self idleReadWriteClients remove: aMongoAPI ifAbsent: aBlock
 ]
 
-{ #category : #actions }
+{ #category : #healthcheck }
+MaplessMongoReplicaSetPool >> replicaSetAvailabilityHealthcheck [
+	"Raise proper exceptions (to be handled) if any of these check fails:
+	1. Primary can be reached.
+	2. Primary can be used.
+	3. Secondaries can be reached.
+	4. Secondaries can be used."
+
+	self ensureTopology.
+	self primaryAvailabilityHealthcheck.
+	"rsSecondariesUrls do:[:e|
+		self secondaryAvailabilityHealthcheck: e]"
+]
+
+{ #category : #healthcheck }
 MaplessMongoReplicaSetPool >> replicaSetCongifurationHealthcheck [
-	"1. Connect to a sec End of statement list encountered -> End of statement list encountered ->ondary node in the replica set.
-	2. Verify that the list of nodes in the replica set configuration is the same as the one found.
-	3. Confirm that the primary node identified by the pool matches the one reported in the replica set status.
-	4. Ensure that the secondary nodes match those reported in the replica set configuration.
-	5. Raise an exception if any inconsistencies are detected, otherwise proceed silently."
+	"1. Connect to a secondary node in the replica set.
+	2. Verify that the list of nodes in the replica set configuration are the same that my resolver has.
+	3. Raise an exception if any inconsistencies are detected, otherwise proceed silently."
 
 	| client secondaryUrls membersUrls rsStatus rsPrimaryUrl rsSecondaryUrls |
 	"1. Connect to a secondary node in the replica set."
-	secondaryUrls := resolver secondaryMongoUrls contents.
+	secondaryUrls := resolver secondaryUrls.
 	secondaryUrls
 		detect: [ :mongoUrl | 
 			client := self makeClientWith: mongoUrl.
@@ -626,35 +686,9 @@ MaplessMongoReplicaSetPool >> replicaSetCongifurationHealthcheck [
 		ifFalse: [ MaplessReplicaSetInconsistentConfiguration
 				signal:
 					'The nodes informed by the replica set do not match the ones configured in this pool' ].
+	"3. Raise an exception if any inconsistencies are detected, otherwise proceed silently."
 
-	"3. Confirm that the primary node identified by the pool matches the one reported in the replica set status."
-	rsPrimaryUrl := rsStatus members
-		detect: [ :e | e isPrimary ]
-		ifNone: [ MaplessMongoPrimaryUnavailable
-				signal:
-					('Unable to find a primary in replica set named "{1}"'
-						format: {rsStatus name}) ].
-
-	"4. Ensure that the secondary nodes match those reported in the replica set configuration."
-	rsSecondaryUrls := rsStatus members
-		select: [ :e | e isSecondary ]
-		thenCollect: [ :e | e name asMongoUrl ].
-	((rsSecondaryUrls includesAll: secondaryUrls)
-		and: [ secondaryUrls includesAll: rsSecondaryUrls ])
-		ifFalse: [ MaplessReplicaSetInconsistentConfiguration
-				signal:
-					'The secondary nodes informed by the replica set do not match the ones configured in this pool' ].
-
-	"All good so far, last health check, the client should be able to get an answer from querying collection names."
-	[ [ (MongoDatabase root: client name: 'admin') collectionNames
-		notEmpty ]
-		on: Error
-		do: [ :x | 
-			MaplessReadOnlyOperationFailed
-				signal: 'Secondary node could not query the "admin" database' ] ]
-		ensure: [ client ifNotNil: [ client close ] ].
-		
-	"5. Raise an exception if any inconsistencies are detected, otherwise proceed silently."
+	"All good so far, moving on."
 ]
 
 { #category : #actions }
@@ -702,6 +736,11 @@ MaplessMongoReplicaSetPool >> requestReadWriteClient [
 			client ]
 ]
 
+{ #category : #accessing }
+MaplessMongoReplicaSetPool >> resolver [
+	^ resolver
+]
+
 { #category : #actions }
 MaplessMongoReplicaSetPool >> returnReadOnlyClient: aMongoAPI [
 	"Sends aMongoAPI to go from the busy ones to the idle ones
@@ -726,8 +765,16 @@ MaplessMongoReplicaSetPool >> returnReadWriteClient: aMongoAPIOrNil [
 ]
 
 { #category : #accessing }
-MaplessMongoReplicaSetPool >> secondaryMongoUrls [
-	^ resolver secondaryMongoUrls contents
+MaplessMongoReplicaSetPool >> secondaryUrls [
+	^ resolver secondaryUrls
+]
+
+{ #category : #actions }
+MaplessMongoReplicaSetPool >> silentlyClose: aMongoClient [
+	[ aMongoClient close ]
+		on: Error
+		do: [ :x | "No noise, thanks" ].
+	self triggerEvent: #clientClosed: with: aMongoClient
 ]
 
 { #category : #actions }
