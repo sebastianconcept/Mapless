@@ -64,6 +64,17 @@ MaplessMongoReplicaSetResolver >> primaryUrl [
 ]
 
 { #category : #actions }
+MaplessMongoReplicaSetResolver >> printOn: aStream [
+	super printOn: aStream.
+	aStream
+		nextPutAll:
+			('(p: {1} s: {2})'
+				format:
+					{primaryUrl asString.
+					secondaryUrls printString})
+]
+
+{ #category : #actions }
 MaplessMongoReplicaSetResolver >> resetRoles [
 	primaryUrl := nil.
 	secondaryUrls := nil
