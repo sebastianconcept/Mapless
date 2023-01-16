@@ -18,33 +18,41 @@ Class {
 		'minReadOnlyClients',
 		'maxReadWriteClients',
 		'maxReadOnlyClients',
-		'loadBalancer'
+		'loadBalancer',
+		'healthChecker'
 	],
 	#category : #'Mapless-Mongo-Core-Connections'
 }
 
-{ #category : #accessing }
+{ #category : #default }
+MaplessMongoReplicaSetPool class >> defaultHealthCheckInterval [
+	"Default interval in seconds for checking the health of the replica set."
+
+	^ 30
+]
+
+{ #category : #default }
 MaplessMongoReplicaSetPool class >> defaultMaxReadOnlyClients [
 	"Default maximum quantity of read-only clients for the connection pool used in case no max was specified"
 
 	^ 50
 ]
 
-{ #category : #accessing }
+{ #category : #default }
 MaplessMongoReplicaSetPool class >> defaultMaxReadWriteClients [
 	"Default maximum quantity of read-write clients for the connection pool used in case no max was specified"
 
 	^ 50
 ]
 
-{ #category : #accessing }
+{ #category : #default }
 MaplessMongoReplicaSetPool class >> defaultMinReadOnlyClients [
 	"Default minimum quantity of read-only clients for the connection pool used in case no min was specified"
 
 	^ 2
 ]
 
-{ #category : #accessing }
+{ #category : #default }
 MaplessMongoReplicaSetPool class >> defaultMinReadWriteClients [
 	"Default minimum quantity of read-write clients for the connection pool used in case no min was specified"
 
@@ -67,6 +75,13 @@ MaplessMongoReplicaSetPool class >> fromString: aStringOfOptionalWeigthsAndMongo
 			weights at: url asMongoUrl put: weight ].
 	mongoUrls := weights keys.
 	^ self mongoUrls: mongoUrls weights: weights database: databaseName
+]
+
+{ #category : #accessing }
+MaplessMongoReplicaSetPool class >> healthCheckInterval [
+	^ (OSEnvironment current
+		at: 'MAPLESS_REPLICA_SET_HEALTH_CHECK'
+		ifAbsent: [ self defaultHealthCheckInterval ]) asInteger
 ]
 
 { #category : #'instance creation' }
@@ -817,7 +832,21 @@ MaplessMongoReplicaSetPool >> silentlyClose: aMongoClient [
 
 { #category : #actions }
 MaplessMongoReplicaSetPool >> start [
-	self findPrimary
+	self findPrimary.
+	self startHealthChecker
+]
+
+{ #category : #healthcheck }
+MaplessMongoReplicaSetPool >> startHealthChecker [
+	healthChecker := [ [ [ self triggerEvent: #beforeReplicaSetHealthCheck.
+	self class healthCheckInterval seconds asDelay wait.
+	self replicaSetAvailabilityHealthcheck.
+	self triggerEvent: #afterSetReplicaHealthCheck ]
+		on: Error, MaplessError
+		do: [ :x | self triggerEvent: #replicaSetHealthCheckError: with: x ] ]
+		repeat ]
+		forkAt: Processor userBackgroundPriority
+		named: 'rs-healthCheck'
 ]
 
 { #category : #actions }
@@ -828,6 +857,16 @@ MaplessMongoReplicaSetPool >> stop [
 	self idleReadOnlyClients do: [ :each | each close ].
 	self idleReadWriteClients do: [ :each | each close ].
 	
+	self stopHealthChecker
+]
+
+{ #category : #healthcheck }
+MaplessMongoReplicaSetPool >> stopHealthChecker [
+	healthChecker
+		ifNotNil: [ | released |
+			released := healthChecker.
+			healthChecker := nil.
+			released terminate ]
 ]
 
 { #category : #actions }
