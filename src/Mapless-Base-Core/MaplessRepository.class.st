@@ -64,10 +64,9 @@ MaplessRepository >> asStorable: anObject [
 						ifTrue: [ (resolver asMaplessReferenceIn: anObject in: self)
 								asJsonObjectIn: self ]
 						ifFalse: [ anObject ] ]
-				ifTrue: [ 
-					anObject hasModel
-						ifTrue: [ resolver maplessReferenceAsJsonObject: anObject in: self ]
-						ifFalse: [ MaplessUnsavedSubmodel
+				ifTrue: [ (anObject hasModel and: [ anObject data id isNil ])
+						ifFalse: [ resolver maplessReferenceAsJsonObject: anObject in: self ]
+						ifTrue: [ MaplessUnsavedSubmodel
 								signal:
 									'This sub model is unsaved. You need to save all sub models before saving a composed model' ] ] ]
 ]
