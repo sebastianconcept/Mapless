@@ -915,7 +915,7 @@ MaplessMongoReplicaSetPool >> start [
 { #category : #healthcheck }
 MaplessMongoReplicaSetPool >> startHealthChecker [
 	healthChecker := [ [ [ self triggerEvent: #beforeReplicaSetHealthCheck.
-	self healthCheckInterval seconds asDelay wait.
+	self healthCheckerInterval seconds asDelay wait.
 	self replicaSetAvailabilityHealthcheck.
 	self triggerEvent: #afterSetReplicaHealthCheck ]
 		on: Error, MaplessError
