@@ -1,5 +1,5 @@
 Class {
-	#name : #MaplessNoSecondariesFound,
+	#name : #MaplessNoReplicaSetMemberCouldBeReached,
 	#superclass : #MaplessMongoReplicaSetError,
 	#category : #'Mapless-Mongo-Core-Errors'
 }

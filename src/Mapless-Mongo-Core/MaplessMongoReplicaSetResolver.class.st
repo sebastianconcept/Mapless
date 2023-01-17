@@ -102,5 +102,7 @@ MaplessMongoReplicaSetResolver >> updateStatusFromStatus: aMongoReplicaSetStatus
 		detect: [ :each | each isPrimary ]
 		ifNone: [ ReplicaSetPrimaryNotFound signal: 'Primary node unavailable?' ]) name asMongoUrl.
 	secondaryUrls := aMongoReplicaSetStatus secondaryMembers
-		collect: [ :e | e name asMongoUrl ]
+		collect: [ :e | e name asMongoUrl ].
+		
+	self triggerEvent: #rolesUpdated
 ]
