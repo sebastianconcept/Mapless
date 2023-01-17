@@ -231,13 +231,10 @@ MaplessMongoReplicaSetPool >> ensureReadWrite: anInteger [
 MaplessMongoReplicaSetPool >> ensureSecondaryClients [
 	"Make sure that secondaries have the minimum number of 
 	clients and that any clients that may have been in a different role are removed."
-	
+
 	| readOnlyClientsMongoUrls |
 	readOnlyProtection
-		critical: [ readOnlyClientsMongoUrls := Set
-				newFrom:
-					(idleReadOnlyClients , busyReadOnlyClients
-						collect: [ :client | client asMongoUrl ]).
+		critical: [ readOnlyClientsMongoUrls := resolver secondaryUrls.
 			idleReadOnlyClients copy
 				do: [ :client | 
 					(readOnlyClientsMongoUrls includes: client asMongoUrl)
