@@ -210,11 +210,18 @@ MaplessMongoReplicaSetPool >> ensurePrimaryClients [
 
 { #category : #actions }
 MaplessMongoReplicaSetPool >> ensureReadOnly: anInteger [
-	| client |
-	self idleReadOnlyClients size <= anInteger
-		ifTrue: [ (anInteger min: anInteger - self idleReadOnlyClients size)
-				timesRepeat: [ client := self makeReadOnlyClient.
-					client ifNotNil: [ self idleReadOnlyClients add: client ] ] ]
+	"Makes sure that each secondary has at least anInteger quantity of idle clients."
+
+	| readOnlyClientsMongoUrls found client |
+	readOnlyClientsMongoUrls := resolver secondaryUrls.
+	readOnlyClientsMongoUrls
+		do: [ :mongoUrl | 
+			found := self idleReadOnlyClients
+				select: [ :each | each asMongoUrl = mongoUrl ].
+			found size <= anInteger
+				ifTrue: [ (anInteger - found size min: anInteger)
+						timesRepeat: [ client := self makeClientWith: mongoUrl.
+							client ifNotNil: [ self idleReadOnlyClients add: client ] ] ] ]
 ]
 
 { #category : #actions }
