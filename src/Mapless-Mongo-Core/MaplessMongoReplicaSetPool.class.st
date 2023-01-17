@@ -169,37 +169,11 @@ MaplessMongoReplicaSetPool >> currentClientDynamicVariable [
 
 { #category : #actions }
 MaplessMongoReplicaSetPool >> ensureClients [
-	"Makes sure every type of connection has the minimum quantity of clients.
-	Also removes any client that might have been in a different role."
+	"Make sure that all types of connections have the minimum number 
+	of clients and that any clients that may have been in a different role are removed."
 
-	| primaryUrl readOnlyClientsMongoUrls |
-	primaryUrl := resolver primaryUrl.
-	readWriteProtection
-		critical: [ idleReadWriteClients copy
-				do: [ :client | 
-					client asMongoUrl = primaryUrl
-						ifTrue: [ idleReadWriteClients remove: client ifAbsent: [ nil ] ] ].
-			busyReadWriteClients copy
-				do: [ :client | 
-					client asMongoUrl = primaryUrl
-						ifTrue: [ idleReadWriteClients remove: client ifAbsent: [ nil ] ] ].
-			self ensureMinimumQuantityOfReadWriteClients ].
-	readOnlyProtection
-		critical: [ readOnlyClientsMongoUrls := Set
-				newFrom:
-					(idleReadOnlyClients , busyReadOnlyClients
-						collect: [ :client | client asMongoUrl ]).
-			readOnlyClientsMongoUrls
-				do: [ :mongoUrl | 
-					idleReadOnlyClients copy
-						do: [ :client | 
-							client asMongoUrl = primaryUrl
-								ifTrue: [ idleReadOnlyClients remove: client ifAbsent: [ nil ] ] ] ].
-			busyReadOnlyClients copy
-				do: [ :client | 
-					client asMongoUrl = primaryUrl
-						ifTrue: [ busyReadOnlyClients remove: client ifAbsent: [ nil ] ] ].
-			self ensureMinimumQuantityOfReadOnlyClients ]
+	self ensurePrimaryClients.
+	self ensureSecondaryClients
 ]
 
 { #category : #actions }
@@ -210,6 +184,28 @@ MaplessMongoReplicaSetPool >> ensureMinimumQuantityOfReadOnlyClients [
 { #category : #actions }
 MaplessMongoReplicaSetPool >> ensureMinimumQuantityOfReadWriteClients [
 	^ self ensureReadWrite: self minReadWriteClients
+]
+
+{ #category : #actions }
+MaplessMongoReplicaSetPool >> ensurePrimaryClients [
+	"Make sure the primary has the minimum number of 
+	clients and that any clients that may have been in a different role are removed."
+
+
+	| primaryUrl |
+	primaryUrl := resolver primaryUrl.
+	readWriteProtection
+		critical: [ idleReadWriteClients copy
+				do: [ :client | 
+					client asMongoUrl ~= primaryUrl
+						ifTrue: [ idleReadWriteClients remove: client ifAbsent: [ nil ].
+							self silentlyClose: client ] ].
+			busyReadWriteClients copy
+				do: [ :client | 
+					client asMongoUrl ~= primaryUrl
+						ifTrue: [ idleReadWriteClients remove: client ifAbsent: [ nil ].
+							self silentlyClose: client ] ].
+			self ensureMinimumQuantityOfReadWriteClients ]
 ]
 
 { #category : #actions }
@@ -229,6 +225,30 @@ MaplessMongoReplicaSetPool >> ensureReadWrite: anInteger [
 		ifTrue: [ (anInteger min: anInteger - self idleReadWriteClients size)
 				timesRepeat: [ client := self makeReadWriteClient.
 					client ifNotNil: [ self idleReadWriteClients add: client ] ] ]
+]
+
+{ #category : #actions }
+MaplessMongoReplicaSetPool >> ensureSecondaryClients [
+	"Make sure that secondaries have the minimum number of 
+	clients and that any clients that may have been in a different role are removed."
+	
+	| readOnlyClientsMongoUrls |
+	readOnlyProtection
+		critical: [ readOnlyClientsMongoUrls := Set
+				newFrom:
+					(idleReadOnlyClients , busyReadOnlyClients
+						collect: [ :client | client asMongoUrl ]).
+			idleReadOnlyClients copy
+				do: [ :client | 
+					(readOnlyClientsMongoUrls includes: client asMongoUrl)
+						ifFalse: [ idleReadOnlyClients remove: client ifAbsent: [ nil ].
+							self silentlyClose: client ] ].
+			busyReadOnlyClients copy
+				do: [ :client | 
+					(readOnlyClientsMongoUrls includes: client asMongoUrl)
+						ifFalse: [ busyReadOnlyClients remove: client ifAbsent: [ nil ].
+							self silentlyClose: client ] ].
+			self ensureMinimumQuantityOfReadOnlyClients ]
 ]
 
 { #category : #healthcheck }
@@ -262,8 +282,9 @@ MaplessMongoReplicaSetPool >> findPrimary [
 
 { #category : #actions }
 MaplessMongoReplicaSetPool >> getIdleReadOnlyClient [
-	"Answer the next mongo client among the idle read only ones regarding to the load balancer.
-	Or nil when can't be found."
+	"Answers the next MongoDB client from among the idle,
+	read-only ones, according to the load balancer.
+	Return 'nil' if none can be found."
 
 	| idleReadOnlyClientUrls selectedUrl |
 	idleReadOnlyClientUrls := idleReadOnlyClients
@@ -750,7 +771,7 @@ MaplessMongoReplicaSetPool >> replicaSetAvailabilityHealthcheck [
 	self primaryAvailabilityHealthcheck.
 	resolver secondaryUrls
 		do: [ :mongoUrl | self secondaryAvailabilityHealthcheck: mongoUrl ].
-
+	self ensureClients.
 ]
 
 { #category : #healthcheck }
@@ -779,12 +800,6 @@ MaplessMongoReplicaSetPool >> replicaSetCongifurationHealthcheck [
 	"3. Raise an exception if any inconsistencies are detected, otherwise proceed silently."
 	
 	"All good so far, moving on."				
-]
-
-{ #category : #actions }
-MaplessMongoReplicaSetPool >> requestClientFor: aMongoUrl [
-	^ self clientsMonitor
-		critical: [ self unprotectedRequestClientFor: aMongoUrl ]
 ]
 
 { #category : #actions }
