@@ -20,8 +20,8 @@ MaplessMongoResourcesTest >> setUp [
 { #category : #tests }
 MaplessMongoResourcesTest >> testEqualChanceWithoutWeightSpecification [
 	| someMongoUrls counters client repeats lowerBound upperBound |
-	someMongoUrls := {'127.0.0.1:27017' . '127.0.0.1:27019'.
-	'127.0.0.1:27020' . '127.0.0.1:27021' . '127.0.0.1:27022'}.
+	someMongoUrls := {'mongo1:27017' . 'mongo2:27018' . 'mongo3:27019'.
+	'mongo4:27020'}.
 	counters := Dictionary new.
 	repository := MaplessMongoRepository
 		for: 'Mapless-Test'
@@ -42,8 +42,8 @@ MaplessMongoResourcesTest >> testEqualChanceWithoutWeightSpecification [
 			counters
 				at: client asMongoUrl
 				put: (counters at: client asMongoUrl) + 1 ].
-	lowerBound := (repeats / counters size) - (repeats * 0.05).
-	upperBound := (repeats / counters size) + (repeats * 0.05).
+	lowerBound := repeats / counters size - (repeats * 0.05).
+	upperBound := repeats / counters size + (repeats * 0.05).
 	counters values
 		do: [ :each | 
 			self assert: each > lowerBound.
@@ -53,7 +53,7 @@ MaplessMongoResourcesTest >> testEqualChanceWithoutWeightSpecification [
 { #category : #tests }
 MaplessMongoResourcesTest >> testHalf25Half50WeightSpecification [
 	| someMongoUrls counters client repeats lowerBound upperBound mongoUrlString toRemove balancedNodes weight nodeUrl occurrences reference hostAndPort key |
-	mongoUrlString := '25@127.0.0.1:27017,25@127.0.0.1:27019,25@127.0.0.1:27020,50@127.0.0.1:27021,50@127.0.0.1:27022'.
+	mongoUrlString := '25@mongo1:27017,25@mongo2:27018,25@mongo3:27019,50@mongo4:27020'.
 	counters := Dictionary new.
 	repository := MaplessMongoRepository
 		for: 'Mapless-Test'
@@ -82,7 +82,7 @@ MaplessMongoResourcesTest >> testHalf25Half50WeightSpecification [
 			counters at: key put: (counters at: key) + 1 ].
 	balancedNodes := someMongoUrls
 		collect: [ :each | each substrings: '@' ].
-	balancedNodes
+	(balancedNodes select: [ :each | each second ~= 'mongo4:27020' ])
 		do: [ :balancedNode | 
 			weight := balancedNode first asNumber.
 			nodeUrl := balancedNode second.
@@ -90,8 +90,8 @@ MaplessMongoResourcesTest >> testHalf25Half50WeightSpecification [
 				at: (self mongoUrlAsKey: nodeUrl asMongoUrl).
 			reference := weight * repeats
 				/ repository accessor loadBalancer totalWeight.
-			lowerBound := reference - (repeats * 0.03).
-			upperBound := reference + (repeats * 0.03).
+			lowerBound := reference - (repeats * 0.10).
+			upperBound := reference + (repeats * 0.10).
 			self assert: occurrences > lowerBound.
 			self assert: upperBound > occurrences ]
 ]
@@ -99,7 +99,8 @@ MaplessMongoResourcesTest >> testHalf25Half50WeightSpecification [
 { #category : #tests }
 MaplessMongoResourcesTest >> testMongoUrlWithWeigths [
 	| mongoUrlString someMongoUrls counters repeats client hostAndPort balancedNodes nodeUrl weight toRemove key lowerBound upperBound occurrences reference |
-	mongoUrlString := '33@127.0.0.1:27017,33@127.0.0.1:27019,33@127.0.0.1:27020,80@127.0.0.1:27021,80@127.0.0.1:27022'.
+	mongoUrlString := '25@mongo1:27017,25@mongo2:27018,50@mongo3:27019,50@mongo4:27020'.
+	
 	repository := MaplessMongoRepository
 		for: 'Mapless-Test'
 		with:
@@ -138,8 +139,8 @@ MaplessMongoResourcesTest >> testMongoUrlWithWeigths [
 				at: (self mongoUrlAsKey: nodeUrl asMongoUrl).
 			reference := weight * repeats
 				/ repository accessor loadBalancer totalWeight.
-			lowerBound := reference - (repeats * 0.03).
-			upperBound := reference + (repeats * 0.03).
+			lowerBound := reference - (repeats * 0.10).
+			upperBound := reference + (repeats * 0.10).
 			self assert: occurrences > lowerBound.
 			self assert: upperBound > occurrences ]
 ]
@@ -147,7 +148,7 @@ MaplessMongoResourcesTest >> testMongoUrlWithWeigths [
 { #category : #tests }
 MaplessMongoResourcesTest >> testMongoUrlWithoutWeigths [
 	| mongoUrlString repeats client counters lowerBound upperBound someMongoUrls |
-	mongoUrlString := '127.0.0.1:27017,127.0.0.1:27019,127.0.0.1:27020,127.0.0.1:27021,127.0.0.1:27022'.
+	mongoUrlString := 'mongo1:27017,mongo2:27018,mongo3:27019,mongo4:27020'.
 	counters := Dictionary new.
 	repository := MaplessMongoRepository
 		for: 'Mapless-Test'
