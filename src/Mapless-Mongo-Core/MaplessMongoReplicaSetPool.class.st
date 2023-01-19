@@ -619,10 +619,10 @@ MaplessMongoReplicaSetPool >> printOn: aStream [
 	super printOn: aStream.
 	aStream
 		nextPutAll:
-			'(' , self busyReadOnlyClients size asString , ' busy R/O, '
-				, self idleReadOnlyClients size asString , ' idle R/O, '
-				, self busyReadWriteClients size asString , ' busy R/W, '
-				, self idleReadWriteClients size asString , ' idle R/W)'
+			'(R/O: ' , self busyReadOnlyClients size asString , ' busy, R/O: '
+				, self idleReadOnlyClients size asString , ' idle, R/W: '
+				, self busyReadWriteClients size asString , ' busy, R/W: '
+				, self idleReadWriteClients size asString , ' idle)'
 ]
 
 { #category : #actions }
@@ -667,6 +667,7 @@ MaplessMongoReplicaSetPool >> readOnlyDo: aBlock [
 
 { #category : #actions }
 MaplessMongoReplicaSetPool >> readOnlyError: anExceptionOrNil [
+	self triggerEvent: #readOnlyError: with: anExceptionOrNil.
 	resolver resetRoles.
 	self removeInvalidReadOnlyClients.
 	anExceptionOrNil
@@ -708,6 +709,7 @@ MaplessMongoReplicaSetPool >> readWriteDo: aBlock [
 
 { #category : #actions }
 MaplessMongoReplicaSetPool >> readWriteError: anExceptionOrNil [
+	self triggerEvent: #readWriteError: with: anExceptionOrNil.
 	resolver resetRoles.
 	self removeInvalidReadWriteClients.
 	anExceptionOrNil
