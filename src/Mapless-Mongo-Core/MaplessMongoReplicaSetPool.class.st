@@ -661,6 +661,7 @@ MaplessMongoReplicaSetPool >> readOnlyDo: aBlock [
 			self readOnlyError: x1 ] ]
 		on: Error
 		do: [ :x2 | 
+			self triggerEvent: #readOnlyError: with: x2.
 			client ifNotNil: [ client reset ].
 			x2 pass ]
 ]
@@ -692,7 +693,7 @@ MaplessMongoReplicaSetPool >> readWriteDo: aBlock [
 		do: [ :x1 | 
 			client ifNotNil: [ client reset ].
 			self readWriteError: x1 ] ]
-		on: MongoNotMaster 
+		on: MongoNotMaster
 		do: [ :x2 | 
 			client ifNotNil: [ client reset ].
 			self
@@ -703,6 +704,7 @@ MaplessMongoReplicaSetPool >> readWriteDo: aBlock [
 			self readWriteError: x2 ] ]
 		on: Error
 		do: [ :x3 | 
+			self triggerEvent: #readWriteError: with: x3.
 			client ifNotNil: [ client reset ].
 			x3 pass ]
 ]
