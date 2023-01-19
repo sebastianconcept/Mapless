@@ -938,7 +938,7 @@ MaplessMongoReplicaSetPool >> silentlyClose: aMongoClient [
 	[ aMongoClient close ]
 		on: Error
 		do: [ :x | "No noise, thanks" ].
-	self triggerEvent: #clientClosed: with: aMongoClient
+
 ]
 
 { #category : #actions }
