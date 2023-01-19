@@ -354,6 +354,11 @@ MaplessMongoReplicaSetPool >> hasPrimary [
 ]
 
 { #category : #accessing }
+MaplessMongoReplicaSetPool >> healthChecker [
+	^ healthChecker
+]
+
+{ #category : #accessing }
 MaplessMongoReplicaSetPool >> healthCheckerInterval [
 	^ healthCheckerInterval
 ]
