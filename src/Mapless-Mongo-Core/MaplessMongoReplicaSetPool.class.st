@@ -480,11 +480,18 @@ MaplessMongoReplicaSetPool >> makeClientWith: aMongoUrl [
 	"Answers a new open MongoAPI client or nil if there is a network error."
 
 	| newClient isAuthenticated |
+	self triggerEvent: #creatingClientTo: with: aMongoUrl.
 	[ newClient := (MongoAPI mongoUrl: aMongoUrl)
 		open;
 		yourself ]
 		on: NetworkError
-		do: [ :x | ^ nil ].
+		do: [ :x | 
+			self
+				triggerEvent: #clientCreationTo:failed:
+				withArguments:
+					{aMongoUrl.
+					x}.
+			^ nil ].
 	self isUsingAuth
 		ifTrue: [ isAuthenticated := self authenticate: newClient.
 			isAuthenticated
