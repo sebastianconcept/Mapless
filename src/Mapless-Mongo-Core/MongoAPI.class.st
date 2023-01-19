@@ -19,6 +19,12 @@ MongoAPI >> asMongoUrl [
 	^ (host , ':' , port asString) asMongoUrl
 ]
 
+{ #category : #actions }
+MongoAPI >> close [
+	self triggerEvent: #closingConnection: with: self.
+	super close
+]
+
 { #category : #accessing }
 MongoAPI >> getIsPrimary [
 	^ self admin isMaster isPrimary

@@ -482,6 +482,7 @@ MaplessMongoReplicaSetPool >> makeClientWith: aMongoUrl [
 	| newClient isAuthenticated |
 	self triggerEvent: #creatingClientTo: with: aMongoUrl.
 	[ newClient := (MongoAPI mongoUrl: aMongoUrl)
+		when: #closingConnection: send: #onClientClosed: to: self;
 		open;
 		yourself ]
 		on: NetworkError
@@ -565,6 +566,11 @@ MaplessMongoReplicaSetPool >> newTrivialLoadBalancer [
 	^ MaplessWeightedRandomPolicy
 		fromDictionary: weights
 		seed: DateAndTime now asUnixTime
+]
+
+{ #category : #reactions }
+MaplessMongoReplicaSetPool >> onClientClosed: aMongoAPI [
+	self triggerEvent: #clientClosed: with: aMongoAPI
 ]
 
 { #category : #reactions }
