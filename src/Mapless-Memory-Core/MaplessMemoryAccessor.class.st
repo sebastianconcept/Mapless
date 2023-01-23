@@ -22,6 +22,11 @@ MaplessMemoryAccessor >> do: aBlock [
 	^ aBlock value
 ]
 
+{ #category : #testing }
+MaplessMemoryAccessor >> hasHealthChecker [
+	^ false
+]
+
 { #category : #operations }
 MaplessMemoryAccessor >> initialize [
 	super initialize.

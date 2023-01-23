@@ -329,6 +329,11 @@ MaplessMongoReplicaSetPool >> hasBusyClients [
 ]
 
 { #category : #testing }
+MaplessMongoReplicaSetPool >> hasHealthChecker [
+	^ true
+]
+
+{ #category : #testing }
 MaplessMongoReplicaSetPool >> hasIdleReadOnlyClients [
 	^ self idleReadOnlyClients notEmpty
 ]
