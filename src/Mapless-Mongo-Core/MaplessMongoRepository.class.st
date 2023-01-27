@@ -9,7 +9,6 @@ Class {
 	#name : #MaplessMongoRepository,
 	#superclass : #MaplessRepository,
 	#instVars : [
-		'mongoClient',
 		'concerns',
 		'defaultConcerns'
 	],
@@ -44,7 +43,7 @@ MaplessMongoRepository >> count: aMaplessClass where: someConditions [
 
 { #category : #accessing }
 MaplessMongoRepository >> database [
-	^ mongoClient databaseNamed: databaseName
+	^ MongoCurrentClient value databaseNamed: databaseName
 ]
 
 { #category : #accessing }
@@ -217,22 +216,17 @@ MaplessMongoRepository >> destroyOne: aMaplessClass atId: anId writeConcern: aCo
 
 { #category : #actions }
 MaplessMongoRepository >> do: aBlock [
-	"Performs aBlock and providing access to a mongo client that will be in use during this thread to 
-	anyone calling MaplessCurrentRepository value."
-
 	^ self do: aBlock with: accessor
 ]
 
 { #category : #actions }
 MaplessMongoRepository >> do: aBlock with: aDatabaseAccessor [
-	"Performs aBlock and providing access to the mongo client in use during this thread to 
-	anyone calling MaplessCurrentRepository value."
+	"Performs aBlock providing access to this repo to 
+	anyone calling MaplessCurrentRepository value from this thread."
 
 	aDatabaseAccessor
-		readWriteDo: [ :client | 
-			[ mongoClient := client.
-			MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
-				ensure: [ mongoClient := nil ] ]
+		readWriteDo:
+			[ :client | MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
 ]
 
 { #category : #actions }
@@ -481,11 +475,6 @@ MaplessMongoRepository >> findOne: aMaplessClass where: someConditions readConce
 		ifFalse: [ found first ]
 ]
 
-{ #category : #testing }
-MaplessMongoRepository >> hasMongoClient [
-	^ mongoClient notNil
-]
-
 { #category : #accessing }
 MaplessMongoRepository >> idPropertyName [
 	"Answers '_id' because we're using MongoDB here 
@@ -559,11 +548,6 @@ MaplessMongoRepository >> insertConcernFor: aMaplessClass [
 		ifAbsent: [ self defaultInsertConcern ]
 ]
 
-{ #category : #accessing }
-MaplessMongoRepository >> mongoClient [
-	^ mongoClient
-]
-
 { #category : #actions }
 MaplessMongoRepository >> newCursorFor: aDictionary [
 	"Returns a new MongoCursor based on the current database and using aDictionary as command.
@@ -602,14 +586,13 @@ MaplessMongoRepository >> readOnlyDo: aBlock [
 
 { #category : #actions }
 MaplessMongoRepository >> readOnlyDo: aBlock with: aDatabaseAccessor [
-	"Performs aBlock and providing access to the mongo client in use during this thread to 
-	anyone calling MaplessCurrentRepository value."
+	"Performs aBlock with a client that can read only.
+	Also, provides access to this repo to anyone calling 
+	MaplessCurrentRepository value from this thread."
 
 	aDatabaseAccessor
-		readOnlyDo: [ :client | 
-			[ mongoClient := client.
-			MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
-				ensure: [ mongoClient := nil ] ]
+		readOnlyDo:
+			[ :client | MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
 ]
 
 { #category : #actions }
@@ -619,14 +602,13 @@ MaplessMongoRepository >> readWriteDo: aBlock [
 
 { #category : #actions }
 MaplessMongoRepository >> readWriteDo: aBlock with: aDatabaseAccessor [
-	"Performs aBlock and providing access to the mongo client in use during this thread to 
-	anyone calling MaplessCurrentRepository value."
+	"Performs aBlock with a client that can read and write.
+	Also, provides access to this repo to anyone calling 
+	MaplessCurrentRepository value from this thread."
 
 	aDatabaseAccessor
-		readWriteDo: [ :client | 
-			[ mongoClient := client.
-			MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
-				ensure: [ mongoClient := nil ] ]
+		readWriteDo:
+			[ :client | MaplessCurrentRepository value: self during: [ ^ aBlock value ] ]
 ]
 
 { #category : #actions }
@@ -737,15 +719,11 @@ MaplessMongoRepository >> withClientDo: aBlock with: aDatabaseAccessor [
 
 { #category : #actions }
 MaplessMongoRepository >> withReadOnlyClientDo: aBlock with: aDatabaseAccessor [
-	"Performs aBlock and providing access to the mongo client as aBlock argument."
-
 	aDatabaseAccessor
 		readOnlyDo: [ :client | 
-			[ mongoClient := client.
 			MaplessCurrentRepository
 				value: self
 				during: [ ^ aBlock value: client ] ]
-				ensure: [ mongoClient := nil ] ]
 ]
 
 { #category : #actions }
@@ -755,15 +733,11 @@ MaplessMongoRepository >> withReadWriteClientDo: aBlock [
 
 { #category : #actions }
 MaplessMongoRepository >> withReadWriteClientDo: aBlock with: aDatabaseAccessor [
-	"Performs aBlock and providing access to the mongo client as aBlock argument."
-
 	aDatabaseAccessor
 		readWriteDo: [ :client | 
-			[ mongoClient := client.
 			MaplessCurrentRepository
 				value: self
 				during: [ ^ aBlock value: client ] ]
-				ensure: [ mongoClient := nil ] ]
 ]
 
 { #category : #actions }
