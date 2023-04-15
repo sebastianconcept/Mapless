@@ -76,7 +76,7 @@ Open a Pharo workspace and evaluate:
 ```smalltalk
 Metacello new
   baseline: 'Mapless';
-  repository: 'github://sebastianconcept/Mapless:v0.5.4-beta/src';
+  repository: 'github://sebastianconcept/Mapless:v0.5.7/src';
   load
 ```
 
@@ -89,5 +89,5 @@ spec
   baseline: 'Mapless'
     with: [ spec
     repository: 'github://sebastianconcept/Mapless:v0.5.0-alpha/src';
-    loads: #('Core' 'Mongo' 'Memory' 'Redis' 'UnQLite') ]
+    load: #('Core' 'Mongo' 'Memory' 'Redis' 'UnQLite') ]
 ```
