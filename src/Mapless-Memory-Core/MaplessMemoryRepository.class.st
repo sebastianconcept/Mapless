@@ -203,6 +203,8 @@ MaplessMemoryRepository >> idPropertyName [
 { #category : #actions }
 MaplessMemoryRepository >> insert: aMapless [
 	self onBeforeInsert: aMapless.
+	aMapless hasId
+		ifFalse: [ self ensureIdOf: aMapless ].
 	self upsert: aMapless.
 	self onAfterInsert: aMapless
 ]
