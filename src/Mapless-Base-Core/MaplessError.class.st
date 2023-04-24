@@ -1,6 +1,6 @@
 Class {
 	#name : #MaplessError,
-	#superclass : #Exception,
+	#superclass : #Error,
 	#category : #'Mapless-Base-Core-Errors'
 }
 

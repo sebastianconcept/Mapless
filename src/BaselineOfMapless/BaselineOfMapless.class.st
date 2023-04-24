@@ -43,8 +43,8 @@ BaselineOfMapless >> baseline: spec [
 { #category : #baseline }
 BaselineOfMapless >> setUpBaseDependencies: spec [
 	spec
-		baseline: 'JSONExtensions'
-		with: [ spec repository: 'github://sebastianconcept/JSONExtensions/src' ].
+		baseline: 'JSON'
+		with: [ spec repository: 'github://sebastianconcept/JSON:v1.0.2/src' ].
 	spec
 		baseline: 'NeoJSON'
 		with: [ spec repository: 'github://svenvc/NeoJSON:master/repository' ]
@@ -54,7 +54,7 @@ BaselineOfMapless >> setUpBaseDependencies: spec [
 BaselineOfMapless >> setUpBasePackages: spec [
 	spec
 		package: 'Mapless-Base-Core'
-		with: [ spec requires: 'JSONExtensions' ].
+		with: [ spec requires: 'JSON' ].
 	spec
 		package: 'Mapless-Tests-Base'
 		with: [ spec requires: 'Mapless-Base-Core' ].
