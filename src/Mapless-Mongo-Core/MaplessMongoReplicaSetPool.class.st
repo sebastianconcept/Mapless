@@ -884,7 +884,7 @@ MaplessMongoReplicaSetPool >> returnReadOnlyClient: aMongoAPI [
 
 	readOnlyProtection
 		critical: [ self busyReadOnlyClients remove: aMongoAPI ifAbsent: [ nil ].
-			(aMongoAPI isValid and: [ aMongoAPI isSecondary ])
+			aMongoAPI isValid
 				ifTrue: [ self idleReadOnlyClients add: aMongoAPI ] ]
 ]
 
@@ -896,7 +896,7 @@ MaplessMongoReplicaSetPool >> returnReadWriteClient: aMongoAPIOrNil [
 	aMongoAPIOrNil ifNil: [ ^ self ].
 	readWriteProtection
 		critical: [ self busyReadWriteClients remove: aMongoAPIOrNil ifAbsent: [ nil ].
-			(aMongoAPIOrNil isValid and: [ aMongoAPIOrNil isPrimary ])
+			aMongoAPIOrNil isValid
 				ifTrue: [ self idleReadWriteClients add: aMongoAPIOrNil ] ]
 ]
 
