@@ -7,6 +7,7 @@ Class {
 	#name : #MaplessStandaloneMongoPool,
 	#superclass : #MaplessAbstracMongoPool,
 	#instVars : [
+		'minClients',
 		'maxClients',
 		'clientsMutex',
 		'clientsMonitor',
@@ -21,6 +22,13 @@ MaplessStandaloneMongoPool class >> defaultMaxClients [
 	"Default maximum quantity of clients for the connection pool used in case no max was specified"
 
 	^ 500
+]
+
+{ #category : #'instance creation' }
+MaplessStandaloneMongoPool class >> defaultMinClients [
+	"Default minimmum quantity of clients for the connection pool used in case no max was specified"
+
+	^ 2
 ]
 
 { #category : #accessing }
@@ -148,6 +156,11 @@ MaplessStandaloneMongoPool >> initializeMaxClients [
 	^ maxClients := self class defaultMaxClients
 ]
 
+{ #category : #initialization }
+MaplessStandaloneMongoPool >> initializeMinClients [
+	^ minClients := self class defaultMinClients
+]
+
 { #category : #actions }
 MaplessStandaloneMongoPool >> makeClient [
 	"Returns a new client so it can be (re)used in the pool"
@@ -171,6 +184,16 @@ MaplessStandaloneMongoPool >> maxClients [
 { #category : #accessing }
 MaplessStandaloneMongoPool >> maxClients: anInteger [
 	maxClients := anInteger
+]
+
+{ #category : #accessing }
+MaplessStandaloneMongoPool >> minClients [
+	^ minClients  ifNil: [ self initializeMinClients ]
+]
+
+{ #category : #accessing }
+MaplessStandaloneMongoPool >> minClients: anObject [
+	minClients := anObject
 ]
 
 { #category : #reactions }
@@ -264,7 +287,7 @@ MaplessStandaloneMongoPool >> returnClient: aMongoClient [
 
 { #category : #actions }
 MaplessStandaloneMongoPool >> start [
-	^ self start: 2
+	^ self start: self minClients
 ]
 
 { #category : #actions }

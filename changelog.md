@@ -1,3 +1,7 @@
+May 19, 2023
+===================================
+- Added `defaultMinClients` for `MaplessStandaloneMongoPool`.
+
 May 19, 2022 | v0.5.4-beta | Humble Falcon
 ===================================
 - `MongoChange` is now using MongoDB `document` instead of `jsonish`.
