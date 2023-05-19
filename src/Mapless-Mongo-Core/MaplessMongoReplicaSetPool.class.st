@@ -295,9 +295,11 @@ MaplessMongoReplicaSetPool >> getIdleReadOnlyClient [
 		collect: [ :each | each mongoUrl ].
 	idleReadOnlyClientUrls ifEmpty: [ ^ nil ].
 	selectedUrl := loadBalancer
-		nextAmong: (Set newFrom: idleReadOnlyClientUrls).
+		nextAmong: (Array withAll: idleReadOnlyClientUrls asArray).
 	^ idleReadOnlyClients
-		detect: [ :e | e mongoUrl = selectedUrl ]
+		detect: [ :e | 
+			e mongoUrl port = selectedUrl port
+				and: [ e mongoUrl host = selectedUrl host ] ]
 		ifNone: [ nil ]
 ]
 
