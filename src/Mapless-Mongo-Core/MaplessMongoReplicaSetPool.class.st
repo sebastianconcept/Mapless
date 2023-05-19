@@ -303,7 +303,7 @@ MaplessMongoReplicaSetPool >> getIdleReadOnlyClient [
 
 { #category : #actions }
 MaplessMongoReplicaSetPool >> getIdleReadWriteClient [
-	^ idleReadWriteClients atRandom: loadBalancer random
+	^ idleReadWriteClients anyOne
 ]
 
 { #category : #accessing }
