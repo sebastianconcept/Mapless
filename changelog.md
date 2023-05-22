@@ -1,3 +1,8 @@
+May 22, 2023
+===================================
+- Improved `MongoAPI` by adding `initializeMongoUrl` and a lazy accessor using it and `Array` instead of `Set` so comparing it on the fly from `getIdleReadOnlyClient` is significantly faster now.
+- `MaplessWeightedRandomPolicy>>nextAmong:` is faster now by not using `includes:` and use a `anySatisfy:` filter instead.
+
 May 19, 2023
 ===================================
 - Added `defaultMinClients` for `MaplessStandaloneMongoPool`.
