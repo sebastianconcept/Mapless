@@ -68,8 +68,11 @@ MaplessWeightedRandomPolicy >> next [
 { #category : #actions }
 MaplessWeightedRandomPolicy >> nextAmong: values [
 	| nextOne |
-	[ nextOne isNil or: [ (values includes: nextOne value) not ] ]
-		whileTrue: [ nextOne := self next ].
+	nextOne := self next.
+	[ (values
+		anySatisfy:
+			[ :url | url port = nextOne value port and: [ url host = nextOne value host ] ])
+		not ] whileTrue: [ nextOne := self next ].
 	^ nextOne value
 ]
 

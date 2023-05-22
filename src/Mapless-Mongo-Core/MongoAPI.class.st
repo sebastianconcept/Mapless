@@ -2,7 +2,8 @@ Class {
 	#name : #MongoAPI,
 	#superclass : #Mongo,
 	#instVars : [
-		'isPrimary'
+		'isPrimary',
+		'mongoUrl'
 	],
 	#category : #'Mapless-Mongo-Core-Connections'
 }
@@ -33,6 +34,11 @@ MongoAPI >> getIsPrimary [
 { #category : #initializing }
 MongoAPI >> initializeIsPrimary [
 	^ isPrimary := self getIsPrimary
+]
+
+{ #category : #initializing }
+MongoAPI >> initializeMongoUrl [
+	^ mongoUrl := (host , ':' , port asString) asMongoUrl
 ]
 
 { #category : #testing }
@@ -75,6 +81,11 @@ MongoAPI >> isType: aSymbol [
 { #category : #testing }
 MongoAPI >> isValid [
 	^ self isOpen
+]
+
+{ #category : #accessing }
+MongoAPI >> mongoUrl [
+	^ mongoUrl ifNil: [ self initializeMongoUrl ]
 ]
 
 { #category : #actions }
