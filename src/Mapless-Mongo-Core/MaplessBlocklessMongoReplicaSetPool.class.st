@@ -134,7 +134,7 @@ MaplessBlocklessMongoReplicaSetPool >> minReadWriteClients: anInteger [
 ]
 
 { #category : #reactions }
-MaplessBlocklessMongoReplicaSetPool >> onPrimaryFound [
+MaplessBlocklessMongoReplicaSetPool >> onPrimaryFound: aMongoAPI [
 	readWrite onPrimaryChanged: resolver primaryUrl.
 	readOnly onSecondariesChanged: resolver secondaryUrls
 ]
