@@ -56,6 +56,7 @@ MaplessMongoTest >> newRepository [
 MaplessMongoTest >> setUp [
 	super setUp.
 	repository := self newRepository.
+	repository accessor start.
 
 ]
 

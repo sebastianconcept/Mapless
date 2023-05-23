@@ -65,14 +65,6 @@ MaplessStandaloneMongoPool >> clientsMutex [
 	^ clientsMutex ifNil: [ self initializeClientsMutex ]
 ]
 
-{ #category : #accessing }
-MaplessStandaloneMongoPool >> currentClientDynamicVariable [
-	"Answers the class of the dynamic variable that will
-	hold the value of the current client during the evaluation of its usage."
-
-	^ MongoCurrentClient
-]
-
 { #category : #actions }
 MaplessStandaloneMongoPool >> do: aBlock [
 	"Evaluates aBlock using a client"

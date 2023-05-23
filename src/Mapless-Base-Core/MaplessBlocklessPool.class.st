@@ -13,6 +13,16 @@ Class {
 	#category : #'Mapless-Base-Core-Repositories'
 }
 
+{ #category : #'as yet unclassified' }
+MaplessBlocklessPool class >> defaultMaximum [
+	^ 4
+]
+
+{ #category : #'as yet unclassified' }
+MaplessBlocklessPool class >> defaultMinimum [
+	^ 2
+]
+
 { #category : #accessing }
 MaplessBlocklessPool >> clients [
 	^ clients

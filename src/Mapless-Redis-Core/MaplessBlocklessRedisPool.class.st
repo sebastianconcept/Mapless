@@ -12,16 +12,6 @@ Class {
 	#category : #'Mapless-Redis-Core-Connections'
 }
 
-{ #category : #'as yet unclassified' }
-MaplessBlocklessRedisPool class >> defaultMaximum [
-	^ 4
-]
-
-{ #category : #'as yet unclassified' }
-MaplessBlocklessRedisPool class >> defaultMinimum [
-	^ 2
-]
-
 { #category : #accessing }
 MaplessBlocklessRedisPool class >> local [
 	^ self on: 'sync://localhost' 

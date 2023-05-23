@@ -34,9 +34,7 @@ MaplessMongoReplicaSetResolver >> findPrimaryFor: aMaplessMongoReplicaSetPool [
 						ifFalse: [ ReplicaSetPrimaryNotFound
 								signal: 'Primary node could not be reached.' ].
 					self updateStatusFromStatus: rsStatus.
-					aMaplessMongoReplicaSetPool
-						triggerEvent: #primaryFound
-						with: mongoUrl ] ]
+					aMaplessMongoReplicaSetPool onPrimaryFound ] ]
 				ensure: [ client ifNotNil: [ client close ] ] ].
 	primaryUrl
 		ifNil: [ ReplicaSetPrimaryNotFound

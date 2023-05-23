@@ -159,14 +159,6 @@ MaplessMongoReplicaSetPool >> countClientsTo: aMongoUrl [
 								ifFalse: [ s ] ]) ]
 ]
 
-{ #category : #accessing }
-MaplessMongoReplicaSetPool >> currentClientDynamicVariable [
-	"Answers the class of the dynamic variable that will
-	hold the value of the current client during the evaluation of its usage."
-
-	^ MongoCurrentClient
-]
-
 { #category : #actions }
 MaplessMongoReplicaSetPool >> ensureClients [
 	"Make sure that all types of connections have the minimum number 
@@ -488,31 +480,6 @@ MaplessMongoReplicaSetPool >> loadBalancer [
 ]
 
 { #category : #actions }
-MaplessMongoReplicaSetPool >> makeClientWith: aMongoUrl [
-	"Answers a new open MongoAPI client or nil if there is a network error."
-
-	| newClient isAuthenticated |
-	self triggerEvent: #creatingClientTo: with: aMongoUrl.
-	[ newClient := (MongoAPI mongoUrl: aMongoUrl)
-		when: #closingConnection: send: #onClientClosed: to: self;
-		open;
-		yourself ]
-		on: NetworkError
-		do: [ :x | 
-			self
-				triggerEvent: #clientCreationTo:failed:
-				withArguments:
-					{aMongoUrl.
-					x}.
-			^ nil ].
-	self isUsingAuth
-		ifTrue: [ isAuthenticated := self authenticate: newClient.
-			isAuthenticated
-				ifFalse: [ ^ self error: 'Authentication failed' ] ].
-	^ newClient
-]
-
-{ #category : #actions }
 MaplessMongoReplicaSetPool >> makeReadOnlyClient [
 	^ self hasPrimary
 		ifTrue: [ self makeClientWith: self getSecondaryUrl ]
@@ -578,11 +545,6 @@ MaplessMongoReplicaSetPool >> newTrivialLoadBalancer [
 	^ MaplessWeightedRandomPolicy
 		fromDictionary: weights
 		seed: DateAndTime now asUnixTime
-]
-
-{ #category : #reactions }
-MaplessMongoReplicaSetPool >> onClientClosed: aMongoAPI [
-	self triggerEvent: #clientClosed: with: aMongoAPI
 ]
 
 { #category : #reactions }
