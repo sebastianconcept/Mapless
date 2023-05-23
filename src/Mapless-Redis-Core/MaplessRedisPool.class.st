@@ -46,7 +46,8 @@ MaplessRedisPool >> redis: anObject [
 
 { #category : #'redis-commands' }
 MaplessRedisPool >> setDatabase: aZeroBasedDbIndex [
-	^ redis endpoint select: aZeroBasedDbIndex
+	^ self
+		withClientDo: [ :client | client endpoint select: aZeroBasedDbIndex ]
 ]
 
 { #category : #actions }
@@ -62,4 +63,9 @@ MaplessRedisPool >> start: anInteger [
 { #category : #actions }
 MaplessRedisPool >> stop [
 	^ redis stick close
+]
+
+{ #category : #actions }
+MaplessRedisPool >> withClientDo: aBlock [
+	^ aBlock value: redis
 ]

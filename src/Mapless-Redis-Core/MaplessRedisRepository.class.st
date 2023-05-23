@@ -34,26 +34,30 @@ MaplessRedisRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
 	self onBeforeDestroy: aMapless.
-	accessor redis deleteKey: (self namespacedIdOf: aMapless).
+	accessor
+		withClientDo: [ :client | client deleteKey: (self namespacedIdOf: aMapless) ].
 	self onAfterDestroy: aMapless
 ]
 
 { #category : #actions }
 MaplessRedisRepository >> drop [
-	^ accessor drop
+	^ accessor withClientDo: [ :client | client endpoint flushDb ]
 ]
 
 { #category : #testing }
 MaplessRedisRepository >> existsId: anId of: aMaplessClass [
-	^ accessor redis
-		includesKey: (self namespacedIdOf: aMaplessClass valued: anId)
+	^ accessor
+		withClientDo:
+			[ :client | client includesKey: (self namespacedIdOf: aMaplessClass valued: anId) ]
 ]
 
 { #category : #actions }
 MaplessRedisRepository >> expires: aMapless in: millisecondsValue [
-	^ accessor redis endpoint
-		expire: (self namespacedIdOf: aMapless)
-		at: DateAndTime now + (Duration milliSeconds: millisecondsValue)
+	^ accessor
+		withClientDo: [ :client | 
+			client endpoint
+				expire: (self namespacedIdOf: aMapless)
+				at: DateAndTime now + (Duration milliSeconds: millisecondsValue) ]
 ]
 
 { #category : #accessing }
@@ -66,12 +70,12 @@ MaplessRedisRepository >> findAll: aMaplessClass where: keysPattern [
 	"Answer a collection of instances of aMaplessClass that have keys matching the given conditions."
 
 	| keys pairs found all |
-	keys := accessor redis keys: keysPattern.
+	keys := accessor withClientDo: [ :client | client keys: keysPattern ].
 	pairs := Dictionary new.
 	all := OrderedCollection new.
 	keys
 		do: [ :key | 
-			found := accessor redis at: key.
+			found := accessor withClientDo: [ :client | client at: key ].
 			found ifNotNil: [ pairs at: key put: found ] ].
 	pairs
 		keysAndValuesDo: [ :key :value | 
@@ -86,8 +90,9 @@ MaplessRedisRepository >> findAll: aMaplessClass where: keysPattern [
 { #category : #accessing }
 MaplessRedisRepository >> findOne: aMaplessClass atId: anId [
 	| value |
-	value := accessor redis
-		at: (self namespaced: 'id' of: aMaplessClass valued: anId).
+	value := accessor
+		withClientDo:
+			[ :client | client at: (self namespaced: 'id' of: aMaplessClass valued: anId) ].
 	^ value
 		ifNil: [ nil ]
 		ifNotNil: [ self makeMapless: aMaplessClass fromValue: value with: anId ]
@@ -172,7 +177,8 @@ MaplessRedisRepository >> onBeforeSave: aMapless [
 
 { #category : #actions }
 MaplessRedisRepository >> removeExpireFor: aMapless [
-	^ accessor redis endpoint persist: (self namespacedIdOf: aMapless)
+	^ accessor
+		withClientDo: [ :client | client endpoint persist: (self namespacedIdOf: aMapless) ]
 ]
 
 { #category : #actions }
@@ -182,7 +188,7 @@ MaplessRedisRepository >> save: aMapless [
 	key := self namespacedIdOf: aMapless.
 	storable := resolver storableFor: aMapless in: self.
 	serialized := BSON write: storable.
-	accessor redis at: key put: serialized.
+	accessor withClientDo: [ :client | client at: key put: serialized ].
 	self onAfterSave: aMapless
 ]
 
@@ -193,7 +199,8 @@ MaplessRedisRepository >> setDatabase: aZeroBasedDbIndex [
 
 { #category : #actions }
 MaplessRedisRepository >> ttlFor: aMapless [
-	^ accessor redis endpoint pttl: (self namespacedIdOf: aMapless)
+	^ accessor
+		withClientDo: [ :client | client endpoint pttl: (self namespacedIdOf: aMapless) ]
 ]
 
 { #category : #accessing }
