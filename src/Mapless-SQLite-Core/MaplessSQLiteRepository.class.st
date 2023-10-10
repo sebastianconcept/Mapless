@@ -1,3 +1,6 @@
+"
+I give access to SQLite
+"
 Class {
 	#name : #MaplessSQLiteRepository,
 	#superclass : #MaplessRepository,
@@ -125,6 +128,14 @@ MaplessSQLiteRepository >> existsId: anId of: aMaplessClass [
 				format:
 					{self idPropertyName.
 					anId})) > 0
+]
+
+{ #category : #querying }
+MaplessSQLiteRepository >> findAll: aMaplessClass [
+
+	^ self withClientDo: [ :client | 
+		  self halt.
+		  client findAll: aMaplessClass in: self ]
 ]
 
 { #category : #querying }
@@ -296,5 +307,6 @@ MaplessSQLiteRepository >> withClientDo: aBlock [
 
 { #category : #actions }
 MaplessSQLiteRepository >> withNormalizedId: aValue [
-	^ UUID newFrom: aValue 
+
+	^ aValue
 ]
