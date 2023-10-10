@@ -134,8 +134,13 @@ MaplessSQLiteRepository >> existsId: anId of: aMaplessClass [
 MaplessSQLiteRepository >> findAll: aMaplessClass [
 
 	^ self withClientDo: [ :client | 
-		  self halt.
-		  client findAll: aMaplessClass in: self ]
+		  client
+			  findAll: aMaplessClass
+			  where: nil
+			  limit: nil
+			  offset: nil
+			  sort: nil
+			  in: self ]
 ]
 
 { #category : #querying }
