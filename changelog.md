@@ -1,3 +1,8 @@
+October 10, 2023
+===================================
+* Fixed most tests for the SQLite backend.
+* Adjusted Benchmarking clases and added the one for SQLite.
+
 April 15, 2022 
 ===================================
 * Added `MaplessUnQLiteRepository>>inMemory` methods to make use of RAM based storage offered by UnQLite.
