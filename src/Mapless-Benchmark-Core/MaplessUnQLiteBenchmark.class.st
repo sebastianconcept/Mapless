@@ -1,3 +1,17 @@
+"
+This class provides some basic performance test for Mapless on UnQLite.
+
+Convenience to run it logging to the terminal:
+
+dbFilename := FileSystem workingDirectory / 'Mapless-Tests.db'.
+repository := MaplessUnQLiteRepository for: dbFilename pathString.
+MaplessUnQLiteBenchmark runOn: repository.
+
+Convenience to run it logging to SomeLogFile.log:
+
+'SomeLogFile.log' asFileReference writeStreamDo: [ :stream |
+	MaplessUnQLiteBenchmark runOn: repository printingOn: stream ]  
+"
 Class {
 	#name : #MaplessUnQLiteBenchmark,
 	#superclass : #Object,

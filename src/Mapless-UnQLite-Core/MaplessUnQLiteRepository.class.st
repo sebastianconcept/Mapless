@@ -93,7 +93,7 @@ MaplessUnQLiteRepository >> delete: aMapless [
 
 { #category : #actions }
 MaplessUnQLiteRepository >> deserialize: aByteArray [
-	^ self bsonDeserialize: aByteArray
+	^ self jsonDeserialize: aByteArray
 ]
 
 { #category : #actions }
@@ -219,6 +219,19 @@ MaplessUnQLiteRepository >> insert: aMapless [
 	self onAfterInsert: aMapless
 ]
 
+{ #category : #'as yet unclassified' }
+MaplessUnQLiteRepository >> jsonDeserialize: aByteArray [
+
+	^ self maplessFromResult:
+		  (Json readFrom: aByteArray asString readStream)
+]
+
+{ #category : #'as yet unclassified' }
+MaplessUnQLiteRepository >> jsonSerialize: aStorable [
+
+	^ aStorable asDictionary asJSONString
+]
+
 { #category : #querying }
 MaplessUnQLiteRepository >> makeMaplessFrom: aByteArray withId: anId [
 	^ (self deserialize: aByteArray)
@@ -308,7 +321,7 @@ MaplessUnQLiteRepository >> save: aMapless [
 
 { #category : #actions }
 MaplessUnQLiteRepository >> serialize: aStorable [
-	^ self bsonSerialize: aStorable
+	^ self jsonSerialize: aStorable
 ]
 
 { #category : #actions }
