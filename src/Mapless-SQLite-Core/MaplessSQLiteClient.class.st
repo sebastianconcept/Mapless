@@ -24,10 +24,11 @@ MaplessSQLiteClient >> connect [
 
 { #category : #querying }
 MaplessSQLiteClient >> count: aMaplessClass where: someConditionsOrNil in: aMaplessPostgresRepository [
+
 	| sql result |
 	sql := self sqlForCount: aMaplessClass where: someConditionsOrNil.
-	result := postgresClient query: sql.
-	^ result firstFieldOfFirstRecord
+	result := sqliteClient execute: sql.
+	^ result onlyRow first
 ]
 
 { #category : #actions }
@@ -50,12 +51,10 @@ MaplessSQLiteClient >> createTableNamed: aString [
 
 { #category : #actions }
 MaplessSQLiteClient >> destroyAll: aMaplessClass where: condition [
-	self postgresClient
-		execute:
-			('DELETE FROM {1} WHERE {2}'
-				format:
-					{(self tableNameFor: aMaplessClass).
-					condition})
+
+	sqliteClient execute: ('DELETE FROM {1} WHERE {2}' format: { 
+				 (self tableNameFor: aMaplessClass).
+				 condition })
 ]
 
 { #category : #actions }
@@ -70,17 +69,20 @@ MaplessSQLiteClient >> dropDatabaseNamed: aString [
 
 { #category : #querying }
 MaplessSQLiteClient >> findAll: aMaplessClass where: someConditionsOrNil limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil in: aMaplessPostgresRepository [
-	| sql result |
+
+	| sql result all |
 	sql := self
-		sqlForFindAll: aMaplessClass
-		where: someConditionsOrNil
-		limit: aLimitOrNil
-		offset: anOffsetOrNil
-		sort: sortConditionsOrNil.
-	result := postgresClient query: sql.
-	^ result data
-		collect:
-			[ :resultData | self maplessFromResult: resultData in: aMaplessPostgresRepository ]
+		       sqlForFindAll: aMaplessClass
+		       where: someConditionsOrNil
+		       limit: aLimitOrNil
+		       offset: anOffsetOrNil
+		       sort: sortConditionsOrNil.
+	result := sqliteClient execute: sql.
+	all := OrderedCollection new.
+	result do: [ :sqliteRow | 
+		all add:
+			(self maplessFromResult: sqliteRow in: aMaplessPostgresRepository) ].
+	^ all
 ]
 
 { #category : #accessing }
@@ -129,11 +131,11 @@ MaplessSQLiteClient >> isValid [
 ]
 
 { #category : #actions }
-MaplessSQLiteClient >> maplessFromResult: anArray in: aMaplessRepository [
+MaplessSQLiteClient >> maplessFromResult: sqliteRow in: aMaplessRepository [
+
 	| id maplessData |
-	id := anArray first.
-	maplessData := JsonObject
-		fromAssociations: anArray second associations.
+	id := sqliteRow first.
+	maplessData := Json readFrom: sqliteRow values second readStream.
 	maplessData at: aMaplessRepository idPropertyName put: id.
 	^ Mapless fromJSONObject: maplessData in: aMaplessRepository
 ]
@@ -190,16 +192,15 @@ MaplessSQLiteClient >> truncate: aMaplessClass [
 
 { #category : #actions }
 MaplessSQLiteClient >> update: aBSONFriendlyObject as: aMaplessClass in: aMaplessPostgresRepository [
-	^ postgresClient
-		execute:
-			('UPDATE {1} SET {2} = ''{3}'' WHERE {4} = ''{5}'''
-				format:
-					{(self tableNameFor: aMaplessClass).
-					aMaplessPostgresRepository maplessDataPropertyName.
-					(aBSONFriendlyObject
-						at: aMaplessPostgresRepository maplessDataPropertyName)
-						asJSONString.
-					aMaplessPostgresRepository idPropertyName.
-					(aBSONFriendlyObject
-						at: aMaplessPostgresRepository idPropertyName)})
+
+	^ sqliteClient execute:
+		  ('UPDATE {1} SET {2} = ''{3}'' WHERE {4} = ''{5}''' format: { 
+				   (self tableNameFor: aMaplessClass).
+				   aMaplessPostgresRepository maplessDataPropertyName.
+				   (aBSONFriendlyObject at:
+					    aMaplessPostgresRepository maplessDataPropertyName)
+					   asJSONString.
+				   aMaplessPostgresRepository idPropertyName.
+				   (aBSONFriendlyObject at:
+					    aMaplessPostgresRepository idPropertyName) })
 ]

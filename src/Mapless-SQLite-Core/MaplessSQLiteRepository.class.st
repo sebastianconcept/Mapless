@@ -296,5 +296,6 @@ MaplessSQLiteRepository >> withClientDo: aBlock [
 
 { #category : #actions }
 MaplessSQLiteRepository >> withNormalizedId: aValue [
-	^ UUID newFrom: aValue 
+
+	^ aValue
 ]
