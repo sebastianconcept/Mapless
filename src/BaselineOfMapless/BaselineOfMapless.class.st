@@ -153,7 +153,7 @@ BaselineOfMapless >> setUpSQLiteDependencies: spec [
 BaselineOfMapless >> setUpSQLitePackages: spec [
 	spec
 		package: 'Mapless-SQLite-Core'
-		with: [ spec requires: #('Mapless-Base-Core' 'PunQLite') ].
+		with: [ spec requires: #('Mapless-Base-Core' 'SQLite3') ].
 	spec
 		package: 'Mapless-SQLite-Tests'
 		with: [ spec requires: #('Mapless-SQLite-Core' 'Mapless-Tests-Base') ]
