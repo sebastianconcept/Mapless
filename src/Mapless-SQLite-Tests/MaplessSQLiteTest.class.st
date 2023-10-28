@@ -35,6 +35,12 @@ MaplessSQLiteTest class >> maplessClasses [
 	DummyTag}
 ]
 
+{ #category : #accessing }
+MaplessSQLiteTest class >> testDatabasePathString [
+
+	^ (Smalltalk imageDirectory / 'MaplessSQLiteTest.db') pathString
+]
+
 { #category : #actions }
 MaplessSQLiteTest >> resetDatabase [
 	"Remove all objects so the database is clean for any test to be run."
@@ -60,7 +66,7 @@ MaplessSQLiteTest >> setUp [
 	super setUp.
 	repository := MaplessSQLiteRepository
 		for: 'Mapless-Tests'
-		with: MaplessSQLitePool local.
+		with: (MaplessSQLitePool on: self class testDatabasePathString).
 	repository ensureDatabase.
 	self resetDatabase
 ]
@@ -272,10 +278,9 @@ MaplessSQLiteTest >> testConditionalCount [
 	users do: [ :user | repository save: user ].
 	firstNames := { 'John'. 'Peter'. 'Alice'. 'Linda' }.
 	firstNames do: [ :firstName | self savePersonNamed: firstName ].
-	sqlCondition := 'json_extract(maplessData,"$.{1}") IN ({2})' format:
-		                { 
-			                'firstName'.
-			                (firstNames asJSONString allButFirst allButLast
+	sqlCondition := 'json_extract(maplessData, ''$.firstName'') IN ({1})' 
+		                format:
+			                { (firstNames asJSONString allButFirst allButLast
 				                 replaceAll: $"
 				                 with: $') }.
 	self

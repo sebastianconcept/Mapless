@@ -1,3 +1,6 @@
+"
+I'm the Mapless API that access SQLite functions
+"
 Class {
 	#name : #MaplessSQLiteClient,
 	#superclass : #Object,
@@ -177,8 +180,10 @@ MaplessSQLiteClient >> tableNameFor: aMaplessClass [
 { #category : #actions }
 MaplessSQLiteClient >> truncate: aMaplessClass [
 
+	"Deletes all rows in the corresponding table (table won't be destroyed)."
+
 	sqliteClient execute:
-		('TRUNCATE {1}' format: { (self tableNameFor: aMaplessClass) })
+		('DELETE from {1}' format: { (self tableNameFor: aMaplessClass) })
 ]
 
 { #category : #actions }
