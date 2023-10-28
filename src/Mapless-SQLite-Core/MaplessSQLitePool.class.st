@@ -1,3 +1,6 @@
+"
+Connection pool for the Mapless repository using SQLite
+"
 Class {
 	#name : #MaplessSQLitePool,
 	#superclass : #MaplessAbstractPool,
@@ -65,17 +68,6 @@ MaplessSQLitePool >> databaseName [
 { #category : #accessing }
 MaplessSQLitePool >> databaseName: anObject [
 	databaseName := anObject
-]
-
-{ #category : #accessing }
-MaplessSQLitePool >> getConnectionUrl [
-	^ ZnUrl new
-		scheme: 'psql';
-		host: hostname;
-		port: port;
-		username: username;
-		password: password;
-		/ databaseName
 ]
 
 { #category : #testing }
