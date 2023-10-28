@@ -1,3 +1,6 @@
+"
+I'm the Mapless API that access SQLite functions
+"
 Class {
 	#name : #MaplessSQLiteClient,
 	#superclass : #Object,
@@ -108,9 +111,10 @@ MaplessSQLiteClient >> initializeOn: aFilenameOrKeyword [
 
 { #category : #actions }
 MaplessSQLiteClient >> insert: serializableObject as: aMaplessClass in: aMaplessSQLiteRepository [
+	"Requires SQLite ^3.38.x for using json()"
 	^ sqliteClient
 		execute:
-			('INSERT INTO {1} VALUES (''{2}'', ''{3}'')'
+			('INSERT INTO {1} VALUES (''{2}'', json(''{3}''))'
 				format:
 					{(self tableNameFor: aMaplessClass).
 					(serializableObject at: aMaplessSQLiteRepository idPropertyName).
@@ -180,8 +184,10 @@ MaplessSQLiteClient >> tableNameFor: aMaplessClass [
 { #category : #actions }
 MaplessSQLiteClient >> truncate: aMaplessClass [
 
+	"Deletes all rows in the corresponding table (table won't be destroyed)."
+
 	sqliteClient execute:
-		('TRUNCATE {1}' format: { (self tableNameFor: aMaplessClass) })
+		('DELETE from {1}' format: { (self tableNameFor: aMaplessClass) })
 ]
 
 { #category : #actions }

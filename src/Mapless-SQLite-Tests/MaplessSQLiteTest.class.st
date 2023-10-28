@@ -35,6 +35,12 @@ MaplessSQLiteTest class >> maplessClasses [
 	DummyTag}
 ]
 
+{ #category : #accessing }
+MaplessSQLiteTest class >> testDatabasePathString [
+
+	^ (Smalltalk imageDirectory / 'MaplessSQLiteTest.db') pathString
+]
+
 { #category : #actions }
 MaplessSQLiteTest >> resetDatabase [
 	"Remove all objects so the database is clean for any test to be run."
@@ -60,7 +66,7 @@ MaplessSQLiteTest >> setUp [
 	super setUp.
 	repository := MaplessSQLiteRepository
 		for: 'Mapless-Tests'
-		with: MaplessSQLitePool local.
+		with: (MaplessSQLitePool on: self class testDatabasePathString).
 	repository ensureDatabase.
 	self resetDatabase
 ]
@@ -258,28 +264,25 @@ MaplessSQLiteTest >> testComposition [
 
 { #category : #tests }
 MaplessSQLiteTest >> testConditionalCount [
+
 	| users firstNames sqlCondition |
 	users := OrderedCollection new.
-	Character alphabet
-		do: [ :char | 
-			users
-				add:
-					(DummyUser new
-						username: char asString;
-						person:
-							(DummyPerson new
-								firstName: char asString;
-								yourself);
-						yourself) ].
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
 	users do: [ :user | repository save: user person ].
 	users do: [ :user | repository save: user ].
-	firstNames := {'John' . 'Peter' . 'Alice' . 'Linda'}.
+	firstNames := { 'John'. 'Peter'. 'Alice'. 'Linda' }.
 	firstNames do: [ :firstName | self savePersonNamed: firstName ].
-	sqlCondition := '{1}->>''{2}'' IN ({3})'
-		format:
-			{'maplessData'.
-			'firstName'.
-			firstNames asJSONString allButFirst allButLast replaceAll: $" with: $'}.
+	sqlCondition := 'json_extract(maplessData, ''$.firstName'') IN ({1})' 
+		                format:
+			                { (firstNames asJSONString allButFirst allButLast
+				                 replaceAll: $"
+				                 with: $') }.
 	self
 		assert: (repository count: DummyPerson where: sqlCondition)
 		equals: firstNames size
@@ -517,32 +520,25 @@ MaplessSQLiteTest >> testMultipleComposedSaveAndLoad [
 
 { #category : #tests }
 MaplessSQLiteTest >> testQueryUsers [
+
 	| users |
 	users := OrderedCollection new.
-	Character alphabet
-		do: [ :char | 
-			users
-				add:
-					(DummyUser new
-						username: char asString;
-						person:
-							(DummyPerson new
-								firstName: char asString;
-								yourself);
-						yourself) ].
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
 	users do: [ :user | repository save: user person ].
 	users do: [ :user | repository save: user ].
-	self
-		assert:
-			(Character alphabet
-				allSatisfy: [ :char | 
-					(repository
-						findOne: DummyUser
-						where:
-							('maplessData->>''{1}'' = ''{2}'''
-								format:
-									{'username'.
-									char asString})) notNil ])
+	self assert: (Character alphabet allSatisfy: [ :char | 
+			 (repository
+				  findOne: DummyUser
+				  where:
+					  ('json_extract(maplessData,''$.{1}'') = ''{2}''' format: { 
+							   'username'.
+							   char asString })) notNil ])
 ]
 
 { #category : #tests }
