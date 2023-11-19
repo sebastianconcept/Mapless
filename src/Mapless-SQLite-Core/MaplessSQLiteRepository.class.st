@@ -213,14 +213,6 @@ MaplessSQLiteRepository >> findOne: aMaplessClass where: someConditions [
 ]
 
 { #category : #testing }
-MaplessSQLiteRepository >> hasDatabase [
-	"Answers true if the database was already created."
-
-	^ self
-		withClientDo: [ :client | client hasDatabaseNamed: databaseName ]
-]
-
-{ #category : #testing }
 MaplessSQLiteRepository >> hasTableFor: aMaplessClass [
 	^ self withClientDo: [ :client | client hasTableFor: aMaplessClass ]
 ]

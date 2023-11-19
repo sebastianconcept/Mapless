@@ -258,28 +258,26 @@ MaplessSQLiteTest >> testComposition [
 
 { #category : #tests }
 MaplessSQLiteTest >> testConditionalCount [
+
 	| users firstNames sqlCondition |
 	users := OrderedCollection new.
-	Character alphabet
-		do: [ :char | 
-			users
-				add:
-					(DummyUser new
-						username: char asString;
-						person:
-							(DummyPerson new
-								firstName: char asString;
-								yourself);
-						yourself) ].
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
 	users do: [ :user | repository save: user person ].
 	users do: [ :user | repository save: user ].
-	firstNames := {'John' . 'Peter' . 'Alice' . 'Linda'}.
+	firstNames := { 'John'. 'Peter'. 'Alice'. 'Linda' }.
 	firstNames do: [ :firstName | self savePersonNamed: firstName ].
-	sqlCondition := '{1}->>''{2}'' IN ({3})'
-		format:
-			{'maplessData'.
-			'firstName'.
-			firstNames asJSONString allButFirst allButLast replaceAll: $" with: $'}.
+	sqlCondition := 'json_extract(maplessData,"$.{1}") IN ({2})' format:
+		                { 
+			                'firstName'.
+			                (firstNames asJSONString allButFirst allButLast
+				                 replaceAll: $"
+				                 with: $') }.
 	self
 		assert: (repository count: DummyPerson where: sqlCondition)
 		equals: firstNames size
@@ -517,32 +515,23 @@ MaplessSQLiteTest >> testMultipleComposedSaveAndLoad [
 
 { #category : #tests }
 MaplessSQLiteTest >> testQueryUsers [
+
 	| users |
 	users := OrderedCollection new.
-	Character alphabet
-		do: [ :char | 
-			users
-				add:
-					(DummyUser new
-						username: char asString;
-						person:
-							(DummyPerson new
-								firstName: char asString;
-								yourself);
-						yourself) ].
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
 	users do: [ :user | repository save: user person ].
 	users do: [ :user | repository save: user ].
-	self
-		assert:
-			(Character alphabet
-				allSatisfy: [ :char | 
-					(repository
-						findOne: DummyUser
-						where:
-							('maplessData->>''{1}'' = ''{2}'''
-								format:
-									{'username'.
-									char asString})) notNil ])
+	self assert: (Character alphabet allSatisfy: [ :char | 
+			 (repository
+				  findOne: DummyUser
+				  where: ('json_extract(maplessData,"$.username") = {1}' format:
+						   { char asString printString })) notNil ])
 ]
 
 { #category : #tests }

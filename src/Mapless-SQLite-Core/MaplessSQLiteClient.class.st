@@ -30,7 +30,7 @@ MaplessSQLiteClient >> count: aMaplessClass where: someConditionsOrNil in: aMapl
 { #category : #actions }
 MaplessSQLiteClient >> createDatabaseNamed: aString [
 
-	sqliteClient execute: 'CREATE DATABASE "' , aString , '"'
+	sqliteClient execute: ('CREATE DATABASE "{1}"' format: { aString })
 ]
 
 { #category : #actions }
@@ -56,7 +56,11 @@ MaplessSQLiteClient >> destroyAll: aMaplessClass where: condition [
 
 { #category : #actions }
 MaplessSQLiteClient >> dropDatabaseNamed: aString [
-	self postgresClient execute: 'DROP DATABASE IF EXISTS "' , aString , '"'
+
+	"There is no DROP database in SQLite.
+	If you want to detroy a database, you just delete its file."
+
+	self shouldNotImplement
 ]
 
 { #category : #querying }
@@ -85,12 +89,6 @@ MaplessSQLiteClient >> getTableNames [
 ]
 
 { #category : #testing }
-MaplessSQLiteClient >> hasDatabaseNamed: aString [
-
-	^ sqliteClient listDatabases includes: aString
-]
-
-{ #category : #testing }
 MaplessSQLiteClient >> hasTableFor: aMaplessClass [
 	^ self hasTableNamed: (self tableNameFor: aMaplessClass)
 ]
@@ -108,15 +106,14 @@ MaplessSQLiteClient >> initializeOn: aFilenameOrKeyword [
 
 { #category : #actions }
 MaplessSQLiteClient >> insert: serializableObject as: aMaplessClass in: aMaplessSQLiteRepository [
-	^ sqliteClient
-		execute:
-			('INSERT INTO {1} VALUES (''{2}'', ''{3}'')'
-				format:
-					{(self tableNameFor: aMaplessClass).
-					(serializableObject at: aMaplessSQLiteRepository idPropertyName).
-					(serializableObject
-						at: aMaplessSQLiteRepository maplessDataPropertyName)
-						asJSONString})
+
+	^ sqliteClient execute:
+		  ('INSERT INTO {1} VALUES (''{2}'', {3})' format: { 
+				   (self tableNameFor: aMaplessClass).
+				   (serializableObject at: aMaplessSQLiteRepository idPropertyName).
+				   (serializableObject at:
+					    aMaplessSQLiteRepository maplessDataPropertyName)
+					   asJSONString printString })
 ]
 
 { #category : #testing }
@@ -188,12 +185,12 @@ MaplessSQLiteClient >> truncate: aMaplessClass [
 MaplessSQLiteClient >> update: aBSONFriendlyObject as: aMaplessClass in: aMaplessPostgresRepository [
 
 	^ sqliteClient execute:
-		  ('UPDATE {1} SET {2} = ''{3}'' WHERE {4} = ''{5}''' format: { 
+		  ('UPDATE {1} SET {2} = {3} WHERE {4} = ''{5}''' format: { 
 				   (self tableNameFor: aMaplessClass).
 				   aMaplessPostgresRepository maplessDataPropertyName.
 				   (aBSONFriendlyObject at:
 					    aMaplessPostgresRepository maplessDataPropertyName)
-					   asJSONString.
+					   asJSONString printString.
 				   aMaplessPostgresRepository idPropertyName.
 				   (aBSONFriendlyObject at:
 					    aMaplessPostgresRepository idPropertyName) })
