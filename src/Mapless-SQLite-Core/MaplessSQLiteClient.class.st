@@ -178,12 +178,10 @@ MaplessSQLiteClient >> tableNameFor: aMaplessClass [
 ]
 
 { #category : #actions }
-MaplessSQLiteClient >> truncate: aMaplessClass [
+MaplessSQLiteClient >> truncateAll [
 
-	"Deletes all rows in the corresponding table (table won't be destroyed)."
-
-	sqliteClient execute:
-		('DELETE from {1}' format: { (self tableNameFor: aMaplessClass) })
+	self getTableNames do: [ :tableName | 
+		self truncateTableNamed: tableName ]
 ]
 
 { #category : #actions }

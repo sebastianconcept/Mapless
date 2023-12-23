@@ -86,7 +86,7 @@ MaplessSQLiteRepository >> destroy: aMapless [
 
 { #category : #actions }
 MaplessSQLiteRepository >> destroyAll: aMaplessClass [
-	self withClientDo: [ :client | client truncate: aMaplessClass ]
+	self withClientDo: [ :client | client truncateMapless: aMaplessClass ]
 ]
 
 { #category : #actions }
