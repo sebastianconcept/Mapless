@@ -187,6 +187,23 @@ MaplessSQLiteClient >> truncate: aMaplessClass [
 ]
 
 { #category : #actions }
+MaplessSQLiteClient >> truncateMapless: aMaplessClass [
+
+	"Deletes all in the table corresponding to the given mapless class."
+
+	^ self truncateTableNamed: (self tableNameFor: aMaplessClass)
+]
+
+{ #category : #actions }
+MaplessSQLiteClient >> truncateTableNamed: aTableNameString [
+
+	"Deletes all rows in the corresponding table (table won't be destroyed)."
+
+	sqliteClient execute:
+		('DELETE from {1}' format: { aTableNameString })
+]
+
+{ #category : #actions }
 MaplessSQLiteClient >> update: aBSONFriendlyObject as: aMaplessClass in: aMaplessPostgresRepository [
 
 	^ sqliteClient execute:

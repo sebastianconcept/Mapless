@@ -617,3 +617,20 @@ MaplessSQLiteTest >> testSubModelsFromReifiedJSON [
 	self assert: reified person class equals: DummyPerson.
 	self assert: reified completeName equals: 'john q'
 ]
+
+{ #category : #tests }
+MaplessSQLiteTest >> testTruncate [
+
+	| people |
+	people := OrderedCollection new.
+	Character alphabet do: [ :char | 
+		people add: (DummyPerson new
+				 firstName: char asString;
+				 yourself) ].
+	people do: [ :guy | repository save: guy ].
+	self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
+	self assert: (repository count: DummyPerson) equals: 26.
+	repository withClientDo: [ :client | client truncateMapless: DummyPerson ].
+	self assert: (repository count: DummyPerson) equals: 0.
+	
+]
