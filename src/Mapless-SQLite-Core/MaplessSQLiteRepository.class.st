@@ -60,6 +60,12 @@ MaplessSQLiteRepository >> createDatabase [
 ]
 
 { #category : #actions }
+MaplessSQLiteRepository >> databaseStartOn: applicationHelper [
+
+	applicationHelper sqlLiteDatabaseStart
+]
+
+{ #category : #actions }
 MaplessSQLiteRepository >> delete: aMapless [
 	self onBeforeDelete: aMapless.
 	aMapless deletedOn: DateAndTime now.

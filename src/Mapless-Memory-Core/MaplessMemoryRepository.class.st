@@ -43,6 +43,12 @@ MaplessMemoryRepository >> databaseCollectionNamed: aCollectionName [
 ]
 
 { #category : #actions }
+MaplessMemoryRepository >> databaseStartOn: applicationHelper [
+
+	applicationHelper memoryDatabaseStart
+]
+
+{ #category : #actions }
 MaplessMemoryRepository >> destroy: aMapless [
 	"Removes aMapless from the persistent collection"
 
