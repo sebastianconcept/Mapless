@@ -4,13 +4,19 @@
 
 Schema-less persistence for Smalltalk with support for multiple backends.
 
-[![Release](https://img.shields.io/github/v/tag/sebastianconcept/Mapless?label=release)](https://github.com/sebastianconcept/Mapless/releases)
+[![Unit Tests](https://github.com/sebastianconcept/Mapless/actions/workflows/build.yml/badge.svg)](https://github.com/sebastianconcept/Mapless/actions/workflows/build.yml)
 ![Tests](https://img.shields.io/badge/tests-178-green)
+[![Coverage Status](https://codecov.io/github/sebastianconcept/Mapless/coverage.svg?branch=main)](https://codecov.io/gh/sebastianconcept/Mapless/branch/master)
+
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE.txt)
+[![Release](https://img.shields.io/github/v/tag/sebastianconcept/Mapless?label=release)](https://github.com/sebastianconcept/Mapless/releases)
+
+
+[![Pharo 7](https://img.shields.io/badge/Pharo-7-%23383932.svg)](https://pharo.org/download)
+[![Pharo 10](https://img.shields.io/badge/Pharo-10-%23383932.svg)](https://pharo.org/download)
 
 [![Social](https://img.shields.io/github/stars/sebastianconcept/Mapless?style=social)]()
 [![Forks](https://img.shields.io/github/forks/sebastianconcept/Mapless?style=sociall)]()
-[![](https://img.shields.io/reddit/subreddit-subscribers/mapless_data?style=social)](https://www.reddit.com/r/mapless_data/)
 
 ---
 
@@ -23,7 +29,7 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 - No need to create accessors and mutators.
 - Multiple backends to chose from.
 - Enables smooth data migration/interoperation among backends.
-- Via Redis PUB/SUB, scalable observer-pattern functionality across images.
+- ~~Via Redis PUB/SUB, scalable observer-pattern functionality across images.~~ In the roadmap.
 
 ## Ambition
 
@@ -35,7 +41,7 @@ Mapless gives you performant state plasticity and high availability in a scale t
 2. Redis
 3. Memory
 4. PostgreSQL
-5. UnQLite
+5. ~~UnQLite~~ `deprecated` / retiring soon
 
 ## Examples
 

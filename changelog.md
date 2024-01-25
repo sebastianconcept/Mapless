@@ -1,3 +1,9 @@
+Jan 25, 2024
+===================================
+- Updating `master` branch to keep up with the latests useful upgrades.
+- Adding badges to the README.md for constant monitoring of CI, unit tests, regression detection capacity and supported Pharo versions.
+- Adds CI via GitHub actions.
+
 May 22, 2023
 ===================================
 - Improved `MongoAPI` by adding `initializeMongoUrl` and a lazy accessor using it and `Array` instead of `Set` so comparing it on the fly from `getIdleReadOnlyClient` is significantly faster now.
