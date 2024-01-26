@@ -11,6 +11,19 @@ jobs:
         redis-version: [7]
         mongodb-version: ['4.4']
     name: ${{ matrix.smalltalk }}
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ""
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432    
     steps:
       - name: Start Redis
         uses: supercharge/redis-github-action@1.7.0
