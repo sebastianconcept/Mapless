@@ -8,8 +8,14 @@ jobs:
     strategy:
       matrix:
         smalltalk: [Pharo64-7.0]
+        redis-version: [7]
     name: ${{ matrix.smalltalk }}
     steps:
+      - name: Start Redis
+          uses: supercharge/redis-github-action@1.7.0
+          with:
+            redis-version: ${{ matrix.redis-version }}
+            redis-remove-container: true
       - uses: actions/checkout@v2
       - uses: hpi-swa/setup-smalltalkCI@v1
         with:
