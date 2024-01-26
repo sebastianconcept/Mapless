@@ -24,8 +24,8 @@ MaplessStandalonePostgresPool class >> local [
 	^ self
 		hostname: 'localhost'
 		port: 5432
-		username: 'username'
-		password: 'password'
+		username: 'postgres'
+		password: ''
 ]
 
 { #category : #accessing }
