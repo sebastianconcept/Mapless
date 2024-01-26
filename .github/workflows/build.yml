@@ -9,12 +9,17 @@ jobs:
       matrix:
         smalltalk: [Pharo64-7.0]
         redis-version: [7]
+        mongodb-version: ['4.4']
     name: ${{ matrix.smalltalk }}
     steps:
-      - uses: supercharge/redis-github-action@1.7.0
+      - name: Start Redis
+        uses: supercharge/redis-github-action@1.7.0
         with:
           redis-version: ${{ matrix.redis-version }}
-          # redis-remove-container: true
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.10.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
       - uses: actions/checkout@v2
       - uses: hpi-swa/setup-smalltalkCI@v1
         with:
