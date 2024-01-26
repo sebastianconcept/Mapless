@@ -1,0 +1,16 @@
+SmalltalkCISpec {
+  #loading : [
+    SCIMetacelloLoadSpec {
+      #baseline : 'Mapless',
+      #directory : 'src',
+      #load : [ 'Core',
+        'Memory',
+        'Postgres',
+        'Mongo',
+        'Redis'
+      ],
+      #platforms : [ #pharo
+      ]
+    }
+  ]
+}

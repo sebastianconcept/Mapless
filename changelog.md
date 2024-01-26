@@ -1,3 +1,18 @@
+Jan 25, 2024
+===================================
+- Updating `master` branch to keep up with the latests useful upgrades.
+- Adding badges to the README.md for constant monitoring of CI, unit tests, regression detection capacity and supported Pharo versions.
+- Adds CI via GitHub actions.
+
+May 22, 2023
+===================================
+- Improved `MongoAPI` by adding `initializeMongoUrl` and a lazy accessor using it and `Array` instead of `Set` so comparing it on the fly from `getIdleReadOnlyClient` is significantly faster now.
+- `MaplessWeightedRandomPolicy>>nextAmong:` is faster now by not using `includes:` and use a `anySatisfy:` filter instead.
+
+May 19, 2023
+===================================
+- Added `defaultMinClients` for `MaplessStandaloneMongoPool`.
+
 May 19, 2022 | v0.5.4-beta | Humble Falcon
 ===================================
 - `MongoChange` is now using MongoDB `document` instead of `jsonish`.

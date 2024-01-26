@@ -1,4 +1,6 @@
 "
+DEPRECATED (will be removed in the next release)
+
 I will help the replica set pool to get the clients for read-only and read-write.
 I can help to gracefully handle a change of primary in the replica set.
 "
@@ -58,6 +60,8 @@ MaplessMongoResolver >> hasPrimary [
 
 { #category : #initializing }
 MaplessMongoResolver >> initializeOn: someMongoUrls [
+	self flag: #deprecated.
+	"DEPRECATED (this class will be removed in the next release)"
 	mongoUrls := someMongoUrls
 ]
 

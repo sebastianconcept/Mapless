@@ -2,7 +2,8 @@ Class {
 	#name : #MongoAPI,
 	#superclass : #Mongo,
 	#instVars : [
-		'isPrimary'
+		'isPrimary',
+		'mongoUrl'
 	],
 	#category : #'Mapless-Mongo-Core-Connections'
 }
@@ -19,6 +20,12 @@ MongoAPI >> asMongoUrl [
 	^ (host , ':' , port asString) asMongoUrl
 ]
 
+{ #category : #actions }
+MongoAPI >> close [
+	self triggerEvent: #closingConnection: with: self.
+	super close
+]
+
 { #category : #accessing }
 MongoAPI >> getIsPrimary [
 	^ self admin isMaster isPrimary
@@ -27,6 +34,11 @@ MongoAPI >> getIsPrimary [
 { #category : #initializing }
 MongoAPI >> initializeIsPrimary [
 	^ isPrimary := self getIsPrimary
+]
+
+{ #category : #initializing }
+MongoAPI >> initializeMongoUrl [
+	^ mongoUrl := (host , ':' , port asString) asMongoUrl
 ]
 
 { #category : #testing }
@@ -69,6 +81,11 @@ MongoAPI >> isType: aSymbol [
 { #category : #testing }
 MongoAPI >> isValid [
 	^ self isOpen
+]
+
+{ #category : #accessing }
+MongoAPI >> mongoUrl [
+	^ mongoUrl ifNil: [ self initializeMongoUrl ]
 ]
 
 { #category : #actions }

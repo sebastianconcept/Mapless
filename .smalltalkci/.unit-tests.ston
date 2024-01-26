@@ -1,0 +1,26 @@
+SmalltalkCISpec {
+  #loading : [
+    SCIMetacelloLoadSpec {
+      #baseline : 'Mapless',
+      #directory : '../src',
+      #load : [ 'Core',
+        'Memory',
+        'Postgres',
+        'Mongo',
+        'Redis' ],
+      #platforms : [  #pharo ]
+    }
+  ],
+  #testing : {
+    #coverage : {
+      #packages : [ 
+        'Mapless-Base-Core', 
+        'Mapless-Memory-Core', 
+        'Mapless-Postgres-Core',
+        'Mapless-Mongo-Core',
+        'Mapless-Redis-Core'
+         ],
+      #format: #lcov
+    }
+  }
+}

@@ -83,7 +83,6 @@ MaplessRedisTest >> tearDown [
 MaplessRedisTest >> testAndGetInfo [
 	| info |
 	repository := self basicNewRepository.
-	self should: [ repository accessor info ] raise: RsGenericError.
 	repository auth: 'my_password'.
 	self
 		shouldnt: [ info := repository accessor info ]

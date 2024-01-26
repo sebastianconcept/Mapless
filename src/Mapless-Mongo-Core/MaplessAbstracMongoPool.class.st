@@ -27,6 +27,11 @@ MaplessAbstracMongoPool >> authenticationDatabaseName: aString [
 	authenticationDatabaseName := aString
 ]
 
+{ #category : #testing }
+MaplessAbstracMongoPool >> hasHealthChecker [
+	^ false
+]
+
 { #category : #initialization }
 MaplessAbstracMongoPool >> initializeAuthenticationDatabaseName [
 	^ authenticationDatabaseName := 'admin'
