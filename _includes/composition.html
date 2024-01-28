@@ -1,12 +1,18 @@
 <div class="shell">
-{% highlight st %}
-"Create and save an alert for the task, then add it and save"
-odb do:[ |anAlert|
-  anAlert := RAlert new 
-                duration: 24 hours;
-                message: 'Get it done!';
-                save.
-    task alert: anAlert.
-    task save].
-{% endhighlight %}
+  {% highlight st %} 
+"Create and save a new alert for the task, 
+then add it to the task and save the task" 
+  repository do: [ | anAlert | 
+    
+    "Create new alert and save it"
+    alert := Alert new 
+      duration: 24 hours;
+      message: 'Get it done!'; 
+      save. 
+
+    "Update the task having that saved alert"
+    task alert: alert. 
+    task save ]. 
+  {% endhighlight
+  %}
 </div>

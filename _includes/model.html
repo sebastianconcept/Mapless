@@ -1,6 +1,13 @@
 <div class="shell">
 {% highlight st %}
-"Creating a 'task' object"
-task := RTask new description: 'Try Mapless'; beIncomplete.
+Mapless subclass: #Task
+	instanceVariableNames: ''
+	classVariableNames: ''
+	category: 'YourApp'.
+
+"Create a task instance"
+task := Task new 
+	description: 'Try Mapless'; 
+	isComplete: false.
 {% endhighlight %}
 </div>

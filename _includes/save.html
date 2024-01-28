@@ -1,6 +1,9 @@
 <div class="shell">
-{% highlight st %}
-"Saving the 'task' object"
-odb do:[task save].
-{% endhighlight %}
+  {% highlight st %}
+"Saving the task object"
+  repository do: [ task save ].
+
+  "Saving the task object when its class implements getRepository"
+  task save.
+  {% endhighlight %}
 </div>

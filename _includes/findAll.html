@@ -1,9 +1,32 @@
 <div class="shell">
-{% highlight st %}
-"Getting all models of a given Mapless class"
-allTasks := odb do:[RTask findAll].
+  {% highlight st %}
+"Get all models of a given Mapless class from the repository"
+    allTasks := repository findAll: Task.
 
-"Getting a specific model using its id"
-theTask := odb do:[RTask findAt: 'c472099f-79b9-8ea2-d61f-e5df34b3ed06'].
-{% endhighlight %}
+    "Same but when your Mapless class can do its own getRepository"
+    allTasks := Task findAll.
+
+    "Getting a specific model using its id"
+    thatTask := Task findId: 'c472099f-79b9-8ea2-d61f-e5df34b3ed06'.
+
+    "The Mapless models that are stored in MongoDB can use MongoTalk querying features"
+    thatTask := Task findOne: { #description -> 'Try Mapless' } asDictionary.
+    
+    "All tasks of a given user"
+    allUserTasks := Task find: { #username -> 'tasksninja' } asDictionary.
+
+    "Second batch of 10 tasks about trying something ordered by description"
+    criteria := { #description -> { '$regex' -> '^Try.*' } asDictionary } asDictionary.
+    userTasksAboutTryingThings := Task find: criteria
+      limit: 10
+      offset: 20
+      sort: { #description -> 1 } asDictionary.   
+
+    "Same query but with a PostgreSQL backend instead"
+    criteria := 'maplessData->> ''description'' LIKE ''Try%'''.
+    userTasksAboutTryingThings := Task find: criteria
+      limit: 10
+      offset: 20
+      sort: 'description DESC'.
+    {% endhighlight %}
 </div>

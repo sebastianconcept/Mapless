@@ -1,6 +1,10 @@
 <div class="shell">
-{% highlight st %}
-"Query objects using an indexed attribute"
-hisTasks := odb do:[RTask findAtUsername: 'awesomeguy'].
-{% endhighlight %}
+  {% highlight st %}
+Task class>>findAtUsername: aString
+        "Answer the Task with the given username or nil if there is no match for it."
+        ^ self findOne: { #username -> aString } asDictionary.
+
+  "Query objects using an indexed attribute"
+  tasks := repository do: [ Task findAtUsername: 'tasksninja' ].
+  {% endhighlight %}
 </div>

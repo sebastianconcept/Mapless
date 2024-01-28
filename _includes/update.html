@@ -1,0 +1,22 @@
+<div class="shell">
+{% highlight st %}
+"Adds or updates values of the model properties, then saves"
+repository do: [
+    task 
+        deadline: Date tomorrow; 
+        notes: 'Wonder how it feels to use this thing, hmm...';
+        save ].
+
+"No, wait! we forgot to add this..."
+repository do: [
+    task 
+        priority: #high;
+        save ].
+
+"...and this"
+repository do: [
+    task 
+        tags: #('flexible' 'portable');
+        save ].
+{% endhighlight %}
+</div>

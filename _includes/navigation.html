@@ -1,12 +1,13 @@
 <div class="shell">
 {% highlight st %}
-"Lazy access to all model's parts"
-odb do:[task alert message].   
+"The alert property has an instance of MaplessReference"
+repository do: [ task alert class = MaplessReference ].
+"=> true"
 
-odb do:[task alert class = MaplessReference].  
-"=> true"   
+"Alert as (sub)model in task, is lazily fetched with the first message 
+and responding as if always would have been ready"
+repository do: [ task alert message ].
+"=> 'Get it done!'"
 
-odb do:[task alert description].  
-"=> 'Get it done!'"   
 {% endhighlight %}
 </div>

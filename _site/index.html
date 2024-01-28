@@ -7,7 +7,8 @@
   <meta name="author" content="Sebastian Sastre" />
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" type="text/css" href='css/style.css' />
-  <link rel="stylesheet" type="text/css" href='css/pygments.css' />
+  <link rel="stylesheet" type="text/css" href='css/highlighter.css' />
+  <link rel="shortcut icon" type="image/png" href="favicon.png">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
   <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
@@ -17,15 +18,13 @@
     <body>
     	<div class="container">
     <div class="header">
-        <a href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png">
-        </a>
         <div class="row">
             <div class="logoWrap">
                 <div class="symbol">
                     <img alt="Mapless logo" src="images/symbol.png">
                 </div>    
                 <div class="center-on-mobiles">
-                    <h1>mapless</h1>
+                    <h1>Mapless</h1>
                 </div>    
         </div>
         </div>    
@@ -40,43 +39,46 @@
 			<div class="appeal leftAppeal">
 			    <h3>Simple</h3>
 			    <p>Low maintenance for real. No instVars. No getters and no setters - just saved models with your data.</p>
-			    <a href="#adding">Add data to a model →</a>
+			    <a href="#updating">Add data to a model →</a>
 			</div>
 		</div>
 		<div class="col-md-4">
 			<div class="appeal middleAppeal">
 			    <h3>Composable</h3>
-			    <p>Do you need to compose models? But of course you do! No mapping required, just add those (sub)models and you're good to go!</p>
-			    <a href="#composable">Compose a Mapless model →</a>
+			    <p>Do you need to compose models? But of course you do! No mapping required, just add those (sub)models, save its children first and you're good to go.</p>
+			    <a href="#composability">Compose models →</a>
 			</div>
 		</div>
 		<div class="col-md-4">
+			<div class="appeal rightAppeal">
+			    <h3>Portable</h3>
+			    <p>Shared API across backends. i.e.: start with SQLite and easily move to MongoDB or PostgreSQL while caching with Redis.</p>
+			    <a href="#portability">Data portability →</a>
+			</div>
+		</div>
+
+		<!-- <div class="col-md-4">
 			<div class="appeal rightAppeal">
 			    <h3>Reactive</h3>
 			    <p>Observe model events in one image and react with an observer from another image. All in a scalable way.</p>
 			    <a href="#reactive">React to model events →</a>
 			</div>
-		</div>
-	    
+		</div>-->
 	</div>
 </div>
         </section>
         <section class="start">
                 <div class="col-md-4 loadNow center-on-mobiles">
-                    <h4>Start saving objects <em>in seconds</em></h4>
+                    <h4>Saving Smalltalk objects <em>in seconds</em></h4>
                 </div>
-                <div class="col-md-7 ">
+                <div class="col-md-8 ">
                     <div class="quickstart">
                         <p class="shellTitle">Load in Pharo</p>
                         <div class="shell">
-<div class="highlight"><pre><code class="st"><span class="nc">Gofer</span> <span class="nf">it</span> 
-    <span class="nf">smalltalkhubUser:</span> <span class="s">&#39;Pharo&#39;</span>
-    <span class="nf">project:</span> <span class="s">&#39;MetaRepoForPharo30&#39;</span><span class="p">;</span> 
-    <span class="nf">package:</span> <span class="s">&#39;ConfigurationOfMapless&#39;</span><span class="p">;</span>
-    <span class="nf">load</span><span class="p">.</span>
-
-(<span class="nc">Smalltalk</span> <span class="nf">at:</span> <span class="ss">#ConfigurationOfMapless</span>) <span class="nf">load</span>
-</code></pre></div>
+<figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span><span class="nc">Metacello</span> <span class="nb">new</span>
+      <span class="nf">baseline:</span> <span class="s">&#39;Mapless&#39;</span><span class="p">;</span>
+      <span class="nf">repository:</span> <span class="s">&#39;github://sebastianconcept/Mapless:latest/src&#39;</span><span class="p">;</span>
+      <span class="nf">load</span></code></pre></figure>
 </div>
 
                     </div>
@@ -86,16 +88,17 @@
         <section class="howDoesItFeel">
                 <div class="col-md-5 ">
                     <div class="elaborate">
-                        <h5>Need to save your models?</h5>
-                        <p>Great! this is what happens with Mapless:</p>
+                        <h5>Your application needs to persist modeled data?</h5>
+                        <p>This is what happens when you do it with Mapless:</p>
                         <ol>
-                            <li>Create a subclass for them</li>
-                            <li><del>Know in advance what attributes they will need</del></li>
-                            <li><del>Create its attributes' instVars</del></li>
-                            <li><del>Make accessors for all of them</del></li>
-                            <li><del>Elegantly map them so it all fits in the database</del></li>
-                            <li><del>Patiently re-map them every time you need to change its design saying 'hi' to object-database mismatch</del></li>
-                            <li>Profit</li>
+                            <li>Create a subclass for them.</li>
+                            <li><del>Know in advance what attributes they will need./del></li>
+                            <li><del>Create its attributes' instVars.</del></li>
+                            <li><del>Make accessors for all of them.</del></li>
+                            <li><del>Elegantly map them so it all fits in the database.</del></li>
+                            <li><del>Patiently re-map them every time you need to change its design saying 'hi' to object-database mismatches.</del></li>
+                            <li>Actually save them.</li>
+                            <li>Profit.</li>
                         </ol>
                     </div>
                 </div>
@@ -110,18 +113,32 @@
                 <div class="col-md-12">
                     <div class="elaborate">
                         <h5>How does it look like?</h5>
-                        <p>You can store  and retrieve your Mapless models on MongoDB in a breeze. Here is a couple of snippets of real code used while developing <a href="http://tasks.flowingconcept.com">tasks</a>.</p>
-                        <p>Getting a connection:</p>
+                        <p>Let's say you want to store and retrieve instances of <code>Task</code> as Mapless models using MongoDB as backend.</p>
+                        <p>You basically will create a repository object, create Task instances that you'll save, query, update or delete.</p>
+                        <p>Let's see the snippets for that step by step.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="elaborate">
+                        <h5>Create the repository</h5>
+                        <p>There are two ways to access MongoDB with Mapless. <code>MaplessStandaloneMongoPool</code> for single server setups and <code>MaplessMongoReplicaSetPool</code> for clusters of <a href="https://www.mongodb.com/docs/manual/replication/" target="_blank"> replica sets</a>.</p>
+                        <p>The following example shows a local standalone MongoDB example.</p>
                     </div>
                 </div>
 
                 <div class="col-md-9 workspace">
                     <div class="">
-                        <p class="shellTitle">Get a connection</p>
+                        <p class="shellTitle">Instantiate the repository</p>
                         <div class="shell">
-<div class="highlight"><pre><code class="st"><span class="c">&quot;Getting a connection to the &#39;Reactive&#39; database&quot;</span>
-<span class="nv">odb</span> <span class="o">:=</span> <span class="nc">MongoPool</span> <span class="nf">instance</span> <span class="nf">databaseAt:</span> <span class="s">&#39;Reactive&#39;</span><span class="p">.</span>
-</code></pre></div>
+  <figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span> 
+  <span class="c">&quot;Create the repository object to use the &#39;TryingMapless&#39; database.</span>
+<span class="c">  This repository is for a local standalone MongoDB at localhost:27017&quot;</span> 
+  <span class="nv">databaseName</span> <span class="o">:=</span> <span class="s">&#39;TryingMapless&#39;</span><span class="p">.</span> 
+  <span class="nv">repository</span> <span class="o">:=</span> <span class="nc">MaplessMongoRepository</span> 
+    <span class="nf">for:</span> <span class="nv">databaseName</span> 
+    <span class="nf">with:</span> <span class="nc">MaplessStandaloneMongoPool</span> <span class="nf">local</span><span class="p">.</span> 
+  </code></pre></figure>
 </div>
 
                     </div>
@@ -129,50 +146,56 @@
 
                 <div class="col-md-12">
                     <div class="elaborate extraTop">
-                        <p>Creating new instances of your models have nothing special. You treat them like any other object</p>
+                        <h5>Model your data</h5>
+                        <p>Creating new instances of your data models have nothing special. You treat them like any other object.</p>
+                        <p>The only thing to remark here is that you do not need to create the mutator methods <code>description:</code> nor <code>isComplete:</code> in the <code>Task</code> class.</p>
                     </div>
-                </div>
+                </div>                
+
                 <div class="col-md-9 workspace">
                     <div class="">
                         <p class="shellTitle">Create a new model</p>
                         <div class="shell">
-<div class="highlight"><pre><code class="st"><span class="c">&quot;Creating a &#39;task&#39; object&quot;</span>
-<span class="nv">task</span> <span class="o">:=</span> <span class="nc">RTask</span> <span class="nb">new</span> <span class="nf">description:</span> <span class="s">&#39;Try Mapless&#39;</span><span class="p">;</span> <span class="nf">beIncomplete</span><span class="p">.</span>
-</code></pre></div>
+<figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span><span class="nc">Mapless</span> <span class="nf">subclass:</span> <span class="ss">#Task</span>
+	<span class="nf">instanceVariableNames:</span> <span class="s">&#39;&#39;</span>
+	<span class="nf">classVariableNames:</span> <span class="s">&#39;&#39;</span>
+	<span class="nf">category:</span> <span class="s">&#39;YourApp&#39;</span><span class="p">.</span>
+
+<span class="c">&quot;Create a task instance&quot;</span>
+<span class="nv">task</span> <span class="o">:=</span> <span class="nc">Task</span> <span class="nb">new</span> 
+	<span class="nf">description:</span> <span class="s">&#39;Try Mapless&#39;</span><span class="p">;</span> 
+	<span class="nf">isComplete:</span> <span class="bp">false</span><span class="p">.</span></code></pre></figure>
 </div>
 
                     </div>
-                </div> 
+                </div>                 
 
                 <div class="col-md-12">
                     <div class="elaborate extraTop">
-                        <h5>Saving a model</h5>
-                        <p>In Mapless you do things inside the <code>#do:[ "your things here" ]</code> closure which Mapless uses to automatically discern which MongoDB database and collection has to be used. It will automatically know if the save operation has to be an insert or an update. And, as bonus, you also get the collection <em>and</em> the database created lazily.</p>
+                        <h5>Storing</h5>
+                        <p></p>
                     </div>
-
                 </div>
 
                 <div class="col-md-9 workspace">
                     <div class="">
                         <p class="shellTitle">Saving a model</p>
                         <div class="shell">
-<div class="highlight"><pre><code class="st"><span class="c">&quot;Saving the &#39;task&#39; object&quot;</span>
-<span class="nv">odb</span> <span class="nf">do:</span>[<span class="nv">task</span> <span class="nf">save</span>]<span class="p">.</span>
-</code></pre></div>
+  <figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span><span class="c">&quot;Saving the task object&quot;</span>
+  <span class="nv">repository</span> <span class="nf">do:</span> [ <span class="nv">task</span> <span class="nf">save</span> ]<span class="p">.</span>
+
+  <span class="c">&quot;Saving the task object when its class implements getRepository&quot;</span>
+  <span class="nv">task</span> <span class="nf">save</span><span class="p">.</span>
+  </code></pre></figure>
 </div>
 
                     </div>
                 </div> 
 
-                <div class="col-md-12 ">
-                    <div class="elaborate">
-                        <p>At <a href="http://flowingconcept.com">flowing</a> we call this a <em>low-friction</em> save.</p>
-                    </div>
-                </div>
                  <div class="col-md-12 ">
-                    <div class="elaborate">
-                        <h5 id="getting">Getting stored objects</h5>
-                        <p>Here you have some basic queries.</p>
+                    <div class="elaborate extraTop">
+                        <h5 id="getting">Querying</h5>
+                        <p>Mapless can use different persistent backends and depending on which one you're using is how you implement the queries for your data. For example when Mapless has a PostgreSQL or SQLite backend you'll be using SQL, when it has MongoDB it uses the <a href="http://smalltalkhub.com/#!/~MongoTalkTeam/mongotalk">MongoTalk</a> querying feature and for Redis you'll be using a namespaced convention.</p>
                     </div>
                 </div>
 
@@ -180,12 +203,35 @@
                     <div class="">
                         <p class="shellTitle">Fetching objects</p>
                         <div class="shell">
-<div class="highlight"><pre><code class="st"><span class="c">&quot;Getting all models of a given Mapless class&quot;</span>
-<span class="nv">allTasks</span> <span class="o">:=</span> <span class="nv">odb</span> <span class="nf">do:</span>[<span class="nc">RTask</span> <span class="nf">findAll</span>]<span class="p">.</span>
+  <figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span><span class="c">&quot;Get all models of a given Mapless class from the repository&quot;</span>
+    <span class="nv">allTasks</span> <span class="o">:=</span> <span class="nv">repository</span> <span class="nf">findAll:</span> <span class="nc">Task</span><span class="p">.</span>
 
-<span class="c">&quot;Getting a specific model using its id&quot;</span>
-<span class="nv">theTask</span> <span class="o">:=</span> <span class="nv">odb</span> <span class="nf">do:</span>[<span class="nc">RTask</span> <span class="nf">findAt:</span> <span class="s">&#39;c472099f-79b9-8ea2-d61f-e5df34b3ed06&#39;</span>]<span class="p">.</span>
-</code></pre></div>
+    <span class="c">&quot;Same but when your Mapless class can do its own getRepository&quot;</span>
+    <span class="nv">allTasks</span> <span class="o">:=</span> <span class="nc">Task</span> <span class="nf">findAll</span><span class="p">.</span>
+
+    <span class="c">&quot;Getting a specific model using its id&quot;</span>
+    <span class="nv">thatTask</span> <span class="o">:=</span> <span class="nc">Task</span> <span class="nf">findId:</span> <span class="s">&#39;c472099f-79b9-8ea2-d61f-e5df34b3ed06&#39;</span><span class="p">.</span>
+
+    <span class="c">&quot;The Mapless models that are stored in MongoDB can use MongoTalk querying features&quot;</span>
+    <span class="nv">thatTask</span> <span class="o">:=</span> <span class="nc">Task</span> <span class="nf">findOne:</span> { <span class="ss">#description</span> <span class="nf">-&gt;</span> <span class="s">&#39;Try Mapless&#39;</span> } <span class="nf">asDictionary</span><span class="p">.</span>
+    
+    <span class="c">&quot;All tasks of a given user&quot;</span>
+    <span class="nv">allUserTasks</span> <span class="o">:=</span> <span class="nc">Task</span> <span class="nf">find:</span> { <span class="ss">#username</span> <span class="nf">-&gt;</span> <span class="s">&#39;tasksninja&#39;</span> } <span class="nf">asDictionary</span><span class="p">.</span>
+
+    <span class="c">&quot;Second batch of 10 tasks about trying something ordered by description&quot;</span>
+    <span class="nv">criteria</span> <span class="o">:=</span> { <span class="ss">#description</span> <span class="nf">-&gt;</span> { <span class="s">&#39;$regex&#39;</span> <span class="nf">-&gt;</span> <span class="s">&#39;^Try.*&#39;</span> } <span class="nf">asDictionary</span> } <span class="nf">asDictionary</span><span class="p">.</span>
+    <span class="nv">userTasksAboutTryingThings</span> <span class="o">:=</span> <span class="nc">Task</span> <span class="nf">find:</span> <span class="nv">criteria</span>
+      <span class="nf">limit:</span> <span class="m">10</span>
+      <span class="nf">offset:</span> <span class="m">20</span>
+      <span class="nf">sort:</span> { <span class="ss">#description</span> <span class="nf">-&gt;</span> <span class="m">1</span> } <span class="nf">asDictionary</span><span class="p">.</span>   
+
+    <span class="c">&quot;Same query but with a PostgreSQL backend instead&quot;</span>
+    <span class="nv">criteria</span> <span class="o">:=</span> <span class="s">&#39;maplessData-&gt;&gt; &#39;&#39;description&#39;&#39; LIKE &#39;&#39;Try%&#39;&#39;&#39;</span><span class="p">.</span>
+    <span class="nv">userTasksAboutTryingThings</span> <span class="o">:=</span> <span class="nc">Task</span> <span class="nf">find:</span> <span class="nv">criteria</span>
+      <span class="nf">limit:</span> <span class="m">10</span>
+      <span class="nf">offset:</span> <span class="m">20</span>
+      <span class="nf">sort:</span> <span class="s">&#39;description DESC&#39;</span><span class="p">.</span>
+    </code></pre></figure>
 </div>
 
                     </div>
@@ -193,8 +239,8 @@
 
                  <div class="col-md-12 ">
                     <div class="elaborate extraTop">
-                        <h5 id="adding">Powerful queries</h5>
-                        <p>Mapless uses <a href="http://smalltalkhub.com/#!/~MongoTalkTeam/mongotalk">MongoTalk</a> to connect to the database so you have all its power at your fingertips. Need an efficient query? No problem, just make the index in mongoDB, a class method to query on it from your model class and you're ready for your next task.</p>
+                        <h5 id="adding">Making the queries powerful</h5>
+                        <p>Let's say you are using a MongoDB backend and want a production ready query by <code>username</code> for this <code>Task</code> data model. All you have to do is to <a href="https://www.mongodb.com/docs/manual/reference/method/db.collection.createIndex/" target="_blank">create an index in MongoDB</a> for <code>username</code> in the <code>Task</code> collection, and if it's of your preference, a class method in <code>Task</code> for the query.</p>
                     </div>
                 </div>
 
@@ -202,9 +248,13 @@
                     <div class="">
                         <p class="shellTitle">Querying efficiently</p>
                         <div class="shell">
-<div class="highlight"><pre><code class="st"><span class="c">&quot;Query objects using an indexed attribute&quot;</span>
-<span class="nv">hisTasks</span> <span class="o">:=</span> <span class="nv">odb</span> <span class="nf">do:</span>[<span class="nc">RTask</span> <span class="nf">findAtUsername:</span> <span class="s">&#39;awesomeguy&#39;</span>]<span class="p">.</span>
-</code></pre></div>
+  <figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span><span class="nc">Task</span> <span class="nf">class&gt;&gt;findAtUsername:</span> <span class="nv">aString</span>
+        <span class="c">&quot;Answer the Task with the given username or nil if there is no match for it.&quot;</span>
+        <span class="o">^</span> <span class="bp">self</span> <span class="nf">findOne:</span> { <span class="ss">#username</span> <span class="nf">-&gt;</span> <span class="nv">aString</span> } <span class="nf">asDictionary</span><span class="p">.</span>
+
+  <span class="c">&quot;Query objects using an indexed attribute&quot;</span>
+  <span class="nv">tasks</span> <span class="o">:=</span> <span class="nv">repository</span> <span class="nf">do:</span> [ <span class="nc">Task</span> <span class="nf">findAtUsername:</span> <span class="s">&#39;tasksninja&#39;</span> ]<span class="p">.</span>
+  </code></pre></figure>
 </div>
 
                     </div>
@@ -212,49 +262,43 @@
 
                  <div class="col-md-12 ">
                     <div class="elaborate extraTop">
-                        <h5 id="adding">Adding stuff to models</h5>
-                        <p>Simply do it. Unless overriden, Mapless will catch all messages you send to your models with a DNU and is smart enough to allow you to add a date a string or other objects without declaring instVars or making any accessors.</p>
+                        <h5 id="updating">Adding properties to models</h5>
+                        <p>Simply do it. Unless overriden, Mapless catches all messages you send to a model via <a href="https://wiki.c2.com/?DoesNotUnderstand" target="_blank">DNU</a>. It is smart enough to allow you to add a date a string or almost any other object without declaring instVars or demanding making schemas or any accessors for it.</p>
                     </div>
                 </div>
 
                 <div id="simple" class="col-md-9 workspace">
                     <div class="">
-                        <p class="shellTitle">Adding information in a model</p>
+                        <p class="shellTitle">Adding information to your data</p>
                         <div class="shell">
-<div class="highlight"><pre><code class="st"><span class="c">&quot;Add stuff to a model, then save&quot;</span>
-<span class="nv">odb</span> <span class="nf">do:</span>[
+<figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span><span class="c">&quot;Adds or updates values of the model properties, then saves&quot;</span>
+<span class="nv">repository</span> <span class="nf">do:</span> [
     <span class="nv">task</span> 
         <span class="nf">deadline:</span> <span class="nc">Date</span> <span class="nf">tomorrow</span><span class="p">;</span> 
         <span class="nf">notes:</span> <span class="s">&#39;Wonder how it feels to use this thing, hmm...&#39;</span><span class="p">;</span>
-        <span class="nf">save</span>]<span class="p">.</span>
+        <span class="nf">save</span> ]<span class="p">.</span>
 
-<span class="c">&quot;No, wait! we forgot to add this:&quot;</span>
-<span class="nv">odb</span> <span class="nf">do:</span>[
+<span class="c">&quot;No, wait! we forgot to add this...&quot;</span>
+<span class="nv">repository</span> <span class="nf">do:</span> [
     <span class="nv">task</span> 
-        <span class="nf">priority:</span> <span class="s">&#39;High&#39;</span><span class="p">;</span>
-        <span class="nf">save</span>]<span class="p">.</span>
+        <span class="nf">priority:</span> <span class="ss">#high</span><span class="p">;</span>
+        <span class="nf">save</span> ]<span class="p">.</span>
 
-<span class="c">&quot;...and this:&quot;</span>
-<span class="nv">odb</span> <span class="nf">do:</span>[
+<span class="c">&quot;...and this&quot;</span>
+<span class="nv">repository</span> <span class="nf">do:</span> [
     <span class="nv">task</span> 
-        <span class="nf">tags:</span> <span class="ss">#(</span><span class="s">&#39;Cool&#39;</span> <span class="s">&#39;Stuff&#39;</span><span class="ss">)</span><span class="p">;</span>
-        <span class="nf">save</span>]<span class="p">.</span>
-</code></pre></div>
+        <span class="nf">tags:</span> <span class="ss">#(</span><span class="s">&#39;flexible&#39;</span> <span class="s">&#39;portable&#39;</span><span class="ss">)</span><span class="p">;</span>
+        <span class="nf">save</span> ]<span class="p">.</span></code></pre></figure>
 </div>
 
                     </div>
                </div> 
-                <div class="col-md-12">
-                    <div class="elaborate">
-                        <p>At <a href="http://flowingconcept.com">flowing</a> we call this <em>low-maintenance</em> storage.</p>
-                    </div>
-                </div>
 
-                 <div id="composable" class="col-md-12 ">
+                 <div id="composability" class="col-md-12 ">
                     <div class="elaborate">
                         <h5 id="adding">Composition</h5>
-                        <p>You add whatever you need to them, even other Mapless models.</p>
-                        <p>When you want to compose your models, the only thing Mapless asks you in return is that your app pays attention to the order in which the models are saved. The way Mapless works is saving the children first. That's not too bad right?</p>
+                        <p>When you model data with your own Mapless classes, you can add almost any property to them, specially other Mapless models, hence composition. When that happens, Mapless will use one collection or table in the backend per type of Mapless object.</p>
+                        <p>The main rule when working with composition here is <em>save the children first</em>.</p>
                     </div>
                 </div>
 
@@ -263,15 +307,21 @@
                     <div class="">
                         <p class="shellTitle">Composing models</p>
                         <div class="shell">
-<div class="highlight"><pre><code class="st"><span class="c">&quot;Create and save an alert for the task, then add it and save&quot;</span>
-<span class="nv">odb</span> <span class="nf">do:</span>[ <span class="o">|</span><span class="nv">anAlert</span><span class="nf">|</span>
-  <span class="nv">anAlert</span> <span class="o">:=</span> <span class="nc">RAlert</span> <span class="nb">new</span> 
-                <span class="nf">duration:</span> <span class="m">24</span> <span class="nf">hours</span><span class="p">;</span>
-                <span class="nf">message:</span> <span class="s">&#39;Get it done!&#39;</span><span class="p">;</span>
-                <span class="nf">save</span><span class="p">.</span>
-    <span class="nv">task</span> <span class="nf">alert:</span> <span class="nv">anAlert</span><span class="p">.</span>
-    <span class="nv">task</span> <span class="nf">save</span>]<span class="p">.</span>
-</code></pre></div>
+  <figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span> 
+<span class="c">&quot;Create and save a new alert for the task, </span>
+<span class="c">then add it to the task and save the task&quot;</span> 
+  <span class="nv">repository</span> <span class="nf">do:</span> [ <span class="o">|</span> <span class="nv">anAlert</span> <span class="nf">|</span> 
+    
+    <span class="c">&quot;Create new alert and save it&quot;</span>
+    <span class="nv">alert</span> <span class="o">:=</span> <span class="nc">Alert</span> <span class="nb">new</span> 
+      <span class="nf">duration:</span> <span class="m">24</span> <span class="nf">hours</span><span class="p">;</span>
+      <span class="nf">message:</span> <span class="s">&#39;Get it done!&#39;</span><span class="p">;</span> 
+      <span class="nf">save</span><span class="p">.</span> 
+
+    <span class="c">&quot;Update the task having that saved alert&quot;</span>
+    <span class="nv">task</span> <span class="nf">alert:</span> <span class="nv">alert</span><span class="p">.</span> 
+    <span class="nv">task</span> <span class="nf">save</span> ]<span class="p">.</span> 
+  </code></pre></figure>
 </div>
 
                     </div>
@@ -280,7 +330,8 @@
                 <div class="col-md-12 ">
                     <div class="elaborate extraTop">
                         <h5 id="adding">Graph navigation</h5>
-                        <p>Mapless embraces laziness. When you navigate the object graph, it will return references for every (sub)model known by the root you got. When you send a message to a (sub)model, the #DNU method will return it resolving as if it was always there.</p>
+                        <p>When you save a Mapless object, you are planting the root of a graph. When you send a message to a composed Mapless object, reaching to the child Mapless is like navigating the object graph one level deeper. Mapless objects that are composed will return lazy references for every (sub)mapless known by the parent. When you send a message to a (sub)model, the DNU method will return it resolving as if it was always there.</p>
+                        <p>At the same time, if a Mapless object never sends any message to a child, then your application is not doing any unnecessary query for that and your backend will say thanks for preventing it do unnecessary extra work.</p>
                     </div>
                 </div>
 
@@ -288,76 +339,34 @@
                     <div class="">
                         <p class="shellTitle">Navigating model graphs</p>
                         <div class="shell">
-<div class="highlight"><pre><code class="st"><span class="c">&quot;Lazy access to all model&#39;s parts&quot;</span>
-<span class="nv">odb</span> <span class="nf">do:</span>[<span class="nv">task</span> <span class="nf">alert</span> <span class="nf">message</span>]<span class="p">.</span>   
+<figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span><span class="c">&quot;The alert property has an instance of MaplessReference&quot;</span>
+<span class="nv">repository</span> <span class="nf">do:</span> [ <span class="nv">task</span> <span class="nf">alert</span> <span class="nf">class</span> <span class="nf">=</span> <span class="nc">MaplessReference</span> ]<span class="p">.</span>
+<span class="c">&quot;=&gt; true&quot;</span>
 
-<span class="nv">odb</span> <span class="nf">do:</span>[<span class="nv">task</span> <span class="nf">alert</span> <span class="nf">class</span> <span class="nf">=</span> <span class="nc">MaplessReference</span>]<span class="p">.</span>  
-<span class="c">&quot;=&gt; true&quot;</span>   
-
-<span class="nv">odb</span> <span class="nf">do:</span>[<span class="nv">task</span> <span class="nf">alert</span> <span class="nf">description</span>]<span class="p">.</span>  
-<span class="c">&quot;=&gt; &#39;Get it done!&#39;&quot;</span>   
-</code></pre></div>
+<span class="c">&quot;Alert as (sub)model in task, is lazily fetched with the first message </span>
+<span class="c">and responding as if always would have been ready&quot;</span>
+<span class="nv">repository</span> <span class="nf">do:</span> [ <span class="nv">task</span> <span class="nf">alert</span> <span class="nf">message</span> ]<span class="p">.</span>
+<span class="c">&quot;=&gt; &#39;Get it done!&#39;&quot;</span></code></pre></figure>
 </div>
 
                     </div>
                 </div> 
 
-
-                <div id="reactive" class="col-md-12 ">
+                <div class="col-md-12 ">
                     <div class="elaborate extraTop">
-                        <h5>Mapless powered by Redis</h5>
-                        <p>Redis is great for:</p>
+                        <h5 id="portability">Supported backends</h5>
+                        <p>All Mapless subclasses have the same basic Smalltalk API and at the time to resolve the requested operations they delegate that in a <code>MaplessRepository</code> subclass corresponding to one of the concrete supported backends.</p>
+                        <p>The following are currently supported:</p>
                         <ol>
-                            <li><strong>Caching</strong>. It will hold the data in RAM so you get great response times.</li>
-                            <li><strong>Reactivity</strong>. There is a set of Mapless that uses Redis <a href="http://redis.io/topics/pubsub">PUB/SUB</a> feature to observe/react models among N worker images enabling <a href="http://en.wikipedia.org/wiki/Scalability#Horizontal_and_vertical_scaling">horizontal scaling</a>.</li>
+                            <li>SQLite.</li>
+                            <li>PostgreSQL.</li>
+                            <li>MongoDB.</li>
+                            <li>Redis.</li>
+                            <li>Memory.</li>
+                            <li><s>UnQLite</s>. Deprecated and retiring soon.</li>
                         </ol>
-                        <p>Here is a workspace for Redis-based Mapless models:</p>
                     </div>
                 </div>
-
-                <div class="col-md-9 workspace">
-                    <div class="">
-                        <p class="shellTitle">Mapless on Redis</p>
-                        <div class="shell">
-<div class="highlight"><pre><code class="st"><span class="c">&quot;Get a connection to Redis&quot;</span>
-<span class="nv">redis</span> <span class="o">:=</span> <span class="nc">RedisPool</span> <span class="nf">instance</span><span class="p">.</span>
-
-<span class="c">&quot;Subclass MaplessRedis with your models.</span>
-<span class="c">As with Mongo, these Mapless have no need </span>
-<span class="c">to declare instVars nor setters nor getters&quot;</span>
-<span class="nc">MaplessRedis</span> <span class="nf">subclass:</span> <span class="ss">#DummyPerson</span>
-	<span class="nf">instanceVariableNames:</span> <span class="s">&#39;&#39;</span>
-	<span class="nf">classVariableNames:</span> <span class="s">&#39;&#39;</span>
-	<span class="nf">category:</span> <span class="s">&#39;YourApp&#39;</span>
-
-
-<span class="c">&quot;Make a new reactive model&quot;</span>
-<span class="nf">guy</span> <span class="o">:=</span> <span class="nc">DummyPerson</span> <span class="nb">new</span>
-            <span class="nf">firstName:</span> <span class="s">&#39;John&#39;</span><span class="p">;</span>
-            <span class="nf">lastName:</span> <span class="s">&#39;Q&#39;</span><span class="p">;</span>
-            <span class="nf">yourself</span><span class="p">.</span>               
-
-<span class="c">&quot;Save it&quot;</span>
-<span class="nv">redis</span> <span class="nf">do:</span>[<span class="o">:</span><span class="nv">r</span><span class="o">|</span> <span class="nv">guy</span> <span class="nf">save</span>]<span class="p">.</span>
-
-<span class="c">&quot;Find it&quot;</span>
-<span class="nv">redis</span> <span class="nf">do:</span>[<span class="o">:</span><span class="nv">r</span><span class="o">|</span> <span class="nc">DummyPerson</span> <span class="nf">findAt:</span> <span class="s">&#39;38skolpqv0y9lazmk772hmsed&#39;</span>]<span class="p">.</span>
-
-<span class="c">&quot;Navigate it&quot;</span>
-<span class="nv">redis</span> <span class="nf">do:</span>[<span class="o">:</span><span class="nv">r</span><span class="o">|</span> (<span class="nc">DummyPerson</span> <span class="nf">findAt:</span> <span class="s">&#39;38skolpqv0y9lazmk772hmsed&#39;</span>) <span class="nf">lastName</span>]<span class="p">.</span>
-<span class="c">&quot;=&gt; &#39;Q&#39;&quot;</span>
-</code></pre></div>
-</div>
-
-                    </div>
-                </div> 
-
-                <div class="col-md-9 workspace">
-                    <div class="elaborate">
-                        <p>Wait a sec, where's my reactivity there?</p>
-                        <p>Oh snap! you got us there... Reactivity is not ready for prime time yet. But we're getting there. Perhaps you want to <a href= "#involved">join your talent to this effort</>?</p>
-                    </div> 
-                </div> 
 
                  <div id="why" class="col-md-12 ">
                     <div class="fluid extraTop">
@@ -365,19 +374,20 @@
 	    <div class="col-md-7 h5NoTop">
 	        <h5 class="h5NoTop">Why Mapless?</h5>
 	        <div class="thumb">
-	            <a href="http://about.me/sebastianconcept">
-	                <img alt="Sebastian's face" src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn2/t1.0-1/p50x50/1920076_4000903876523_97483785_t.jpg">
+	            <a href="https://sebastiansastre.co/" target="_blank" >
+								<img alt="Sebastian Sastre portrait" src="images/p3.jpg" width="68">
 	            </a>
 	        </div>
 
-	        <blockquote>I wanted to persist objects with <i>low friction</i>, <i>low maintenance</i> but <i>high scaling</i> and <i>availability</i> capabilities so <a href="http://github.com/sebastianconcept/Mapless" target="_blank">Mapless</a> is totally biased towards that. This framework is what I came up with after incorporating my experience with <a href="https://github.com/sebastianconcept/Aggregate" target="_blank">Aggregate</a> in <a href="http://airflowing.com">airflowing</a>.
+	        <blockquote>I wanted to persist objects with <i>low friction</i>, <i>low maintenance</i> but high <i>scale</i>, <i>throughput</i> and <i>availability</i> capabilities and <a href="http://github.com/sebastianconcept/Mapless" target="_blank">Mapless</a> is totally biased towards that. This framework is what I came up with after incorporating my SaaS experience with <a href="https://www.youtube.com/watch?v=7Z29q5PUoJs" target="_blank">airflowing</a>.
 	        </blockquote>
 	    </div>
 	    <ul class="col-md-5 thereIsNo">
-	      <li>There is no instVars...</li>
-	      <li>There is no accessors...</li>
-	      <li>There is no object-mapping impedance...</li>
-	      <li></br>Only persistence.</li>
+	      <li>There are no instVars...</li>
+	      <li>No accessors...</li>
+	      <li>No object-mapping impedance...</li>
+	      <li></br>— Only persistence.</li>
+	      <li></br>What would you do with it?</li>
 	    </ul>
 	</div>
 </div>
@@ -386,63 +396,46 @@
                  <div id="involved" class="col-md-12 ">
                     <div class="elaborate">
                         <h5 class="">Frequently Asked Questions</h5>
-                            <p><em>What saving 'Models' means? why not any object?</em> By Models Mapless means that you are not pretending to save transient stuff like contexts or sockets or filehandlers, etc. Any instance of a MongoMapless subclass will save in a breeze. Those instances are going to be serialized and stored as documents of its correspondant MongoDB collection.<p>
-                            <p><em>Is only for tree-like structures or does actually support an object graph?</em> Given that you follow its rules,like saving children first and thinking your models as noSQL friendly documents, yes, it does support an arbitrary object graph.<p>
-                            <p><em>Why would I want to use Mapless?</em> Because you might want to profit from some of these benefits:
+                            <p><em>What saving 'Models' means? why not any object?</em></p>
+                            <p>By models Mapless means that you are not pretending to save transient stuff like contexts or sockets or file handlers, etc. Any instance of a <code>Mapless</code> subclass will save in a breeze. Those instances are going to be serialized and stored as documents of its own MongoDB collection or PostgreSQL table.<p>
+                            <p><em>Is only for tree-like structures or does actually support an object graph?</em></p>
+                            <p>Given that you follow its rules,like saving children first and thinking your models as noSQL friendly documents, yes, it does support an arbitrary object graph.<p>
+                            <p><em>Why would I want to use Mapless?</em></p>
+                            <p> Because you might want to profit from some of these benefits:
                             <ol>
-                                <li>JSON friendly models</li>
-                                <li>Having 1:1 interoperability of your models with Ruby and NodeJS and any JSON friendly object oriented app</li>
-                                <li>Dealing with Gigas or Teras order of magnitude databases</li>
-                                <li>High availability</li>
-                                <li>Easy replication of the whole database across the cloud</li>
-                                <li>Databases many people is familiar to use and <em>maintain</em></li>
-                                <li>Powerful queries and custom indices</li>
-                                <li>Freedom from <em>a prioristic</em> instVars declarations</li>
-                                <li>Freedom from mappings maintenance <em>when</em> the design changes</li>                                
-                                <li>Trans-image model caching (requires Redis)</li>
-                                <li>Trans-image model observation/reaction, horizontally scalling the <a href="http://en.wikipedia.org/wiki/Observer_pattern" target="_bank">Observer Pattern</a> (requires Redis)</li>
-                                <li>Friendly to mobile noSQL database use and sync (requires CouchDB)</li>
-                            </ol> All that with <em>very low-friction and low-maintenance</em> using one simple API<p>                    
-                    </div>
-                </div>
-
-                 <div id="involved" class="col-md-12 ">
-                    <div class="elaborate">
-                        <h5 class="">Get involved!</h5>
-                            <p>Want to push this forward? Awesome!</p>
-                            <ol>
-                                <li>Clone the repo</li>
-                                <li>Add your contribution / feature / bugfix</li>
-                                <li>Send your pull request</li>
-                            </ol>
+                                <li>JSON friendly persisted models.</li>
+                                <li>Having frictionless system interoperability with Ruby and NodeJS and any JSON friendly object oriented app.</li>
+                                <li>Dealing with Gigas or Teras order of magnitude databases.</li>
+                                <li>High availability via <a href="https://www.mongodb.com/docs/manual/replication/" target="_bank">MongoDB Replica Set features</a> or <a href="https://www.postgresql.org/docs/current/high-availability.html" target="_bank">PostgreSQL Replication</a>.</li>
+                                <li>Replication of the whole database across the cloud.</li>
+                                <li>World class databases many engineers are familiar to use and <em>maintain</em>.</li>
+                                <li>Powerful queries and custom indices.</li>
+                                <li>Freedom from <em>a prioristic</em> instVars declarations.</li>
+                                <li>Freedom from mappings maintenance <em>when</em> the design changes.</li>                                
+                                <li>Cross-image model caching (requires Redis).</li>
+                                <li>Cross-image model observation/reaction, horizontally scalling the <a href="http://en.wikipedia.org/wiki/Observer_pattern" >Observer Pattern</a> (requires Redis PUB/SUB).</li>
+                            </ol> All that with <em>very low-friction and low-maintenance</em> using one comfortable API.<p>                    
                     </div>
                 </div>
 
                  <div id="direction" class="col-md-12 ">
                     <div class="elaborate">
-                        <h5>Direction?</h5>
-                        <ol>
-                            <li>We would love to see more and better tests and iterate the design of the reactive features so you can ultimately get an a model in one image being observed in regard to one event by something in another image and that something reacting upon that event. Broadcast and multicast of events would be also a nice feat and not too hard to do. Have design suggestions? Let's have a chat!</li>
-                            <li>For MongoDB-based Mapless, a nice feature would be to have <code>UserModel ensureIndex: '{ key1: 1, key2: -1 }'</code></li>
-                            <li>We actually are starting to think <a href="http://amber-lang.net">Amber</a> and <a href="http://en.wikipedia.org/wiki/Web_storage">localStorage</a> but that's more hush hush at this point. Oh gee! <a href="https://www.youtube.com/watch?v=ZDC1N5wYsMg">we already</a> blown it!</li>
-                        </ol>
-                        <p>Want to discuss its design? Lets hangout</p>
+                        <h5>Need support?</h5>
+                        <p>Don't hesitate to reach out in <a href="https://twitter.com/sebastianconcpt" target="_blank">𝕏</a> or <a href="https://www.linkedin.com/in/sebastiansastre/" target="_blank">LinkedIn</a> <a href="https://discord.com/invite/QewZMZa" target="_blank">Pharo Discord server</a> for discussing design possibilities and implementation support.</p>
                     </div>
                 </div>
 
                  <div class="col-md-12">
                     <div class="elaborate ">
                         <h5 class="">License</h5>
-                        <p>All Mapless software and the contents of this website are © 2014 by <a href="http://about.me/sebastianconcept">Sebastian Sastre</a> under the terms of <a href="https://github.com/sebastianconcept/Mapless/blob/master/LICENSE">MIT License</a></p>
+                        <p>Since 2014 <a href="http://sebastiansastre.co">Sebastian Sastre</a> published Mapless under the terms of <a href="https://github.com/sebastianconcept/Mapless/blob/master/LICENSE">MIT License</a>.</p>
                 </div>
         </section>
-
 </div>
 <div>
     <div class="foot">
-	<p>Proudly shared by <a href="http://flowingconcept.com" target="_blank">flowing</a></p>
-	<p>Meant for creativity and wealth creation</p>
-	<p>April 2014</p>
+	<p>Proudly shared by <a href="http://flowingconcept.co" target="_blank">Flowing</a></p>
+	<p>Since April 2014</p>
 </div>
 </div>
     </body>

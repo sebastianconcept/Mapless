@@ -24,6 +24,7 @@ body span {
 code {
   color: #729fcf !important;
   background-color: #3d3d3d !important;
+  padding: 0 4px !important;
 }
 
 body h1 { 
@@ -67,7 +68,7 @@ body h5 {
 }
 
 .appeal {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: lighter;
 }
 
@@ -98,12 +99,11 @@ h5.h5NoTop{
 }
 .thereIsNo li {
   list-style: none;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .thumb {
-  width: 48px;
-  height: 48px;
+  width: 68px;
   display: block;
   float: left;
   margin: 28px 15px 10px 18px; 
@@ -171,7 +171,7 @@ blockquote {
 }
 
 .quickstart {
-  margin: 20px 10px;
+  margin: 40px 10px 40px 10px;
 }
 
 .loadNow {
@@ -278,6 +278,6 @@ pre {
 }
 
 .foot {
- margin: 0 0 60px 0; 
+ margin: 40px 0 60px 0; 
  text-align: center;
 }
