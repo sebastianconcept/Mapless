@@ -7,6 +7,12 @@ Class {
 	#category : #'Mapless-SQLite-Core'
 }
 
+{ #category : #'instance creation' }
+MaplessSQLiteRepository class >> for: aDatabaseName on: aPathString [
+
+	^ self for: aDatabaseName with: (MaplessSQLitePool on: aPathString)
+]
+
 { #category : #actions }
 MaplessSQLiteRepository class >> getNewId [
 	^ UUID new asString36

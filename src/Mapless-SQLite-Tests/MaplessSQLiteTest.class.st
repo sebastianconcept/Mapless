@@ -63,10 +63,11 @@ MaplessSQLiteTest >> savePersonNamed: aString [
 
 { #category : #'setUp-tearDown' }
 MaplessSQLiteTest >> setUp [
+
 	super setUp.
 	repository := MaplessSQLiteRepository
-		for: 'Mapless-Tests'
-		with: (MaplessSQLitePool on: self class testDatabasePathString).
+		              for: 'Mapless-Tests'
+		              on: self class testDatabasePathString.
 	repository ensureDatabase.
 	self resetDatabase
 ]
