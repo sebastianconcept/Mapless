@@ -238,6 +238,21 @@ MaplessMemoryRepositoryTest >> testFindAllSorted [
 ]
 
 { #category : #tests }
+MaplessMemoryRepositoryTest >> testInsert [
+
+	| guy |
+	guy := DummyPerson new
+		       firstName: 'john';
+		       lastName: 'q';
+		       yourself.
+	repository do: [ self assert: DummyPerson findAll isEmpty ].
+	repository insert: guy.
+	repository do: [
+		self deny: DummyPerson findAll isEmpty.
+		self assert: DummyPerson findAll size equals: 1 ]
+]
+
+{ #category : #tests }
 MaplessMemoryRepositoryTest >> testSelectWithSort [
 	| found |
 	repository
