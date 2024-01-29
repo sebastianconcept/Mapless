@@ -200,6 +200,19 @@ MaplessMemoryRepositoryTest >> testDropDatabase [
 ]
 
 { #category : #tests }
+MaplessMemoryRepositoryTest >> testExistenceDetection [
+
+	| all |
+	repository do: [
+		self addDummyPeople.
+		all := DummyPerson findAll ].
+
+	self deny: (repository existsId: '123' of: DummyPerson).
+	all do: [ :guy |
+		self assert: (repository existsId: guy id of: DummyPerson) ]
+]
+
+{ #category : #tests }
 MaplessMemoryRepositoryTest >> testFindAll [
 	| found |
 	repository
