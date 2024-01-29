@@ -41,16 +41,31 @@ Mapless achieves a balance of maximum data survivability and robust architectura
 
 ## Supported backends
 
-1. MongoDB
-2. Redis
-3. Memory
-4. PostgreSQL
-5. ~~UnQLite~~ `deprecated` / retiring soon
+1. SQLite
+2. PostgreSQL
+3. Redis
+4. MongoDB
+5. Memory
+6. ~~UnQLite~~ `deprecated` / retiring soon
 
 ## Examples
+Try Mapless by [installing it in a supported Pharo image](#install) and the following snippets:
 
 ```Smalltalk
-"Instanciates a mapless object."
+"Instantiates an SQLite Mapless repository."
+repository := MaplessSQLiteRepository
+    for: 'TryMapless'
+    on: 'path/string/to/your/sqlite.db'.
+```
+
+```Smalltalk
+"Custom class to model your data"
+Mapless subclass: #Person
+	instanceVariableNames: ''
+	classVariableNames: ''
+	package: 'YourApp-Mapless'
+
+"Instantiates a Mapless object."
 philosopher := Person new
 	firstName: 'Aristotle';
 	yourself.
@@ -82,12 +97,12 @@ oneOrNil := repository findOne: Person where: [ :each |
 ```
 
 ```Smalltalk
-"Create a Person mapless model"
+"Create a Person Mapless model"
 philosopher := Person new
 	firstName: 'Aristotle';
 	save.
 
-"Set it as the person for a new User mapless model"
+"Set it as the person for a new User Mapless model"
 philosopherUser := User new
 	person: philosopher;
 	save.  
@@ -97,7 +112,7 @@ aristotle := (User findId: philosopherUser id) person.
 ```
 ## Install
 
-Open a workspace in a supported Pharo image and evaluate:
+To start with Mapless, download Pharo, open a Pharo Playground and evaluate:
 
 ```smalltalk
 Metacello new
@@ -108,7 +123,7 @@ Metacello new
 
 ## Include as dependency
 
-In BaselineOf or ConfigurationOf it can be added in this way:
+To include Mapless as a dependency from BaselineOf or ConfigurationOf add it with:
 
 ```smalltalk
 spec
@@ -117,6 +132,6 @@ spec
     repository: 'github://sebastianconcept/Mapless:latest/src';
     load: #('Core' 'Postgres' 'Mongo' 'Redis' 'Memory') ]
 ```
-## Ambition
+## Project Ambition
 
-To deliver a high-performance solution that preserves arbitrary application state (data) with a focus on flexibility, availability, and capacity. It aims to strategically aid in scaling without causing backend vendor lock-in, across various persistence backends, and by neutralizing the costs associated with object-mapping impedance mismatch.
+To deliver a high-performance solution that preserves arbitrary application state (data) with a focus on flexibility, availability, and capacity. It aims to strategically aid in scaling without causing vendor lock-in, across various persistence backends, and by neutralizing the costs associated with object-mapping impedance mismatch.
