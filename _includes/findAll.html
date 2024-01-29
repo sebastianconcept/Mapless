@@ -1,9 +1,13 @@
 <div class="shell">
   {% highlight st %}
-"Get all models of a given Mapless class from the repository"
+  "Get all models of a given Mapless class from the repository"
     allTasks := repository findAll: Task.
 
-    "Same but when your Mapless class can do its own getRepository"
+    "Same within the repository context"
+    repository do: [ allTasks := Task findAll ].
+
+    "Same but when your Mapless class can do its own getRepository
+    (uses the MaplessCurrentRepository DynamicVariable)"
     allTasks := Task findAll.
 
     "Getting a specific model using its id"
@@ -22,8 +26,11 @@
       offset: 20
       sort: { #description -> 1 } asDictionary.   
 
-    "Same query but with a PostgreSQL backend instead"
+    "If we'd be using PostgreSQL instead and wanting the same data"
     criteria := 'maplessData->> ''description'' LIKE ''Try%'''.
+    
+    "The criteria filter here is used in the predicate of the SQL sentence 
+    that Mapless creates for querying this"
     userTasksAboutTryingThings := Task find: criteria
       limit: 10
       offset: 20

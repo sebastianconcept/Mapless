@@ -4,6 +4,8 @@
 repository do: [ task alert class = MaplessReference ].
 "=> true"
 
+"At this point, Mapless never queried to fetch the data that belongs to the alert of that task..."
+
 "Alert as (sub)model in task, is lazily fetched with the first message 
 and responding as if always would have been ready"
 repository do: [ task alert message ].

@@ -38,21 +38,21 @@
 		<div class="col-md-4">
 			<div class="appeal leftAppeal">
 			    <h3>Simple</h3>
-			    <p>Low maintenance for real. No instVars. No getters and no setters - just saved models with your data.</p>
+			    <p>Low maintenance for real. No instance variables, no getters, and no setters — just saved models with your data.</p>
 			    <a href="#updating">Add data to a model →</a>
 			</div>
 		</div>
 		<div class="col-md-4">
 			<div class="appeal middleAppeal">
 			    <h3>Composable</h3>
-			    <p>Do you need to compose models? But of course you do! No mapping required, just add those (sub)models, save its children first and you're good to go.</p>
+					<p>Do you need to compose models? But of course you do! No mapping required — just add those (sub)models, save its children first, and you're good to go.</p>
 			    <a href="#composability">Compose models →</a>
 			</div>
 		</div>
 		<div class="col-md-4">
 			<div class="appeal rightAppeal">
 			    <h3>Portable</h3>
-			    <p>Shared API across backends. i.e.: start with SQLite and easily move to MongoDB or PostgreSQL while caching with Redis.</p>
+					<p>Shared API across backends. For example, start with SQLite and easily move to MongoDB or PostgreSQL while caching with Redis.</p>
 			    <a href="#portability">Data portability →</a>
 			</div>
 		</div>
@@ -88,14 +88,14 @@
         <section class="howDoesItFeel">
                 <div class="col-md-5 ">
                     <div class="elaborate">
-                        <h5>Your application needs to persist modeled data?</h5>
+                        <h5>Need to persist modeled data?</h5>
                         <p>This is what happens when you do it with Mapless:</p>
                         <ol>
-                            <li>Create a subclass for them.</li>
-                            <li><del>Know in advance what attributes they will need./del></li>
-                            <li><del>Create its attributes' instVars.</del></li>
-                            <li><del>Make accessors for all of them.</del></li>
-                            <li><del>Elegantly map them so it all fits in the database.</del></li>
+                            <li>Create a dedicated subclass for each type of data model.</li>
+                            <li><del>Know in advance the attributes they'll require.</del></li>
+                            <li><del>Create instance variables for these attributes.</del></li>
+                            <li><del>Add accessors for each of them.</del></li>
+                            <li><del>Careful map them so it all fits in the database.</del></li>
                             <li><del>Patiently re-map them every time you need to change its design saying 'hi' to object-database mismatches.</del></li>
                             <li>Actually save them.</li>
                             <li>Profit.</li>
@@ -114,8 +114,8 @@
                     <div class="elaborate">
                         <h5>How does it look like?</h5>
                         <p>Let's say you want to store and retrieve instances of <code>Task</code> as Mapless models using MongoDB as backend.</p>
-                        <p>You basically will create a repository object, create Task instances that you'll save, query, update or delete.</p>
-                        <p>Let's see the snippets for that step by step.</p>
+                        <p>In essence, you'll create a repository object to handle <code>Task</code> instances — saving, querying, updating, or deleting them.</p>
+                        <p>Let's see the snippets for achieving these basic operations one by one.</p>
                     </div>
                 </div>
 
@@ -123,17 +123,17 @@
                     <div class="elaborate">
                         <h5>Create the repository</h5>
                         <p>There are two ways to access MongoDB with Mapless. <code>MaplessStandaloneMongoPool</code> for single server setups and <code>MaplessMongoReplicaSetPool</code> for clusters of <a href="https://www.mongodb.com/docs/manual/replication/" target="_blank"> replica sets</a>.</p>
-                        <p>The following example shows a local standalone MongoDB example.</p>
+                        <p>The following one shows an example for accessing a local standalone MongoDB.</p>
                     </div>
                 </div>
 
                 <div class="col-md-9 workspace">
                     <div class="">
-                        <p class="shellTitle">Instantiate the repository</p>
+                        <p class="shellTitle">Create a repository to access a standalone MongoDB service</p>
                         <div class="shell">
   <figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span> 
   <span class="c">&quot;Create the repository object to use the &#39;TryingMapless&#39; database.</span>
-<span class="c">  This repository is for a local standalone MongoDB at localhost:27017&quot;</span> 
+<span class="c">  This repository is for a standalone MongoDB listening on localhost:27017&quot;</span> 
   <span class="nv">databaseName</span> <span class="o">:=</span> <span class="s">&#39;TryingMapless&#39;</span><span class="p">.</span> 
   <span class="nv">repository</span> <span class="o">:=</span> <span class="nc">MaplessMongoRepository</span> 
     <span class="nf">for:</span> <span class="nv">databaseName</span> 
@@ -147,7 +147,7 @@
                 <div class="col-md-12">
                     <div class="elaborate extraTop">
                         <h5>Model your data</h5>
-                        <p>Creating new instances of your data models have nothing special. You treat them like any other object.</p>
+                        <p>Creating new instances of your data models is straightforward — treat them like any other object.</p>
                         <p>The only thing to remark here is that you do not need to create the mutator methods <code>description:</code> nor <code>isComplete:</code> in the <code>Task</code> class.</p>
                     </div>
                 </div>                
@@ -173,7 +173,9 @@
                 <div class="col-md-12">
                     <div class="elaborate extraTop">
                         <h5>Storing</h5>
-                        <p></p>
+                        <p>To store data, simply send the <code>save</code> message to any <code>Mapless</code> instance, and be automatically inserted or updated in the database.</p>
+                        <p>The repository object features the <code>do:</code> method, accepting a block closure. This allows your Mapless object to understand the repository it should work with.</p>
+                        <p>Alternatively, you can implement <code>Task class>>getRepository</code> to have the model provide the repository directly, enabling it to handle the  <code>save</code> operation without relying on a closure from external sources.</p>
                     </div>
                 </div>
 
@@ -195,7 +197,7 @@
                  <div class="col-md-12 ">
                     <div class="elaborate extraTop">
                         <h5 id="getting">Querying</h5>
-                        <p>Mapless can use different persistent backends and depending on which one you're using is how you implement the queries for your data. For example when Mapless has a PostgreSQL or SQLite backend you'll be using SQL, when it has MongoDB it uses the <a href="http://smalltalkhub.com/#!/~MongoTalkTeam/mongotalk">MongoTalk</a> querying feature and for Redis you'll be using a namespaced convention.</p>
+                        <p>Mapless supports various persistent backends, and the method of implementing queries for your data depends on the specific backend in use. For instance, with a PostgreSQL or SQLite backend, SQL queries are employed. In the case of MongoDB, Mapless utilizes the <a href="http://smalltalkhub.com/#!/~MongoTalkTeam/mongotalk">MongoTalk</a> querying feature, while Redis adopts a namespaced convention.</p>
                     </div>
                 </div>
 
@@ -203,10 +205,14 @@
                     <div class="">
                         <p class="shellTitle">Fetching objects</p>
                         <div class="shell">
-  <figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span><span class="c">&quot;Get all models of a given Mapless class from the repository&quot;</span>
+  <figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span>  <span class="c">&quot;Get all models of a given Mapless class from the repository&quot;</span>
     <span class="nv">allTasks</span> <span class="o">:=</span> <span class="nv">repository</span> <span class="nf">findAll:</span> <span class="nc">Task</span><span class="p">.</span>
 
-    <span class="c">&quot;Same but when your Mapless class can do its own getRepository&quot;</span>
+    <span class="c">&quot;Same within the repository context&quot;</span>
+    <span class="nv">repository</span> <span class="nf">do:</span> [ <span class="nv">allTasks</span> <span class="o">:=</span> <span class="nc">Task</span> <span class="nf">findAll</span> ]<span class="p">.</span>
+
+    <span class="c">&quot;Same but when your Mapless class can do its own getRepository</span>
+<span class="c">    (uses the MaplessCurrentRepository DynamicVariable)&quot;</span>
     <span class="nv">allTasks</span> <span class="o">:=</span> <span class="nc">Task</span> <span class="nf">findAll</span><span class="p">.</span>
 
     <span class="c">&quot;Getting a specific model using its id&quot;</span>
@@ -225,8 +231,11 @@
       <span class="nf">offset:</span> <span class="m">20</span>
       <span class="nf">sort:</span> { <span class="ss">#description</span> <span class="nf">-&gt;</span> <span class="m">1</span> } <span class="nf">asDictionary</span><span class="p">.</span>   
 
-    <span class="c">&quot;Same query but with a PostgreSQL backend instead&quot;</span>
+    <span class="c">&quot;If we&#39;d be using PostgreSQL instead and wanting the same data&quot;</span>
     <span class="nv">criteria</span> <span class="o">:=</span> <span class="s">&#39;maplessData-&gt;&gt; &#39;&#39;description&#39;&#39; LIKE &#39;&#39;Try%&#39;&#39;&#39;</span><span class="p">.</span>
+    
+    <span class="c">&quot;The criteria filter here is used in the predicate of the SQL sentence </span>
+<span class="c">    that Mapless creates for querying this&quot;</span>
     <span class="nv">userTasksAboutTryingThings</span> <span class="o">:=</span> <span class="nc">Task</span> <span class="nf">find:</span> <span class="nv">criteria</span>
       <span class="nf">limit:</span> <span class="m">10</span>
       <span class="nf">offset:</span> <span class="m">20</span>
@@ -240,7 +249,7 @@
                  <div class="col-md-12 ">
                     <div class="elaborate extraTop">
                         <h5 id="adding">Making the queries powerful</h5>
-                        <p>Let's say you are using a MongoDB backend and want a production ready query by <code>username</code> for this <code>Task</code> data model. All you have to do is to <a href="https://www.mongodb.com/docs/manual/reference/method/db.collection.createIndex/" target="_blank">create an index in MongoDB</a> for <code>username</code> in the <code>Task</code> collection, and if it's of your preference, a class method in <code>Task</code> for the query.</p>
+                        <p>Let's say you are using a MongoDB backend and want a production ready query by <code>username</code> for this <code>Task</code>. All you have to do is to <a href="https://www.mongodb.com/docs/manual/reference/method/db.collection.createIndex/" target="_blank">create an index in MongoDB</a> for <code>username</code> in the <code>Task</code> collection. Optionally, you can add a class method in <code>Task</code> tailored to this query.</p>
                     </div>
                 </div>
 
@@ -297,7 +306,7 @@
                  <div id="composability" class="col-md-12 ">
                     <div class="elaborate">
                         <h5 id="adding">Composition</h5>
-                        <p>When you model data with your own Mapless classes, you can add almost any property to them, specially other Mapless models, hence composition. When that happens, Mapless will use one collection or table in the backend per type of Mapless object.</p>
+                        <p>When you model data using your custom Mapless classes, you have the flexibility to add almost any property to them, especially other Mapless models—hence, composition. In such cases, Mapless efficiently organizes the data, utilizing one collection or table in the backend per type of Mapless object.</p>
                         <p>The main rule when working with composition here is <em>save the children first</em>.</p>
                     </div>
                 </div>
@@ -330,8 +339,8 @@
                 <div class="col-md-12 ">
                     <div class="elaborate extraTop">
                         <h5 id="adding">Graph navigation</h5>
-                        <p>When you save a Mapless object, you are planting the root of a graph. When you send a message to a composed Mapless object, reaching to the child Mapless is like navigating the object graph one level deeper. Mapless objects that are composed will return lazy references for every (sub)mapless known by the parent. When you send a message to a (sub)model, the DNU method will return it resolving as if it was always there.</p>
-                        <p>At the same time, if a Mapless object never sends any message to a child, then your application is not doing any unnecessary query for that and your backend will say thanks for preventing it do unnecessary extra work.</p>
+                        <p>Saving a Mapless object is akin to planting the root of a graph. When interacting with a composed Mapless object, accessing the child Mapless feels like navigating one level deeper in the object graph. Composed Mapless objects return lazy references for every known (sub)Mapless to the parent. When you send a message to a (sub)model, the DNU method seamlessly resolves it, making it appear as if it was always there.</p>
+                        <p>At the same time, if a Mapless object never sends any message to a child, then your application is not doing any unnecessary query. This prevents your backend from doing unnecessary extra work in advance making your system more efficient by default and in general.</p>
                     </div>
                 </div>
 
@@ -342,6 +351,8 @@
 <figure class="highlight"><pre><code class="language-st" data-lang="st"><span></span><span class="c">&quot;The alert property has an instance of MaplessReference&quot;</span>
 <span class="nv">repository</span> <span class="nf">do:</span> [ <span class="nv">task</span> <span class="nf">alert</span> <span class="nf">class</span> <span class="nf">=</span> <span class="nc">MaplessReference</span> ]<span class="p">.</span>
 <span class="c">&quot;=&gt; true&quot;</span>
+
+<span class="c">&quot;At this point, Mapless never queried to fetch the data that belongs to the alert of that task...&quot;</span>
 
 <span class="c">&quot;Alert as (sub)model in task, is lazily fetched with the first message </span>
 <span class="c">and responding as if always would have been ready&quot;</span>
@@ -355,15 +366,15 @@
                 <div class="col-md-12 ">
                     <div class="elaborate extraTop">
                         <h5 id="portability">Supported backends</h5>
-                        <p>All Mapless subclasses have the same basic Smalltalk API and at the time to resolve the requested operations they delegate that in a <code>MaplessRepository</code> subclass corresponding to one of the concrete supported backends.</p>
-                        <p>The following are currently supported:</p>
+                        <p>All Mapless subclasses share the same fundamental Smalltalk API. When resolving requested operations, they delegate to a corresponding <code>MaplessRepository</code> subclass aligned with one of the concrete supported backends.</p>
+                        <p>Currently supported backends include:</p>
                         <ol>
                             <li>SQLite.</li>
                             <li>PostgreSQL.</li>
                             <li>MongoDB.</li>
                             <li>Redis.</li>
                             <li>Memory.</li>
-                            <li><s>UnQLite</s>. Deprecated and retiring soon.</li>
+                            <li><s>UnQLite</s> (Deprecated and retiring soon).</li>
                         </ol>
                     </div>
                 </div>
@@ -375,7 +386,7 @@
 	        <h5 class="h5NoTop">Why Mapless?</h5>
 	        <div class="thumb">
 	            <a href="https://sebastiansastre.co/" target="_blank" >
-								<img alt="Sebastian Sastre portrait" src="images/p3.jpg" width="68">
+								<img alt="Sebastian Sastre portrait" src="images/seb.jpeg" width="68">
 	            </a>
 	        </div>
 
@@ -397,9 +408,9 @@
                     <div class="elaborate">
                         <h5 class="">Frequently Asked Questions</h5>
                             <p><em>What saving 'Models' means? why not any object?</em></p>
-                            <p>By models Mapless means that you are not pretending to save transient stuff like contexts or sockets or file handlers, etc. Any instance of a <code>Mapless</code> subclass will save in a breeze. Those instances are going to be serialized and stored as documents of its own MongoDB collection or PostgreSQL table.<p>
+                            <p>By "Models," Mapless refers to instances that represent persistent data, excluding transient entities such as contexts, sockets, or file handlers. Any instance of a Mapless subclass can be saved effortlessly. These instances are serialized and stored as documents in their respective MongoDB collection or PostgreSQL table.</p>
                             <p><em>Is only for tree-like structures or does actually support an object graph?</em></p>
-                            <p>Given that you follow its rules,like saving children first and thinking your models as noSQL friendly documents, yes, it does support an arbitrary object graph.<p>
+                            <p>As long as you adhere to its rules, such as saving children first and treating your models as NoSQL-friendly documents and not trying to store a Socket or some unserializable object, yes, Mapless does support an arbitrary object graph.</p>
                             <p><em>Why would I want to use Mapless?</em></p>
                             <p> Because you might want to profit from some of these benefits:
                             <ol>
@@ -418,9 +429,17 @@
                     </div>
                 </div>
 
+                <div id="direction" class="col-md-12 ">
+                    <div class="elaborate">
+                        <h5>Found a Bug?</h5>
+                        <h5>Need that feature for your use case?</h5>
+                        <p>Please create a <a href="https://github.com/sebastianconcept/Mapless/issues" target="_blank">GitHub issue</a> in the Mapless repository.</p>
+                    </div>
+                </div>
+
                  <div id="direction" class="col-md-12 ">
                     <div class="elaborate">
-                        <h5>Need support?</h5>
+                        <h5>Need additional support?</h5>
                         <p>Don't hesitate to reach out in <a href="https://twitter.com/sebastianconcpt" target="_blank">𝕏</a> or <a href="https://www.linkedin.com/in/sebastiansastre/" target="_blank">LinkedIn</a> <a href="https://discord.com/invite/QewZMZa" target="_blank">Pharo Discord server</a> for discussing design possibilities and implementation support.</p>
                     </div>
                 </div>

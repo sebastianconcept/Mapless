@@ -1,6 +1,3 @@
-@import url(http://fonts.googleapis.com/css?family=Nothing+You+Could+Do);
-@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,200,200italic);
-
 body {
   margin: 0;
   padding: 0;
@@ -18,18 +15,19 @@ body p,
 body div,
 body code,
 body span {
-  font-family: 'Titillium Web', Helvetica, "Open Sans", sans-serif;
+  font-family: Helvetica, "Open Sans", sans-serif;
 }
 
 code {
-  color: #729fcf !important;
+  /* color: #729fcf !important; */
+  color: #fcaf3e !important;
   background-color: #3d3d3d !important;
-  padding: 0 4px !important;
+  padding: 2px 4px !important;
 }
 
-body h1 { 
-  font-family: 'Nothing You Could Do', cursive;
-  text-shadow: rgba(167, 253, 119,0.5) 0px 3px 3px;  
+body h1 {
+  font-weight: bold;
+  text-shadow: rgba(167, 253, 119, 0.5) 0px 3px 3px;
 }
 
 body h1 {
@@ -40,21 +38,19 @@ body h1 {
 }
 
 body h2 {
-  font-family: 'Nothing You Could Do', cursive;  
-background-color: #666666;
--webkit-background-clip: text;
--moz-background-clip: text;
-background-clip: text;
-color: transparent;
-text-shadow: rgba(255,255,255,0.5) 0px 3px 3px;
-font-size: 48px;
-font-weight: lighter;
-
+  background-color: #666666;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: rgba(255, 255, 255, 0.5) 0px 1px 2px;
+  font-size: 42px;
+  font-weight: bold;
 }
 
 body h5 {
   font-weight: bold;
-  font-size: 24px;  
+  font-size: 24px;
   margin: 20px 0 10px;
   color: #072701;
 }
@@ -79,7 +75,7 @@ body h5 {
 
 #github {
   position: absolute;
-  top:0;
+  top: 0;
   right: 0;
   border: 0;
 }
@@ -94,34 +90,61 @@ ul.thereIsNo {
   margin: 40px 0 0 0;
 }
 
-h5.h5NoTop{
+h5.h5NoTop {
   margin: 0 0 10px 0;
 }
 .thereIsNo li {
   list-style: none;
-  font-size: 15px;
+  font-size: 20px;
 }
 
 .thumb {
   width: 68px;
   display: block;
   float: left;
-  margin: 28px 15px 10px 18px; 
+  margin: 28px 15px 10px 18px;
 }
 
 blockquote {
   margin: 20px 0 20px !important;
   background: #fafafa;
+  font-size: 17px;
   padding: 20px !important;
   border: none;
-  background: rgb(205,146,57);
-  background: -moz-linear-gradient(top,rgba(226, 226, 226,1) 0%, rgba(184, 184, 184,1) 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(226, 226, 226,1)), color-stop(100%,rgba(184, 184, 184,1)));
-  background: -webkit-linear-gradient(top,rgba(226, 226, 226,1) 0%,rgba(184, 184, 184,1) 100%);
-  background: -o-linear-gradient(top,rgba(226, 226, 226,1) 0%,rgba(184, 184, 184,1) 100%);
-  background: -ms-linear-gradient(top,rgba(226, 226, 226,1) 0%,rgba(184, 184, 184,1) 100%);
-  background: linear-gradient(to bottom,rgba(226, 226, 226,1) 0%,rgba(184, 184, 184,1) 100%);
-  box-shadow: 0 3px 10px rgba(0,0,0,.5);
+  background: rgb(205, 146, 57);
+  background: -moz-linear-gradient(
+    top,
+    rgba(226, 226, 226, 1) 0%,
+    rgba(184, 184, 184, 1) 100%
+  );
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0%, rgba(226, 226, 226, 1)),
+    color-stop(100%, rgba(184, 184, 184, 1))
+  );
+  background: -webkit-linear-gradient(
+    top,
+    rgba(226, 226, 226, 1) 0%,
+    rgba(184, 184, 184, 1) 100%
+  );
+  background: -o-linear-gradient(
+    top,
+    rgba(226, 226, 226, 1) 0%,
+    rgba(184, 184, 184, 1) 100%
+  );
+  background: -ms-linear-gradient(
+    top,
+    rgba(226, 226, 226, 1) 0%,
+    rgba(184, 184, 184, 1) 100%
+  );
+  background: linear-gradient(
+    to bottom,
+    rgba(226, 226, 226, 1) 0%,
+    rgba(184, 184, 184, 1) 100%
+  );
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
   border: none !important;
 }
 
@@ -131,10 +154,9 @@ blockquote {
 }
 
 .header {
-
 }
 
-.content{
+.content {
   display: -webkit-box;
   display: -moz-box;
   -webkit-box-orient: vertical;
@@ -142,10 +164,10 @@ blockquote {
   -webkit-box-align: justify;
   -moz-box-align: justify;
   background-color: rgba(255, 255, 255, 0.9);
-  -moz-box-shadow: 0 0 10px #143A03;
-  -webkit-box-shadow: 0 0 10px #143A03;
-  -o-box-shadow: 0 0 10px #143A03;
-  box-shadow: 0 0 10px #143A03;
+  -moz-box-shadow: 0 0 10px #143a03;
+  -webkit-box-shadow: 0 0 10px #143a03;
+  -o-box-shadow: 0 0 10px #143a03;
+  box-shadow: 0 0 10px #143a03;
   padding: 20px 0;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
@@ -160,14 +182,14 @@ blockquote {
 }
 
 .start {
-  background: #2D4914 url("../images/noise.png") repeat;
+  background: #2d4914 url("../images/noise.png") repeat;
   color: #fff;
   margin: 20px 0;
-  box-shadow: inset 0 3px 10px rgba(0,0,0,.4);
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.4);
 }
 
 .start h4 {
-  text-shadow: rgba(98, 224, 41, 1) 0px 1px 11px;  
+  text-shadow: rgba(98, 224, 41, 1) 0px 1px 11px;
 }
 
 .quickstart {
@@ -181,18 +203,21 @@ blockquote {
 
 @media (max-width: 500px) {
   .logoWrap {
-    text-align: center;  
+    text-align: center;
     margin: 60px auto;
     text-align: center;
-  }  
-  .symbol {width: 100%; text-align: center;}
+  }
+  .symbol {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 @media (min-width: 500px) {
   .logoWrap {
-    text-align: center;  
+    text-align: center;
     margin: 60px auto;
-    width: 500px;
+    width: 550px;
   }
 }
 
@@ -204,56 +229,73 @@ blockquote {
   .appeal {
     margin: 20px 40px;
   }
-  .leftAppeal {margin: 20px 40px;}
-  .middleAppeal {margin: 20px 40px;}
-  .rightAppeal {margin: 20px 40px;}
+  .leftAppeal {
+    margin: 20px 40px;
+  }
+  .middleAppeal {
+    margin: 20px 40px;
+  }
+  .rightAppeal {
+    margin: 20px 40px;
+  }
 }
 
 @media (min-width: 991px) {
   .loadNow h4 {
-    font-size: 28px;
+    font-size: 26px;
+    line-height: 1.3em;
     margin: 100px 0 0 40px;
   }
   .appeal {
     margin: 20px 40px;
   }
-  .leftAppeal {margin: 20px 10px 20px 40px;}
-  .middleAppeal {margin: 20px 15px;}
-  .rightAppeal {margin: 20px 40px 20px 10px;}
+  .leftAppeal {
+    margin: 20px 10px 20px 40px;
+  }
+  .middleAppeal {
+    margin: 20px 15px;
+  }
+  .rightAppeal {
+    margin: 20px 40px 20px 10px;
+  }
 }
 
 .shellTitle {
-text-shadow: 0 1px 0 rgba(255,255,255,.5);  
-background: #f7f7f7;
-color: #444;
-display: block;
-text-align: center;
-margin: 0 20px;
-padding: 5px 0;
-border-radius: 5px 5px 0 0;
-box-shadow: 0 3px 10px rgba(0,0,0,.5);
-font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-font-size: 16px;
-font-weight: 400;
-background: -webkit-linear-gradient(top,#f7f7f7 0%,#cfcfcf 7%,#aaaaaa 100%);
-border-bottom: 1px solid #222;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background: #f7f7f7;
+  color: #444;
+  display: block;
+  text-align: center;
+  margin: 0 20px;
+  padding: 5px 0;
+  border-radius: 5px 5px 0 0;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  background: -webkit-linear-gradient(
+    top,
+    #f7f7f7 0%,
+    #cfcfcf 7%,
+    #aaaaaa 100%
+  );
+  border-bottom: 1px solid #222;
 }
 
 .shell {
-padding: 20px;
-text-shadow: none;
-margin: 0 20px;
-background: #3d3d3d;
-border-radius: 0 0 5px 5px;
-box-shadow: 0 3px 10px rgba(0,0,0,.5);
-font-size: 18px;
+  padding: 20px;
+  text-shadow: none;
+  margin: 0 20px;
+  background: #3d3d3d;
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+  font-size: 18px;
 }
-
 
 pre {
   background-color: transparent !important;
   padding: 0 !important;
-  border: none !important;  
+  border: none !important;
   color: #babdb6 !important;
 }
 
@@ -265,19 +307,23 @@ pre {
   margin: 20px 35px;
 }
 
-.workspace {margin: 0 15px;}
+.workspace {
+  margin: 0 15px;
+}
 
-.extraTop {margin: 40px 35px 20px }
+.extraTop {
+  margin: 40px 35px 20px;
+}
 
 .foot a {
-  color: #E3FFD3;
+  color: #e3ffd3;
 }
 
 .foot a:hover {
-  color: #E3FFD3;
+  color: #e3ffd3;
 }
 
 .foot {
- margin: 40px 0 60px 0; 
- text-align: center;
+  margin: 40px 0 60px 0;
+  text-align: center;
 }
