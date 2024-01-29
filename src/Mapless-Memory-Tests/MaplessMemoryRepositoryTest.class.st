@@ -186,6 +186,20 @@ MaplessMemoryRepositoryTest >> testDatabaseDrop [
 ]
 
 { #category : #tests }
+MaplessMemoryRepositoryTest >> testDropDatabase [
+
+	| db databaseCollection |
+	db := repository database.
+	repository do: [ self addDummyPeople ].
+	databaseCollection := db collectionNamed: 'DummyPerson'.
+	self assert: databaseCollection name equals: 'DummyPerson'.
+	self deny: repository database collections isEmpty.
+
+	self shouldnt: [ repository drop ] raise: Error.
+	self assert: repository database collections isEmpty
+]
+
+{ #category : #tests }
 MaplessMemoryRepositoryTest >> testFindAll [
 	| found |
 	repository
