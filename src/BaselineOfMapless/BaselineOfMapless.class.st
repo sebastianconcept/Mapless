@@ -70,9 +70,11 @@ BaselineOfMapless >> setUpBasePackages: spec [
 
 { #category : #baseline }
 BaselineOfMapless >> setUpMongoDependencies: spec [
-	spec
-		baseline: 'MongoTalk'
-		with: [ spec repository: 'github://pharo-nosql/mongotalk:1.25/mc' ]
+
+	spec baseline: 'MongoTalk' with: [ 
+		spec
+			repository: 'github://pharo-nosql/mongotalk:v2.0/mc';
+			loads: #( Client 'Mongo-DriverLegacy' ) ]
 ]
 
 { #category : #baseline }
