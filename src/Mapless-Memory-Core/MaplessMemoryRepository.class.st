@@ -72,11 +72,6 @@ MaplessMemoryRepository >> drop [
 	^ self do: [ self database drop ]
 ]
 
-{ #category : #actions }
-MaplessMemoryRepository >> ensureCollection [
-	self shouldBeImplemented
-]
-
 { #category : #testing }
 MaplessMemoryRepository >> existsId: anId of: aMaplessClass [
 
