@@ -1,3 +1,10 @@
+Jan 29, 2024
+===================================
+* Added SQLite support.
+* Added Pharo 10 and Pharo 11 support.
+* Dropped Pharo 7 support. Last working version on Pharo 7 was v0.5.26
+* Added badges to the README.md
+
 Jan 25, 2024
 ===================================
 * Updating `master` branch to keep up with the latests useful upgrades.

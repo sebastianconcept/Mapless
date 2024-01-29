@@ -4,21 +4,29 @@
 
 Schema-less persistence for Smalltalk with support for multiple backends.
 
+[![Release](https://img.shields.io/github/v/tag/sebastianconcept/Mapless?label=release)](https://github.com/sebastianconcept/Mapless/releases)
 [![Unit Tests](https://github.com/sebastianconcept/Mapless/actions/workflows/build.yml/badge.svg)](https://github.com/sebastianconcept/Mapless/actions/workflows/build.yml)
+
 ![Tests](https://img.shields.io/badge/tests-193-green)
 [![Coverage Status](https://codecov.io/github/sebastianconcept/Mapless/coverage.svg?branch=main)](https://codecov.io/gh/sebastianconcept/Mapless/branch/master)
 
-[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE.txt)
-[![Release](https://img.shields.io/github/v/tag/sebastianconcept/Mapless?label=release)](https://github.com/sebastianconcept/Mapless/releases)
 
-
-[![Pharo 7](https://img.shields.io/badge/Pharo-7-%23383932.svg)](https://pharo.org/download)
 [![Pharo 10](https://img.shields.io/badge/Pharo-10-%23383932.svg)](https://pharo.org/download)
+[![Pharo 11](https://img.shields.io/badge/Pharo-11-%23383932.svg)](https://pharo.org/download)
 
 [![Social](https://img.shields.io/github/stars/sebastianconcept/Mapless?style=social)]()
 [![Forks](https://img.shields.io/github/forks/sebastianconcept/Mapless?style=sociall)]()
+[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE.txt)
 
 ---
+
+## Description
+
+Mapless is a schema-less persistence framework supporting multiple backends and offering a user-friendly API. For instance, querying Mapless objects involves a common family of methods, and there's no need to declare accessors and mutators. See [examples below](#examples).
+
+Designed to be schema-less, Mapless eliminates the need for schema maintenance and avoids any Object-Relational Mapping requirements.
+
+Mapless achieves a balance of maximum data survivability and robust architectural flexibility without imposing a heavy burden in terms of adoption and maintenance.
 
 ## Features
 
@@ -30,18 +38,6 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 - Multiple backends to choose from.
 - Enables smooth data migration/interoperation among backends.
 - ~~Via Redis PUB/SUB, scalable observer-pattern functionality across images.~~ In the roadmap.
-
-## Description
-
-Mapless is a schema-less persistence framework supporting multiple backends and offering a user-friendly API. For instance, querying Mapless objects involves a common family of methods, and there's no need to declare accessors and mutators. See [examples below](#examples).
-
-Designed to be schema-less, Mapless eliminates the need for schema maintenance and avoids any Object-Relational Mapping requirements.
-
-Mapless achieves a balance of maximum data survivability and robust architectural flexibility without imposing a heavy burden in terms of adoption and maintenance.
-
-## Ambition
-
-To deliver a high-performance solution that preserves arbitrary application state (data) with a focus on flexibility, availability, and capacity. It aims to strategically aid in scaling without causing backend vendor lock-in, across various persistence backends, and by neutralizing the costs associated with object-mapping impedance mismatch.
 
 ## Supported backends
 
@@ -75,12 +71,14 @@ allOrEmpty := repository findAll: Person.
 
 ```Smalltalk
 "Query to load all the instances that match the condition."
-someOrEmpty := repository findAll: Person where: [ :each | each lastName = 'Peterson' ].
+someOrEmpty := repository findAll: Person where: [ :each | 
+  each firstName = 'Aristotle' ].
 ```
 
 ```Smalltalk
 "Conditionally loading the first matching instance."
-oneOrNil := repository findOne: Person where: [ :each | each lastName = 'Peterson' ].
+oneOrNil := repository findOne: Person where: [ :each | 
+  each firstName = 'Aristotle' ].
 ```
 
 ```Smalltalk
@@ -97,7 +95,7 @@ philosopherUser := User new
 "Query for that user by ID and get its person instance"
 aristotle := (User findId: philosopherUser id) person.
 ```
-## Installation
+## Install
 
 Open a workspace in a supported Pharo image and evaluate:
 
@@ -119,3 +117,6 @@ spec
     repository: 'github://sebastianconcept/Mapless:latest/src';
     load: #('Core' 'Postgres' 'Mongo' 'Redis' 'Memory') ]
 ```
+## Ambition
+
+To deliver a high-performance solution that preserves arbitrary application state (data) with a focus on flexibility, availability, and capacity. It aims to strategically aid in scaling without causing backend vendor lock-in, across various persistence backends, and by neutralizing the costs associated with object-mapping impedance mismatch.
