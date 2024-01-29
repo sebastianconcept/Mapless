@@ -569,7 +569,7 @@ MaplessRedisTest >> testRemovingExpire [
 	howMuchWillItBeThere := repository ttlFor: guy.
 	self
 		assert: (howMuchWillItBeThere = -1 or: [ howMuchWillItBeThere = -2 ]).
-	100 milliseconds wait.
+	100 milliSeconds wait.
 	found := repository findOne: DummyPerson atId: guy id.
 	self assert: found notNil.
 
@@ -606,7 +606,7 @@ MaplessRedisTest >> testSimpleExpire [
 	found := repository findOne: DummyPerson atId: guy id.
 	self assert: found notNil.
 	repository expires: guy in: 50.
-	60 milliseconds wait.
+	60 milliSeconds wait.
 	found := repository findOne: DummyPerson atId: guy id.
 	self assert: found isNil.
 		 
@@ -700,7 +700,7 @@ MaplessRedisTest >> testUpdatingExpire [
 	found := repository findOne: DummyPerson atId: guy id.
 	self assert: found notNil.
 	repository expires: guy in: 900.
-	10 milliseconds wait.
+	10 milliSeconds wait.
 	howMuchWillItBeThere := repository ttlFor: guy.
 	self assert: howMuchWillItBeThere > 0.
 	answer := repository expires: guy in: 2500.
