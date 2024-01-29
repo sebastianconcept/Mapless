@@ -49,7 +49,11 @@ MaplessMemoryRepositoryTest >> setUp [
 
 { #category : #tests }
 MaplessMemoryRepositoryTest >> tearDown [
-	repository ifNotNil: [ repository shutDown ].
+
+	repository ifNotNil: [
+		repository
+			drop;
+			shutDown ].
 	super tearDown
 ]
 
@@ -235,6 +239,26 @@ MaplessMemoryRepositoryTest >> testFindAllSorted [
 			self assert: found notNil.
 			self assert: found first firstName = 'John'.
 			self assert: found last firstName = 'Robert' ]
+]
+
+{ #category : #tests }
+MaplessMemoryRepositoryTest >> testFindManyWithConditionsLimitedAndSorted [
+
+	| found |
+	repository do: [
+		(self newDummyPersonNamed: 'Peter') save.
+		(self newDummyPersonNamed: 'Rogers') save.
+		(self newDummyPersonNamed: 'Robin') save.
+		(self newDummyPersonNamed: 'Ron') save.
+		(self newDummyPersonNamed: 'John') save.
+		found := DummyPerson
+			         find: [ :e | 'Ro*' match: e firstName ]
+			         limit: 2
+			         sort: #firstName ascending.
+		self assert: found notNil.
+		self assert: found size equals: 2.
+		self assert: found notNil.
+		self assert: found first firstName < found second firstName ]
 ]
 
 { #category : #tests }

@@ -133,10 +133,21 @@ MaplessMemoryRepository >> findAll: aMaplessClass where: someConditions limit: a
 	databaseCollection := self databaseCollectionNamed:
 		                      aMaplessClass collectionName.
 	result := databaseCollection values select: someConditions.
-	anOffsetOrNil ifNotNil: [
-		result := result
-			          copyFrom: anOffsetOrNil
-			          to: (result size min: anOffsetOrNil + aLimitOrNil) ].
+	result := anOffsetOrNil
+		          ifNil: [
+			          aLimitOrNil
+				          ifNil: [ result ]
+				          ifNotNil: [
+				          result copyFrom: 1 to: (result size min: aLimitOrNil) ] ]
+		          ifNotNil: [
+			          sortConditionsOrNil ifNotNil: [
+				          result := (SortedCollection sortBlock:
+						                     sortConditionsOrNil)
+					                    addAll: result;
+					                    yourself ].
+			          result
+				          copyFrom: anOffsetOrNil
+				          to: (result size min: anOffsetOrNil + aLimitOrNil) ].
 	sortConditionsOrNil ifNotNil: [
 		result := (SortedCollection sortBlock: sortConditionsOrNil)
 			          addAll: result;
