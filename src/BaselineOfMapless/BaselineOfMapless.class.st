@@ -38,7 +38,7 @@ BaselineOfMapless >> baseline: spec [
 				group: 'SQLite' with: #('Mapless-SQLite-Tests');
 				group: 'UnQLite' with: #('Mapless-UnQLite-Tests');
 				group: 'Benchmark' with: #('Mapless-Benchmark-Core');
-				group: 'default' with: #('Memory' 'Mongo') ]
+				group: 'default' with: #('Memory' 'SQLite') ]
 ]
 
 { #category : #baseline }
