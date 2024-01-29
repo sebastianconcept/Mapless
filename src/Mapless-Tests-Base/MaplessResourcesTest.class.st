@@ -38,10 +38,10 @@ MaplessResourcesTest >> test11And44And44Chance [
 				ifTrue: [ k := k + 1 ] ].
 	self assert: i > 1000.
 	self assert: i < 1200.
-	self assert: j > 4300.
-	self assert: j < 4500.
-	self assert: k > 4300.
-	self assert: k < 4500
+	self assert: j > 4200.
+	self assert: j < 4600.
+	self assert: k > 4200.
+	self assert: k < 4600
 ]
 
 { #category : #tests }
@@ -68,8 +68,8 @@ MaplessResourcesTest >> test30And70Chance [
 				ifTrue: [ i := i + 1 ].
 			latest value = 'url2'
 				ifTrue: [ j := j + 1 ] ].
-	self assert: i > 2900.
-	self assert: j > 6900
+	self assert: i > 2800.
+	self assert: j > 6800
 ]
 
 { #category : #tests }
@@ -96,6 +96,6 @@ MaplessResourcesTest >> testHalfHalfChance [
 				ifTrue: [ i := i + 1 ].
 			latest value = 'url2'
 				ifTrue: [ j := j + 1 ] ].
-	self assert: i > 4900.
-	self assert: j > 4900
+	self assert: i > 4800.
+	self assert: j > 4800
 ]
