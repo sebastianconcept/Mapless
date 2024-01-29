@@ -202,11 +202,24 @@ blockquote {
 }
 
 @media (max-width: 500px) {
+  body h1 {
+    font-size: 70px;
+  }
+
+  body h2 {
+    font-size: 28px;
+  }
+
+  .loadNow h4 {
+    font-size: 24px;
+  }
+
   .logoWrap {
     text-align: center;
     margin: 60px auto;
     text-align: center;
   }
+
   .symbol {
     width: 100%;
     text-align: center;
@@ -297,6 +310,10 @@ pre {
   padding: 0 !important;
   border: none !important;
   color: #babdb6 !important;
+}
+
+.descriptive-tagline {
+  font-size: 16px;
 }
 
 .quickstart code {
