@@ -1,4 +1,4 @@
-![Mapless](./header.png)
+![Mapless](./hero.jpg)
 
 # Mapless
 
