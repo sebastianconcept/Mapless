@@ -66,7 +66,7 @@ MaplessStandaloneMongoPool >> clientsMutex [
 ]
 
 { #category : #accessing }
-MaplessStandaloneMongoPool >> currentClientDynamicVariable [
+MaplessStandaloneMongoPool >> currentClientDynamicVariableClass [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
 
@@ -163,7 +163,7 @@ MaplessStandaloneMongoPool >> initializeMinClients [
 
 { #category : #actions }
 MaplessStandaloneMongoPool >> makeClient [
-	"Returns a new client so it can be (re)used in the pool"
+	"Returns a new client that can be (re)used in the pool"
 
 	| newMongoClient isAuthenticated |
 	newMongoClient := (MongoAPI host: hostname port: port asInteger)
@@ -312,7 +312,7 @@ MaplessStandaloneMongoPool >> withClientDo: aBlock [
 
 	| mongoClient |
 	mongoClient := self requestClient.
-	^ self currentClientDynamicVariable
+	^ self currentClientDynamicVariableClass
 		value: mongoClient
 		during: [ [ [ aBlock value: mongoClient ]
 				on: Error

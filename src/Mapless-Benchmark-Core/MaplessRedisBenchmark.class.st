@@ -1,14 +1,14 @@
 "
-This class provides some basic performance test for Mapless on MongoDB.
+This class provides some basic performance test for Mapless on Redis.
 
 Convenience to run it logging to the Transcript:
 
-MaplessMongoBenchmark run
+MaplessRedisBenchmark run
 
 Convenience to run it logging to SomeLogFile.log:
 
 'SomeLogFile.log' asFileReference writeStreamDo: [ :stream |
-	MaplessMongoBenchmark runPrintingOn: stream ]  
+	MaplessRedisBenchmark runPrintingOn: stream ]  
 "
 Class {
 	#name : #MaplessRedisBenchmark,

@@ -1,33 +1,45 @@
+Jan 29, 2024
+===================================
+* Added SQLite support.
+* Added Pharo 10 and Pharo 11 support.
+* Dropped Pharo 7 support. Last working version on Pharo 7 was v0.5.26
+* Added badges to the README.md
+
 Jan 25, 2024
 ===================================
-- Updating `master` branch to keep up with the latests useful upgrades.
-- Adding badges to the README.md for constant monitoring of CI, unit tests, regression detection capacity and supported Pharo versions.
-- Adds CI via GitHub actions.
+* Updating `master` branch to keep up with the latests useful upgrades.
+* Adding badges to the README.md for constant monitoring of CI, unit tests, regression detection capacity and supported Pharo versions.
+* Adds CI via GitHub actions.
+
+October 10, 2023
+===================================
+* Fixed most tests for the SQLite backend.
+* Adjusted Benchmarking clases and added the one for SQLite.
 
 May 22, 2023
 ===================================
-- Improved `MongoAPI` by adding `initializeMongoUrl` and a lazy accessor using it and `Array` instead of `Set` so comparing it on the fly from `getIdleReadOnlyClient` is significantly faster now.
-- `MaplessWeightedRandomPolicy>>nextAmong:` is faster now by not using `includes:` and use a `anySatisfy:` filter instead.
+* Improved `MongoAPI` by adding `initializeMongoUrl` and a lazy accessor using it and `Array` instead of `Set` so comparing it on the fly from `getIdleReadOnlyClient` is significantly faster now.
+* `MaplessWeightedRandomPolicy>>nextAmong:` is faster now by not using `includes:` and use a `anySatisfy:` filter instead.
 
 May 19, 2023
 ===================================
-- Added `defaultMinClients` for `MaplessStandaloneMongoPool`.
+* Added `defaultMinClients` for `MaplessStandaloneMongoPool`.
 
 May 19, 2022 | v0.5.4-beta | Humble Falcon
 ===================================
-- `MongoChange` is now using MongoDB `document` instead of `jsonish`.
-- Version bump.
+* `MongoChange` is now using MongoDB `document` instead of `jsonish`.
+* Version bump.
 
 May 18, 2022 | v0.5.3-beta | Proud Falcon
 ===================================
-- Declaring stable API for beta version.
+* Declaring stable API for beta version.
 
 May 18, 2022 | v0.5.2-alpha | Major Bird
 ===================================
-- `MongoChange` `type` is now uppercase for client convenience.
-- Added `maplessClass` accessor in `Mapless` and `MaplessReference`.
-- Added `unobservable` accessor to prevent recursive changes log.
-- Fixes `DELETE` missing jsonish in the `MongoChange` object.
+* `MongoChange` `type` is now uppercase for client convenience.
+* Added `maplessClass` accessor in `Mapless` and `MaplessReference`.
+* Added `unobservable` accessor to prevent recursive changes log.
+* Fixes `DELETE` missing jsonish in the `MongoChange` object.
 
 May 11, 2022 | v0.5.1-alpha | Tense Eagle
 ===================================
