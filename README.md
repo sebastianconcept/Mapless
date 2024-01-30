@@ -23,11 +23,11 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 
 ## Description
 
-Mapless is a schema-less persistence framework supporting multiple backends and offering a user-friendly API. For instance, querying Mapless objects involves a common family of methods, and there's no need to declare accessors and mutators. See [examples below](#examples).
+Mapless is a schema-less persistence framework supporting multiple backends and offering a user-friendly API. Querying Mapless objects involves a common family of methods, and there's no need to declare accessors and mutators. See [examples below](#examples).
 
-Designed to be schema-less, Mapless eliminates the need for schema maintenance and avoids any Object-Relational Mapping requirements.
+Designed to eliminate the need for schema maintenance, Mapless avoids any Object-Relational Mapping requirements.
 
-Mapless achieves a balance of maximum data survivability and robust architectural flexibility without imposing a heavy burden in terms of adoption and maintenance.
+Mapless achieves a balance between maximum data survivability and robust architectural flexibility without imposing a heavy burden in terms of adoption and maintenance. A sweet spot for development and production.
 
 ## Features
 
@@ -65,6 +65,9 @@ Mapless subclass: #Person
 	instanceVariableNames: ''
 	classVariableNames: ''
 	package: 'YourApp-Mapless'
+
+"Guarantees the database has a Person table (this is idempotent)."
+repository ensureTableFor: #Person.
 
 "Instantiates a Mapless object."
 philosopher := Person new
@@ -111,7 +114,7 @@ philosopherUser := User new
 "Query for that user by ID and get its person instance"
 aristotle := (User findId: philosopherUser id) person.
 ```
-## Install
+## How to Install
 
 To start with Mapless, download Pharo, open a Pharo Playground and evaluate:
 
@@ -119,19 +122,21 @@ To start with Mapless, download Pharo, open a Pharo Playground and evaluate:
 Metacello new
   baseline: 'Mapless';
   repository: 'github://sebastianconcept/Mapless:latest/src';
-  load
+  load.
+
+"By default, Mapless loads the Memory and SQLite backends"
 ```
 
 ## Include as dependency
 
-To include Mapless as a dependency from BaselineOf or ConfigurationOf add it with:
+To include Mapless as a dependency from `BaselineOf` or `ConfigurationOf` add it with:
 
 ```smalltalk
 spec
   baseline: 'Mapless'
     with: [ spec
     repository: 'github://sebastianconcept/Mapless:latest/src';
-    load: #('Core' 'Postgres' 'Mongo' 'Redis' 'Memory') ]
+    load: #('Core' 'SQLite' 'Postgres' 'Mongo' 'Redis' 'Memory') ]
 ```
 ## Project Ambition
 
