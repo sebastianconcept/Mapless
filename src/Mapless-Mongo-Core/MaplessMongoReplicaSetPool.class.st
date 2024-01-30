@@ -160,7 +160,7 @@ MaplessMongoReplicaSetPool >> countClientsTo: aMongoUrl [
 ]
 
 { #category : #accessing }
-MaplessMongoReplicaSetPool >> currentClientDynamicVariable [
+MaplessMongoReplicaSetPool >> currentClientDynamicVariableClass [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
 
@@ -676,7 +676,7 @@ MaplessMongoReplicaSetPool >> readOnlyDo: aBlock [
 	| client |
 	[ [ client := self requestReadOnlyClient.
 	client ifNil: [ self readOnlyError: nil ].
-	^ self currentClientDynamicVariable
+	^ self currentClientDynamicVariableClass
 		value: client
 		during: [ [ aBlock value: client ]
 				ensure: [ self returnReadOnlyClient: client ] ] ]
@@ -710,7 +710,7 @@ MaplessMongoReplicaSetPool >> readWriteDo: aBlock [
 	| client |
 	[ [ [ client := self requestReadWriteClient.
 	client ifNil: [ self readWriteError: nil ].
-	^ self currentClientDynamicVariable
+	^ self currentClientDynamicVariableClass
 		value: client
 		during: [ [ aBlock value: client ]
 				ensure: [ self returnReadWriteClient: client ] ] ]

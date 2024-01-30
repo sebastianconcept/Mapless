@@ -53,7 +53,7 @@ MaplessSQLitePool >> clientsMonitor [
 ]
 
 { #category : #accessing }
-MaplessSQLitePool >> currentClientDynamicVariable [
+MaplessSQLitePool >> currentClientDynamicVariableClass [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
 
@@ -234,7 +234,7 @@ MaplessSQLitePool >> withClientDo: aBlock [
 
 	| maplessDbClient |
 	maplessDbClient := self requestClient.
-	^ self currentClientDynamicVariable
+	^ self currentClientDynamicVariableClass
 		value: maplessDbClient
 		during: [ [ [ aBlock value: maplessDbClient ]
 				on: Error

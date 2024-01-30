@@ -51,7 +51,7 @@ MaplessUnQLitePool >> clientsMonitor [
 ]
 
 { #category : #accessing }
-MaplessUnQLitePool >> currentClientDynamicVariable [
+MaplessUnQLitePool >> currentClientDynamicVariableClass [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
 
@@ -236,7 +236,7 @@ MaplessUnQLitePool >> withClientDo: aBlock [
 
 	| unqliteClient |
 	unqliteClient := self requestClient.
-	^ self currentClientDynamicVariable
+	^ self currentClientDynamicVariableClass
 		value: unqliteClient
 		during: [ [ [ aBlock value: unqliteClient ]
 				on: Error

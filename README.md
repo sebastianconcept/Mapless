@@ -50,7 +50,7 @@ Mapless achieves a balance between maximum data survivability and robust archite
 6. ~~UnQLite~~ `deprecated` / retiring soon
 
 ## Examples
-Try Mapless by [installing it in a supported Pharo image](#install) and the following snippets:
+Try Mapless by [installing it in a supported Pharo image](#how-to-install) and the following snippets:
 
 ```Smalltalk
 "Instantiates an SQLite Mapless repository."
