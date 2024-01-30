@@ -1,3 +1,6 @@
+"
+I'm the type of Error specific to Mapless scenarios
+"
 Class {
 	#name : #MaplessError,
 	#superclass : #Error,

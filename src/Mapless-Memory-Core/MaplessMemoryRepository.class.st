@@ -72,87 +72,91 @@ MaplessMemoryRepository >> drop [
 	^ self do: [ self database drop ]
 ]
 
-{ #category : #actions }
-MaplessMemoryRepository >> ensureCollection [
-	self shouldBeImplemented
-]
-
 { #category : #testing }
 MaplessMemoryRepository >> existsId: anId of: aMaplessClass [
+
 	^ (self findOne: aMaplessClass atId: anId) notNil
 ]
 
 { #category : #accessing }
 MaplessMemoryRepository >> findAll: aMaplessClass [
+
 	^ self
-		findAll: aMaplessClass
-		where: [ :each | each class = aMaplessClass ]
+		  findAll: aMaplessClass
+		  where: [ :each | each class = aMaplessClass ]
 ]
 
 { #category : #accessing }
 MaplessMemoryRepository >> findAll: aMaplessClass sort: sortConditions [
+
 	^ self
-		findAll: aMaplessClass
-		where: (resolver conditionForClass: aMaplessClass)
-		sort: sortConditions
+		  findAll: aMaplessClass
+		  where: (resolver conditionForClass: aMaplessClass)
+		  sort: sortConditions
 ]
 
 { #category : #accessing }
 MaplessMemoryRepository >> findAll: aMaplessClass where: someConditions [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
-		findAll: aMaplessClass
-		where: someConditions
-		limit: nil
-		offset: nil
+		  findAll: aMaplessClass
+		  where: someConditions
+		  limit: nil
+		  offset: nil
 ]
 
 { #category : #accessing }
 MaplessMemoryRepository >> findAll: aMaplessClass where: someConditions limit: aLimitOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
-		findAll: aMaplessClass
-		where: someConditions
-		limit: aLimitOrNil
-		offset: nil
+		  findAll: aMaplessClass
+		  where: someConditions
+		  limit: aLimitOrNil
+		  offset: nil
 ]
 
 { #category : #accessing }
 MaplessMemoryRepository >> findAll: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
-		findAll: aMaplessClass
-		where: someConditions
-		limit: aLimitOrNil
-		offset: anOffsetOrNil
-		sort: nil
+		  findAll: aMaplessClass
+		  where: someConditions
+		  limit: aLimitOrNil
+		  offset: anOffsetOrNil
+		  sort: nil
 ]
 
 { #category : #accessing }
 MaplessMemoryRepository >> findAll: aMaplessClass where: someConditions limit: aLimitOrNil offset: anOffsetOrNil sort: sortConditionsOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	| result databaseCollection |
-	databaseCollection := self
-		databaseCollectionNamed: aMaplessClass collectionName.
+	databaseCollection := self databaseCollectionNamed:
+		                      aMaplessClass collectionName.
 	result := databaseCollection values select: someConditions.
-	anOffsetOrNil
-		ifNotNil: [ result := result
-				copyFrom: anOffsetOrNil
-				to: (result size min: anOffsetOrNil + aLimitOrNil) ].
-	sortConditionsOrNil
-		ifNotNil: [ result := (SortedCollection sortBlock: sortConditionsOrNil)
-				addAll: result;
-				yourself ].
+	result := anOffsetOrNil
+		          ifNil: [
+			          aLimitOrNil
+				          ifNil: [ result ]
+				          ifNotNil: [
+				          result copyFrom: 1 to: (result size min: aLimitOrNil) ] ]
+		          ifNotNil: [
+			          sortConditionsOrNil ifNotNil: [
+				          result := (SortedCollection sortBlock:
+						                     sortConditionsOrNil)
+					                    addAll: result;
+					                    yourself ].
+			          result
+				          copyFrom: anOffsetOrNil
+				          to: (result size min: anOffsetOrNil + aLimitOrNil) ].
+	sortConditionsOrNil ifNotNil: [
+		result := (SortedCollection sortBlock: sortConditionsOrNil)
+			          addAll: result;
+			          yourself ].
 	^ result collect: [ :each | self onAfterRead: each ]
 ]
 
 { #category : #accessing }
 MaplessMemoryRepository >> findAll: aMaplessClass where: someConditions limit: aLimitOrNil sort: sortConditionsOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
 		findAll: aMaplessClass
@@ -164,7 +168,6 @@ MaplessMemoryRepository >> findAll: aMaplessClass where: someConditions limit: a
 
 { #category : #accessing }
 MaplessMemoryRepository >> findAll: aMaplessClass where: someConditions sort: sortConditionsOrNil [
-	"Answer a collection of instances of aMaplessClass that meet with someConditions from the repository."
 
 	^ self
 		findAll: aMaplessClass
@@ -182,7 +185,6 @@ MaplessMemoryRepository >> findOne: aMaplessClass atId: anId [
 
 { #category : #accessing }
 MaplessMemoryRepository >> findOne: aMaplessClass where: someConditions [
-	"Answer one instance of aMaplessClass that meet with someConditions from the repository."
 
 	| result databaseCollection |
 	databaseCollection := self
@@ -217,7 +219,7 @@ MaplessMemoryRepository >> onBeforeSave: aMapless [
 
 { #category : #actions }
 MaplessMemoryRepository >> save: aMapless [
-	"Storage this instance into the persistent collection"
+	"Store this instance into the persistent collection"
 
 	self onBeforeSave: aMapless.
 	self update: aMapless.

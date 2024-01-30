@@ -49,7 +49,11 @@ MaplessMemoryRepositoryTest >> setUp [
 
 { #category : #tests }
 MaplessMemoryRepositoryTest >> tearDown [
-	repository ifNotNil: [ repository shutDown ].
+
+	repository ifNotNil: [
+		repository
+			drop;
+			shutDown ].
 	super tearDown
 ]
 
@@ -186,6 +190,33 @@ MaplessMemoryRepositoryTest >> testDatabaseDrop [
 ]
 
 { #category : #tests }
+MaplessMemoryRepositoryTest >> testDropDatabase [
+
+	| db databaseCollection |
+	db := repository database.
+	repository do: [ self addDummyPeople ].
+	databaseCollection := db collectionNamed: 'DummyPerson'.
+	self assert: databaseCollection name equals: 'DummyPerson'.
+	self deny: repository database collections isEmpty.
+
+	self shouldnt: [ repository drop ] raise: Error.
+	self assert: repository database collections isEmpty
+]
+
+{ #category : #tests }
+MaplessMemoryRepositoryTest >> testExistenceDetection [
+
+	| all |
+	repository do: [
+		self addDummyPeople.
+		all := DummyPerson findAll ].
+
+	self deny: (repository existsId: '123' of: DummyPerson).
+	all do: [ :guy |
+		self assert: (repository existsId: guy id of: DummyPerson) ]
+]
+
+{ #category : #tests }
 MaplessMemoryRepositoryTest >> testFindAll [
 	| found |
 	repository
@@ -208,6 +239,41 @@ MaplessMemoryRepositoryTest >> testFindAllSorted [
 			self assert: found notNil.
 			self assert: found first firstName = 'John'.
 			self assert: found last firstName = 'Robert' ]
+]
+
+{ #category : #tests }
+MaplessMemoryRepositoryTest >> testFindManyWithConditionsLimitedAndSorted [
+
+	| found |
+	repository do: [
+		(self newDummyPersonNamed: 'Peter') save.
+		(self newDummyPersonNamed: 'Rogers') save.
+		(self newDummyPersonNamed: 'Robin') save.
+		(self newDummyPersonNamed: 'Ron') save.
+		(self newDummyPersonNamed: 'John') save.
+		found := DummyPerson
+			         find: [ :e | 'Ro*' match: e firstName ]
+			         limit: 2
+			         sort: #firstName ascending.
+		self assert: found notNil.
+		self assert: found size equals: 2.
+		self assert: found notNil.
+		self assert: found first firstName < found second firstName ]
+]
+
+{ #category : #tests }
+MaplessMemoryRepositoryTest >> testInsert [
+
+	| guy |
+	guy := DummyPerson new
+		       firstName: 'john';
+		       lastName: 'q';
+		       yourself.
+	repository do: [ self assert: DummyPerson findAll isEmpty ].
+	repository insert: guy.
+	repository do: [
+		self deny: DummyPerson findAll isEmpty.
+		self assert: DummyPerson findAll size equals: 1 ]
 ]
 
 { #category : #tests }

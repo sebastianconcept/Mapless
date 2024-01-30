@@ -43,7 +43,7 @@ MaplessStandalonePostgresPool >> clientsMonitor [
 ]
 
 { #category : #accessing }
-MaplessStandalonePostgresPool >> currentClientDynamicVariable [
+MaplessStandalonePostgresPool >> currentClientDynamicVariableClass [
 	"Answers the class of the dynamic variable that will
 	hold the value of the current client during the evaluation of its usage."
 
@@ -127,7 +127,7 @@ MaplessStandalonePostgresPool >> initializeMaxClients [
 
 { #category : #actions }
 MaplessStandalonePostgresPool >> makeClient [
-	"Returns a new client so it can be (re)used in the pool"
+	"Returns a new client that can be (re)used in the pool"
 
 	^ (MaplessPostgresClient url: self getConnectionUrl) connect
 ]
@@ -229,7 +229,7 @@ MaplessStandalonePostgresPool >> withClientDo: aBlock [
 
 	| postgresClient |
 	postgresClient := self requestClient.
-	^ self currentClientDynamicVariable
+	^ self currentClientDynamicVariableClass
 		value: postgresClient
 		during: [ [ [ aBlock value: postgresClient ]
 				on: Error
