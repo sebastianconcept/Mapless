@@ -67,7 +67,7 @@ Mapless subclass: #Person
 	package: 'YourApp-Mapless'
 
 "Guarantees the database has a Person table (this is idempotent)."
-repository ensureTableFor: #Person.
+repository ensureTableFor: Person.
 
 "Instantiates a Mapless object."
 philosopher := Person new
