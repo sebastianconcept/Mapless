@@ -1,3 +1,6 @@
+"
+Providing access to Redis features for Mapless is my job
+"
 Class {
 	#name : #MaplessRedisRepository,
 	#superclass : #MaplessRepository,

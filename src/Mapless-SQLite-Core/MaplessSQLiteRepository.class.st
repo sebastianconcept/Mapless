@@ -1,5 +1,5 @@
 "
-I give access to SQLite
+Providing access to SQLite features for Mapless is my job
 "
 Class {
 	#name : #MaplessSQLiteRepository,
