@@ -14,9 +14,16 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 [![Pharo 10](https://img.shields.io/badge/Pharo-10-%23383932.svg)](https://pharo.org/download)
 [![Pharo 11](https://img.shields.io/badge/Pharo-11-%23383932.svg)](https://pharo.org/download)
 
-[![Social](https://img.shields.io/github/stars/sebastianconcept/Mapless?style=social)]()
-[![Forks](https://img.shields.io/github/forks/sebastianconcept/Mapless?style=sociall)]()
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE.txt)
+[![Forks](https://img.shields.io/github/forks/sebastianconcept/Mapless?style=sociall)]()
+[![Social](https://img.shields.io/github/stars/sebastianconcept/Mapless?style=social)]()
+
+[![](https://img.shields.io/badge/Sqlite-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/index.html)
+[![](https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=whit)](https://www.postgresql.org/)
+[![](https://img.shields.io/badge/UnQlite-003127?logo=unqlite&logoColor=white)](https://unqlite.org/)
+[![](https://img.shields.io/badge/MongoDB-4EA94B?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![](https://img.shields.io/badge/RAM-001B57)](https://en.wikipedia.org/wiki/Random-access_memory)
+[![](https://img.shields.io/badge/redis-CC0000.svg?logo=redis&logoColor=white)](https://redis.io/)
 
 ### [Mapless GitHub Page](https://sebastianconcept.github.io/Mapless/)
 
