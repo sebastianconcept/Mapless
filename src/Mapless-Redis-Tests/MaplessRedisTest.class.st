@@ -593,7 +593,7 @@ MaplessRedisTest >> testReactsToObservedPubsubEventWithLocalArguments [
 	self deny: valued.
 	task1
 		pubsubWhen: #doTheThing
-		send: #valueWithArguments:
+		send: #value:value:
 		to: reaction
 		withArguments: { $a. 42 }.
 	self deny: valued.
