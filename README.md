@@ -19,6 +19,9 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE.txt)
 
 ### [Mapless GitHub Page](https://sebastianconcept.github.io/Mapless/)
+
+Jump to [How to Install](#how-to-install)
+
 ---
 
 ## Description
@@ -114,17 +117,23 @@ philosopherUser := User new
 "Query for that user by ID and get its person instance"
 aristotle := (User findId: philosopherUser id) person.
 ```
-## How to Install
+## How to install
 
 To start with Mapless, download Pharo, open a Pharo Playground and evaluate:
 
 ```smalltalk
+"Load latest version of Mapless with its default backends (Memory and SQLite)"
 Metacello new
   baseline: 'Mapless';
   repository: 'github://sebastianconcept/Mapless:latest/src';
   load.
-
-"By default, Mapless loads the Memory and SQLite backends"
+```
+```smalltalk
+"Load latest version of Mapless specifying which backends explicitely"
+Metacello new
+  baseline: 'Mapless';
+  repository: 'github://sebastianconcept/Mapless:latest/src';
+  load: #('Core' 'SQLite' 'Postgres' 'Mongo' 'Redis' 'Memory') 
 ```
 
 ## Include as dependency
