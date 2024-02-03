@@ -1,5 +1,5 @@
 "
-I give access to SQLite
+I support Mapless features using SQLite
 "
 Class {
 	#name : #MaplessSQLiteRepository,
