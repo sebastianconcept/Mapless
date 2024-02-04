@@ -19,20 +19,6 @@ MaplessRedisRepository >> auth: aPassword [
 ]
 
 { #category : #accessing }
-MaplessRedisRepository >> channelNameFor: aMapless when: anEventSelector [
-
-	"Answers the channel name to use for messaging occurrences 
-	of anEventSelector about the given mapless object, aMapless.
-	The channel name is formatted as '{1}:{2}', where:
-	- {1} is the id of the mapless object, aMapless.
-	- {2} is the string representation of anEventSelector."
-
-	^ '{1}:{2}' format: { 
-			  aMapless id asString.
-			  anEventSelector asString }
-]
-
-{ #category : #accessing }
 MaplessRedisRepository >> count: aMaplessClass [
 	^ self count: aMaplessClass where: aMaplessClass name , ':id:*'
 ]
@@ -188,18 +174,6 @@ MaplessRedisRepository >> onBeforeSave: aMapless [
 ]
 
 { #category : #actions }
-MaplessRedisRepository >> publish: anEventSelector from: aMapless [
-
-	(self isUnsaved: aMapless) ifTrue: [ 
-		MaplessObserverOnUnsaved signal:
-			'Mapless objects need to be saved for publishing events.' ].
-
-	accessor
-		publish: (self channelNameFor: aMapless when: anEventSelector)
-		message: anEventSelector
-]
-
-{ #category : #actions }
 MaplessRedisRepository >> removeExpireFor: aMapless [
 	^ accessor redis endpoint persist: (self namespacedIdOf: aMapless)
 ]
@@ -221,36 +195,6 @@ MaplessRedisRepository >> setDatabase: aZeroBasedDbIndex [
 ]
 
 { #category : #actions }
-MaplessRedisRepository >> subscribe: aMapless when: anEventSelector evaluate: anAction [
-
-	"Subscribes the provided action, anAction, to be evaluated whenever 
-	an event with the specified anEventSelector occurs about the given 
-	mapless object, aMapless.
-
-	Example:
-		maplessRedisRepository 
-			subscribe: someMaplessObject 
-			when: #updated 
-			evaluate: [ :event | self handleUpdateEvent: event ]"
-
-	"Verify only saved Mapless subscribe to pubsub channels"
-
-	(self isUnsaved: aMapless) ifTrue: [ 
-		MaplessObserverOnUnsaved signal:
-			'Cannot observe an unsaved mapless object' ].
-
-	"Wire reacting with anAction so triggered events are handled"
-	aMapless when: #pubsubPublished evaluate: anAction.
-
-	"Subscribe to the right channel for anEventSelector"
-	accessor
-		subscribe: (self channelNameFor: aMapless when: anEventSelector)
-		callback: [ :pubsubResponse | 
-			pubsubResponse payload ifNotNil: [ 
-				aMapless triggerEvent: #pubsubPublished ] ]
-]
-
-{ #category : #actions }
 MaplessRedisRepository >> ttlFor: aMapless [
 	^ accessor redis endpoint pttl: (self namespacedIdOf: aMapless)
 ]
@@ -261,17 +205,6 @@ MaplessRedisRepository >> unnamespaced: propertyName in: aNamespacedKey [
 		upTo: propertyName;
 		upTo: $:;
 		upToEnd
-]
-
-{ #category : #actions }
-MaplessRedisRepository >> unsubscribe: aMapless from: anEventSelector [
-
-	"Unsubscribe from the right channel for anEventSelector on aMapless"
-	accessor unsubscribe:
-		(self channelNameFor: aMapless when: anEventSelector).
-
-	"Local unwiring of attempts to react to it"
-	aMapless removeActionsForEvent: #pubsubPublished
 ]
 
 { #category : #actions }

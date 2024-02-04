@@ -9,8 +9,6 @@ Mapless >> pubsubTriggerEvent: anEventSelector [
 { #category : #'*Mapless-Redis-Observer' }
 Mapless >> pubsubTriggerEvent: anEventSelector with: anObject [
 
-	self flag: 'review remote arguments'.
-
 	^ self
 		  pubsubTriggerEvent: anEventSelector
 		  withArguments: { anObject }
@@ -19,11 +17,10 @@ Mapless >> pubsubTriggerEvent: anEventSelector with: anObject [
 { #category : #'*Mapless-Redis-Observer' }
 Mapless >> pubsubTriggerEvent: anEventSelector withArguments: anArgumentList [
 
-	self flag: 'review remote arguments'.
 	self class getPubsubRepository
 		publish: anEventSelector
 		from: self
-		arguments: (STON toString: anArgumentList)
+		arguments: anArgumentList
 ]
 
 { #category : #'*Mapless-Redis-Observer' }
@@ -68,4 +65,24 @@ Mapless >> pubsubWhen: anEventSelector send: aMessageSelector to: anObject withA
 			 receiver: anObject
 			 selector: aMessageSelector
 			 arguments: anArgArray)
+]
+
+{ #category : #'*Mapless-Redis-Observer' }
+Mapless >> pubsubWithRemoteArgumentWhen: anEventSelector send: aMessageSelector to: anObject [
+
+	self class getPubsubRepository
+		withRemoteArgumentSubscribe: self
+		when: anEventSelector
+		send: aMessageSelector
+		to: anObject
+]
+
+{ #category : #'*Mapless-Redis-Observer' }
+Mapless >> pubsubWithRemoteArgumentsWhen: anEventSelector send: aMessageSelector to: anObject [
+
+	self class getPubsubRepository
+		withRemoteArgumentsSubscribe: self
+		when: anEventSelector
+		send: aMessageSelector
+		to: anObject
 ]

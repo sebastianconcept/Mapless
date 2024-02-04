@@ -78,6 +78,49 @@ MaplessRedisObserverTest >> testCannotSubscribeToUnsavedMapless [
 ]
 
 { #category : #tests }
+MaplessRedisObserverTest >> testReactsToAnObservedInstanceAmongMany [
+
+	| task1 task2 valued reaction task3 |
+	MaplessRedisHelper repository: self newRepository.
+	repository := MaplessRedisHelper repository.
+	task1 := SampleTask new.
+	task2 := SampleTask new.
+	task3 := SampleTask new.
+	valued := Dictionary new.
+	reaction := [ :id | valued at: id ifAbsentPut: [ true ] ].
+	{ 
+		task1.
+		task2.
+		task3 } do: [ :task | repository save: task ].
+
+	task1
+		pubsubWhen: #doTheThing
+		send: #value:
+		to: reaction
+		with: task1 id.
+	self deny: (valued includesKey: task1 id).
+	task2 := repository findOne: SampleTask atId: task2 id.
+	task2 pubsubTriggerEvent: #doTheThing.
+	self deny: (valued includesKey: task1 id).
+	self deny: (valued includesKey: task2 id).
+	self deny: (valued includesKey: task3 id).
+	
+	task3 := repository findOne: SampleTask atId: task3 id.
+	task3 pubsubTriggerEvent: #doTheThing.
+	self deny: (valued includesKey: task1 id).
+	self deny: (valued includesKey: task2 id).
+	self deny: (valued includesKey: task3 id).
+
+	task1 := repository findOne: SampleTask atId: task1 id.
+	task1 pubsubTriggerEvent: #doTheThing.
+
+	5 milliSeconds asDelay wait.
+	self assert: (valued includesKey: task1 id).
+	self deny: (valued includesKey: task2 id).
+	self deny: (valued includesKey: task3 id)
+]
+
+{ #category : #tests }
 MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithLocalArguments [
 
 	| task1 task2 valued reaction receivedOne receivedTwo |
@@ -127,12 +170,68 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithOneLocalArgument 
 	self deny: valued.
 	self assert: receivedArguments isNil.
 	task2 := repository findOne: SampleTask atId: task1 id.
-	Transcript crShow: valued.
 	task2 pubsubTriggerEvent: #doTheThing.
 	5 milliSeconds asDelay wait.
 	self assert: valued.
 	self assert: receivedArguments notNil.
 	self assert: receivedArguments equals: 42
+]
+
+{ #category : #tests }
+MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithRemoteArgument [
+
+	| task1 task2 valued reaction received |
+	MaplessRedisHelper repository: self newRepository.
+	repository := MaplessRedisHelper repository.
+	task1 := SampleTask new.
+	valued := false.
+	reaction := [ :first | 
+	            valued := true.
+	            received := first ].
+	repository save: task1.
+	self deny: valued.
+	task1
+		pubsubWithRemoteArgumentWhen: #doTheThing
+		send: #value:
+		to: reaction.
+	self deny: valued.
+	self deny: received equals: 42.
+	task2 := repository findOne: SampleTask atId: task1 id.
+
+	task2 pubsubTriggerEvent: #doTheThing with: 42.
+	5 milliSeconds asDelay wait.
+	self assert: valued.
+	self assert: received equals: 42
+]
+
+{ #category : #tests }
+MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithRemoteArguments [
+
+	| task1 task2 valued reaction receivedOne receivedTwo |
+	MaplessRedisHelper repository: self newRepository.
+	repository := MaplessRedisHelper repository.
+	task1 := SampleTask new.
+	valued := false.
+	reaction := [ :first :second | 
+	            valued := true.
+	            receivedOne := first.
+	            receivedTwo := second ].
+	repository save: task1.
+	self deny: valued.
+	task1
+		pubsubWithRemoteArgumentsWhen: #doTheThing
+		send: #value:value:
+		to: reaction.
+	self deny: valued.
+	self deny: receivedOne equals: $a.
+	self deny: receivedTwo equals: 42.
+	task2 := repository findOne: SampleTask atId: task1 id.
+
+	task2 pubsubTriggerEvent: #doTheThing withArguments: { $a. 42 }.
+	5 milliSeconds asDelay wait.
+	self assert: valued.
+	self assert: receivedOne equals: $a.
+	self assert: receivedTwo equals: 42
 ]
 
 { #category : #tests }
@@ -153,4 +252,36 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithoutArguments [
 	task2 pubsubTriggerEvent: #doTheThing.
 	5 milliSeconds asDelay wait.
 	self assert: valued
+]
+
+{ #category : #tests }
+MaplessRedisObserverTest >> testThreeRemoteArguments [
+
+	| task1 task2 valued reaction receivedOne receivedTwo receivedThree |
+	MaplessRedisHelper repository: self newRepository.
+	repository := MaplessRedisHelper repository.
+	task1 := SampleTask new.
+	valued := false.
+	reaction := [ :first :second :third | 
+	            valued := true.
+	            receivedOne := first.
+	            receivedTwo := second.
+	            receivedThree := third ].
+	repository save: task1.
+	self deny: valued.
+	task1
+		pubsubWithRemoteArgumentsWhen: #doTheThing
+		send: #value:value:value:
+		to: reaction.
+	self deny: valued.
+	task2 := repository findOne: SampleTask atId: task1 id.
+
+	task2
+		pubsubTriggerEvent: #doTheThing
+		withArguments: { $a. 42. #answer }.
+	5 milliSeconds asDelay wait.
+	self assert: valued.
+	self assert: receivedOne equals: $a.
+	self assert: receivedTwo equals: 42.
+	self assert: receivedThree equals: #answer
 ]
