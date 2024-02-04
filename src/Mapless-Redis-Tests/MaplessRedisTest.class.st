@@ -778,6 +778,28 @@ MaplessRedisTest >> testSubModelsFromReifiedJSON [
 ]
 
 { #category : #tests }
+MaplessRedisTest >> testUpdate [
+
+	| guy found foundAgain |
+	repository := self newRepository.
+	guy := DummyPerson new
+		       firstName: 'john';
+		       lastName: 'q';
+		       yourself.
+	self shouldnt: [ repository save: guy ] raise: Error.
+
+	found := repository findOne: DummyPerson atId: guy id.
+	self assert: found notNil.
+	self assert: found id equals: guy id.
+	self assert: found firstName equals: 'john'.
+	found firstName: 'John'.
+	repository update: found.
+
+	foundAgain := repository findOne: DummyPerson atId: guy id.
+	self assert: foundAgain firstName equals: 'John'
+]
+
+{ #category : #tests }
 MaplessRedisTest >> testUpdatingExpire [
 	| guy found howMuchWillItBeThere newerTTL answer |
 	repository := self newRepository.
