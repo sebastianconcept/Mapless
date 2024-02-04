@@ -286,6 +286,66 @@ MaplessRedisTest >> testComposition [
 ]
 
 { #category : #tests }
+MaplessRedisTest >> testCountAll [
+
+	| users count |
+	repository := self newRepository.
+	users := OrderedCollection new.
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
+	count := repository count: DummyUser.
+	self assert: count equals: 0.
+
+	count := repository count: DummyPerson.
+	self assert: count equals: 0.
+
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+	count := repository count: DummyUser.
+
+	count := repository count: DummyUser.
+	self assert: count equals: 26.
+
+	count := repository count: DummyPerson.
+	self assert: count equals: 26
+]
+
+{ #category : #tests }
+MaplessRedisTest >> testCountSome [
+
+	| users count |
+	repository := self newRepository.
+	users := OrderedCollection new.
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
+	count := repository count: DummyUser where: 'id:123'.
+	self assert: count equals: 0.
+
+	count := repository count: DummyPerson where: 'id:123'.
+	self assert: count equals: 0.
+
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+	count := repository count: DummyUser where: 'id:' , users first id.
+	self assert: count equals: 1.
+
+	count := repository
+		         count: DummyPerson
+		         where: 'id:' , users first person id.
+	self assert: count equals: 1
+]
+
+{ #category : #tests }
 MaplessRedisTest >> testDateAndTime [
 	| when guy loaded |
 	repository := self newRepository.
