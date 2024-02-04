@@ -14,12 +14,19 @@ Class {
 
 { #category : #'instance creation' }
 MaplessRedisPool class >> local [
+
+	^ self targetUrl: 'sync://localhost'
+]
+
+{ #category : #'instance creation' }
+MaplessRedisPool class >> targetUrl: anUrl [
+
 	| rediStick |
-	rediStick := RsRediStick targetUrl: 'sync://localhost'.
+	rediStick := RsRediStick targetUrl: anUrl.
 	rediStick connect.
 	^ self new
-		redis: (RsRedis on: rediStick);
-		yourself
+		  redis: (RsRedis on: rediStick);
+		  yourself
 ]
 
 { #category : #'redis-commands' }
