@@ -430,6 +430,36 @@ MaplessRedisTest >> testFindAll [
 ]
 
 { #category : #tests }
+MaplessRedisTest >> testFindOne [
+
+	| users found |
+	repository := self newRepository.
+	users := OrderedCollection new.
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
+
+	users do: [ :user | 
+		found := repository findOne: DummyUser atId: user id.
+		self assert: found isNil ].
+
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+
+	users do: [ :user | 
+		found := repository findOne: DummyUser atId: user id.
+		self assert: found id equals: user id.
+		self assert: found username equals: user username.
+		found := repository findOne: DummyPerson atId: user person id.
+		self assert: found id equals: user person id.
+		self assert: found firstName equals: user person firstName ]
+]
+
+{ #category : #tests }
 MaplessRedisTest >> testIsUnsaved [
 	| guy |
 	repository := self newRepository.
