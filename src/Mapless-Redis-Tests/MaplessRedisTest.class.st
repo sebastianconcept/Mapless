@@ -673,6 +673,21 @@ MaplessRedisTest >> testMultipleComposedSaveAndLoad [
 ]
 
 { #category : #tests }
+MaplessRedisTest >> testNormalizeId [
+
+	| m id |
+	repository := self basicNewRepository.
+	m := Mapless new.
+	self assert: m maplessData id isNil.
+	repository save: m.
+	self assert: m maplessData id notNil.
+	id := m maplessData id.
+	repository normalizeIdOfOn: m.
+
+	self assert: id equals: m id
+]
+
+{ #category : #tests }
 MaplessRedisTest >> testRemovingExpire [
 	| guy found howMuchWillItBeThere |
 	repository := self newRepository.
