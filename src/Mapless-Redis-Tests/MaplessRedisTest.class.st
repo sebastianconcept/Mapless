@@ -460,6 +460,27 @@ MaplessRedisTest >> testFindOne [
 ]
 
 { #category : #tests }
+MaplessRedisTest >> testInsert [
+
+	| guy all |
+	repository := self newRepository.
+	guy := DummyPerson new
+		       firstName: 'john';
+		       lastName: 'q';
+		       yourself.
+	self shouldnt: [ repository save: guy ] raise: Error.
+
+	all := repository findAll: DummyPerson.
+	self assert: all size equals: 1.
+	
+	repository insert: DummyPerson new.
+	
+	all := repository findAll: DummyPerson.
+	self assert: all size equals: 2.
+	
+]
+
+{ #category : #tests }
 MaplessRedisTest >> testIsUnsaved [
 	| guy |
 	repository := self newRepository.
