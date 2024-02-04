@@ -140,12 +140,22 @@ BaselineOfMapless >> setUpRedisDependencies: spec [
 
 { #category : #baseline }
 BaselineOfMapless >> setUpRedisPackages: spec [
+
 	spec
-		package: 'Mapless-Redis-Core'
-		with: [ spec requires: #('Mapless-Base-Core' 'RediStick') ].
+		package: 'Mapless-Redis'
+		with: [ spec requires: #( 'Mapless-Base-Core' 'RediStick' ) ].
+
+	spec
+		package: 'Mapless-Redis-Observer'
+		with: [ spec requires: #( 'Mapless-Base-Core' ) ].
+
+	spec package: 'Mapless-Redis-Observer-Tests' with: [ 
+		spec requires: #( 'Mapless-Redis-Observer' 'Mapless-Redis-Tests'
+			   'Mapless-Tests-Base' ) ].
+		
 	spec
 		package: 'Mapless-Redis-Tests'
-		with: [ spec requires: #('Mapless-Redis-Core' 'Mapless-Tests-Base') ]
+		with: [ spec requires: #( 'Mapless-Redis' 'Mapless-Tests-Base' ) ].	
 ]
 
 { #category : #baseline }

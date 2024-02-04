@@ -7,7 +7,7 @@ Class {
 	#classInstVars : [
 		'repository'
 	],
-	#category : #'Mapless-Redis-Tests'
+	#category : #'Mapless-Redis-Observer'
 }
 
 { #category : #initialization }
