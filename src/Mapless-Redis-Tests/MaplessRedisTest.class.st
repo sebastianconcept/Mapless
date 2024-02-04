@@ -430,7 +430,7 @@ MaplessRedisTest >> testFindAll [
 ]
 
 { #category : #tests }
-MaplessRedisTest >> testFindOne [
+MaplessRedisTest >> testFindOneAtId [
 
 	| users found |
 	repository := self newRepository.
@@ -445,6 +445,38 @@ MaplessRedisTest >> testFindOne [
 
 	users do: [ :user | 
 		found := repository findOne: DummyUser atId: user id.
+		self assert: found isNil ].
+
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+
+	users do: [ :user | 
+		found := repository findOne: DummyUser atId: user id.
+		self assert: found id equals: user id.
+		self assert: found username equals: user username.
+		found := repository findOne: DummyPerson atId: user person id.
+		self assert: found id equals: user person id.
+		self assert: found firstName equals: user person firstName ]
+]
+
+{ #category : #tests }
+MaplessRedisTest >> testFindOneWhere [
+
+	| users found |
+	repository := self newRepository.
+	users := OrderedCollection new.
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
+
+	users do: [ :user | 
+		found := repository
+			         findOne: DummyUser
+			         where: ('id:{1}' format: { user id }).
 		self assert: found isNil ].
 
 	users do: [ :user | repository save: user person ].
@@ -811,7 +843,7 @@ MaplessRedisTest >> testUpdatingExpire [
 	found := repository findOne: DummyPerson atId: guy id.
 	self assert: found notNil.
 	repository expires: guy in: 900.
-	30 milliSeconds wait.
+	60 milliSeconds wait.
 	howMuchWillItBeThere := repository ttlFor: guy.
 	self assert: howMuchWillItBeThere > 0.
 	answer := repository expires: guy in: 2500.
