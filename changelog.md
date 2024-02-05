@@ -1,3 +1,8 @@
+Feb 5, 2024 | 
+===================================
+* Using PUBSUB Redis feature via `RediStick` to implement the observer pattern of specific `Mapless` instances and across images.
+* `Mapless-Redis-Observer` has its own package and `Mapless-Redis` is now the main package (discontinuing `Mapless-Redis-Core`). Unit tests are in their own package as usual.
+
 Jan 30, 2024 | v0.6.0 | Sharp Bird
 ===================================
 * Version relese
