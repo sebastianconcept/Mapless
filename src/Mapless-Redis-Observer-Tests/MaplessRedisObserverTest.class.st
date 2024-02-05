@@ -60,7 +60,7 @@ MaplessRedisObserverTest >> testCanSubscribeToSavedMapless [
 	reaction := [ valued := true ].
 	repository save: task.
 	self
-		shouldnt: [ task pubsubWhen: #something send: #value to: reaction ]
+		shouldnt: [ task publish: #something send: #value to: reaction ]
 		raise: MaplessObserverOnUnsaved
 ]
 
@@ -73,7 +73,7 @@ MaplessRedisObserverTest >> testCannotSubscribeToUnsavedMapless [
 	valued := false.
 	reaction := [ valued := true ].
 	self
-		should: [ task pubsubWhen: #something send: #value to: reaction ]
+		should: [ task publish: #something send: #value to: reaction ]
 		raise: MaplessObserverOnUnsaved
 ]
 
@@ -94,25 +94,25 @@ MaplessRedisObserverTest >> testReactsToAnObservedInstanceAmongMany [
 		task3 } do: [ :task | repository save: task ].
 
 	task1
-		pubsubWhen: #doTheThing
+		subscribe: #doTheThing
 		send: #value:
 		to: reaction
 		with: task1 id.
 	self deny: (valued includesKey: task1 id).
 	task2 := repository findOne: SampleTask atId: task2 id.
-	task2 pubsubTriggerEvent: #doTheThing.
+	task2 publish: #doTheThing.
 	self deny: (valued includesKey: task1 id).
 	self deny: (valued includesKey: task2 id).
 	self deny: (valued includesKey: task3 id).
 	
 	task3 := repository findOne: SampleTask atId: task3 id.
-	task3 pubsubTriggerEvent: #doTheThing.
+	task3 publish: #doTheThing.
 	self deny: (valued includesKey: task1 id).
 	self deny: (valued includesKey: task2 id).
 	self deny: (valued includesKey: task3 id).
 
 	task1 := repository findOne: SampleTask atId: task1 id.
-	task1 pubsubTriggerEvent: #doTheThing.
+	task1 publish: #doTheThing.
 
 	5 milliSeconds asDelay wait.
 	self assert: (valued includesKey: task1 id).
@@ -135,14 +135,14 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithLocalArguments [
 	repository save: task1.
 	self deny: valued.
 	task1
-		pubsubWhen: #doTheThing
+		subscribe: #doTheThing
 		send: #value:value:
 		to: reaction
 		withArguments: { $a. 42 }.
 	self deny: valued.
 	task2 := repository findOne: SampleTask atId: task1 id.
 
-	task2 pubsubTriggerEvent: #doTheThing.
+	task2 publish: #doTheThing.
 	5 milliSeconds asDelay wait.
 	self assert: valued.
 	self assert: receivedOne equals: $a.
@@ -163,14 +163,14 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithOneLocalArgument 
 	repository save: task1.
 	self deny: valued.
 	task1
-		pubsubWhen: #doTheThing
+		subscribe: #doTheThing
 		send: #value:
 		to: reaction
 		with: 42.
 	self deny: valued.
 	self assert: receivedArguments isNil.
 	task2 := repository findOne: SampleTask atId: task1 id.
-	task2 pubsubTriggerEvent: #doTheThing.
+	task2 publish: #doTheThing.
 	5 milliSeconds asDelay wait.
 	self assert: valued.
 	self assert: receivedArguments notNil.
@@ -191,14 +191,14 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithRemoteArgument [
 	repository save: task1.
 	self deny: valued.
 	task1
-		pubsubWithRemoteArgumentWhen: #doTheThing
+		subscribe: #doTheThing
 		send: #value:
 		to: reaction.
 	self deny: valued.
 	self deny: received equals: 42.
 	task2 := repository findOne: SampleTask atId: task1 id.
 
-	task2 pubsubTriggerEvent: #doTheThing with: 42.
+	task2 publish: #doTheThing with: 42.
 	5 milliSeconds asDelay wait.
 	self assert: valued.
 	self assert: received equals: 42
@@ -219,7 +219,7 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithRemoteArguments [
 	repository save: task1.
 	self deny: valued.
 	task1
-		pubsubWithRemoteArgumentsWhen: #doTheThing
+		subscribe: #doTheThing
 		send: #value:value:
 		to: reaction.
 	self deny: valued.
@@ -227,7 +227,7 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithRemoteArguments [
 	self deny: receivedTwo equals: 42.
 	task2 := repository findOne: SampleTask atId: task1 id.
 
-	task2 pubsubTriggerEvent: #doTheThing withArguments: { $a. 42 }.
+	task2 publish: #doTheThing withArguments: { $a. 42 }.
 	5 milliSeconds asDelay wait.
 	self assert: valued.
 	self assert: receivedOne equals: $a.
@@ -245,11 +245,11 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithoutArguments [
 	reaction := [ valued := true ].
 	repository save: task1.
 	self deny: valued.
-	task1 pubsubWhen: #doTheThing send: #value to: reaction.
+	task1 publish: #doTheThing send: #value to: reaction.
 	self deny: valued.
 	task2 := repository findOne: SampleTask atId: task1 id.
 
-	task2 pubsubTriggerEvent: #doTheThing.
+	task2 publish: #doTheThing.
 	5 milliSeconds asDelay wait.
 	self assert: valued
 ]
@@ -270,14 +270,14 @@ MaplessRedisObserverTest >> testThreeRemoteArguments [
 	repository save: task1.
 	self deny: valued.
 	task1
-		pubsubWithRemoteArgumentsWhen: #doTheThing
+		subscribe: #doTheThing
 		send: #value:value:value:
 		to: reaction.
 	self deny: valued.
 	task2 := repository findOne: SampleTask atId: task1 id.
 
 	task2
-		pubsubTriggerEvent: #doTheThing
+		publish: #doTheThing
 		withArguments: { $a. 42. #answer }.
 	5 milliSeconds asDelay wait.
 	self assert: valued.

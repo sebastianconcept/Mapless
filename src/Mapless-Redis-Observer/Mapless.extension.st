@@ -1,38 +1,13 @@
 Extension { #name : #Mapless }
 
 { #category : #'*Mapless-Redis-Observer' }
-Mapless >> pubsubTriggerEvent: anEventSelector [
+Mapless >> publish: anEventSelector [
 
 	self class getPubsubRepository publish: anEventSelector from: self
 ]
 
 { #category : #'*Mapless-Redis-Observer' }
-Mapless >> pubsubTriggerEvent: anEventSelector with: anObject [
-
-	^ self
-		  pubsubTriggerEvent: anEventSelector
-		  withArguments: { anObject }
-]
-
-{ #category : #'*Mapless-Redis-Observer' }
-Mapless >> pubsubTriggerEvent: anEventSelector withArguments: anArgumentList [
-
-	self class getPubsubRepository
-		publish: anEventSelector
-		from: self
-		arguments: anArgumentList
-]
-
-{ #category : #'*Mapless-Redis-Observer' }
-Mapless >> pubsubUnsubscribe: anEventSelector [
-
-	self class getPubsubRepository
-		unsubscribe: self
-		from: anEventSelector
-]
-
-{ #category : #'*Mapless-Redis-Observer' }
-Mapless >> pubsubWhen: anEventSelector evaluate: anAction [
+Mapless >> publish: anEventSelector evaluate: anAction [
 
 	self class getPubsubRepository
 		subscribe: self
@@ -41,48 +16,63 @@ Mapless >> pubsubWhen: anEventSelector evaluate: anAction [
 ]
 
 { #category : #'*Mapless-Redis-Observer' }
-Mapless >> pubsubWhen: anEventSelector send: aMessageSelector to: anObject [
+Mapless >> publish: anEventSelector send: aMessageSelector to: anObject [
 
 	self
-		pubsubWhen: anEventSelector
+		publish: anEventSelector
 		evaluate:
 		(WeakMessageSend receiver: anObject selector: aMessageSelector)
 ]
 
 { #category : #'*Mapless-Redis-Observer' }
-Mapless >> pubsubWhen: anEventSelector send: aMessageSelector to: anObject with: anArg [
+Mapless >> publish: anEventSelector with: anObject [
 
-	self pubsubWhen: anEventSelector evaluate: (WeakMessageSend
+	^ self
+		  publish: anEventSelector
+		  withArguments: { anObject }
+]
+
+{ #category : #'*Mapless-Redis-Observer' }
+Mapless >> publish: anEventSelector withArguments: anArgumentList [
+
+	self class getPubsubRepository
+		publish: anEventSelector
+		from: self
+		arguments: anArgumentList
+]
+
+{ #category : #'*Mapless-Redis-Observer' }
+Mapless >> subscribe: anEventSelector send: aMessageSelector to: anObject [
+
+	self class getPubsubRepository
+		subscribe: self
+		when: anEventSelector
+		send: aMessageSelector
+		to: anObject
+]
+
+{ #category : #'*Mapless-Redis-Observer' }
+Mapless >> subscribe: anEventSelector send: aMessageSelector to: anObject with: anArg [
+
+	self publish: anEventSelector evaluate: (WeakMessageSend
 			 receiver: anObject
 			 selector: aMessageSelector
 			 argument: anArg)
 ]
 
 { #category : #'*Mapless-Redis-Observer' }
-Mapless >> pubsubWhen: anEventSelector send: aMessageSelector to: anObject withArguments: anArgArray [
+Mapless >> subscribe: anEventSelector send: aMessageSelector to: anObject withArguments: anArgArray [
 
-	self pubsubWhen: anEventSelector evaluate: (WeakMessageSend
+	self publish: anEventSelector evaluate: (WeakMessageSend
 			 receiver: anObject
 			 selector: aMessageSelector
 			 arguments: anArgArray)
 ]
 
 { #category : #'*Mapless-Redis-Observer' }
-Mapless >> pubsubWithRemoteArgumentWhen: anEventSelector send: aMessageSelector to: anObject [
+Mapless >> unsubscribe: anEventSelector [
 
 	self class getPubsubRepository
-		withRemoteArgumentSubscribe: self
-		when: anEventSelector
-		send: aMessageSelector
-		to: anObject
-]
-
-{ #category : #'*Mapless-Redis-Observer' }
-Mapless >> pubsubWithRemoteArgumentsWhen: anEventSelector send: aMessageSelector to: anObject [
-
-	self class getPubsubRepository
-		withRemoteArgumentsSubscribe: self
-		when: anEventSelector
-		send: aMessageSelector
-		to: anObject
+		unsubscribe: self
+		from: anEventSelector
 ]

@@ -85,30 +85,7 @@ MaplessRedisRepository >> subscribe: aMapless when: anEventSelector evaluate: an
 ]
 
 { #category : #'*Mapless-Redis-Observer' }
-MaplessRedisRepository >> unsubscribe: aMapless from: anEventSelector [
-
-	"Unsubscribe from the right channel for anEventSelector on aMapless"
-
-	accessor unsubscribe:
-		(self channelNameFor: aMapless when: anEventSelector)
-]
-
-{ #category : #'*Mapless-Redis-Observer' }
-MaplessRedisRepository >> withRemoteArgumentSubscribe: aMapless when: anEventSelector send: aMessageSelector to: anObject [
-
-	"Whenever anEventSelector is published in aMapless,
-	anObject gets subscribed to perform aMessageSelector 
-	with the remotely received arguments."
-
-	^ self
-		  withRemoteArgumentsSubscribe: aMapless
-		  when: anEventSelector
-		  send: aMessageSelector
-		  to: anObject
-]
-
-{ #category : #'*Mapless-Redis-Observer' }
-MaplessRedisRepository >> withRemoteArgumentsSubscribe: aMapless when: anEventSelector send: aMessageSelector to: anObject [
+MaplessRedisRepository >> subscribe: aMapless when: anEventSelector send: aMessageSelector to: anObject [
 
 	"Whenever anEventSelector is published in aMapless,
 	anObject gets subscribed to perform aMessageSelector 
@@ -128,4 +105,13 @@ MaplessRedisRepository >> withRemoteArgumentsSubscribe: aMapless when: anEventSe
 			message := MaplessRedisPubsubMessage fromPubsubResponse:
 				           pubsubResponse.
 			message withArgumentsExecute: aMessageSelector on: anObject ]
+]
+
+{ #category : #'*Mapless-Redis-Observer' }
+MaplessRedisRepository >> unsubscribe: aMapless from: anEventSelector [
+
+	"Unsubscribe from the right channel for anEventSelector on aMapless"
+
+	accessor unsubscribe:
+		(self channelNameFor: aMapless when: anEventSelector)
 ]
