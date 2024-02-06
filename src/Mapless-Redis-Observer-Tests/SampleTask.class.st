@@ -4,5 +4,5 @@ I can help to test features
 Class {
 	#name : #SampleTask,
 	#superclass : #Mapless,
-	#category : #'Mapless-Redis-Tests'
+	#category : #'Mapless-Redis-Observer-Tests'
 }
