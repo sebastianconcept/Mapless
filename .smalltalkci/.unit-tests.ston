@@ -18,7 +18,8 @@ SmalltalkCISpec {
         'Mapless-Memory-Core', 
         'Mapless-Postgres-Core',
         'Mapless-Mongo-Core',
-        'Mapless-Redis-Core'
+        'Mapless-Redis',
+        'Mapless-Redis-Observer'
          ],
       #format: #lcov
     }
