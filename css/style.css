@@ -38,6 +38,27 @@ body h1 {
 }
 
 body h2 {
+  font-size: 42px;
+  color: #072701;
+  margin: 10px 0 30px;
+  font-weight: bold;
+}
+
+body h3 {
+  font-size: 32px;
+  color: #072701;
+  margin: 20px 0 30px;
+  font-weight: bold;
+}
+
+body h4 {
+  font-size: 28px;
+  color: #072701;
+  margin: 20px 0 5px 0;
+  font-weight: bold;
+}
+
+.catchPhrase {
   background-color: #666666;
   -webkit-background-clip: text;
   -moz-background-clip: text;
@@ -51,7 +72,7 @@ body h2 {
 body h5 {
   font-weight: bold;
   font-size: 24px;
-  margin: 20px 0 10px;
+  margin: 20px 0 5px;
   color: #072701;
 }
 
@@ -103,6 +124,11 @@ h5.h5NoTop {
   display: block;
   float: left;
   margin: 28px 15px 10px 18px;
+}
+
+.imageParagraph {
+  margin-top: 30px;
+  margin-bottom: 20px;
 }
 
 blockquote {
@@ -279,7 +305,7 @@ blockquote {
   color: #444;
   display: block;
   text-align: center;
-  margin: 0 20px;
+  margin: 20px 20px 0 20px;
   padding: 5px 0;
   border-radius: 5px 5px 0 0;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
@@ -298,7 +324,7 @@ blockquote {
 .shell {
   padding: 20px;
   text-shadow: none;
-  margin: 0 20px;
+  margin: 0 20px 20px 20px;
   background: #3d3d3d;
   border-radius: 0 0 5px 5px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);

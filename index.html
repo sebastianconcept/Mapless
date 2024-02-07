@@ -5,19 +5,7 @@ title: Mapless, obscenely simple object persistence
 
 
 <div class="container">
-    <div class="header">
-        <div class="row">
-            <div class="logoWrap">
-                <div class="symbol">
-                    <img alt="Mapless logo" src="images/symbol.png">
-                </div>    
-                <div class="center-on-mobiles">
-                    <h1>Mapless</h1>
-                </div>
-                <p class="descriptive-tagline">Schema-less persistence for Smalltalk with support for multiple backends.</p>
-        </div>
-        </div>    
-    </div>
+    {% include brandHeader.html %}
 
     <div class="content">
         <section class="intro">
@@ -25,11 +13,11 @@ title: Mapless, obscenely simple object persistence
         </section>
         <section class="start">
                 <div class="col-md-4 loadNow center-on-mobiles">
-                    <h4>Saving Smalltalk objects <em>in seconds</em></h4>
+                    <h4 style="font-size: 26px; font-weight: normal; color: rgba(255, 255, 255, 0.9)">Saving Smalltalk objects <em>in seconds</em></h4>
                 </div>
                 <div class="col-md-8 ">
                     <div class="quickstart">
-                        <p class="shellTitle">Load in Pharo</p>
+                        <p class="shellTitle">Install in Pharo</p>
                         {% include baselineOfMapless.html %}
                     </div>
                 </div>            
@@ -268,9 +256,11 @@ title: Mapless, obscenely simple object persistence
                         <h5>Guides</h5>
                         <p>Here are some guides to help you get started:</p>
                         <ul>
+                            <li><a href="guides/2024/02/06/recommended-workflow.html">Recommended workflow</a></li>
+                            <li><a href="guides/2024/02/06/installing-pharo.html">Installing Pharo</a></li>
                             <li><s>RESTful APIs with Mapless on Teapot.</s> To-Do</li>
                             <li><s>Redis as a cache.</s> To-Do</li>
-                            <li><s>Redis as messaging channel across images.</s> To-Do</li>
+                            <li><a href="guides/2024/01/28/observer-pattern.html">The Observer Pattern beyond one Smalltalk image</a>.</li>
                             <li><s>Using Maples with a MongoDB Replica Set.</s> To-Do</li>
                             <li><s>Simple Web Application PoC with htmx Teapot and Mapless.</s> To-Do</li>
                             <li><s>How-to use Maples with SQLite in production with litestream.io backups</s>. To-Do</li>
