@@ -19,7 +19,7 @@ In this guide we're going to unlock this possibility.
 
 We're going to use [Mapless](https://github.com/sebastianconcept/Mapless) with a Redis backend to implement a simple backend Twitter/X-like application named `SimpleTwitter` using [Pharo](https://pharo.org). In this example, from image A we'll create and save a `Tweet`, and from image B, that `Tweet` will be observed to locally get its current values of likes and reposts.
 
-![](/images/PubsubDiagram.png){:width="100%" class="imageParagraph"}
+![]({{ '/images/PubsubDiagram.png' | relative_url }}){:width="100%" class="imageParagraph"}
 
 - **Smalltalk image A**. Creates the tweet with ID 321, saves it and publish events when people like or repost that tweet.
 
@@ -209,4 +209,4 @@ tweet unsubscribe: #someoneReacted.
 
 Enjoy your `SimpleTwitter` with Smalltalk!
 
-![](/images/observer2.gif){:width="100%"}
+![]({{ '/images/observer2.gif' | relative_url }}){:width="100%"}
