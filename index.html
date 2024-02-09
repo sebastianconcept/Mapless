@@ -112,7 +112,7 @@ title: Mapless, obscenely simple object persistence
                 </div> 
 
                 <div class="col-md-12">
-                    <div class="elaborate extraTop">
+                    <div class="elaborate">
                         <h5>Model your data</h5>
                         <p>Creating new instances of your data models is straightforward — treat them like any other object.</p>
                         <p>The only thing to remark here is that you do not need to create the mutator methods <code>description:</code> nor <code>isComplete:</code> in the <code>Task</code> class.</p>
@@ -127,7 +127,7 @@ title: Mapless, obscenely simple object persistence
                 </div>                 
 
                 <div class="col-md-12">
-                    <div class="elaborate extraTop">
+                    <div class="elaborate">
                         <h5>Storing</h5>
                         <p>To store data, simply send the <code>save</code> message to any <code>Mapless</code> instance, and be automatically inserted or updated in the database.</p>
                         <p>The repository object features the <code>do:</code> method, accepting a block closure. This allows your Mapless object to understand the repository it should work with.</p>
@@ -143,7 +143,7 @@ title: Mapless, obscenely simple object persistence
                 </div> 
 
                  <div class="col-md-12 ">
-                    <div class="elaborate extraTop">
+                    <div class="elaborate">
                         <h5 id="getting">Querying</h5>
                         <p>Mapless supports various persistent backends, and the method of implementing queries for your data depends on the specific backend in use. For instance, with a PostgreSQL or SQLite backend, SQL queries are employed. In the case of MongoDB, Mapless utilizes the <a href="http://smalltalkhub.com/#!/~MongoTalkTeam/mongotalk">MongoTalk</a> querying feature, while Redis adopts a namespaced convention.</p>
                     </div>
@@ -157,7 +157,7 @@ title: Mapless, obscenely simple object persistence
                 </div> 
 
                  <div class="col-md-12 ">
-                    <div class="elaborate extraTop">
+                    <div class="elaborate">
                         <h5 id="adding">Making the queries powerful</h5>
                         <p>Let's say you are using a MongoDB backend and want a production ready query by <code>username</code> for this <code>Task</code>. All you have to do is to <a href="https://www.mongodb.com/docs/manual/reference/method/db.collection.createIndex/" target="_blank">create an index in MongoDB</a> for <code>username</code> in the <code>Task</code> collection. Optionally, you can add a class method in <code>Task</code> tailored to this query.</p>
                     </div>
@@ -171,7 +171,7 @@ title: Mapless, obscenely simple object persistence
                 </div> 
 
                  <div class="col-md-12 ">
-                    <div class="elaborate extraTop">
+                    <div class="elaborate">
                         <h5 id="updating">Adding properties to models</h5>
                         <p>Simply do it. Unless overriden, Mapless catches all messages you send to a model via <a href="https://wiki.c2.com/?DoesNotUnderstand" target="_blank">DNU</a>. It is smart enough to allow you to add a date a string or almost any other object without declaring instVars or demanding making schemas or any accessors for it.</p>
                     </div>
@@ -185,7 +185,7 @@ title: Mapless, obscenely simple object persistence
                </div> 
 
                  <div id="composability" class="col-md-12 ">
-                    <div class="elaborate extraTop">
+                    <div class="elaborate">
                         <h5 id="adding">Composition</h5>
                         <p>When you model data using your custom Mapless classes, you have the flexibility to add almost any property to them, especially other Mapless models—hence, composition. In such cases, Mapless efficiently organizes the data, utilizing one collection or table in the backend per type of Mapless object.</p>
                         <p>The main rule when working with composition here is <em>save the children first</em>.</p>
@@ -201,7 +201,7 @@ title: Mapless, obscenely simple object persistence
                 </div> 
 
                 <div class="col-md-12 ">
-                    <div class="elaborate extraTop">
+                    <div class="elaborate">
                         <h5 id="adding">Graph navigation</h5>
                         <p>Saving a Mapless object is akin to planting the root of a graph. When interacting with a composed Mapless object, accessing the child Mapless feels like navigating one level deeper in the object graph. Composed Mapless objects return lazy references for every known (sub)Mapless to the parent. When you send a message to a (sub)model, the DNU method seamlessly resolves it, making it appear as if it was always there.</p>
                         <p>At the same time, if a Mapless object never sends any message to a child, then your application is not doing any unnecessary query. This prevents your backend from doing unnecessary extra work in advance making your system more efficient by default and in general.</p>
@@ -216,7 +216,7 @@ title: Mapless, obscenely simple object persistence
                 </div> 
 
                 <div class="col-md-12 ">
-                    <div class="elaborate extraTop">
+                    <div class="elaborate">
                         <h5 id="portability">Supported backends</h5>
                         <p>All Mapless subclasses share the same fundamental Smalltalk API. When resolving requested operations, they delegate to a corresponding <code>MaplessRepository</code> subclass aligned with one of the concrete supported backends.</p>
                         <p>Currently supported backends include:</p>
@@ -236,7 +236,7 @@ title: Mapless, obscenely simple object persistence
                 </div>
 
                 <div class="col-md-12 ">
-                    <div class="elaborate extraTop">
+                    <div class="elaborate">
                         <h5>Applicability and Real-World Scenarios</h5>
                         <p>Mapless, in active production since 2014, has proven its versatility across diverse scenarios—from initial Proof of Concepts to supporting mission-critical services actively monitored 24/7 by numerous network operators in the telecom industry.</p>
                         <p>Mapless excels in various use cases, including:</p>
@@ -252,13 +252,13 @@ title: Mapless, obscenely simple object persistence
                 </div>
 
                 <div class="col-md-12 ">
-                    <div class="elaborate extraTop">
+                    <div class="elaborate">
                         <h5>Guides</h5>
                         <p>Here are some guides to help you get started:</p>
                         <ul>
                             <li><a href="guides/2024/02/06/recommended-workflow.html">Recommended workflow</a></li>
                             <li><a href="guides/2024/02/06/installing-pharo.html">Installing Pharo</a></li>
-                            <li><s>RESTful APIs with Mapless on Teapot.</s> To-Do</li>
+                            <li><a href="guides/2024/02/09/restful-api.html">RESTful APIs with Mapless and Teapot</a>.</li>
                             <li><s>Redis as a cache.</s> To-Do</li>
                             <li><a href="guides/2024/01/28/observer-pattern.html">The Observer Pattern beyond one Smalltalk image</a>.</li>
                             <li><s>Using Maples with a MongoDB Replica Set.</s> To-Do</li>

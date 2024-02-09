@@ -305,7 +305,7 @@ blockquote {
   color: #444;
   display: block;
   text-align: center;
-  margin: 20px 20px 0 20px;
+  margin: 20px 0 0 0;
   padding: 5px 0;
   border-radius: 5px 5px 0 0;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
@@ -324,7 +324,7 @@ blockquote {
 .shell {
   padding: 20px;
   text-shadow: none;
-  margin: 0 20px 20px 20px;
+  margin: 0 0 20px 0;
   background: #3d3d3d;
   border-radius: 0 0 5px 5px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
@@ -347,7 +347,7 @@ pre {
 }
 
 .elaborate {
-  margin: 20px 35px;
+  margin: 20px;
 }
 
 .workspace {
@@ -355,7 +355,7 @@ pre {
 }
 
 .extraTop {
-  margin: 40px 35px 20px;
+  margin: 40px 0 20px;
 }
 
 .foot a {
