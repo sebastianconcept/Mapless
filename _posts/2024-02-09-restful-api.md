@@ -26,9 +26,9 @@ Metacello new
 
 "Load latest version of Mapless with its default backends (Memory and SQLite)"
 Metacello new
-baseline: 'Mapless';
-repository: 'github://sebastianconcept/Mapless:latest/src';
-load.
+  baseline: 'Mapless';
+  repository: 'github://sebastianconcept/Mapless:v0.6.0/src';
+  load.
 {% endhighlight %}
 
 </div>
@@ -49,12 +49,12 @@ teapot := Teapot configure: {
 
 "Add an exception handler to fail gracefully"
 teapot exception: Error -> [ :ex :req |
-| content |
-content := (Smalltalk isHeadless and: [ Smalltalk isInteractiveGraphic ])
-ifTrue: [ 'Ouch: {1}' format: { ex messageText } ]
-ifFalse: [ 'Internal error' ].
-TeaResponse serverError body: content.
-].
+  | content |
+  content := (Smalltalk isHeadless and: [ Smalltalk isInteractiveGraphic ])
+  ifTrue: [ 'Ouch: {1}' format: { ex messageText } ]
+  ifFalse: [ 'Internal error' ].
+  TeaResponse serverError body: content.
+  ].
 
 "Optionally add a ping route to use as health-check / availability check"
 teapot GET: '/ping' -> 'pong'.  
@@ -81,7 +81,7 @@ Mapless subclass: #Tweet
 
 ##### Setup routes
 
-We need to implement the CRUD operations in they respective routes.
+We need to implement the CRUD operations in their respective routes.
 
 {: .shellTitle }
 Pharo Playground
