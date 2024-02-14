@@ -178,6 +178,25 @@ BaselineOfMapless >> setUpSQLitePackages: spec [
 ]
 
 { #category : #baseline }
+BaselineOfMapless >> setUpSQLiteDependencies: spec [
+	spec
+		baseline: 'SQLite3'
+		with: [ spec
+				repository: 'github://pharo-rdbms/Pharo-SQLite3/src';
+				loads: #('Core') ]
+]
+
+{ #category : #baseline }
+BaselineOfMapless >> setUpSQLitePackages: spec [
+	spec
+		package: 'Mapless-SQLite-Core'
+		with: [ spec requires: #('Mapless-Base-Core' 'SQLite3') ].
+	spec
+		package: 'Mapless-SQLite-Tests'
+		with: [ spec requires: #('Mapless-SQLite-Core' 'Mapless-Tests-Base') ]
+]
+
+{ #category : #baseline }
 BaselineOfMapless >> setUpUnQLiteDependencies: spec [
 	spec
 		baseline: 'PunQLite'
