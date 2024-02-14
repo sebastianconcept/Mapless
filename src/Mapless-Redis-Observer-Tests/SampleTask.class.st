@@ -6,3 +6,9 @@ Class {
 	#superclass : #Mapless,
 	#category : #'Mapless-Redis-Observer-Tests'
 }
+
+{ #category : #accessing }
+SampleTask class >> getPubsubRepository [
+
+	^ MaplessRedisHelper repository
+]
