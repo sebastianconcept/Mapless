@@ -17,9 +17,9 @@ SmalltalkCISpec {
       #packages : [ 
         'Mapless-Base-Core', 
         'Mapless-Memory-Core',
-        'Mapless-SQLite-Core',
         'Mapless-Postgres-Core',
         'Mapless-Mongo-Core',
+        'Mapless-SQLite',
         'Mapless-Redis',
         'Mapless-Redis-Observer'
          ],
