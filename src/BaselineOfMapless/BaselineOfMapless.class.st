@@ -48,7 +48,7 @@ BaselineOfMapless >> setUpBaseDependencies: spec [
 		with: [ spec repository: 'github://sebastianconcept/JSON:v1.0.2/src' ].
 	spec
 		baseline: 'NeoJSON'
-		with: [ spec repository: 'github://svenvc/NeoJSON:master/repository' ]
+		with: [ spec repository: 'github://svenvc/NeoJSON:v18/repository' ]
 ]
 
 { #category : #baseline }
@@ -156,25 +156,6 @@ BaselineOfMapless >> setUpRedisPackages: spec [
 	spec
 		package: 'Mapless-Redis-Tests'
 		with: [ spec requires: #( 'Mapless-Redis' 'Mapless-Tests-Base' ) ].	
-]
-
-{ #category : #baseline }
-BaselineOfMapless >> setUpSQLiteDependencies: spec [
-	spec
-		baseline: 'SQLite3'
-		with: [ spec
-				repository: 'github://pharo-rdbms/Pharo-SQLite3/src';
-				loads: #('Core') ]
-]
-
-{ #category : #baseline }
-BaselineOfMapless >> setUpSQLitePackages: spec [
-	spec
-		package: 'Mapless-SQLite-Core'
-		with: [ spec requires: #('Mapless-Base-Core' 'SQLite3') ].
-	spec
-		package: 'Mapless-SQLite-Tests'
-		with: [ spec requires: #('Mapless-SQLite-Core' 'Mapless-Tests-Base') ]
 ]
 
 { #category : #baseline }
