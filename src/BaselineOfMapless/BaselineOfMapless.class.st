@@ -48,7 +48,7 @@ BaselineOfMapless >> setUpBaseDependencies: spec [
 		with: [ spec repository: 'github://sebastianconcept/JSON:v1.0.2/src' ].
 	spec
 		baseline: 'NeoJSON'
-		with: [ spec repository: 'github://svenvc/NeoJSON:master/repository' ]
+		with: [ spec repository: 'github://svenvc/NeoJSON:v18/repository' ]
 ]
 
 { #category : #baseline }
@@ -116,7 +116,7 @@ BaselineOfMapless >> setUpPackages: spec [
 
 { #category : #baseline }
 BaselineOfMapless >> setUpPostgresDependencies: spec [
-	spec baseline: 'P3' with: [ spec repository: 'github://svenvc/P3' ]
+	spec baseline: 'P3' with: [ spec repository: 'github://svenvc/P3:v1.4' ]
 ]
 
 { #category : #baseline }
@@ -134,7 +134,7 @@ BaselineOfMapless >> setUpRedisDependencies: spec [
 	spec
 		baseline: 'RediStick'
 		with: [ spec
-				repository: 'github://mumez/RediStick/repository';
+				repository: 'github://mumez/RediStick:v2.5.0/repository';
 				loads: #('Core' 'ConnectionPool') ]
 ]
 
@@ -163,26 +163,7 @@ BaselineOfMapless >> setUpSQLiteDependencies: spec [
 	spec
 		baseline: 'SQLite3'
 		with: [ spec
-				repository: 'github://pharo-rdbms/Pharo-SQLite3/src';
-				loads: #('Core') ]
-]
-
-{ #category : #baseline }
-BaselineOfMapless >> setUpSQLitePackages: spec [
-	spec
-		package: 'Mapless-SQLite-Core'
-		with: [ spec requires: #('Mapless-Base-Core' 'SQLite3') ].
-	spec
-		package: 'Mapless-SQLite-Tests'
-		with: [ spec requires: #('Mapless-SQLite-Core' 'Mapless-Tests-Base') ]
-]
-
-{ #category : #baseline }
-BaselineOfMapless >> setUpSQLiteDependencies: spec [
-	spec
-		baseline: 'SQLite3'
-		with: [ spec
-				repository: 'github://pharo-rdbms/Pharo-SQLite3/src';
+				repository: 'github://pharo-rdbms/Pharo-SQLite3:v2.2.7/src';
 				loads: #('Core') ]
 ]
 
@@ -201,7 +182,7 @@ BaselineOfMapless >> setUpUnQLiteDependencies: spec [
 	spec
 		baseline: 'PunQLite'
 		with: [ spec
-				repository: 'github://mumez/PunQLite/repository';
+				repository: 'github://mumez/PunQLite:aab064c2e003ef18fcdf8dad2a139fa4b36b6ed6/repository';
 				loads: #('Core') ]
 ]
 
