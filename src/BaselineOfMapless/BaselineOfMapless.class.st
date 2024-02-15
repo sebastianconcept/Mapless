@@ -116,7 +116,7 @@ BaselineOfMapless >> setUpPackages: spec [
 
 { #category : #baseline }
 BaselineOfMapless >> setUpPostgresDependencies: spec [
-	spec baseline: 'P3' with: [ spec repository: 'github://svenvc/P3' ]
+	spec baseline: 'P3' with: [ spec repository: 'github://svenvc/P3:v1.4' ]
 ]
 
 { #category : #baseline }
