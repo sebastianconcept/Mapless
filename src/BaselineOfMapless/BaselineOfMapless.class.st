@@ -134,7 +134,7 @@ BaselineOfMapless >> setUpRedisDependencies: spec [
 	spec
 		baseline: 'RediStick'
 		with: [ spec
-				repository: 'github://mumez/RediStick/repository';
+				repository: 'github://mumez/RediStick:v2.5.0/repository';
 				loads: #('Core' 'ConnectionPool') ]
 ]
 
