@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        smalltalk: [Pharo64-10, Pharo64-11]
+        smalltalk: [Pharo64-10]
         redis-version: [7]
         mongodb-version: ['4.4']
     name: ${{ matrix.smalltalk }}
     services:
       postgres:
-        image: postgres:14
+        image: postgres:15
         env:
           POSTGRES_USER: postgres
           POSTGRES_HOST_AUTH_METHOD: trust

@@ -5,6 +5,7 @@ SmalltalkCISpec {
       #directory : '../src',
       #load : [ 'Core',
         'Memory',
+        'SQLite',
         'Postgres',
         'Mongo',
         'Redis' ],
@@ -15,10 +16,12 @@ SmalltalkCISpec {
     #coverage : {
       #packages : [ 
         'Mapless-Base-Core', 
-        'Mapless-Memory-Core', 
+        'Mapless-Memory-Core',
         'Mapless-Postgres-Core',
         'Mapless-Mongo-Core',
-        'Mapless-Redis-Core'
+        'Mapless-SQLite',
+        'Mapless-Redis',
+        'Mapless-Redis-Observer'
          ],
       #format: #lcov
     }

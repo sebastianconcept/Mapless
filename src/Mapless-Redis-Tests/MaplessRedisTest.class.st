@@ -16,27 +16,6 @@ Redis databases are numbered from 0 to 15 and, by default, you connect to databa
 	^ 2
 ]
 
-{ #category : #history }
-MaplessRedisTest class >> lastStoredRun [
-	^ Dictionary new
-		add:
-			#passed
-				->
-					(Set new
-						add: #testDefaultCategoryCleanUp;
-						add: #testPackageCleanUp;
-						add: #testSingleClassCreation;
-						add: #testClassCreationInDifferentCategories;
-						add: #testClassFastCreationInDifferentCategories;
-						add: #testMultipleClassCreation;
-						add: #testSingleClassFastCreation;
-						yourself);
-		add: #timeStamp -> '22 November 2008 10:11:35 pm';
-		add: #failures -> Set new;
-		add: #errors -> Set new;
-		yourself
-]
-
 { #category : #actions }
 MaplessRedisTest >> basicNewRepository [
 	^ MaplessRedisRepository
@@ -57,7 +36,6 @@ MaplessRedisTest >> newRepository [
 	| accessor |
 	accessor := MaplessRedisPool local.
 	accessor start.
-	accessor auth: 'my_password'.
 	^ MaplessRedisRepository
 		for: self class databaseIndex
 		with: accessor
@@ -308,6 +286,66 @@ MaplessRedisTest >> testComposition [
 ]
 
 { #category : #tests }
+MaplessRedisTest >> testCountAll [
+
+	| users count |
+	repository := self newRepository.
+	users := OrderedCollection new.
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
+	count := repository count: DummyUser.
+	self assert: count equals: 0.
+
+	count := repository count: DummyPerson.
+	self assert: count equals: 0.
+
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+	count := repository count: DummyUser.
+
+	count := repository count: DummyUser.
+	self assert: count equals: 26.
+
+	count := repository count: DummyPerson.
+	self assert: count equals: 26
+]
+
+{ #category : #tests }
+MaplessRedisTest >> testCountSome [
+
+	| users count |
+	repository := self newRepository.
+	users := OrderedCollection new.
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
+	count := repository count: DummyUser where: 'id:123'.
+	self assert: count equals: 0.
+
+	count := repository count: DummyPerson where: 'id:123'.
+	self assert: count equals: 0.
+
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+	count := repository count: DummyUser where: 'id:' , users first id.
+	self assert: count equals: 1.
+
+	count := repository
+		         count: DummyPerson
+		         where: 'id:' , users first person id.
+	self assert: count equals: 1
+]
+
+{ #category : #tests }
 MaplessRedisTest >> testDateAndTime [
 	| when guy loaded |
 	repository := self newRepository.
@@ -389,6 +427,89 @@ MaplessRedisTest >> testFindAll [
 			(Character alphabet
 				allSatisfy:
 					[ :char | all anySatisfy: [ :user | user person firstName = char asString ] ])
+]
+
+{ #category : #tests }
+MaplessRedisTest >> testFindOneAtId [
+
+	| users found |
+	repository := self newRepository.
+	users := OrderedCollection new.
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
+
+	users do: [ :user | 
+		found := repository findOne: DummyUser atId: user id.
+		self assert: found isNil ].
+
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+
+	users do: [ :user | 
+		found := repository findOne: DummyUser atId: user id.
+		self assert: found id equals: user id.
+		self assert: found username equals: user username.
+		found := repository findOne: DummyPerson atId: user person id.
+		self assert: found id equals: user person id.
+		self assert: found firstName equals: user person firstName ]
+]
+
+{ #category : #tests }
+MaplessRedisTest >> testFindOneWhere [
+
+	| users found |
+	repository := self newRepository.
+	users := OrderedCollection new.
+	Character alphabet do: [ :char | 
+		users add: (DummyUser new
+				 username: char asString;
+				 person: (DummyPerson new
+						  firstName: char asString;
+						  yourself);
+				 yourself) ].
+
+	users do: [ :user | 
+		found := repository
+			         findOne: DummyUser
+			         where: ('id:{1}' format: { user id }).
+		self assert: found isNil ].
+
+	users do: [ :user | repository save: user person ].
+	users do: [ :user | repository save: user ].
+
+	users do: [ :user | 
+		found := repository findOne: DummyUser atId: user id.
+		self assert: found id equals: user id.
+		self assert: found username equals: user username.
+		found := repository findOne: DummyPerson atId: user person id.
+		self assert: found id equals: user person id.
+		self assert: found firstName equals: user person firstName ]
+]
+
+{ #category : #tests }
+MaplessRedisTest >> testInsert [
+
+	| guy all |
+	repository := self newRepository.
+	guy := DummyPerson new
+		       firstName: 'john';
+		       lastName: 'q';
+		       yourself.
+	self shouldnt: [ repository save: guy ] raise: Error.
+
+	all := repository findAll: DummyPerson.
+	self assert: all size equals: 1.
+	
+	repository insert: DummyPerson new.
+	
+	all := repository findAll: DummyPerson.
+	self assert: all size equals: 2.
+	
 ]
 
 { #category : #tests }
@@ -552,6 +673,21 @@ MaplessRedisTest >> testMultipleComposedSaveAndLoad [
 ]
 
 { #category : #tests }
+MaplessRedisTest >> testNormalizeId [
+
+	| m id |
+	repository := self basicNewRepository.
+	m := Mapless new.
+	self assert: m maplessData id isNil.
+	repository save: m.
+	self assert: m maplessData id notNil.
+	id := m maplessData id.
+	repository normalizeIdOfOn: m.
+
+	self assert: id equals: m id
+]
+
+{ #category : #tests }
 MaplessRedisTest >> testRemovingExpire [
 	| guy found howMuchWillItBeThere |
 	repository := self newRepository.
@@ -689,6 +825,28 @@ MaplessRedisTest >> testSubModelsFromReifiedJSON [
 ]
 
 { #category : #tests }
+MaplessRedisTest >> testUpdate [
+
+	| guy found foundAgain |
+	repository := self newRepository.
+	guy := DummyPerson new
+		       firstName: 'john';
+		       lastName: 'q';
+		       yourself.
+	self shouldnt: [ repository save: guy ] raise: Error.
+
+	found := repository findOne: DummyPerson atId: guy id.
+	self assert: found notNil.
+	self assert: found id equals: guy id.
+	self assert: found firstName equals: 'john'.
+	found firstName: 'John'.
+	repository update: found.
+
+	foundAgain := repository findOne: DummyPerson atId: guy id.
+	self assert: foundAgain firstName equals: 'John'
+]
+
+{ #category : #tests }
 MaplessRedisTest >> testUpdatingExpire [
 	| guy found howMuchWillItBeThere newerTTL answer |
 	repository := self newRepository.
@@ -700,7 +858,7 @@ MaplessRedisTest >> testUpdatingExpire [
 	found := repository findOne: DummyPerson atId: guy id.
 	self assert: found notNil.
 	repository expires: guy in: 900.
-	30 milliSeconds wait.
+	60 milliSeconds wait.
 	howMuchWillItBeThere := repository ttlFor: guy.
 	self assert: howMuchWillItBeThere > 0.
 	answer := repository expires: guy in: 2500.

@@ -1,7 +1,10 @@
+"
+I support Mapless features using Redis
+"
 Class {
 	#name : #MaplessRedisRepository,
 	#superclass : #MaplessRepository,
-	#category : #'Mapless-Redis-Core-Core'
+	#category : #'Mapless-Redis-Core'
 }
 
 { #category : #actions }
@@ -17,16 +20,25 @@ MaplessRedisRepository >> auth: aPassword [
 
 { #category : #accessing }
 MaplessRedisRepository >> count: aMaplessClass [
-	^ self count: aMaplessClass where: aMaplessClass name , ':id:*'
+
+	"WARNING:
+	Expensive operation.
+	See count:where:"
+
+	^ self count: aMaplessClass where: 'id:*'
 ]
 
 { #category : #accessing }
 MaplessRedisRepository >> count: aMaplessClass where: keyPattern [
-	"KEYS and the much preferred SCAN are both 'evil'.
+
+	"WARNING:
+	KEYS and the much preferred SCAN are both 'evil'.
 	Doing KEYS (or SCAN) in real time is very expensive 
 	in terms of performance - it means that you're iterating over the entire keyspace."
 
-	^ (accessor redis keys: keyPattern) size
+	^ (accessor redis keys: ('{1}:{2}' format: { 
+				    aMaplessClass name.
+				    keyPattern })) size
 ]
 
 { #category : #actions }

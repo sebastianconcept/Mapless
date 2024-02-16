@@ -1,6 +1,6 @@
 Extension { #name : #RsRedisEndpoint }
 
-{ #category : #'*Mapless-Redis-Core' }
+{ #category : #'*Mapless-Redis' }
 RsRedisEndpoint >> persist: aKey [
 	"PERSIST key
 Available since 2.2.0.
@@ -13,7 +13,7 @@ Remove the existing timeout on key, turning the key from volatile (a key with an
 			aKey}
 ]
 
-{ #category : #'*Mapless-Redis-Core' }
+{ #category : #'*Mapless-Redis' }
 RsRedisEndpoint >> pttl: aKey [
 	"Returns the remaining time to live of a key that has an expire set in milliseconds."
 
