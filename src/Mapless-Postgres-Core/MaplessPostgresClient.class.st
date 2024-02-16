@@ -91,7 +91,7 @@ MaplessPostgresClient >> findAll: aMaplessClass where: someConditionsOrNil limit
 MaplessPostgresClient >> getTableNames [
 	"Answers the names of the existing tables in the database."
 
-	^ (postgresClient listTablesInSchema: 'public') collect: #first
+	^ postgresClient listTablesInSchema: 'public'
 ]
 
 { #category : #testing }
