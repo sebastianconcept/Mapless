@@ -49,5 +49,30 @@ MaplessResolversTest >> testMaplessCustomCollectionNameResolver [
 	self
 		assert:
 		(customResolver maplessClassFor: dictionarish in: repository)
-		equals: SampleTask
+		equals: SampleTask.
+
+	customResolver translations: (Dictionary new
+			 at: #LaborUnit put: SampleTask name;
+			 yourself).
+
+	repository resolver: customResolver.
+
+	dictionarish := Dictionary new
+		                at: '_c' put: 'Task';
+		                yourself.
+
+	self
+		should: [
+		customResolver maplessClassFor: dictionarish in: repository ]
+		raise: MaplessClassNotFound.
+		
+	dictionarish := Dictionary new
+		                at: '_c' put: 'LaborUnit';
+		                yourself.
+
+	self
+		shouldnt: [
+		customResolver maplessClassFor: dictionarish in: repository ]
+		raise: MaplessClassNotFound.		
+			
 ]
