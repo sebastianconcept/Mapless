@@ -71,6 +71,22 @@ MaplessResourcesTest >> test30And70Chance [
 ]
 
 { #category : #tests }
+MaplessResourcesTest >> testChangeWeightedNodeWeight [
+
+	| n1 |
+	n1 := MaplessWeightedNode new
+		      weight: 0.5;
+		      value: 'url1';
+		      yourself.
+
+	self assert: n1 weight equals: 0.5.
+
+	n1 weight: 0.75.
+	self deny: n1 weight equals: 0.5.
+	self assert: n1 weight equals: 0.75
+]
+
+{ #category : #tests }
 MaplessResourcesTest >> testHalfHalfChance [
 	| wr n1 n2 i j latest |
 	i := 0.
