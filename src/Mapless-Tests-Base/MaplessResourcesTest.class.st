@@ -26,8 +26,7 @@ MaplessResourcesTest >> test11And44And44Chance [
 	wr
 		addNode: n1;
 		addNode: n2;
-		addNode: n3;
-		yourself.
+		addNode: n3.
 	10000
 		timesRepeat: [ latest := wr next.
 			latest value = 'url1'
@@ -60,8 +59,7 @@ MaplessResourcesTest >> test30And70Chance [
 		yourself.
 	wr
 		addNode: n1;
-		addNode: n2;
-		yourself.
+		addNode: n2.
 	10000
 		timesRepeat: [ latest := wr next.
 			latest value = 'url1'
@@ -88,8 +86,7 @@ MaplessResourcesTest >> testHalfHalfChance [
 		yourself.
 	wr
 		addNode: n1;
-		addNode: n2;
-		yourself.
+		addNode: n2.
 	10000
 		timesRepeat: [ latest := wr next.
 			latest value = 'url1'
@@ -98,4 +95,16 @@ MaplessResourcesTest >> testHalfHalfChance [
 				ifTrue: [ j := j + 1 ] ].
 	self assert: i > 4800.
 	self assert: j > 4800
+]
+
+{ #category : #tests }
+MaplessResourcesTest >> testPrintsWeightedNodeInAUsefulWay [
+
+	| n1 |
+	n1 := MaplessWeightedNode new
+		      weight: 0.5;
+		      value: 'url1';
+		      yourself.
+
+	self assert: n1 asString equals: 'a MaplessWeightedNode(0.5@url1)'
 ]

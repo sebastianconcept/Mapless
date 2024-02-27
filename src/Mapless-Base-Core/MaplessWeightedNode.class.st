@@ -43,8 +43,11 @@ MaplessWeightedNode >> matches: aRandomValue [
 
 { #category : #printing }
 MaplessWeightedNode >> printOn: aStream [
+
 	super printOn: aStream.
-	aStream << ('({1})' format: {value asString})
+	aStream << ('({1}@{2})' format: {
+			 weight asString.
+			 value asString })
 ]
 
 { #category : #actions }
