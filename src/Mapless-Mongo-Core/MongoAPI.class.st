@@ -1,3 +1,6 @@
+"
+I'm a specialized API to help Mapless use MongoTalk
+"
 Class {
 	#name : #MongoAPI,
 	#superclass : #Mongo,

@@ -21,7 +21,7 @@ MaplessCustomCollectionNameResolver >> maplessClassNameFor: aJsonObject in: aMap
 	classSelector := aJsonObject at: '_c'.
 	^ self translations
 		at: classSelector
-		ifAbsent: [ self error: 'This resolver could not translate ' , classSelector ]
+		ifAbsent: [ MaplessClassNotFound signal: 'This resolver could not translate ' , classSelector ]
 ]
 
 { #category : #accessing }

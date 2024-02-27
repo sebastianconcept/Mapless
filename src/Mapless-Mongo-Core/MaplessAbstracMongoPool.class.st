@@ -1,3 +1,6 @@
+"
+I hold commonalities of the Mapless MongoDB clients pool 
+"
 Class {
 	#name : #MaplessAbstracMongoPool,
 	#superclass : #MaplessAbstractPool,

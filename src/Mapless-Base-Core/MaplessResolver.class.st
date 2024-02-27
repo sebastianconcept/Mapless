@@ -1,5 +1,5 @@
 "
-I'm the abstraction of the resolvers that helps a concrete MaplessRepository how to resolve classes in the image and collection names.
+I'm the abstraction of the resolvers that helps a concrete MaplessRepository know how to resolve classes in the image and collection names.
 "
 Class {
 	#name : #MaplessResolver,
