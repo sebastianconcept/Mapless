@@ -7,27 +7,28 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 [![Release](https://img.shields.io/github/v/tag/sebastianconcept/Mapless?label=release)](https://github.com/sebastianconcept/Mapless/releases)
 [![Unit Tests](https://github.com/sebastianconcept/Mapless/actions/workflows/build.yml/badge.svg)](https://github.com/sebastianconcept/Mapless/actions/workflows/build.yml)
 
-![Tests](https://img.shields.io/badge/tests-193-green)
 [![Coverage Status](https://codecov.io/github/sebastianconcept/Mapless/coverage.svg?branch=main)](https://codecov.io/gh/sebastianconcept/Mapless/branch/master)
+![Tests](https://img.shields.io/badge/tests-193-green)
 
 
-[![Pharo 10](https://img.shields.io/badge/Pharo-10-%23383932.svg)](https://pharo.org/download)
 [![Pharo 11](https://img.shields.io/badge/Pharo-11-%23383932.svg)](https://pharo.org/download)
+[![Pharo 10](https://img.shields.io/badge/Pharo-10-%23383932.svg)](https://pharo.org/download)
 
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE.txt)
 [![Forks](https://img.shields.io/github/forks/sebastianconcept/Mapless?style=sociall)]()
 [![Social](https://img.shields.io/github/stars/sebastianconcept/Mapless?style=social)]()
 
-[![](https://img.shields.io/badge/Sqlite-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/index.html)
-[![](https://img.shields.io/badge/PostgreSQL-316192?logo=postgresql&logoColor=whit)](https://www.postgresql.org/)
+[![](https://img.shields.io/badge/Sqlite-044a64?logo=sqlite&logoColor=white)](https://www.sqlite.org/index.html)
+[![](https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![](https://img.shields.io/badge/UnQlite-003127?logo=unqlite&logoColor=white)](https://unqlite.org/)
-[![](https://img.shields.io/badge/MongoDB-4EA94B?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![](https://img.shields.io/badge/MongoDB-001e2b?logo=mongodb&logoColor=13aa52)](https://www.mongodb.com/)
 [![](https://img.shields.io/badge/RAM-001B57)](https://en.wikipedia.org/wiki/Random-access_memory)
 [![](https://img.shields.io/badge/redis-CC0000.svg?logo=redis&logoColor=white)](https://redis.io/)
 
 ### [Mapless GitHub Page](https://sebastianconcept.github.io/Mapless/)
 
-Jump to [How to Install](#how-to-install)
+- [How to Install](#how-to-install)
+- [Guides](https://sebastianconcept.github.io/Mapless#guides)
 
 ---
 
@@ -48,7 +49,7 @@ Mapless achieves a balance between maximum data survivability and robust archite
 - No need to create accessors and mutators.
 - Multiple backends to choose from.
 - Enables smooth data migration/interoperation among backends.
-- ~~Via Redis PUB/SUB, scalable observer-pattern functionality across images.~~ In the roadmap.
+- [Scalable observer-pattern](https://sebastianconcept.github.io/Mapless/guides/2024/01/28/observer-pattern.html) functionality across images (requires Redis).
 
 ## Supported backends
 
@@ -57,7 +58,7 @@ Mapless achieves a balance between maximum data survivability and robust archite
 3. Redis
 4. MongoDB
 5. Memory
-6. ~~UnQLite~~ `deprecated` / retiring soon
+6. UnQLite (frozen support)
 
 ## Examples
 Try Mapless by [installing it in a supported Pharo image](#how-to-install) and the following snippets:
