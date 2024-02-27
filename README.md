@@ -27,7 +27,8 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 
 ### [Mapless GitHub Page](https://sebastianconcept.github.io/Mapless/)
 
-Jump to [How to Install](#how-to-install)
+- [How to Install](#how-to-install)
+- [Guides](https://sebastianconcept.github.io/Mapless/#guides)
 
 ---
 
