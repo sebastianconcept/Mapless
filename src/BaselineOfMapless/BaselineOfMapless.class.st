@@ -31,12 +31,12 @@ BaselineOfMapless >> baseline: spec [
 			self setUpPackages: spec.
 			spec
 				group: 'Core' with: #('Mapless-Base-Core');
-				group: 'Memory' with: #('Mapless-Memory-Tests');
-				group: 'Mongo' with: #('Mapless-Mongo-Tests');
-				group: 'Redis' with: #('Mapless-Redis-Tests');
-				group: 'Postgres' with: #('Mapless-Postgres-Tests');
-				group: 'SQLite' with: #('Mapless-SQLite-Tests');
-				group: 'UnQLite' with: #('Mapless-UnQLite-Tests');
+				group: 'Memory' with: #('Mapless-Memory');
+				group: 'Mongo' with: #('Mapless-Mongo');
+				group: 'Redis' with: #('Mapless-Redis');
+				group: 'Postgres' with: #('Mapless-Postgres');
+				group: 'SQLite' with: #('Mapless-SQLite');
+				group: 'UnQLite' with: #('Mapless-UnQLite');
 				group: 'Benchmark' with: #('Mapless-Benchmark-Core');
 				group: 'default' with: #('Memory' 'SQLite') ]
 ]
@@ -182,7 +182,7 @@ BaselineOfMapless >> setUpUnQLiteDependencies: spec [
 	spec
 		baseline: 'PunQLite'
 		with: [ spec
-				repository: 'github://mumez/PunQLite:aab064c2e003ef18fcdf8dad2a139fa4b36b6ed6/repository';
+				repository: 'github://mumez/PunQLite:v2.0.1/repository';
 				loads: #('Core') ]
 ]
 

@@ -362,7 +362,7 @@ MaplessMongoTest >> testMaplessErrorDefaultAction [
 
 	self
 		should: [ MaplessError signal: 'mmmmmmmmm...' ]
-		raise: UnhandledError
+		raise: MaplessError
 ]
 
 { #category : #tests }
