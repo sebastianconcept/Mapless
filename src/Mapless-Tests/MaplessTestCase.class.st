@@ -32,7 +32,9 @@ MaplessTestCase >> testPoolBasics [
 	pool := MaplessAbstractPool hostname: '1' port: 2.
 
 	self assert: pool hostname equals: '1'.
-	self assert: pool port equals: 2
+	self assert: pool port equals: 2.
+
+	self shouldnt: [ pool logNewClient: 42 ] raise: Error
 ]
 
 { #category : #tests }
