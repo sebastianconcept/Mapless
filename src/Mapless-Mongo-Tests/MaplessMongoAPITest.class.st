@@ -20,6 +20,17 @@ MaplessMongoAPITest >> testConnectUsingMongoUrl [
 ]
 
 { #category : #tests }
+MaplessMongoAPITest >> testGetAdminDatabase [
+
+	| api |
+	api := MongoAPI mongoUrl: 'mongodb://localhost:27017/Mapless-Test'.
+	api open.
+
+	self assert: api admin class equals: MongoDatabase.
+	api close
+]
+
+{ #category : #tests }
 MaplessMongoAPITest >> testGetMongoInfo [
 
 	| api |

@@ -1,3 +1,6 @@
+"
+I'm a Mapless error that can signal when something specific to MongoDB went bad
+"
 Class {
 	#name : #MaplessMongoError,
 	#superclass : #MaplessError,

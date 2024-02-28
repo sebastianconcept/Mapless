@@ -10,9 +10,9 @@ Class {
 		'minClients',
 		'maxClients',
 		'clientsMutex',
-		'clientsMonitor',
 		'busyClients',
-		'idleClients'
+		'idleClients',
+		'clientsMonitor'
 	],
 	#category : #'Mapless-Mongo-Connections'
 }
@@ -56,13 +56,6 @@ MaplessStandaloneMongoPool >> clientsMonitor [
 	"Answers the monitor used to protect clients usage"
 
 	^ clientsMonitor ifNil: [ self initializeClientsMonitor ]
-]
-
-{ #category : #accessing }
-MaplessStandaloneMongoPool >> clientsMutex [
-	"Answers the mutex used to protect clients usage"
-
-	^ clientsMutex ifNil: [ self initializeClientsMutex ]
 ]
 
 { #category : #accessing }
@@ -138,12 +131,8 @@ MaplessStandaloneMongoPool >> initializeBusyClients [
 
 { #category : #initialization }
 MaplessStandaloneMongoPool >> initializeClientsMonitor [
-	^ clientsMonitor := Monitor new
-]
 
-{ #category : #initialization }
-MaplessStandaloneMongoPool >> initializeClientsMutex [
-	^ clientsMutex := Mutex new
+	^ clientsMonitor := Monitor new
 ]
 
 { #category : #initialization }
@@ -167,12 +156,12 @@ MaplessStandaloneMongoPool >> makeClient [
 
 	| newMongoClient isAuthenticated |
 	newMongoClient := (MongoAPI host: hostname port: port asInteger)
-		open;
-		yourself.
-	self isUsingAuth
-		ifTrue: [ isAuthenticated := self authenticate: newMongoClient.
-			isAuthenticated
-				ifFalse: [ ^ self error: 'Authentication failed' ] ].
+		                  open;
+		                  yourself.
+	self isUsingAuth ifTrue: [
+		isAuthenticated := self authenticate: newMongoClient.
+		isAuthenticated ifFalse: [
+			^ MaplessMongoAuthorizationError signal: 'Authentication failed' ] ].
 	^ newMongoClient
 ]
 
@@ -194,11 +183,6 @@ MaplessStandaloneMongoPool >> minClients [
 { #category : #accessing }
 MaplessStandaloneMongoPool >> minClients: anObject [
 	minClients := anObject
-]
-
-{ #category : #reactions }
-MaplessStandaloneMongoPool >> onLogout: aMongoClient [
-	self remove: aMongoClient
 ]
 
 { #category : #actions }
