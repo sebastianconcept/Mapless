@@ -31,7 +31,7 @@ BaselineOfMapless >> baseline: spec [
 		self setUpPackages: spec.
 		spec
 			group: 'Core' with: #( 'Mapless-Base' );
-			group: 'Tests' with: #( 'Mapless-Base' 'Mapless-Tests-Base' );
+			group: 'Tests' with: #( 'Mapless-Base' 'Mapless-Tests' );
 			group: 'Memory' with: #( 'Mapless-Memory' );
 			group: 'Memory-Tests'
 			with: #( 'Mapless-Memory' 'Mapless-Memory-Tests' );
@@ -99,7 +99,7 @@ BaselineOfMapless >> setUpMongoPackages: spec [
 		with: [ spec requires: #('Mapless-Base' 'MongoTalk') ].
 	spec
 		package: 'Mapless-Mongo-Tests'
-		with: [ spec requires: #('Mapless-Mongo' 'Mapless-Tests-Base') ].
+		with: [ spec requires: #('Mapless-Mongo' 'Mapless-Tests') ].
 	spec
 		package: 'Mapless-Mongo-Log'
 		with: [ spec requires: #('Mapless-Mongo-Tests' 'NeoJSON') ].
@@ -141,7 +141,7 @@ BaselineOfMapless >> setUpPostgresPackages: spec [
 		with: [ spec requires: #('Mapless-Base' 'P3') ].
 	spec
 		package: 'Mapless-Postgres-Tests'
-		with: [ spec requires: #('Mapless-Postgres' 'Mapless-Tests-Base') ]
+		with: [ spec requires: #('Mapless-Postgres' 'Mapless-Tests') ]
 ]
 
 { #category : #dependencies }
@@ -166,11 +166,11 @@ BaselineOfMapless >> setUpRedisPackages: spec [
 
 	spec package: 'Mapless-Redis-Observer-Tests' with: [
 		spec requires: #( 'Mapless-Redis-Observer' 'Mapless-Redis-Tests'
-			   'Mapless-Tests-Base' ) ].
+			   'Mapless-Tests' ) ].
 
 	spec
 		package: 'Mapless-Redis-Tests'
-		with: [ spec requires: #( 'Mapless-Redis' 'Mapless-Tests-Base' ) ]
+		with: [ spec requires: #( 'Mapless-Redis' 'Mapless-Tests' ) ]
 ]
 
 { #category : #dependencies }
@@ -189,7 +189,7 @@ BaselineOfMapless >> setUpSQLitePackages: spec [
 		with: [ spec requires: #('Mapless-Base' 'SQLite3') ].
 	spec
 		package: 'Mapless-SQLite-Tests'
-		with: [ spec requires: #('Mapless-SQLite' 'Mapless-Tests-Base') ]
+		with: [ spec requires: #('Mapless-SQLite' 'Mapless-Tests') ]
 ]
 
 { #category : #dependencies }
@@ -208,5 +208,5 @@ BaselineOfMapless >> setUpUnQLitePackages: spec [
 		with: [ spec requires: #('Mapless-Base' 'PunQLite') ].
 	spec
 		package: 'Mapless-UnQLite-Tests'
-		with: [ spec requires: #('Mapless-UnQLite' 'Mapless-Tests-Base') ]
+		with: [ spec requires: #('Mapless-UnQLite' 'Mapless-Tests') ]
 ]
