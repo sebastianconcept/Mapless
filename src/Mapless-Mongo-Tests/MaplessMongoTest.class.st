@@ -315,6 +315,26 @@ MaplessMongoTest >> testDestroy [
 ]
 
 { #category : #tests }
+MaplessMongoTest >> testDestroyAll [
+	| people |
+	self
+		do: [ people := OrderedCollection new.
+			Character alphabet
+				do: [ :char | 
+					people
+						add:
+							(SamplePerson new
+								firstName: char asString;
+								yourself) ].
+			people do: [ :guy | guy save ].
+			self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
+			SamplePerson getRepository destroyAll: SamplePerson.
+
+			self
+				assert: (people allSatisfy: [ :guy | (SamplePerson existsId: guy id) not ]) ]
+]
+
+{ #category : #tests }
 MaplessMongoTest >> testFindAll [
 	| found |
 	repository
