@@ -4,6 +4,7 @@ SmalltalkCISpec {
       #baseline : 'Mapless',
       #directory : '../src',
       #load : [
+        'Core',
         'Tests',
         'Memory-Tests',
         'SQLite-Tests',
