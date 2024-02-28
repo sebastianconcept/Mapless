@@ -53,6 +53,7 @@ MaplessRedisPoolTest >> testUnsubscribe [
 	valued := false.
 
 	pool unsubscribe: #testing.
+	200 milliSeconds asDelay wait.
 	pool publish: #testing message: 'answer'.
 	200 milliSeconds asDelay wait.
 	self deny: valued.
