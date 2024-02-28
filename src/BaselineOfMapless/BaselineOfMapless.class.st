@@ -95,11 +95,11 @@ BaselineOfMapless >> setUpMongoDependencies: spec [
 { #category : #baseline }
 BaselineOfMapless >> setUpMongoPackages: spec [
 	spec
-		package: 'Mapless-Mongo-Core'
+		package: 'Mapless-Mongo'
 		with: [ spec requires: #('Mapless-Base-Core' 'MongoTalk') ].
 	spec
 		package: 'Mapless-Mongo-Tests'
-		with: [ spec requires: #('Mapless-Mongo-Core' 'Mapless-Tests-Base') ].
+		with: [ spec requires: #('Mapless-Mongo' 'Mapless-Tests-Base') ].
 	spec
 		package: 'Mapless-Mongo-Log'
 		with: [ spec requires: #('Mapless-Mongo-Tests' 'NeoJSON') ].
@@ -137,11 +137,11 @@ BaselineOfMapless >> setUpPostgresDependencies: spec [
 { #category : #baseline }
 BaselineOfMapless >> setUpPostgresPackages: spec [
 	spec
-		package: 'Mapless-Postgres-Core'
+		package: 'Mapless-Postgres'
 		with: [ spec requires: #('Mapless-Base-Core' 'P3') ].
 	spec
 		package: 'Mapless-Postgres-Tests'
-		with: [ spec requires: #('Mapless-Postgres-Core' 'Mapless-Tests-Base') ]
+		with: [ spec requires: #('Mapless-Postgres' 'Mapless-Tests-Base') ]
 ]
 
 { #category : #baseline }
@@ -185,11 +185,11 @@ BaselineOfMapless >> setUpSQLiteDependencies: spec [
 { #category : #baseline }
 BaselineOfMapless >> setUpSQLitePackages: spec [
 	spec
-		package: 'Mapless-SQLite-Core'
+		package: 'Mapless-SQLite'
 		with: [ spec requires: #('Mapless-Base-Core' 'SQLite3') ].
 	spec
 		package: 'Mapless-SQLite-Tests'
-		with: [ spec requires: #('Mapless-SQLite-Core' 'Mapless-Tests-Base') ]
+		with: [ spec requires: #('Mapless-SQLite' 'Mapless-Tests-Base') ]
 ]
 
 { #category : #baseline }
@@ -204,9 +204,9 @@ BaselineOfMapless >> setUpUnQLiteDependencies: spec [
 { #category : #baseline }
 BaselineOfMapless >> setUpUnQLitePackages: spec [
 	spec
-		package: 'Mapless-UnQLite-Core'
+		package: 'Mapless-UnQLite'
 		with: [ spec requires: #('Mapless-Base-Core' 'PunQLite') ].
 	spec
 		package: 'Mapless-UnQLite-Tests'
-		with: [ spec requires: #('Mapless-UnQLite-Core' 'Mapless-Tests-Base') ]
+		with: [ spec requires: #('Mapless-UnQLite' 'Mapless-Tests-Base') ]
 ]
