@@ -22,7 +22,7 @@ Class {
 	#category : #BaselineOfMapless
 }
 
-{ #category : #baseline }
+{ #category : #baselines }
 BaselineOfMapless >> baseline: spec [
 
 	<baseline>
@@ -30,8 +30,8 @@ BaselineOfMapless >> baseline: spec [
 		self setUpBaseDependencies: spec.
 		self setUpPackages: spec.
 		spec
-			group: 'Core' with: #( 'Mapless-Base-Core' );
-			group: 'Tests' with: #( 'Mapless-Base-Core' 'Mapless-Tests-Base' );
+			group: 'Core' with: #( 'Mapless-Base' );
+			group: 'Tests' with: #( 'Mapless-Base' 'Mapless-Tests-Base' );
 			group: 'Memory' with: #( 'Mapless-Memory' );
 			group: 'Memory-Tests'
 			with: #( 'Mapless-Memory' 'Mapless-Memory-Tests' );
@@ -56,7 +56,7 @@ BaselineOfMapless >> baseline: spec [
 			group: 'default' with: #( 'Memory' 'SQLite' ) ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpBaseDependencies: spec [
 	spec
 		baseline: 'JSON'
@@ -66,14 +66,14 @@ BaselineOfMapless >> setUpBaseDependencies: spec [
 		with: [ spec repository: 'github://svenvc/NeoJSON:v18/repository' ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpBasePackages: spec [
 	spec
-		package: 'Mapless-Base-Core'
+		package: 'Mapless-Base'
 		with: [ spec requires: 'JSON' ].
 	spec
-		package: 'Mapless-Tests-Base'
-		with: [ spec requires: 'Mapless-Base-Core' ].
+		package: 'Mapless-Tests'
+		with: [ spec requires: 'Mapless-Base' ].
 	spec
 		package: 'Mapless-Memory'
 		with: [ spec requires: #('Mapless-Base') ].
@@ -83,7 +83,7 @@ BaselineOfMapless >> setUpBasePackages: spec [
 
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpMongoDependencies: spec [
 
 	spec baseline: 'MongoTalk' with: [ 
@@ -92,11 +92,11 @@ BaselineOfMapless >> setUpMongoDependencies: spec [
 			loads: #( Client 'Mongo-DriverLegacy' ) ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpMongoPackages: spec [
 	spec
 		package: 'Mapless-Mongo'
-		with: [ spec requires: #('Mapless-Base-Core' 'MongoTalk') ].
+		with: [ spec requires: #('Mapless-Base' 'MongoTalk') ].
 	spec
 		package: 'Mapless-Mongo-Tests'
 		with: [ spec requires: #('Mapless-Mongo' 'Mapless-Tests-Base') ].
@@ -108,7 +108,7 @@ BaselineOfMapless >> setUpMongoPackages: spec [
 		with: [ spec requires: 'Mapless-Mongo-Tests' ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpPackages: spec [
 	self setUpBaseDependencies: spec.
 	self setUpBasePackages: spec.
@@ -129,22 +129,22 @@ BaselineOfMapless >> setUpPackages: spec [
 	self setUpUnQLitePackages: spec
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpPostgresDependencies: spec [
 	spec baseline: 'P3' with: [ spec repository: 'github://svenvc/P3:v1.4' ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpPostgresPackages: spec [
 	spec
 		package: 'Mapless-Postgres'
-		with: [ spec requires: #('Mapless-Base-Core' 'P3') ].
+		with: [ spec requires: #('Mapless-Base' 'P3') ].
 	spec
 		package: 'Mapless-Postgres-Tests'
 		with: [ spec requires: #('Mapless-Postgres' 'Mapless-Tests-Base') ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpRedisDependencies: spec [
 	spec
 		baseline: 'RediStick'
@@ -153,27 +153,27 @@ BaselineOfMapless >> setUpRedisDependencies: spec [
 				loads: #('Core' 'ConnectionPool') ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpRedisPackages: spec [
 
 	spec
 		package: 'Mapless-Redis'
-		with: [ spec requires: #( 'Mapless-Base-Core' 'RediStick' ) ].
+		with: [ spec requires: #( 'Mapless-Base' 'RediStick' ) ].
 
 	spec
 		package: 'Mapless-Redis-Observer'
-		with: [ spec requires: #( 'Mapless-Base-Core' ) ].
+		with: [ spec requires: #( 'Mapless-Redis' ) ].
 
-	spec package: 'Mapless-Redis-Observer-Tests' with: [ 
+	spec package: 'Mapless-Redis-Observer-Tests' with: [
 		spec requires: #( 'Mapless-Redis-Observer' 'Mapless-Redis-Tests'
 			   'Mapless-Tests-Base' ) ].
-		
+
 	spec
 		package: 'Mapless-Redis-Tests'
-		with: [ spec requires: #( 'Mapless-Redis' 'Mapless-Tests-Base' ) ].	
+		with: [ spec requires: #( 'Mapless-Redis' 'Mapless-Tests-Base' ) ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpSQLiteDependencies: spec [
 	spec
 		baseline: 'SQLite3'
@@ -182,17 +182,17 @@ BaselineOfMapless >> setUpSQLiteDependencies: spec [
 				loads: #('Core') ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpSQLitePackages: spec [
 	spec
 		package: 'Mapless-SQLite'
-		with: [ spec requires: #('Mapless-Base-Core' 'SQLite3') ].
+		with: [ spec requires: #('Mapless-Base' 'SQLite3') ].
 	spec
 		package: 'Mapless-SQLite-Tests'
 		with: [ spec requires: #('Mapless-SQLite' 'Mapless-Tests-Base') ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpUnQLiteDependencies: spec [
 	spec
 		baseline: 'PunQLite'
@@ -201,11 +201,11 @@ BaselineOfMapless >> setUpUnQLiteDependencies: spec [
 				loads: #('Core') ]
 ]
 
-{ #category : #baseline }
+{ #category : #dependencies }
 BaselineOfMapless >> setUpUnQLitePackages: spec [
 	spec
 		package: 'Mapless-UnQLite'
-		with: [ spec requires: #('Mapless-Base-Core' 'PunQLite') ].
+		with: [ spec requires: #('Mapless-Base' 'PunQLite') ].
 	spec
 		package: 'Mapless-UnQLite-Tests'
 		with: [ spec requires: #('Mapless-UnQLite' 'Mapless-Tests-Base') ]
