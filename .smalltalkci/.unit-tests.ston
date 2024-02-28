@@ -3,19 +3,13 @@ SmalltalkCISpec {
     SCIMetacelloLoadSpec {
       #baseline : 'Mapless',
       #directory : '../src',
-      #load : [ 'Core',
+      #load : [
         'Tests',
-        'Memory',
         'Memory-Tests',
-        'SQLite',
         'SQLite-Tests',
-        'Postgres',
         'Postgres-Tests',
-        'Mongo',
         'Mongo-Tests',
-        'Redis',
         'Redis-Tests',
-        'Redis-Observer',
         'Redis-Observer-Tests' ],
       #platforms : [  #pharo ]
     }
