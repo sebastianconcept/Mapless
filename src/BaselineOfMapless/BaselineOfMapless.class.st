@@ -75,11 +75,11 @@ BaselineOfMapless >> setUpBasePackages: spec [
 		package: 'Mapless-Tests-Base'
 		with: [ spec requires: 'Mapless-Base-Core' ].
 	spec
-		package: 'Mapless-Memory-Core'
-		with: [ spec requires: #('Mapless-Base-Core') ].
+		package: 'Mapless-Memory'
+		with: [ spec requires: #('Mapless-Base') ].
 	spec
 		package: 'Mapless-Memory-Tests'
-		with: [ spec requires: #('Mapless-Memory-Core') ].
+		with: [ spec requires: #('Mapless-Memory') ].
 
 ]
 
