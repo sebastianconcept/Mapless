@@ -15,9 +15,11 @@ MaplessTestCase >> testGetterReturn [
 ]
 
 { #category : #tests }
-MaplessTestCase >> testMaplessError [
+MaplessTestCase >> testMaplessErrorDefaultAction [
 
-	self should: [ MaplessError signal: 'issue' ] raise: UnhandledError
+	self
+		should: [ MaplessError signal: 'mmmmmmmmm...' ]
+		raise: MaplessError
 ]
 
 { #category : #tests }

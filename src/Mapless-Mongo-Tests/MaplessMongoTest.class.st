@@ -358,14 +358,6 @@ MaplessMongoTest >> testIsUnsaved [
 ]
 
 { #category : #tests }
-MaplessMongoTest >> testMaplessErrorDefaultAction [
-
-	self
-		should: [ MaplessError signal: 'mmmmmmmmm...' ]
-		raise: MaplessError
-]
-
-{ #category : #tests }
 MaplessMongoTest >> testMultipleComposedComposables [
 	| tags tagsOfTags tagsOfTagsOfTags loaded |
 	self
