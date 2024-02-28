@@ -24,21 +24,36 @@ Class {
 
 { #category : #baseline }
 BaselineOfMapless >> baseline: spec [
+
 	<baseline>
-	spec
-		for: #common
-		do: [ self setUpBaseDependencies: spec.
-			self setUpPackages: spec.
-			spec
-				group: 'Core' with: #('Mapless-Base-Core');
-				group: 'Memory' with: #('Mapless-Memory');
-				group: 'Mongo' with: #('Mapless-Mongo');
-				group: 'Redis' with: #('Mapless-Redis');
-				group: 'Postgres' with: #('Mapless-Postgres');
-				group: 'SQLite' with: #('Mapless-SQLite');
-				group: 'UnQLite' with: #('Mapless-UnQLite');
-				group: 'Benchmark' with: #('Mapless-Benchmark-Core');
-				group: 'default' with: #('Memory' 'SQLite') ]
+	spec for: #common do: [
+		self setUpBaseDependencies: spec.
+		self setUpPackages: spec.
+		spec
+			group: 'Core' with: #( 'Mapless-Base-Core' );
+			group: 'Tests' with: #( 'Mapless-Base-Core' 'Mapless-Tests-Base' );
+			group: 'Memory' with: #( 'Mapless-Memory' );
+			group: 'Memory-Tests'
+			with: #( 'Mapless-Memory' 'Mapless-Memory-Tests' );
+			group: 'Mongo' with: #( 'Mapless-Mongo' );
+			group: 'Mongo-Tests'
+			with: #( 'Mapless-Mongo' 'Mapless-Mongo-Tests' );
+			group: 'Redis' with: #( 'Mapless-Redis' );
+			group: 'Redis-Tests'
+			with: #( 'Mapless-Redis' 'Mapless-Redis-Tests' );
+			group: 'Redis-Observer-Tests'
+			with: #( 'Mapless-Redis-Observer' 'Mapless-Redis-Observer-Tests' );
+			group: 'Postgres' with: #( 'Mapless-Postgres' );
+			group: 'Postgres-Tests'
+			with: #( 'Mapless-Postgres' 'Mapless-Postgres-Tests' );
+			group: 'SQLite' with: #( 'Mapless-SQLite' );
+			group: 'SQLite-Tests'
+			with: #( 'Mapless-SQLite' 'Mapless-SQLite-Tests' );
+			group: 'UnQLite' with: #( 'Mapless-UnQLite' );
+			group: 'UnQLite-Tests'
+			with: #( 'Mapless-UnQLite' 'Mapless-UnQLite-Tests' );
+			group: 'Benchmark' with: #( 'Mapless-Benchmark-Core' );
+			group: 'default' with: #( 'Memory' 'SQLite' ) ]
 ]
 
 { #category : #baseline }
