@@ -42,7 +42,7 @@ MaplessVoyageMongoModelTest >> testReifyWithReferenceFromVoyageMetadata [
 		in: repository.
 	self
 		assert: deserializedFromVoyage class
-		equals: DummyUserInteroperating.
+		equals: SampleUserInteroperating.
 	self assert: deserializedFromVoyage username equals: 'Paul'.
 	self assert: deserializedFromVoyage person notNil.
 	self assert: deserializedFromVoyage person class notNil.
@@ -56,10 +56,10 @@ MaplessVoyageMongoModelTest >> testSaveWithVoyageMetadata [
 	| found voyageDummyUserJSON voyageDummyPersonJSON personFromMapless userFromMapless command filter cursor |
 	voyageDummyUserJSON := '{"_id": "596f7169a5aa73b9a2110def", "#instanceOf": "DummyUser","#version":345,"username":"Paul","person":{"__id": "d9b4e739421aa92bd8002411","#collection": "DummyPerson","#instanceOf": "DummyPerson"}}'.
 	voyageDummyPersonJSON := '{"_id": "d9b4e739421aa92bd8002411", "#instanceOf": "DummyPerson","#version":345,"firstName":"Buddy"}'.
-	personFromMapless := DummyPersonInteroperating new
+	personFromMapless := SamplePersonInteroperating new
 		firstName: 'Buddy';
 		yourself.
-	userFromMapless := DummyUserInteroperating new
+	userFromMapless := SampleUserInteroperating new
 		username: 'buddy';
 		person: personFromMapless;
 		yourself.
@@ -67,7 +67,7 @@ MaplessVoyageMongoModelTest >> testSaveWithVoyageMetadata [
 	repository save: personFromMapless.
 	repository save: userFromMapless.
 	found := repository
-		findOne: DummyPersonInteroperating
+		findOne: SamplePersonInteroperating
 		atId: personFromMapless id.
 	self assert: found notNil.
 	self
@@ -75,7 +75,7 @@ MaplessVoyageMongoModelTest >> testSaveWithVoyageMetadata [
 		equals: 'DummyPerson'.
 	self assert: found id equals: personFromMapless id.
 	found := repository
-		findOne: DummyUserInteroperating
+		findOne: SampleUserInteroperating
 		atId: userFromMapless id.
 	self assert: found notNil.
 	self
@@ -85,7 +85,7 @@ MaplessVoyageMongoModelTest >> testSaveWithVoyageMetadata [
 	self assert: found person class equals: MaplessReference.
 	self
 		assert: found person model class
-		equals: DummyPersonInteroperating.
+		equals: SamplePersonInteroperating.
 	self assert: found person id notNil.
 	self assert: found person id equals: personFromMapless id.
 	self assert: found person model notNil.
@@ -95,7 +95,7 @@ MaplessVoyageMongoModelTest >> testSaveWithVoyageMetadata [
 			{'_id'.
 			userFromMapless id}.
 	command := OrderedDictionary new
-		at: 'find' put: DummyUserInteroperating collectionName;
+		at: 'find' put: SampleUserInteroperating collectionName;
 		at: 'filter' put: filter asMongoQuery;
 		yourself.
 	repository

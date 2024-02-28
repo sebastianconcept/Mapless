@@ -1,3 +1,6 @@
+"
+Connection pool for the Mapless repository using UnQLite
+"
 Class {
 	#name : #MaplessUnQLitePool,
 	#superclass : #MaplessAbstractPool,

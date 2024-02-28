@@ -40,7 +40,7 @@ MaplessMongoTest >> do: aBlock [
 
 { #category : #tests }
 MaplessMongoTest >> newDummyPersonNamed: aString [
-	^ DummyPerson new
+	^ SamplePerson new
 		firstName: aString;
 		yourself
 ]
@@ -73,10 +73,10 @@ MaplessMongoTest >> testComposedAccess [
 
 	| user guy |
 	repository
-		readWriteDo: [ user := DummyUser new
+		readWriteDo: [ user := SampleUser new
 				userame: 'johnq';
 				yourself.
-			guy := DummyPerson new
+			guy := SamplePerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
@@ -87,19 +87,19 @@ MaplessMongoTest >> testComposedAccess [
 		readOnlyDo: [ 
 			self waitABit.
 			self
-				assert: (DummyUser findId: user id) completeName
+				assert: (SampleUser findId: user id) completeName
 				equals: 'john q'.
 			self
-				assert: (DummyUser findId: user id) person class
+				assert: (SampleUser findId: user id) person class
 				equals: MaplessReference.
 			self
-				assert: (DummyUser findId: user id) person model class
-				equals: DummyPerson.
+				assert: (SampleUser findId: user id) person model class
+				equals: SamplePerson.
 			self
-				assert: (DummyUser findId: user id) person firstName
+				assert: (SampleUser findId: user id) person firstName
 				equals: 'john'.
 			self
-				assert: (DummyUser findId: user id) person lastName
+				assert: (SampleUser findId: user id) person lastName
 				equals: 'q' ]
 ]
 
@@ -112,10 +112,10 @@ MaplessMongoTest >> testComposedDelete [
 				do: [ :char | 
 					users
 						add:
-							(DummyUser new
+							(SampleUser new
 								userame: char asString;
 								person:
-									(DummyPerson new
+									(SamplePerson new
 										firstName: char asString;
 										yourself);
 								yourself) ].
@@ -141,10 +141,10 @@ MaplessMongoTest >> testComposedDestroy [
 				do: [ :char | 
 					users
 						add:
-							(DummyUser new
+							(SampleUser new
 								userame: char asString;
 								person:
-									(DummyPerson new
+									(SamplePerson new
 										firstName: char asString;
 										yourself);
 								yourself) ].
@@ -154,22 +154,22 @@ MaplessMongoTest >> testComposedDestroy [
 			self
 				assert:
 					(users
-						allSatisfy: [ :user | (DummyPerson existsId: user person id) not ]).
+						allSatisfy: [ :user | (SamplePerson existsId: user person id) not ]).
 			self
-				assert: (users allSatisfy: [ :user | DummyUser existsId: user id ]).
+				assert: (users allSatisfy: [ :user | SampleUser existsId: user id ]).
 			users do: [ :user | user destroy ].
 			self
-				assert: (users allSatisfy: [ :user | (DummyUser existsId: user id) not ]) ]
+				assert: (users allSatisfy: [ :user | (SampleUser existsId: user id) not ]) ]
 ]
 
 { #category : #tests }
 MaplessMongoTest >> testComposedResaveAndLoad [
 	| user guy loaded |
 	repository
-		readWriteDo: [ user := DummyUser new
+		readWriteDo: [ user := SampleUser new
 				username: 'johnq';
 				yourself.
-			guy := DummyPerson new
+			guy := SamplePerson new
 				firstName: 'John';
 				lastName: 'W';
 				yourself.
@@ -179,13 +179,13 @@ MaplessMongoTest >> testComposedResaveAndLoad [
 	repository
 		readOnlyDo: [ 
 			self waitABit.
-			loaded := DummyUser findId: user id.
+			loaded := SampleUser findId: user id.
 			self assert: loaded person firstName equals: 'John'.
 			loaded person lastName: 'wayne'.
 			loaded person save.
-			loaded := DummyUser findId: user id.
+			loaded := SampleUser findId: user id.
 			self assert: loaded person lastName equals: 'wayne'.
-			loaded := DummyUser findId: user id.
+			loaded := SampleUser findId: user id.
 			self assert: loaded person firstName equals: 'John' ].
 	repository
 		readWriteDo: [ loaded person lastName: 'Wayne'.
@@ -193,7 +193,7 @@ MaplessMongoTest >> testComposedResaveAndLoad [
 			loaded username: 'johnw'.
 			loaded save ].
 	repository
-		readOnlyDo: [ loaded := DummyUser findId: user id.
+		readOnlyDo: [ loaded := SampleUser findId: user id.
 			self assert: loaded username equals: 'johnw'.
 			self assert: loaded person firstName equals: 'John' ]
 ]
@@ -202,10 +202,10 @@ MaplessMongoTest >> testComposedResaveAndLoad [
 MaplessMongoTest >> testComposedSave [
 	| user guy |
 	self
-		do: [ user := DummyUser new
+		do: [ user := SampleUser new
 				userame: 'johnq';
 				yourself.
-			guy := DummyPerson new
+			guy := SamplePerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
@@ -223,11 +223,11 @@ MaplessMongoTest >> testComposedSave [
 MaplessMongoTest >> testComposedSaveAndLoad [
 	| user guy loaded |
 	repository
-		readWriteDo: [ user := DummyUser new
+		readWriteDo: [ user := SampleUser new
 				createdOn: DateAndTime now;
 				username: 'johnq';
 				yourself.
-			guy := DummyPerson new
+			guy := SamplePerson new
 				createdOn: DateAndTime now;
 				firstName: 'john';
 				lastName: 'q';
@@ -242,16 +242,16 @@ MaplessMongoTest >> testComposedSaveAndLoad [
 MaplessMongoTest >> testComposition [
 	| user guy |
 	self
-		do: [ user := DummyUser new
+		do: [ user := SampleUser new
 				userame: 'johnq';
 				yourself.
-			guy := DummyPerson new
+			guy := SamplePerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
 			user person: guy.
-			self assert: (user data at: 'person') class equals: DummyPerson.
-			self assert: (user data at: 'person') _c equals: #DummyPerson.
+			self assert: (user data at: 'person') class equals: SamplePerson.
+			self assert: (user data at: 'person') _c equals: #SamplePerson.
 			self assert: user id isNil.
 			self assert: (user data at: 'person') id isNil.
 			self assert: user completeName equals: 'john q' ]
@@ -261,7 +261,7 @@ MaplessMongoTest >> testComposition [
 MaplessMongoTest >> testDateAndTime [
 	| when guy loaded |
 	when := DateAndTime now asUTC.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		createdOn: when;
@@ -269,7 +269,7 @@ MaplessMongoTest >> testDateAndTime [
 	repository save: guy.
 	repository
 		readOnlyDo: [ self waitABit.
-			loaded := repository findOne: DummyPerson atId: guy id.
+			loaded := repository findOne: SamplePerson atId: guy id.
 			self
 				assert: loaded createdOn asDate asString = when asDate asString.
 			self assert: loaded createdOn asTime hour = when asTime hour.
@@ -286,7 +286,7 @@ MaplessMongoTest >> testDelete [
 				do: [ :char | 
 					people
 						add:
-							(DummyPerson new
+							(SamplePerson new
 								firstName: char asString;
 								yourself) ].
 			people do: [ :guy | guy save ].
@@ -304,14 +304,14 @@ MaplessMongoTest >> testDestroy [
 				do: [ :char | 
 					people
 						add:
-							(DummyPerson new
+							(SamplePerson new
 								firstName: char asString;
 								yourself) ].
 			people do: [ :guy | guy save ].
 			self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
 			people do: [ :guy | guy destroy ].
 			self
-				assert: (people allSatisfy: [ :guy | (DummyPerson existsId: guy id) not ]) ]
+				assert: (people allSatisfy: [ :guy | (SamplePerson existsId: guy id) not ]) ]
 ]
 
 { #category : #tests }
@@ -324,7 +324,7 @@ MaplessMongoTest >> testFindAll [
 	repository
 		readOnlyDo: [ 
 			self waitABit.
-			found := DummyPerson findAll.
+			found := SamplePerson findAll.
 			self assert: found notNil.
 			self assert: found size equals: 3 ]
 ]
@@ -339,7 +339,7 @@ MaplessMongoTest >> testFindAllSorted [
 	repository
 		readOnlyDo: [ 
 			self waitABit.
-			found := DummyPerson findAllSort: {(#firstName -> 1)} asDictionary.
+			found := SamplePerson findAllSort: {(#firstName -> 1)} asDictionary.
 			self assert: found notNil.
 			self assert: found size equals: 3.
 			self assert: found notNil.
@@ -350,7 +350,7 @@ MaplessMongoTest >> testFindAllSorted [
 { #category : #tests }
 MaplessMongoTest >> testIsUnsaved [
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -374,35 +374,35 @@ MaplessMongoTest >> testMultipleComposedComposables [
 			tagsOfTagsOfTags := OrderedCollection new.
 			tags
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'is this';
 						yourself);
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'multiply';
 						yourself);
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'composable?';
 						yourself);
 				yourself.
 			tagsOfTags
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'like';
 						yourself);
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'really?';
 						yourself);
 				yourself.
 			tagsOfTagsOfTags
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'wow';
 						yourself);
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'nice';
 						yourself);
 				yourself.
@@ -418,7 +418,7 @@ MaplessMongoTest >> testMultipleComposedComposables [
 			self
 				shouldnt: [ self do: [ tags do: [ :e | e save ] ] ]
 				raise: MaplessUnsavedSubmodel.
-			loaded := DummyTag findId: tags first id.
+			loaded := SampleTag findId: tags first id.
 			self assert: loaded notNil.
 			self assert: loaded label = 'is this'.
 			self assert: loaded tags isCollection.
@@ -438,22 +438,22 @@ MaplessMongoTest >> testMultipleComposedComposables [
 MaplessMongoTest >> testMultipleComposedMixedSaveAndLoad [
 	| guy things loaded |
 	repository
-		readWriteDo: [ guy := DummyPerson new
+		readWriteDo: [ guy := SamplePerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
 			guy things: OrderedCollection new.
 			guy things
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'cool';
 						yourself);
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'stuff';
 						yourself);
 				add:
-					(DummyUser new
+					(SampleUser new
 						info: 'also this';
 						yourself);
 				yourself.
@@ -464,7 +464,7 @@ MaplessMongoTest >> testMultipleComposedMixedSaveAndLoad [
 				raise: MaplessUnsavedSubmodel ].
 	repository
 		readOnlyDo: [ self waitABit.
-			loaded := DummyPerson findId: guy id.
+			loaded := SamplePerson findId: guy id.
 			self assert: loaded notNil.
 			self assert: loaded firstName = 'john'.
 			self assert: loaded things isCollection.
@@ -472,30 +472,30 @@ MaplessMongoTest >> testMultipleComposedMixedSaveAndLoad [
 			loaded things
 				do: [ :each | self assert: (things anySatisfy: [ :t | t id = each id ]) ].
 			loaded unreferenced.
-			self assert: loaded things first class = DummyTag.
-			self assert: loaded things second class = DummyTag.
-			self assert: loaded things third class = DummyUser ]
+			self assert: loaded things first class = SampleTag.
+			self assert: loaded things second class = SampleTag.
+			self assert: loaded things third class = SampleUser ]
 ]
 
 { #category : #tests }
 MaplessMongoTest >> testMultipleComposedSaveAndLoad [
 	| user guy tags loaded |
 	repository
-		readWriteDo: [ user := DummyUser new
+		readWriteDo: [ user := SampleUser new
 				username: 'johnq';
 				yourself.
-			guy := DummyPerson new
+			guy := SamplePerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
 			tags := OrderedCollection new.
 			tags
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'cool';
 						yourself);
 				add:
-					(DummyTag new
+					(SampleTag new
 						label: 'stuff';
 						yourself);
 				yourself.
@@ -508,7 +508,7 @@ MaplessMongoTest >> testMultipleComposedSaveAndLoad [
 			self shouldnt: [ user save ] raise: MaplessUnsavedSubmodel ].
 	repository
 		readOnlyDo: [ self waitABit.
-			loaded := DummyUser findId: user id.
+			loaded := SampleUser findId: user id.
 			self assert: loaded notNil.
 			self assert: loaded username = 'johnq'.
 			self assert: loaded tags isCollection.
@@ -527,10 +527,10 @@ MaplessMongoTest >> testQueryUsers [
 				do: [ :char | 
 					users
 						add:
-							(DummyUser new
+							(SampleUser new
 								username: char asString;
 								person:
-									(DummyPerson new
+									(SamplePerson new
 										firstName: char asString;
 										yourself);
 								yourself) ].
@@ -540,13 +540,13 @@ MaplessMongoTest >> testQueryUsers [
 				do: [ self
 						assert:
 							(Character alphabet
-								allSatisfy: [ :char | (DummyUser findUsername: char asString) notNil ]) ] ]
+								allSatisfy: [ :char | (SampleUser findUsername: char asString) notNil ]) ] ]
 ]
 
 { #category : #tests }
 MaplessMongoTest >> testSaveSetsID [
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -559,7 +559,7 @@ MaplessMongoTest >> testSaveSetsID [
 { #category : #tests }
 MaplessMongoTest >> testSimpleSave [
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -569,14 +569,14 @@ MaplessMongoTest >> testSimpleSave [
 { #category : #tests }
 MaplessMongoTest >> testSimpleSaveAndLoad [
 	| guy loaded |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	repository readWriteDo: [ guy save ].
 	repository
 		readOnlyDo: [ self waitABit.
-			loaded := DummyPerson findId: guy id ].
+			loaded := SamplePerson findId: guy id ].
 	self assert: loaded notNil.
 	loaded data
 		keysAndValuesDo: [ :k :v | 
@@ -588,28 +588,28 @@ MaplessMongoTest >> testSimpleSaveAndLoad [
 MaplessMongoTest >> testSimpleSaveAndUpdate [
 	| guy loaded reloaded |
 	repository
-		readWriteDo: [ guy := DummyPerson new
+		readWriteDo: [ guy := SamplePerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
 			guy save ].
 	repository
 		readOnlyDo: [ self waitABit.
-			loaded := DummyPerson findId: guy id.
+			loaded := SamplePerson findId: guy id.
 			self assert: loaded firstName equals: 'john'.
 			self deny: loaded remember equals: 'this words' ].
 	loaded remember: 'this words'.
 	repository
 		readWriteDo: [
 			loaded save.
-			reloaded := repository findOne: DummyPerson atId: guy id.
+			reloaded := repository findOne: SamplePerson atId: guy id.
 			self assert: reloaded remember = 'this words' ]
 ]
 
 { #category : #tests }
 MaplessMongoTest >> testSimpleSaveWithAByteSymbol [
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		value: #thisByteSymbol;
@@ -620,25 +620,25 @@ MaplessMongoTest >> testSimpleSaveWithAByteSymbol [
 { #category : #tests }
 MaplessMongoTest >> testSubModelsFromReifiedJSON [
 	| user guy jsonString reified |
-	user := DummyUser new
+	user := SampleUser new
 		userame: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	user person: guy.
 	self
 		do: [ jsonString := user unreferenced asJSONString.
-			reified := DummyUser fromJSONString: jsonString ].
-	self assert: reified person class equals: DummyPerson.
+			reified := SampleUser fromJSONString: jsonString ].
+	self assert: reified person class equals: SamplePerson.
 	self assert: reified completeName equals: 'john q'
 ]
 
 { #category : #tests }
 MaplessMongoTest >> testUpsert [
 	| guy theId found freshFound |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -647,13 +647,13 @@ MaplessMongoTest >> testUpsert [
 			theId := guy id ].
 	repository
 		readOnlyDo: [ self waitABit.
-			found := DummyPerson findId: theId.
+			found := SamplePerson findId: theId.
 			self assert: found notNil equals: true.
 			self assert: found firstName equals: 'john'.
 			found firstName: 'John'.
 			found upsert ].
 	repository
-		readOnlyDo: [ freshFound := DummyPerson findId: theId.
+		readOnlyDo: [ freshFound := SamplePerson findId: theId.
 			self assert: freshFound firstName equals: 'John' ]
 ]
 

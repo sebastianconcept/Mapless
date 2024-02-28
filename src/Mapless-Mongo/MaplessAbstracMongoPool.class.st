@@ -11,27 +11,6 @@ Class {
 }
 
 { #category : #'instance creation' }
-MaplessAbstracMongoPool class >> hostname: aString port: anInteger [
-
-	^ self
-		  hostname: aString
-		  port: anInteger
-		  username: nil
-		  password: nil
-]
-
-{ #category : #'instance creation' }
-MaplessAbstracMongoPool class >> hostname: aString port: anInteger username: anUsernameOrNil password: aPasswordOrNil [
-
-	^ self new
-		  hostname: aString;
-		  port: anInteger;
-		  username: anUsernameOrNil;
-		  password: aPasswordOrNil;
-		  yourself
-]
-
-{ #category : #'instance creation' }
 MaplessAbstracMongoPool class >> local [
 	^ self
 		hostname: 'localhost'

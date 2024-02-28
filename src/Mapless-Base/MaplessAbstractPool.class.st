@@ -15,6 +15,27 @@ Class {
 }
 
 { #category : #'instance creation' }
+MaplessAbstractPool class >> hostname: aString port: anInteger [
+
+	^ self
+		  hostname: aString
+		  port: anInteger
+		  username: nil
+		  password: nil
+]
+
+{ #category : #'instance creation' }
+MaplessAbstractPool class >> hostname: aString port: anInteger username: anUsernameOrNil password: aPasswordOrNil [
+
+	^ self new
+		  hostname: aString;
+		  port: anInteger;
+		  username: anUsernameOrNil;
+		  password: aPasswordOrNil;
+		  yourself
+]
+
+{ #category : #'instance creation' }
 MaplessAbstractPool class >> local [
 	^ self subclassResponsibility
 ]

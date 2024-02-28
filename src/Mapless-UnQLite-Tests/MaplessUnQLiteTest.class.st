@@ -12,9 +12,9 @@ Class {
 
 { #category : #history }
 MaplessUnQLiteTest class >> maplessClasses [
-	^ {DummyPerson.
-	DummyUser.
-	DummyTag}
+	^ {SamplePerson.
+	SampleUser.
+	SampleTag}
 ]
 
 { #category : #actions }
@@ -26,7 +26,7 @@ MaplessUnQLiteTest >> dropDatabase: aDatabaseFileName [
 MaplessUnQLiteTest >> savePersonNamed: aString [
 	repository
 		save:
-			(DummyPerson new
+			(SamplePerson new
 				firstName: aString;
 				yourself)
 ]
@@ -52,10 +52,10 @@ MaplessUnQLiteTest >> testComposedAccess [
 	"Test proxies and its on-demand-load and DNU mechanism"
 
 	| user guy |
-	user := DummyUser new
+	user := SampleUser new
 		userame: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -63,19 +63,19 @@ MaplessUnQLiteTest >> testComposedAccess [
 	repository save: guy.
 	repository save: user.
 	self
-		assert: (repository findOne: DummyUser atId: user id) completeName
+		assert: (repository findOne: SampleUser atId: user id) completeName
 		equals: 'john q'.
 	self
-		assert: (repository findOne: DummyUser atId: user id) person class
+		assert: (repository findOne: SampleUser atId: user id) person class
 		equals: MaplessReference.
 	self
-		assert: (repository findOne: DummyUser atId: user id) person model class
-		equals: DummyPerson.
+		assert: (repository findOne: SampleUser atId: user id) person model class
+		equals: SamplePerson.
 	self
-		assert: (repository findOne: DummyUser atId: user id) person firstName
+		assert: (repository findOne: SampleUser atId: user id) person firstName
 		equals: 'john'.
 	self
-		assert: (repository findOne: DummyUser atId: user id) person lastName
+		assert: (repository findOne: SampleUser atId: user id) person lastName
 		equals: 'q'
 ]
 
@@ -87,10 +87,10 @@ MaplessUnQLiteTest >> testComposedDelete [
 		do: [ :char | 
 			users
 				add:
-					(DummyUser new
+					(SampleUser new
 						userame: char asString;
 						person:
-							(DummyPerson new
+							(SamplePerson new
 								firstName: char asString;
 								yourself);
 						yourself) ].
@@ -115,10 +115,10 @@ MaplessUnQLiteTest >> testComposedDestroy [
 		do: [ :char | 
 			users
 				add:
-					(DummyUser new
+					(SampleUser new
 						userame: char asString;
 						person:
-							(DummyPerson new
+							(SamplePerson new
 								firstName: char asString;
 								yourself);
 						yourself) ].
@@ -128,31 +128,31 @@ MaplessUnQLiteTest >> testComposedDestroy [
 		assert:
 			(users
 				allSatisfy:
-					[ :user | (repository findOne: DummyPerson atId: user person id) notNil ]).
+					[ :user | (repository findOne: SamplePerson atId: user person id) notNil ]).
 	users do: [ :user | repository destroy: user person ].
 	self
 		assert:
 			(users
 				allSatisfy:
-					[ :user | (repository findOne: DummyPerson atId: user person id) isNil ]).
+					[ :user | (repository findOne: SamplePerson atId: user person id) isNil ]).
 	self
 		assert:
 			(users
-				allSatisfy: [ :user | (repository findOne: DummyUser atId: user id) notNil ]).
+				allSatisfy: [ :user | (repository findOne: SampleUser atId: user id) notNil ]).
 	users do: [ :user | repository destroy: user ].
 	self
 		assert:
 			(users
-				allSatisfy: [ :user | (repository findOne: DummyUser atId: user id) isNil ])
+				allSatisfy: [ :user | (repository findOne: SampleUser atId: user id) isNil ])
 ]
 
 { #category : #tests }
 MaplessUnQLiteTest >> testComposedSave [
 	| user guy |
-	user := DummyUser new
+	user := SampleUser new
 		userame: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -172,11 +172,11 @@ MaplessUnQLiteTest >> testComposedSave [
 MaplessUnQLiteTest >> testComposedSaveAndLoad [
 	| user guy loaded when |
 	when := DateAndTime now asUTC.
-	user := DummyUser new
+	user := SampleUser new
 		createdOn: when;
 		username: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		createdOn: when;
 		firstName: 'john';
 		lastName: 'q';
@@ -191,7 +191,7 @@ MaplessUnQLiteTest >> testComposedSaveAndLoad [
 	self
 		shouldnt: [ repository save: user ]
 		raise: MaplessUnsavedSubmodel.
-	loaded := repository findOne: DummyUser atId: user id.
+	loaded := repository findOne: SampleUser atId: user id.
 	self assert: loaded notNil.
 	self assert: loaded createdOn notNil.
 	self assert: loaded modifiedOn notNil.
@@ -208,24 +208,24 @@ MaplessUnQLiteTest >> testComposedSaveAndLoad [
 	self assert: loaded username = 'johnq'.
 	self assert: loaded person firstName = 'john'.
 	self assert: loaded person lastName = 'q'.
-	self assert: loaded person maplessClassName = #DummyPerson.
-	self assert: loaded person model class = DummyPerson
+	self assert: loaded person maplessClassName = #SamplePerson.
+	self assert: loaded person model class = SamplePerson
 ]
 
 { #category : #tests }
 MaplessUnQLiteTest >> testComposition [
 	| user guy |
-	user := DummyUser new
+	user := SampleUser new
 		userame: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	user person: guy.
 	self
 		assert: (user maplessData at: 'person') class
-		equals: DummyPerson.
+		equals: SamplePerson.
 	self assert: user id isNil.
 	self assert: (user maplessData at: 'person') id isNil.
 	self assert: user completeName equals: 'john q'
@@ -239,7 +239,7 @@ MaplessUnQLiteTest >> testCursorDoEach [
 		do: [ :char | 
 			people
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: char asString;
 						yourself) ].
 	people do: [ :guy | repository save: guy ].
@@ -248,7 +248,7 @@ MaplessUnQLiteTest >> testCursorDoEach [
 			cursor
 				doEach: [ :each | 
 					self assert: each isMapless.
-					self assert: each class equals: DummyPerson.
+					self assert: each class equals: SamplePerson.
 					found := people detect: [ :e | e id = each id ] ifNone: [ nil ].
 					self deny: found equals: nil.
 					self assert: found firstName equals: each firstName ] ].
@@ -262,7 +262,7 @@ MaplessUnQLiteTest >> testCursorDoEachFollowsSortingOrder [
 	1 to: 10 do: [ :index | 
 		people
 			add:
-				(DummyPerson new
+				(SamplePerson new
 					id: index;
 					firstName: 'guy-' , index asString;
 					yourself) ].
@@ -295,7 +295,7 @@ MaplessUnQLiteTest >> testDelete [
 		do: [ :char | 
 			people
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: char asString;
 						yourself) ].
 	people do: [ :guy | repository save: guy ].
@@ -312,7 +312,7 @@ MaplessUnQLiteTest >> testDestroy [
 		do: [ :char | 
 			people
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: char asString;
 						yourself) ].
 	people do: [ :guy | repository save: guy ].
@@ -320,29 +320,29 @@ MaplessUnQLiteTest >> testDestroy [
 	self
 		assert:
 			(people
-				allSatisfy: [ :guy | (repository findOne: DummyPerson atId: guy id) notNil ]).
+				allSatisfy: [ :guy | (repository findOne: SamplePerson atId: guy id) notNil ]).
 	people do: [ :guy | repository destroy: guy ].
 	self
 		assert:
 			(people
-				allSatisfy: [ :guy | (repository findOne: DummyPerson atId: guy id) isNil ])
+				allSatisfy: [ :guy | (repository findOne: SamplePerson atId: guy id) isNil ])
 ]
 
 { #category : #tests }
 MaplessUnQLiteTest >> testExists [
 	| guy loaded |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	repository save: guy.
-	self assert: (repository existsId: guy id of: DummyPerson)
+	self assert: (repository existsId: guy id of: SamplePerson)
 ]
 
 { #category : #tests }
 MaplessUnQLiteTest >> testIsUnsaved [
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -361,35 +361,35 @@ MaplessUnQLiteTest >> testMultipleComposedComposables [
 	tagsOfTagsOfTags := OrderedCollection new.
 	tags
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'is this';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'multiply';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'composable?';
 				yourself);
 		yourself.
 	tagsOfTags
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'like';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'really?';
 				yourself);
 		yourself.
 	tagsOfTagsOfTags
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'wow';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'nice';
 				yourself);
 		yourself.
@@ -405,7 +405,7 @@ MaplessUnQLiteTest >> testMultipleComposedComposables [
 	self
 		shouldnt: [ tags do: [ :e | repository save: e ] ]
 		raise: MaplessUnsavedSubmodel.
-	loaded := repository findOne: DummyTag atId: tags first id.
+	loaded := repository findOne: SampleTag atId: tags first id.
 	self assert: loaded notNil.
 	self assert: loaded label = 'is this'.
 	self assert: loaded tags isCollection.
@@ -424,29 +424,29 @@ MaplessUnQLiteTest >> testMultipleComposedComposables [
 { #category : #tests }
 MaplessUnQLiteTest >> testMultipleComposedMixedSaveAndLoad [
 	| guy things loaded |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	guy things: OrderedCollection new.
 	guy things
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'cool';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'stuff';
 				yourself);
 		add:
-			(DummyUser new
+			(SampleUser new
 				info: 'also this';
 				yourself);
 		yourself.
 	things := guy things.
 	guy things do: [ :each | repository save: each ].
 	self shouldnt: [ repository save: guy ] raise: MaplessUnsavedSubmodel.
-	loaded := repository findOne: DummyPerson atId: guy id.
+	loaded := repository findOne: SamplePerson atId: guy id.
 	self assert: loaded notNil.
 	self assert: loaded firstName = 'john'.
 	self assert: loaded things isCollection.
@@ -454,29 +454,29 @@ MaplessUnQLiteTest >> testMultipleComposedMixedSaveAndLoad [
 	loaded things
 		do: [ :each | self assert: (things anySatisfy: [ :t | t id = each id ]) ].
 	loaded unreferenced.
-	self assert: loaded things first class = DummyTag.
-	self assert: loaded things second class = DummyTag.
-	self assert: loaded things third class = DummyUser
+	self assert: loaded things first class = SampleTag.
+	self assert: loaded things second class = SampleTag.
+	self assert: loaded things third class = SampleUser
 ]
 
 { #category : #tests }
 MaplessUnQLiteTest >> testMultipleComposedSaveAndLoad [
 	| user guy tags loaded |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	tags := OrderedCollection new.
 	tags
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'cool';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'stuff';
 				yourself);
 		yourself.
@@ -489,7 +489,7 @@ MaplessUnQLiteTest >> testMultipleComposedSaveAndLoad [
 	self
 		shouldnt: [ repository save: user ]
 		raise: MaplessUnsavedSubmodel.
-	loaded := repository findOne: DummyUser atId: user id.
+	loaded := repository findOne: SampleUser atId: user id.
 	self assert: loaded notNil.
 	self assert: loaded username = 'johnq'.
 	self assert: loaded tags isCollection.
@@ -502,7 +502,7 @@ MaplessUnQLiteTest >> testMultipleComposedSaveAndLoad [
 { #category : #tests }
 MaplessUnQLiteTest >> testSaveSetsID [
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -519,7 +519,7 @@ MaplessUnQLiteTest >> testSeekGreaterThan [
 	1 to: 10 do: [ :index | 
 		people
 			add:
-				(DummyPerson new
+				(SamplePerson new
 					id: index;
 					firstName: 'guy-' , index asString;
 					yourself) ].
@@ -527,7 +527,7 @@ MaplessUnQLiteTest >> testSeekGreaterThan [
 	repository
 		withCursorDo: [ :cursor | 
 			| key |
-			key := repository namespaced: 'id' of: DummyPerson valued: 7.
+			key := repository namespaced: 'id' of: SamplePerson valued: 7.
 			cursor seekGreaterThan: key.
 			i := 7.
 			cursor
@@ -543,7 +543,7 @@ MaplessUnQLiteTest >> testSeekLessThan [
 	1 to: 10 do: [ :index | 
 		people
 			add:
-				(DummyPerson new
+				(SamplePerson new
 					id: index;
 					firstName: 'guy-' , index asString;
 					yourself) ].
@@ -551,7 +551,7 @@ MaplessUnQLiteTest >> testSeekLessThan [
 	repository
 		withCursorDo: [ :cursor | 
 			| key |
-			key := repository namespaced: 'id' of: DummyPerson valued: 7.
+			key := repository namespaced: 'id' of: SamplePerson valued: 7.
 			cursor seekGreaterThan: key.
 			i := 7.
 			cursor
@@ -563,7 +563,7 @@ MaplessUnQLiteTest >> testSeekLessThan [
 { #category : #tests }
 MaplessUnQLiteTest >> testSimpleSave [
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -573,12 +573,12 @@ MaplessUnQLiteTest >> testSimpleSave [
 { #category : #tests }
 MaplessUnQLiteTest >> testSimpleSaveAndLoad [
 	| guy loaded |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	repository save: guy.
-	loaded := repository findOne: DummyPerson atId: guy id.
+	loaded := repository findOne: SamplePerson atId: guy id.
 	self assert: loaded notNil.
 	loaded modifiedOn: nil.
 	guy modifiedOn: nil.
@@ -592,12 +592,12 @@ MaplessUnQLiteTest >> testSimpleSaveAndLoad [
 MaplessUnQLiteTest >> testSimpleSaveAndLoadInMemory [
 	| guy loaded memoryRepository |
 	memoryRepository := MaplessUnQLiteRepository inMemory.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	memoryRepository save: guy.
-	loaded := memoryRepository findOne: DummyPerson atId: guy id.
+	loaded := memoryRepository findOne: SamplePerson atId: guy id.
 	self assert: loaded notNil.
 	loaded modifiedOn: nil.
 	guy modifiedOn: nil.
@@ -610,37 +610,37 @@ MaplessUnQLiteTest >> testSimpleSaveAndLoadInMemory [
 { #category : #tests }
 MaplessUnQLiteTest >> testSimpleSaveAndUpdate [
 	| guy loaded reloaded |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	repository save: guy.
-	loaded := repository findOne: DummyPerson atId: guy id.
+	loaded := repository findOne: SamplePerson atId: guy id.
 	self assert: loaded firstName = 'john'.
 	self deny: loaded remember = 'this words'.
 	loaded firstName: loaded firstName capitalized.
 	loaded remember: 'this words'.
 	repository save: loaded.
-	reloaded := repository findOne: DummyPerson atId: guy id.
+	reloaded := repository findOne: SamplePerson atId: guy id.
 	self assert: reloaded remember = 'this words'
 ]
 
 { #category : #tests }
 MaplessUnQLiteTest >> testSubModelsFromReifiedJSON [
 	| user guy jsonString reified loaded |
-	user := DummyUser new
+	user := SampleUser new
 		userame: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	user person: guy.
 	repository save: guy.
 	repository save: user.
-	loaded := repository findOne: DummyUser atId: user id.
+	loaded := repository findOne: SampleUser atId: user id.
 	jsonString := loaded unreferenced asJSONString.
-	reified := DummyUser fromJSONString: jsonString in: repository.
-	self assert: reified person class equals: DummyPerson.
+	reified := SampleUser fromJSONString: jsonString in: repository.
+	self assert: reified person class equals: SamplePerson.
 	self assert: reified completeName equals: 'john q'
 ]

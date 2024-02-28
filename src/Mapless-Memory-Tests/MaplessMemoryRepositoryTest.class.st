@@ -14,7 +14,7 @@ Class {
 MaplessMemoryRepositoryTest >> addDummyPeople [
 	| guy |
 	1 to: 10 do: [ :i | 
-		guy := DummyPerson new
+		guy := SamplePerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -22,7 +22,7 @@ MaplessMemoryRepositoryTest >> addDummyPeople [
 			ifTrue: [ guy lastName: guy lastName , i asString ].
 		guy save ].
 	1 to: 10 do: [ :i | 
-		guy := DummyPerson new
+		guy := SamplePerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -33,7 +33,7 @@ MaplessMemoryRepositoryTest >> addDummyPeople [
 
 { #category : #actions }
 MaplessMemoryRepositoryTest >> newDummyPersonNamed: aString [
-	^ DummyPerson new
+	^ SamplePerson new
 		firstName: aString;
 		yourself
 ]
@@ -78,7 +78,7 @@ MaplessMemoryRepositoryTest >> testAccessorDatabaseAccess [
 MaplessMemoryRepositoryTest >> testCursorCount [
 	repository
 		do: [ self addDummyPeople.
-			self assert: DummyPerson count equals: 20 ]
+			self assert: SamplePerson count equals: 20 ]
 ]
 
 { #category : #tests }
@@ -86,7 +86,7 @@ MaplessMemoryRepositoryTest >> testCursorCountWithConditions [
 	repository
 		do: [ self addDummyPeople.
 			self
-				assert: (DummyPerson count: [ :each | each firstName = 'john' ])
+				assert: (SamplePerson count: [ :each | each firstName = 'john' ])
 				equals: 10 + 1 ]
 ]
 
@@ -106,15 +106,15 @@ MaplessMemoryRepositoryTest >> testDatabaseCollectionFindId [
 	databaseCollection := db collectionNamed: 'DummyPerson'.
 	self assert: databaseCollection isEmpty.
 	repository
-		do: [ guy := DummyPerson new
+		do: [ guy := SamplePerson new
 				firstName: 'John';
 				lastName: 'Q';
 				yourself.
 			guy save ].
 	self assert: (databaseCollection includes: guy).
 	repository
-		do: [ self assert: (DummyPerson findId: guy id) notNil.
-			self assert: (DummyPerson findId: guy id) firstName equals: 'John' ]
+		do: [ self assert: (SamplePerson findId: guy id) notNil.
+			self assert: (SamplePerson findId: guy id) firstName equals: 'John' ]
 ]
 
 { #category : #tests }
@@ -127,7 +127,7 @@ MaplessMemoryRepositoryTest >> testDatabaseCollectionFindOneWithConditions [
 		do: [ guys := {'John' . 'Peter' . 'Dave'}
 				collect: [ :name | (self newDummyPersonNamed: name) save ] ].
 	repository
-		do: [ guy := DummyPerson findOne: [ :each | each firstName = 'Dave' ].
+		do: [ guy := SamplePerson findOne: [ :each | each firstName = 'Dave' ].
 			self assert: guy firstName equals: 'Dave' ]
 ]
 
@@ -141,7 +141,7 @@ MaplessMemoryRepositoryTest >> testDatabaseCollectionFindWithConditions [
 		do: [ guys := {'John' . 'Peter' . 'Dave'}
 				collect: [ :name | self newDummyPersonNamed: name ].
 			guys do: #save.
-			guy := DummyPerson find: [ :each | each firstName = 'John' ].
+			guy := SamplePerson find: [ :each | each firstName = 'John' ].
 			guys detect: [ :e | e firstName = 'John' ].
 			self assert: guys first firstName equals: 'John' ]
 ]
@@ -153,7 +153,7 @@ MaplessMemoryRepositoryTest >> testDatabaseCollectionSave [
 	databaseCollection := db collectionNamed: 'DummyPerson'.
 	self assert: databaseCollection isEmpty.
 	repository
-		do: [ guy := DummyPerson new
+		do: [ guy := SamplePerson new
 				firstName: 'John';
 				lastName: 'Q';
 				yourself.
@@ -167,7 +167,7 @@ MaplessMemoryRepositoryTest >> testDatabaseCollectionSaveAndDestroy [
 	db := repository database.
 	databaseCollection := db collectionNamed: 'DummyPerson'.
 	repository
-		do: [ guy := DummyPerson new
+		do: [ guy := SamplePerson new
 				firstName: 'John';
 				lastName: 'Q';
 				yourself.
@@ -209,11 +209,11 @@ MaplessMemoryRepositoryTest >> testExistenceDetection [
 	| all |
 	repository do: [
 		self addDummyPeople.
-		all := DummyPerson findAll ].
+		all := SamplePerson findAll ].
 
-	self deny: (repository existsId: '123' of: DummyPerson).
+	self deny: (repository existsId: '123' of: SamplePerson).
 	all do: [ :guy |
-		self assert: (repository existsId: guy id of: DummyPerson) ]
+		self assert: (repository existsId: guy id of: SamplePerson) ]
 ]
 
 { #category : #tests }
@@ -221,7 +221,7 @@ MaplessMemoryRepositoryTest >> testFindAll [
 	| found |
 	repository
 		do: [ self addDummyPeople.
-			found := DummyPerson findAll.
+			found := SamplePerson findAll.
 			self assert: found notNil.
 			self assert: found size equals: 20 ]
 ]
@@ -233,7 +233,7 @@ MaplessMemoryRepositoryTest >> testFindAllSorted [
 		do: [ (self newDummyPersonNamed: 'Peter') save.
 			(self newDummyPersonNamed: 'Robert') save.
 			(self newDummyPersonNamed: 'John') save.
-			found := DummyPerson findAllSort: #firstName ascending.
+			found := SamplePerson findAllSort: #firstName ascending.
 			self assert: found notNil.
 			self assert: found size equals: 3.
 			self assert: found notNil.
@@ -251,7 +251,7 @@ MaplessMemoryRepositoryTest >> testFindManyWithConditionsLimitedAndSorted [
 		(self newDummyPersonNamed: 'Robin') save.
 		(self newDummyPersonNamed: 'Ron') save.
 		(self newDummyPersonNamed: 'John') save.
-		found := DummyPerson
+		found := SamplePerson
 			         find: [ :e | 'Ro*' match: e firstName ]
 			         limit: 2
 			         sort: #firstName ascending.
@@ -265,15 +265,15 @@ MaplessMemoryRepositoryTest >> testFindManyWithConditionsLimitedAndSorted [
 MaplessMemoryRepositoryTest >> testInsert [
 
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		       firstName: 'john';
 		       lastName: 'q';
 		       yourself.
-	repository do: [ self assert: DummyPerson findAll isEmpty ].
+	repository do: [ self assert: SamplePerson findAll isEmpty ].
 	repository insert: guy.
 	repository do: [
-		self deny: DummyPerson findAll isEmpty.
-		self assert: DummyPerson findAll size equals: 1 ]
+		self deny: SamplePerson findAll isEmpty.
+		self assert: SamplePerson findAll size equals: 1 ]
 ]
 
 { #category : #tests }
@@ -281,7 +281,7 @@ MaplessMemoryRepositoryTest >> testSelectWithSort [
 	| found |
 	repository
 		do: [ self addDummyPeople.
-			found := DummyPerson
+			found := SamplePerson
 				find: [ :each | each firstName = 'john' | (each firstName = 'john3') ]
 				sort: #firstName ascending.
 			self assert: found notNil.

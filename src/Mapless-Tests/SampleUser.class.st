@@ -1,89 +1,89 @@
 Class {
-	#name : #DummyUser,
+	#name : #SampleUser,
 	#superclass : #Mapless,
 	#category : #'Mapless-Tests-Samples'
 }
 
 { #category : #'as yet unclassified' }
-DummyUser class >> findUsername: anUsername [
+SampleUser class >> findUsername: anUsername [
 	^ self getRepository
 		findOne: self
 		where: {('username' -> anUsername)} asDictionary
 ]
 
 { #category : #accessing }
-DummyUser >> completeName [
+SampleUser >> completeName [
 	^ self person firstName , ' ' , self person lastName
 ]
 
 { #category : #hooks }
-DummyUser >> onAfterDelete [
+SampleUser >> onAfterDelete [
 	super onAfterDelete.
 	self afterDelete: true
 ]
 
 { #category : #hooks }
-DummyUser >> onAfterDestroy [
+SampleUser >> onAfterDestroy [
 	super onAfterDestroy.
 	self afterDestroy: true
 ]
 
 { #category : #hooks }
-DummyUser >> onAfterInsert [
+SampleUser >> onAfterInsert [
 	super onAfterInsert.
 	self afterInsert: true
 ]
 
 { #category : #hooks }
-DummyUser >> onAfterSave [
+SampleUser >> onAfterSave [
 	super onAfterSave.
 	self afterSave: true
 ]
 
 { #category : #hooks }
-DummyUser >> onAfterUpdate [
+SampleUser >> onAfterUpdate [
 	super onAfterUpdate.
 	self afterUpdate: true
 ]
 
 { #category : #hooks }
-DummyUser >> onAfterUpsert [
+SampleUser >> onAfterUpsert [
 	super onAfterUpsert.
 	self afterUpsert: true
 ]
 
 { #category : #hooks }
-DummyUser >> onBeforeDelete [
+SampleUser >> onBeforeDelete [
 	super onBeforeDelete.
 	self beforeDelete: true
 ]
 
 { #category : #hooks }
-DummyUser >> onBeforeDestroy [
+SampleUser >> onBeforeDestroy [
 	super onBeforeDestroy.
 	self beforeDestroy: true
 ]
 
 { #category : #hooks }
-DummyUser >> onBeforeInsert [
+SampleUser >> onBeforeInsert [
 	super onBeforeInsert.
 	self beforeInsert: true
 ]
 
 { #category : #hooks }
-DummyUser >> onBeforeSave [
+SampleUser >> onBeforeSave [
 	super onBeforeSave.
 	self beforeSave: true
 ]
 
 { #category : #hooks }
-DummyUser >> onBeforeUpdate [
+SampleUser >> onBeforeUpdate [
 	super onBeforeUpdate.
 	self beforeUpdate: true
 ]
 
 { #category : #hooks }
-DummyUser >> onBeforeUpsert [
+SampleUser >> onBeforeUpsert [
 	super onBeforeUpsert.
 	self beforeUpsert: true
 ]

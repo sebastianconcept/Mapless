@@ -11,7 +11,7 @@ Class {
 MaplessMongoQueriesTest >> addDummyPeople [
 	| guy |
 	1 to: 10 do: [ :i | 
-		guy := DummyPerson new
+		guy := SamplePerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -19,7 +19,7 @@ MaplessMongoQueriesTest >> addDummyPeople [
 			ifTrue: [ guy lastName: guy lastName , i asString ].
 		guy save ].
 	1 to: 10 do: [ :i | 
-		guy := DummyPerson new
+		guy := SamplePerson new
 			firstName: 'john';
 			lastName: 'q';
 			yourself.
@@ -48,7 +48,7 @@ MaplessMongoQueriesTest >> tearDown [
 MaplessMongoQueriesTest >> testCursorCount [
 	repository
 		do: [ self addDummyPeople.
-			self assert: DummyPerson count equals: DummyPerson findAll size ]
+			self assert: SamplePerson count equals: SamplePerson findAll size ]
 ]
 
 { #category : #tests }
@@ -56,11 +56,11 @@ MaplessMongoQueriesTest >> testCursorCountWithConditions [
 	repository
 		do: [ self addDummyPeople.
 			self
-				assert: (DummyPerson count: {('firstName' -> 'john')} asDictionary)
+				assert: (SamplePerson count: {('firstName' -> 'john')} asDictionary)
 				equals: 10 + 1.
 			self
-				deny: (DummyPerson count: {('firstName' -> 'john')} asDictionary)
-				equals: DummyPerson findAll size ]
+				deny: (SamplePerson count: {('firstName' -> 'john')} asDictionary)
+				equals: SamplePerson findAll size ]
 ]
 
 { #category : #tests }
@@ -68,7 +68,7 @@ MaplessMongoQueriesTest >> testFindAll [
 	| found |
 	repository
 		do: [ self addDummyPeople.
-			found := DummyPerson findAll.
+			found := SamplePerson findAll.
 			self assert: found notNil.
 			self assert: found size equals: 20 ]
 ]
@@ -78,7 +78,7 @@ MaplessMongoQueriesTest >> testFresh [
 	| found guy freshGuy |
 	repository
 		do: [ self addDummyPeople.
-			found := DummyPerson findAll.
+			found := SamplePerson findAll.
 			self assert: found notNil.
 			self assert: found size equals: 20 ].
 	guy := found first.
@@ -97,7 +97,7 @@ MaplessMongoQueriesTest >> testSelectWithAnd [
 	| found |
 	repository
 		do: [ self addDummyPeople.
-			found := DummyPerson
+			found := SamplePerson
 				find: [ :each | each firstName = 'john' & (each lastName = 'q4') ].
 			self assert: found notEmpty.
 			self assert: found size equals: 1.
@@ -110,7 +110,7 @@ MaplessMongoQueriesTest >> testSelectWithOr [
 	| found |
 	repository
 		do: [ self addDummyPeople.
-			found := DummyPerson
+			found := SamplePerson
 				find: [ :each | each firstName = 'john' | (each firstName = 'john3') ].
 			self assert: found notNil.
 			self assert: found size equals: 1 + 10 + 1.
@@ -123,7 +123,7 @@ MaplessMongoQueriesTest >> testSelectWithSort [
 	| found |
 	repository
 		do: [ self addDummyPeople.
-			found := DummyPerson
+			found := SamplePerson
 				find: [ :each | each firstName = 'john' | (each firstName = 'john3') ]
 				sort: {('firstName' -> 1)} asDictionary.
 			self assert: found notNil.

@@ -30,9 +30,9 @@ MaplessSQLiteTest class >> lastStoredRun [
 
 { #category : #history }
 MaplessSQLiteTest class >> maplessClasses [
-	^ {DummyPerson.
-	DummyUser.
-	DummyTag}
+	^ {SamplePerson.
+	SampleUser.
+	SampleTag}
 ]
 
 { #category : #accessing }
@@ -56,7 +56,7 @@ MaplessSQLiteTest >> resetDatabase [
 MaplessSQLiteTest >> savePersonNamed: aString [
 	repository
 		save:
-			(DummyPerson new
+			(SamplePerson new
 				firstName: aString;
 				yourself)
 ]
@@ -84,10 +84,10 @@ MaplessSQLiteTest >> testComposedAccess [
 	"Test proxies and its on-demand-load and DNU mechanism"
 
 	| user guy |
-	user := DummyUser new
+	user := SampleUser new
 		userame: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -95,19 +95,19 @@ MaplessSQLiteTest >> testComposedAccess [
 	repository save: guy.
 	repository save: user.
 	self
-		assert: (repository findOne: DummyUser atId: user id) completeName
+		assert: (repository findOne: SampleUser atId: user id) completeName
 		equals: 'john q'.
 	self
-		assert: (repository findOne: DummyUser atId: user id) person class
+		assert: (repository findOne: SampleUser atId: user id) person class
 		equals: MaplessReference.
 	self
-		assert: (repository findOne: DummyUser atId: user id) person model class
-		equals: DummyPerson.
+		assert: (repository findOne: SampleUser atId: user id) person model class
+		equals: SamplePerson.
 	self
-		assert: (repository findOne: DummyUser atId: user id) person firstName
+		assert: (repository findOne: SampleUser atId: user id) person firstName
 		equals: 'john'.
 	self
-		assert: (repository findOne: DummyUser atId: user id) person lastName
+		assert: (repository findOne: SampleUser atId: user id) person lastName
 		equals: 'q'
 ]
 
@@ -119,10 +119,10 @@ MaplessSQLiteTest >> testComposedDelete [
 		do: [ :char | 
 			users
 				add:
-					(DummyUser new
+					(SampleUser new
 						userame: char asString;
 						person:
-							(DummyPerson new
+							(SamplePerson new
 								firstName: char asString;
 								yourself);
 						yourself) ].
@@ -147,10 +147,10 @@ MaplessSQLiteTest >> testComposedDestroy [
 		do: [ :char | 
 			users
 				add:
-					(DummyUser new
+					(SampleUser new
 						userame: char asString;
 						person:
-							(DummyPerson new
+							(SamplePerson new
 								firstName: char asString;
 								yourself);
 						yourself) ].
@@ -160,31 +160,31 @@ MaplessSQLiteTest >> testComposedDestroy [
 		assert:
 			(users
 				allSatisfy:
-					[ :user | (repository findOne: DummyPerson atId: user person id) notNil ]).
+					[ :user | (repository findOne: SamplePerson atId: user person id) notNil ]).
 	users do: [ :user | repository destroy: user person ].
 	self
 		assert:
 			(users
 				allSatisfy:
-					[ :user | (repository findOne: DummyPerson atId: user person id) isNil ]).
+					[ :user | (repository findOne: SamplePerson atId: user person id) isNil ]).
 	self
 		assert:
 			(users
-				allSatisfy: [ :user | (repository findOne: DummyUser atId: user id) notNil ]).
+				allSatisfy: [ :user | (repository findOne: SampleUser atId: user id) notNil ]).
 	users do: [ :user | repository destroy: user ].
 	self
 		assert:
 			(users
-				allSatisfy: [ :user | (repository findOne: DummyUser atId: user id) isNil ])
+				allSatisfy: [ :user | (repository findOne: SampleUser atId: user id) isNil ])
 ]
 
 { #category : #tests }
 MaplessSQLiteTest >> testComposedSave [
 	| user guy |
-	user := DummyUser new
+	user := SampleUser new
 		userame: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -204,11 +204,11 @@ MaplessSQLiteTest >> testComposedSave [
 MaplessSQLiteTest >> testComposedSaveAndLoad [
 	| user guy loaded when |
 	when := DateAndTime now asUTC.
-	user := DummyUser new
+	user := SampleUser new
 		createdOn: when;
 		username: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		createdOn: when;
 		firstName: 'john';
 		lastName: 'q';
@@ -223,7 +223,7 @@ MaplessSQLiteTest >> testComposedSaveAndLoad [
 	self
 		shouldnt: [ repository save: user ]
 		raise: MaplessUnsavedSubmodel.
-	loaded := repository findOne: DummyUser atId: user id.
+	loaded := repository findOne: SampleUser atId: user id.
 	self assert: loaded notNil.
 	self assert: loaded createdOn notNil.
 	self assert: loaded modifiedOn notNil.
@@ -240,24 +240,24 @@ MaplessSQLiteTest >> testComposedSaveAndLoad [
 	self assert: loaded username = 'johnq'.
 	self assert: loaded person firstName = 'john'.
 	self assert: loaded person lastName = 'q'.
-	self assert: loaded person maplessClassName = #DummyPerson.
-	self assert: loaded person model class = DummyPerson
+	self assert: loaded person maplessClassName = #SamplePerson.
+	self assert: loaded person model class = SamplePerson
 ]
 
 { #category : #tests }
 MaplessSQLiteTest >> testComposition [
 	| user guy |
-	user := DummyUser new
+	user := SampleUser new
 		userame: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	user person: guy.
 	self
 		assert: (user maplessData at: 'person') class
-		equals: DummyPerson.
+		equals: SamplePerson.
 	self assert: user id isNil.
 	self assert: (user maplessData at: 'person') id isNil.
 	self assert: user completeName equals: 'john q'
@@ -269,9 +269,9 @@ MaplessSQLiteTest >> testConditionalCount [
 	| users firstNames sqlCondition |
 	users := OrderedCollection new.
 	Character alphabet do: [ :char | 
-		users add: (DummyUser new
+		users add: (SampleUser new
 				 username: char asString;
-				 person: (DummyPerson new
+				 person: (SamplePerson new
 						  firstName: char asString;
 						  yourself);
 				 yourself) ].
@@ -285,7 +285,7 @@ MaplessSQLiteTest >> testConditionalCount [
 				                 replaceAll: $"
 				                 with: $') }.
 	self
-		assert: (repository count: DummyPerson where: sqlCondition)
+		assert: (repository count: SamplePerson where: sqlCondition)
 		equals: firstNames size
 ]
 
@@ -297,17 +297,17 @@ MaplessSQLiteTest >> testCount [
 		do: [ :char | 
 			users
 				add:
-					(DummyUser new
+					(SampleUser new
 						username: char asString;
 						person:
-							(DummyPerson new
+							(SamplePerson new
 								firstName: char asString;
 								yourself);
 						yourself) ].
 	users do: [ :user | repository save: user person ].
 	users do: [ :user | repository save: user ].
 	self
-		assert: (repository count: DummyUser)
+		assert: (repository count: SampleUser)
 		equals: Character alphabet size
 ]
 
@@ -319,7 +319,7 @@ MaplessSQLiteTest >> testDelete [
 		do: [ :char | 
 			people
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: char asString;
 						yourself) ].
 	people do: [ :guy | repository save: guy ].
@@ -336,7 +336,7 @@ MaplessSQLiteTest >> testDestroy [
 		do: [ :char | 
 			people
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: char asString;
 						yourself) ].
 	people do: [ :guy | repository save: guy ].
@@ -345,24 +345,24 @@ MaplessSQLiteTest >> testDestroy [
 	self
 		assert:
 			(people
-				allSatisfy: [ :guy | (repository findOne: DummyPerson atId: guy id) isNil ])
+				allSatisfy: [ :guy | (repository findOne: SamplePerson atId: guy id) isNil ])
 ]
 
 { #category : #tests }
 MaplessSQLiteTest >> testExists [
 	| guy loaded |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	repository save: guy.
-	self assert: (repository existsId: guy id of: DummyPerson)
+	self assert: (repository existsId: guy id of: SamplePerson)
 ]
 
 { #category : #tests }
 MaplessSQLiteTest >> testIsUnsaved [
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -381,35 +381,35 @@ MaplessSQLiteTest >> testMultipleComposedComposables [
 	tagsOfTagsOfTags := OrderedCollection new.
 	tags
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'is this';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'multiply';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'composable?';
 				yourself);
 		yourself.
 	tagsOfTags
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'like';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'really?';
 				yourself);
 		yourself.
 	tagsOfTagsOfTags
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'wow';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'nice';
 				yourself);
 		yourself.
@@ -425,7 +425,7 @@ MaplessSQLiteTest >> testMultipleComposedComposables [
 	self
 		shouldnt: [ tags do: [ :e | repository save: e ] ]
 		raise: MaplessUnsavedSubmodel.
-	loaded := repository findOne: DummyTag atId: tags first id.
+	loaded := repository findOne: SampleTag atId: tags first id.
 	self assert: loaded notNil.
 	self assert: loaded label = 'is this'.
 	self assert: loaded tags isCollection.
@@ -444,29 +444,29 @@ MaplessSQLiteTest >> testMultipleComposedComposables [
 { #category : #tests }
 MaplessSQLiteTest >> testMultipleComposedMixedSaveAndLoad [
 	| guy things loaded |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	guy things: OrderedCollection new.
 	guy things
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'cool';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'stuff';
 				yourself);
 		add:
-			(DummyUser new
+			(SampleUser new
 				info: 'also this';
 				yourself);
 		yourself.
 	things := guy things.
 	guy things do: [ :each | repository save: each ].
 	self shouldnt: [ repository save: guy ] raise: MaplessUnsavedSubmodel.
-	loaded := repository findOne: DummyPerson atId: guy id.
+	loaded := repository findOne: SamplePerson atId: guy id.
 	self assert: loaded notNil.
 	self assert: loaded firstName = 'john'.
 	self assert: loaded things isCollection.
@@ -474,29 +474,29 @@ MaplessSQLiteTest >> testMultipleComposedMixedSaveAndLoad [
 	loaded things
 		do: [ :each | self assert: (things anySatisfy: [ :t | t id = each id ]) ].
 	loaded unreferenced.
-	self assert: loaded things first class = DummyTag.
-	self assert: loaded things second class = DummyTag.
-	self assert: loaded things third class = DummyUser
+	self assert: loaded things first class = SampleTag.
+	self assert: loaded things second class = SampleTag.
+	self assert: loaded things third class = SampleUser
 ]
 
 { #category : #tests }
 MaplessSQLiteTest >> testMultipleComposedSaveAndLoad [
 	| user guy tags loaded |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	tags := OrderedCollection new.
 	tags
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'cool';
 				yourself);
 		add:
-			(DummyTag new
+			(SampleTag new
 				label: 'stuff';
 				yourself);
 		yourself.
@@ -509,7 +509,7 @@ MaplessSQLiteTest >> testMultipleComposedSaveAndLoad [
 	self
 		shouldnt: [ repository save: user ]
 		raise: MaplessUnsavedSubmodel.
-	loaded := repository findOne: DummyUser atId: user id.
+	loaded := repository findOne: SampleUser atId: user id.
 	self assert: loaded notNil.
 	self assert: loaded username = 'johnq'.
 	self assert: loaded tags isCollection.
@@ -525,9 +525,9 @@ MaplessSQLiteTest >> testQueryUsers [
 	| users |
 	users := OrderedCollection new.
 	Character alphabet do: [ :char | 
-		users add: (DummyUser new
+		users add: (SampleUser new
 				 username: char asString;
-				 person: (DummyPerson new
+				 person: (SamplePerson new
 						  firstName: char asString;
 						  yourself);
 				 yourself) ].
@@ -535,7 +535,7 @@ MaplessSQLiteTest >> testQueryUsers [
 	users do: [ :user | repository save: user ].
 	self assert: (Character alphabet allSatisfy: [ :char | 
 			 (repository
-				  findOne: DummyUser
+				  findOne: SampleUser
 				  where: ('json_extract(maplessData,"$.username") = {1}' format:
 						   { char asString printString })) notNil ])
 ]
@@ -543,7 +543,7 @@ MaplessSQLiteTest >> testQueryUsers [
 { #category : #tests }
 MaplessSQLiteTest >> testSaveSetsID [
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -556,7 +556,7 @@ MaplessSQLiteTest >> testSaveSetsID [
 { #category : #tests }
 MaplessSQLiteTest >> testSimpleSave [
 	| guy |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
@@ -566,12 +566,12 @@ MaplessSQLiteTest >> testSimpleSave [
 { #category : #tests }
 MaplessSQLiteTest >> testSimpleSaveAndLoad [
 	| guy loaded |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	repository save: guy.
-	loaded := repository findOne: DummyPerson atId: guy id.
+	loaded := repository findOne: SamplePerson atId: guy id.
 	self assert: loaded notNil.
 	loaded modifiedOn: nil.
 	guy modifiedOn: nil.
@@ -584,38 +584,38 @@ MaplessSQLiteTest >> testSimpleSaveAndLoad [
 { #category : #tests }
 MaplessSQLiteTest >> testSimpleSaveAndUpdate [
 	| guy loaded reloaded |
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	repository save: guy.
-	loaded := repository findOne: DummyPerson atId: guy id.
+	loaded := repository findOne: SamplePerson atId: guy id.
 	self assert: loaded firstName = 'john'.
 	self deny: loaded remember = 'this words'.
 	loaded firstName: loaded firstName capitalized.
 	loaded remember: 'this words'.
 	repository save: loaded.
-	reloaded := repository findOne: DummyPerson atId: guy id.
+	reloaded := repository findOne: SamplePerson atId: guy id.
 	self assert: reloaded remember = 'this words'
 ]
 
 { #category : #tests }
 MaplessSQLiteTest >> testSubModelsFromReifiedJSON [
 	| user guy jsonString reified loaded |
-	user := DummyUser new
+	user := SampleUser new
 		userame: 'johnq';
 		yourself.
-	guy := DummyPerson new
+	guy := SamplePerson new
 		firstName: 'john';
 		lastName: 'q';
 		yourself.
 	user person: guy.
 	repository save: guy.
 	repository save: user.
-	loaded := repository findOne: DummyUser atId: user id.
+	loaded := repository findOne: SampleUser atId: user id.
 	jsonString := loaded unreferenced asJSONString.
-	reified := DummyUser fromJSONString: jsonString in: repository.
-	self assert: reified person class equals: DummyPerson.
+	reified := SampleUser fromJSONString: jsonString in: repository.
+	self assert: reified person class equals: SamplePerson.
 	self assert: reified completeName equals: 'john q'
 ]
 
@@ -625,13 +625,13 @@ MaplessSQLiteTest >> testTruncate [
 	| people |
 	people := OrderedCollection new.
 	Character alphabet do: [ :char | 
-		people add: (DummyPerson new
+		people add: (SamplePerson new
 				 firstName: char asString;
 				 yourself) ].
 	people do: [ :guy | repository save: guy ].
 	self assert: (people allSatisfy: [ :guy | guy isDeleted not ]).
-	self assert: (repository count: DummyPerson) equals: 26.
-	repository withClientDo: [ :client | client truncateMapless: DummyPerson ].
-	self assert: (repository count: DummyPerson) equals: 0.
+	self assert: (repository count: SamplePerson) equals: 26.
+	repository withClientDo: [ :client | client truncateMapless: SamplePerson ].
+	self assert: (repository count: SamplePerson) equals: 0.
 	
 ]

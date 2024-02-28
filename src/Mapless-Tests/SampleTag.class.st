@@ -1,5 +1,5 @@
 Class {
-	#name : #DummyTag,
+	#name : #SampleTag,
 	#superclass : #Mapless,
 	#category : #'Mapless-Tests-Samples'
 }
