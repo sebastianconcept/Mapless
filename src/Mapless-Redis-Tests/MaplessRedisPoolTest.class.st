@@ -30,6 +30,7 @@ MaplessRedisPoolTest >> testSubscribe [
 	self
 		shouldnt: [ pool subscribe: #testing callback: reaction ]
 		raise: Error.
+	120 milliSeconds asDelay wait.
 	self deny: valued.
 	pool publish: #testing message: 'answer'.
 	120 milliSeconds asDelay wait.
