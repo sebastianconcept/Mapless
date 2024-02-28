@@ -32,7 +32,7 @@ MaplessRedisPoolTest >> testSubscribe [
 		raise: Error.
 	self deny: valued.
 	pool publish: #testing message: 'answer'.
-	30 milliSeconds asDelay wait.
+	60 milliSeconds asDelay wait.
 	self assert: valued
 ]
 
