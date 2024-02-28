@@ -1,7 +1,7 @@
 Class {
 	#name : #DummyUser,
 	#superclass : #Mapless,
-	#category : #'Mapless-Tests-Base-Samples'
+	#category : #'Mapless-Tests-Samples'
 }
 
 { #category : #'as yet unclassified' }

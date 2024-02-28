@@ -4,5 +4,5 @@ I'm a DummyPerson mapless that is meant to be used interoperating with objects p
 Class {
 	#name : #DummyPersonInteroperating,
 	#superclass : #Mapless,
-	#category : #'Mapless-Tests-Base-Samples'
+	#category : #'Mapless-Tests-Samples'
 }

@@ -1,7 +1,7 @@
 Class {
 	#name : #MaplessResourcesTest,
 	#superclass : #MaplessTestCase,
-	#category : #'Mapless-Tests-Base-Tests'
+	#category : #'Mapless-Tests-Tests'
 }
 
 { #category : #tests }
