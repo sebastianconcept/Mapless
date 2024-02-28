@@ -15,6 +15,12 @@ MaplessTestCase >> testGetterReturn [
 ]
 
 { #category : #tests }
+MaplessTestCase >> testMaplessError [
+
+	self should: [ MaplessError signal: 'issue' ] raise: UnhandledError
+]
+
+{ #category : #tests }
 MaplessTestCase >> testPoolBasics [
 
 	| pool |

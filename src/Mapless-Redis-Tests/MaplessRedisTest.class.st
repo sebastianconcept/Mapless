@@ -24,13 +24,6 @@ MaplessRedisTest >> basicNewRepository [
 		using: MaplessTrivialResolver new
 ]
 
-{ #category : #tests }
-MaplessRedisTest >> newDummyPersonNamed: aString [
-	^ SamplePerson new
-		firstName: aString;
-		yourself
-]
-
 { #category : #actions }
 MaplessRedisTest >> newRepository [
 	| accessor |
@@ -40,6 +33,13 @@ MaplessRedisTest >> newRepository [
 		for: self class databaseIndex
 		with: accessor
 		using: MaplessTrivialResolver new
+]
+
+{ #category : #tests }
+MaplessRedisTest >> newSamplePersonNamed: aString [
+	^ SamplePerson new
+		firstName: aString;
+		yourself
 ]
 
 { #category : #'setUp-tearDown' }

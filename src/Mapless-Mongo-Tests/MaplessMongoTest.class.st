@@ -38,18 +38,18 @@ MaplessMongoTest >> do: aBlock [
 	^ repository do: aBlock
 ]
 
-{ #category : #tests }
-MaplessMongoTest >> newDummyPersonNamed: aString [
-	^ SamplePerson new
-		firstName: aString;
-		yourself
-]
-
 { #category : #actions }
 MaplessMongoTest >> newRepository [
 	^ MaplessMongoRepository
 		for: 'Mapless-Test'
 		with: MaplessStandaloneMongoPool local
+]
+
+{ #category : #tests }
+MaplessMongoTest >> newSamplePersonNamed: aString [
+	^ SamplePerson new
+		firstName: aString;
+		yourself
 ]
 
 { #category : #'setUp-tearDown' }
@@ -318,9 +318,9 @@ MaplessMongoTest >> testDestroy [
 MaplessMongoTest >> testFindAll [
 	| found |
 	repository
-		readWriteDo: [ (self newDummyPersonNamed: 'Peter') save.
-			(self newDummyPersonNamed: 'Robert') save.
-			(self newDummyPersonNamed: 'John') save ].
+		readWriteDo: [ (self newSamplePersonNamed: 'Peter') save.
+			(self newSamplePersonNamed: 'Robert') save.
+			(self newSamplePersonNamed: 'John') save ].
 	repository
 		readOnlyDo: [ 
 			self waitABit.
@@ -333,9 +333,9 @@ MaplessMongoTest >> testFindAll [
 MaplessMongoTest >> testFindAllSorted [
 	| found |
 	repository
-		readWriteDo: [ (self newDummyPersonNamed: 'Peter') save.
-			(self newDummyPersonNamed: 'Robert') save.
-			(self newDummyPersonNamed: 'John') save ].
+		readWriteDo: [ (self newSamplePersonNamed: 'Peter') save.
+			(self newSamplePersonNamed: 'Robert') save.
+			(self newSamplePersonNamed: 'John') save ].
 	repository
 		readOnlyDo: [ 
 			self waitABit.

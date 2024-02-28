@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #tests }
-MaplessMongoQueriesTest >> addDummyPeople [
+MaplessMongoQueriesTest >> addSamplePeople [
 	| guy |
 	1 to: 10 do: [ :i | 
 		guy := SamplePerson new
@@ -47,14 +47,14 @@ MaplessMongoQueriesTest >> tearDown [
 { #category : #tests }
 MaplessMongoQueriesTest >> testCursorCount [
 	repository
-		do: [ self addDummyPeople.
+		do: [ self addSamplePeople.
 			self assert: SamplePerson count equals: SamplePerson findAll size ]
 ]
 
 { #category : #tests }
 MaplessMongoQueriesTest >> testCursorCountWithConditions [
 	repository
-		do: [ self addDummyPeople.
+		do: [ self addSamplePeople.
 			self
 				assert: (SamplePerson count: {('firstName' -> 'john')} asDictionary)
 				equals: 10 + 1.
@@ -67,7 +67,7 @@ MaplessMongoQueriesTest >> testCursorCountWithConditions [
 MaplessMongoQueriesTest >> testFindAll [
 	| found |
 	repository
-		do: [ self addDummyPeople.
+		do: [ self addSamplePeople.
 			found := SamplePerson findAll.
 			self assert: found notNil.
 			self assert: found size equals: 20 ]
@@ -77,7 +77,7 @@ MaplessMongoQueriesTest >> testFindAll [
 MaplessMongoQueriesTest >> testFresh [
 	| found guy freshGuy |
 	repository
-		do: [ self addDummyPeople.
+		do: [ self addSamplePeople.
 			found := SamplePerson findAll.
 			self assert: found notNil.
 			self assert: found size equals: 20 ].
@@ -96,7 +96,7 @@ MaplessMongoQueriesTest >> testFresh [
 MaplessMongoQueriesTest >> testSelectWithAnd [
 	| found |
 	repository
-		do: [ self addDummyPeople.
+		do: [ self addSamplePeople.
 			found := SamplePerson
 				find: [ :each | each firstName = 'john' & (each lastName = 'q4') ].
 			self assert: found notEmpty.
@@ -109,7 +109,7 @@ MaplessMongoQueriesTest >> testSelectWithAnd [
 MaplessMongoQueriesTest >> testSelectWithOr [
 	| found |
 	repository
-		do: [ self addDummyPeople.
+		do: [ self addSamplePeople.
 			found := SamplePerson
 				find: [ :each | each firstName = 'john' | (each firstName = 'john3') ].
 			self assert: found notNil.
@@ -122,7 +122,7 @@ MaplessMongoQueriesTest >> testSelectWithOr [
 MaplessMongoQueriesTest >> testSelectWithSort [
 	| found |
 	repository
-		do: [ self addDummyPeople.
+		do: [ self addSamplePeople.
 			found := SamplePerson
 				find: [ :each | each firstName = 'john' | (each firstName = 'john3') ]
 				sort: {('firstName' -> 1)} asDictionary.
