@@ -42,7 +42,9 @@ MaplessTestCase >> testPoolBasics [
 	self assert: pool hostname equals: '1'.
 	self assert: pool port equals: 2.
 
-	self shouldnt: [ pool logNewClient: 42 ] raise: Error
+	self shouldnt: [ pool logNewClient: 42 ] raise: Error.
+
+	self deny: pool hasHealthChecker
 ]
 
 { #category : #tests }

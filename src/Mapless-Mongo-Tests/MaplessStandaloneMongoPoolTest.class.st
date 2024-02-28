@@ -15,7 +15,11 @@ MaplessStandaloneMongoPoolTest >> testAuth [
 	self
 		should: [
 		pool withClientDo: [ :client | pool authenticate: client ] ]
-		raise: MaplessMongoAuthorizationError
+		raise: MaplessMongoAuthorizationError.
+
+	self assert: pool authenticationDatabaseName notNil.
+	pool authenticationDatabaseName: 'adminis'.
+	self assert: pool authenticationDatabaseName equals: 'adminis'
 ]
 
 { #category : #tests }

@@ -48,6 +48,12 @@ MaplessAbstractPool >> currentClientDynamicVariableClass [
 	^ self subclassResponsibility
 ]
 
+{ #category : #testing }
+MaplessAbstractPool >> hasHealthChecker [
+
+	^ false
+]
+
 { #category : #accessing }
 MaplessAbstractPool >> hostname [
 	^ hostname
