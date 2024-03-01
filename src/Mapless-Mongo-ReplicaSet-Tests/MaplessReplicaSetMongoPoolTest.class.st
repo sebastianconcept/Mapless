@@ -1,7 +1,7 @@
 Class {
 	#name : #MaplessReplicaSetMongoPoolTest,
 	#superclass : #MaplessTestCase,
-	#category : #'Mapless-Mongo-Tests-Tests'
+	#category : #'Mapless-Mongo-ReplicaSet-Tests'
 }
 
 { #category : #tests }

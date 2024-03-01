@@ -101,6 +101,9 @@ BaselineOfMapless >> setUpMongoPackages: spec [
 		package: 'Mapless-Mongo-Tests'
 		with: [ spec requires: #('Mapless-Mongo' 'Mapless-Tests') ].
 	spec
+		package: 'Mapless-Mongo-ReplicaSet-Tests'
+		with: [ spec requires: #('Mapless-Mongo-Tests') ].
+	spec
 		package: 'Mapless-Mongo-Log'
 		with: [ spec requires: #('Mapless-Mongo-Tests' 'NeoJSON') ].
 	spec
