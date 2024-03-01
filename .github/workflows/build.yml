@@ -9,7 +9,7 @@ jobs:
       matrix:
         smalltalk: [Pharo64-11]
         redis-version: [7]
-        mongodb-version: ['4.4']
+        mongodb-version: ['7.0']
     name: ${{ matrix.smalltalk }}
     services:
       postgres:
