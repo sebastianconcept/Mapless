@@ -5,6 +5,45 @@ Class {
 }
 
 { #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testCountClientsFromUrl [
+
+	| pool |
+	pool := MaplessMongoReplicaSetPool
+		        mongoUrls: { '1@localhost:27017' }
+		        database: 'Mapless-Test'.
+
+	pool idleReadOnlyClients add:
+		(pool makeClientWith: '1@localhost:27017').
+
+	self
+		assert: (pool countClientsTo: 'localhost:27017' asMongoUrl)
+		equals: 1
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testDefaults [
+
+	| pool repository |
+	pool := MaplessMongoReplicaSetPool
+		        fromString: '1@localhost:27017'
+		        database: 'Mapless-Test'.
+
+	repository := MaplessMongoRepository for: 'Mapless-Test' with: pool.
+	self
+		assert: repository accessor minReadWriteClients
+		equals: MaplessMongoReplicaSetPool defaultMinReadWriteClients.
+	self
+		assert: repository accessor maxReadWriteClients
+		equals: MaplessMongoReplicaSetPool defaultMaxReadWriteClients.
+	self
+		assert: repository accessor minReadOnlyClients
+		equals: MaplessMongoReplicaSetPool defaultMinReadOnlyClients.
+	self
+		assert: repository accessor maxReadOnlyClients
+		equals: MaplessMongoReplicaSetPool defaultMaxReadOnlyClients
+]
+
+{ #category : #tests }
 MaplessReplicaSetMongoPoolTest >> testDeleteConcern [
 
 	| pool repository |
@@ -21,6 +60,96 @@ MaplessReplicaSetMongoPoolTest >> testDeleteConcern [
 ]
 
 { #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testDynamicVariable [
+
+	self
+		assert:
+		MaplessMongoReplicaSetPool local currentClientDynamicVariableClass
+		equals: MongoCurrentClient
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testGetIdleReadOnlyClient [
+
+	| pool |
+	pool := MaplessMongoReplicaSetPool
+		        mongoUrls: { '1@localhost:27017' }
+		        database: 'Mapless-Test'.
+
+	pool idleReadOnlyClients add:
+		(pool makeClientWith: '1@localhost:27017').
+
+	self assert: pool getIdleReadOnlyClient class equals: MongoAPI
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testGetIdleReadWriteClient [
+
+	| pool |
+	pool := MaplessMongoReplicaSetPool
+		        mongoUrls: { '1@localhost:27017' }
+		        database: 'Mapless-Test'.
+
+	pool idleReadWriteClients add:
+		(pool makeClientWith: '1@localhost:27017').
+
+	self assert: pool getIdleReadWriteClient class equals: MongoAPI
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testHasBusyClients [
+
+	| pool |
+	pool := MaplessMongoReplicaSetPool
+		        mongoUrls: { '1@localhost:27017' }
+		        database: 'Mapless-Test'.
+
+	pool busyReadOnlyClients add:
+		(pool makeClientWith: '1@localhost:27017').
+
+	self assert: pool hasBusyClients.
+	pool busyReadOnlyClients removeAll.
+
+	pool busyReadWriteClients add:
+		(pool makeClientWith: '1@localhost:27017').
+
+	self assert: pool hasBusyClients
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testHasHealthChecker [
+
+	| pool repository |
+	pool := MaplessMongoReplicaSetPool
+		        fromString: '1@localhost:27017'
+		        database: 'Mapless-Test'.
+
+	repository := MaplessMongoRepository for: 'Mapless-Test' with: pool.
+
+	self assert: repository accessor hasHealthChecker
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testHasIdleClients [
+
+	| pool |
+	pool := MaplessMongoReplicaSetPool
+		        mongoUrls: { '1@localhost:27017' }
+		        database: 'Mapless-Test'.
+
+	pool idleReadOnlyClients add:
+		(pool makeClientWith: '1@localhost:27017').
+
+	self assert: pool hasIdleReadOnlyClients.
+	pool idleReadOnlyClients removeAll.
+
+	pool idleReadWriteClients add:
+		(pool makeClientWith: '1@localhost:27017').
+
+	self assert: pool hasIdleReadWriteClients
+]
+
+{ #category : #tests }
 MaplessReplicaSetMongoPoolTest >> testInsertConcern [
 
 	| pool repository |
@@ -34,6 +163,21 @@ MaplessReplicaSetMongoPoolTest >> testInsertConcern [
 	repository defaultInsertConcern: #majority.
 
 	self assert: repository defaultInsertConcern equals: #majority
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testInstanceCreationFromMongoUrls [
+
+	| pool repository |
+	pool := MaplessMongoReplicaSetPool
+		        mongoUrls: { '1@localhost:27017' }
+		        database: 'Mapless-Test'.
+
+	repository := MaplessMongoRepository for: 'Mapless-Test' with: pool.
+
+	self
+		assert: repository accessor resolver mongoUrls first
+		equals: '1@localhost:27017' asMongoUrl
 ]
 
 { #category : #tests }

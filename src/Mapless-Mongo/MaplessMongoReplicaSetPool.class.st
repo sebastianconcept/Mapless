@@ -423,12 +423,26 @@ MaplessMongoReplicaSetPool >> initializeIdleReadWriteClients [
 ]
 
 { #category : #initialization }
+MaplessMongoReplicaSetPool >> initializeMaxReadOnlyClients [
+
+	^ maxReadOnlyClients := self class defaultMaxReadOnlyClients
+]
+
+{ #category : #initialization }
+MaplessMongoReplicaSetPool >> initializeMaxReadWriteClients [
+
+	^ maxReadWriteClients := self class defaultMaxReadWriteClients
+]
+
+{ #category : #initialization }
 MaplessMongoReplicaSetPool >> initializeMinReadOnlyClients [
+
 	^ minReadOnlyClients := self class defaultMinReadOnlyClients
 ]
 
 { #category : #initialization }
 MaplessMongoReplicaSetPool >> initializeMinReadWriteClients [
+
 	^ minReadWriteClients := self class defaultMinReadWriteClients
 ]
 
@@ -528,7 +542,8 @@ MaplessMongoReplicaSetPool >> makeReadWriteClient [
 
 { #category : #accessing }
 MaplessMongoReplicaSetPool >> maxReadOnlyClients [
-	^ maxReadOnlyClients
+
+	^ maxReadOnlyClients ifNil: [ self initializeMaxReadOnlyClients ]
 ]
 
 { #category : #accessing }
@@ -538,7 +553,8 @@ MaplessMongoReplicaSetPool >> maxReadOnlyClients: anObject [
 
 { #category : #accessing }
 MaplessMongoReplicaSetPool >> maxReadWriteClients [
-	^ maxReadWriteClients
+
+	^ maxReadWriteClients ifNil: [ self initializeMaxReadWriteClients ]
 ]
 
 { #category : #accessing }
