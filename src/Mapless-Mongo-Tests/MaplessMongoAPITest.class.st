@@ -31,6 +31,21 @@ MaplessMongoAPITest >> testGetAdminDatabase [
 ]
 
 { #category : #tests }
+MaplessMongoAPITest >> testGetCollection [
+
+	| repository |
+	repository := MaplessMongoRepository
+		              for: 'Mapless-Test'
+		              with: MaplessStandaloneMongoPool local.
+
+	repository do: [
+		self assert: SamplePerson collection class equals: MongoCollection.
+		self
+			assert: SamplePerson collection name
+			equals: SamplePerson collectionName ]
+]
+
+{ #category : #tests }
 MaplessMongoAPITest >> testGetMongoInfo [
 
 	| api |

@@ -531,6 +531,56 @@ MaplessMongoTest >> testMultipleComposedSaveAndLoad [
 ]
 
 { #category : #tests }
+MaplessMongoTest >> testQueryConditionally [
+
+	| users found |
+	self do: [
+		users := OrderedCollection new.
+		Character alphabet do: [ :char |
+			SampleUser new
+				username: char asString;
+				person: (SamplePerson new
+						 firstName: char asString;
+						 save);
+				save ] ].
+
+	self do: [
+		found := SampleUser
+			         find: { ('username' -> 'j') } asDictionary
+			         limit: 1 ].
+	self assert: found notNil.
+	self assert: found notEmpty.
+	self assert: found first username equals: 'j'
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testQueryConditionallySorted [
+
+	| users found |
+	self do: [
+		users := OrderedCollection new.
+		Character alphabet do: [ :char |
+			SampleUser new
+				username: char asString;
+				person: (SamplePerson new
+						 firstName: char asString;
+						 save);
+				save ] ].
+
+	self do: [
+		found := SampleUser
+			         find: { ('$or' -> {
+					          { (#username -> 'j') } asDictionary.
+					          { (#username -> 'z') } asDictionary }) } asDictionary
+			         sort: { (#username -> 1) } asDictionary ].
+	self assert: found notNil.
+	self assert: found notEmpty.
+	self assert: found size equals: 2.
+	self assert: found first username equals: 'j'.
+	self assert: found second username equals: 'z'
+]
+
+{ #category : #tests }
 MaplessMongoTest >> testQueryUsers [
 	| users |
 	self
