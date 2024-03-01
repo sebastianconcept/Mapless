@@ -38,6 +38,8 @@ BaselineOfMapless >> baseline: spec [
 			group: 'Mongo' with: #( 'Mapless-Mongo' );
 			group: 'Mongo-Tests'
 			with: #( 'Mapless-Mongo' 'Mapless-Mongo-Tests' );
+			group: 'Mongo-ReplicaSet-Tests'
+			with: #( 'Mapless-Mongo-ReplicaSet-Tests' );
 			group: 'Redis' with: #( 'Mapless-Redis' );
 			group: 'Redis-Tests'
 			with: #( 'Mapless-Redis' 'Mapless-Redis-Tests' );

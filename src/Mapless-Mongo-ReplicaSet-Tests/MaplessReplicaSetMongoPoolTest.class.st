@@ -150,6 +150,18 @@ MaplessReplicaSetMongoPoolTest >> testHasIdleClients [
 ]
 
 { #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testInitializeIsPrimary [
+
+	| api result |
+	api := MongoAPI mongoUrl: 'mongodb://localhost:27017/Mapless-Test'.
+	api open.
+
+	self shouldnt: [ result := api isPrimary ] raise: Error.
+	self deny: result.
+	api close
+]
+
+{ #category : #tests }
 MaplessReplicaSetMongoPoolTest >> testInsertConcern [
 
 	| pool repository |
@@ -181,6 +193,57 @@ MaplessReplicaSetMongoPoolTest >> testInstanceCreationFromMongoUrls [
 ]
 
 { #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testIsPrimary [
+
+	| api result |
+	api := MongoAPI mongoUrl: 'mongodb://localhost:27017/Mapless-Test'.
+	api open.
+
+	self
+		shouldnt: [ result := api admin isMaster isPrimary ]
+		raise: Error.
+	self deny: result.
+	api close
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testIsReadOnly [
+
+	| api |
+	api := MongoAPI mongoUrl: 'mongodb://localhost:27017/Mapless-Test'.
+	api open.
+
+	self shouldnt: [ api isPrimary ] raise: Error.
+	self assert: api isReadOnly.
+	api close
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testIsReadWrite [
+
+	| api |
+	api := MongoAPI mongoUrl: 'mongodb://localhost:27017/Mapless-Test'.
+	api open.
+
+	self shouldnt: [ api isPrimary ] raise: Error.
+	self deny: api isReadWrite.
+	api close
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testIsType [
+
+	| api |
+	api := MongoAPI mongoUrl: 'mongodb://localhost:27017/Mapless-Test'.
+	api open.
+
+	self shouldnt: [ api isPrimary ] raise: Error.
+
+	self assert: (api isType: #readOnly).
+	api close
+]
+
+{ #category : #tests }
 MaplessReplicaSetMongoPoolTest >> testReadConcern [
 
 	| pool repository |
@@ -194,6 +257,23 @@ MaplessReplicaSetMongoPoolTest >> testReadConcern [
 	repository defaultReadConcern: #majority.
 
 	self assert: repository defaultReadConcern equals: #majority
+]
+
+{ #category : #tests }
+MaplessReplicaSetMongoPoolTest >> testResetRole [
+
+	| api |
+	api := MongoAPI mongoUrl: 'mongodb://localhost:27017/Mapless-Test'.
+	api open.
+
+	self shouldnt: [ api isPrimary ] raise: Error.
+
+	self assert: (api isType: #readOnly).
+
+	self shouldnt: [ api resetIsPrimary ] raise: Error.
+	self shouldnt: [ api isPrimary ] raise: Error.
+	self assert: (api isType: #readOnly).
+	api close
 ]
 
 { #category : #tests }
