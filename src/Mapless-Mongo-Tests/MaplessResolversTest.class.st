@@ -25,6 +25,76 @@ MaplessResolversTest >> tearDown [
 ]
 
 { #category : #tests }
+MaplessResolversTest >> testCanRepresentArrayOfMaplessReferences [
+
+	self assert: (repository resolver
+			 canRepresentArrayOfMaplessReferences: {
+					 {
+						 ('_c' -> 'SampleUser').
+						 ('_id' -> '12') } asDictionary.
+					 {
+						 ('_c' -> 'SamplePerson').
+						 ('_id' -> '123') } asDictionary }
+			 in: repository)
+]
+
+{ #category : #tests }
+MaplessResolversTest >> testCanRepresentSubMapless [
+
+	self assert: (repository resolver
+			 canRepresentSubMapless: {
+					 ('_c' -> 'SamplePerson').
+					 ('_id' -> '123') } asDictionary
+			 in: repository)
+]
+
+{ #category : #tests }
+MaplessResolversTest >> testConditionForClass [
+
+	self
+		assert: (repository resolver conditionForClass: SamplePerson)
+		equals: { ('_c' -> 'SamplePerson') } asDictionary
+]
+
+{ #category : #tests }
+MaplessResolversTest >> testMaplessAsStorable [
+
+	| saved |
+	saved := SamplePerson new.
+	repository save: saved.
+
+	self
+		assert:
+			(repository resolver maplessAsStorable: saved in: repository)
+				asDictionary
+		equals: {
+				('_c' -> 'SamplePerson').
+				('_id' -> saved id) } asDictionary
+]
+
+{ #category : #tests }
+MaplessResolversTest >> testMaplessClass [
+
+	self
+		assert: (repository resolver
+				 maplessClassFor: { ('_c' -> 'SamplePerson') } asDictionary
+				 in: repository)
+		equals: SamplePerson
+]
+
+{ #category : #tests }
+MaplessResolversTest >> testMaplessClassNameFor [
+
+	self
+		assert: (repository resolver
+				 maplessClassNameFor: {
+						 ('_c' -> 'SamplePerson').
+						 ('_id' -> '123') } asDictionary
+				 in: repository)
+		equals: 'SamplePerson'
+]
+
+{ #category : #tests }
 MaplessResolversTest >> testMaplessCustomCollectionNameResolver [
 
 	| customResolver dictionarish |
