@@ -1,2 +1,2 @@
 ignore:
-  - "**/*/Manifest*"
+  - "**/Manifest*.st"
