@@ -234,11 +234,6 @@ MaplessMongoRepository >> drop [
 	^ self readWriteDo: [ self database drop ]
 ]
 
-{ #category : #actions }
-MaplessMongoRepository >> ensureCollection [
-	self shouldBeImplemented
-]
-
 { #category : #testing }
 MaplessMongoRepository >> existsId: anId of: aMaplessClass [
 	^ (self
@@ -718,6 +713,11 @@ MaplessMongoRepository >> withClientDo: aBlock with: aDatabaseAccessor [
 ]
 
 { #category : #actions }
+MaplessMongoRepository >> withReadOnlyClientDo: aBlock [
+	^ self withReadOnlyClientDo: aBlock with: accessor
+]
+
+{ #category : #actions }
 MaplessMongoRepository >> withReadOnlyClientDo: aBlock with: aDatabaseAccessor [
 	aDatabaseAccessor
 		readOnlyDo: [ :client | 
@@ -738,9 +738,4 @@ MaplessMongoRepository >> withReadWriteClientDo: aBlock with: aDatabaseAccessor 
 			MaplessCurrentRepository
 				value: self
 				during: [ ^ aBlock value: client ] ]
-]
-
-{ #category : #actions }
-MaplessMongoRepository >> withReadnlyClientDo: aBlock [
-	^ self withReadOnlyClientDo: aBlock with: accessor
 ]

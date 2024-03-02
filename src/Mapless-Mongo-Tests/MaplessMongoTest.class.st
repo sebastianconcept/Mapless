@@ -363,6 +363,22 @@ MaplessMongoTest >> testDestroyAll [
 ]
 
 { #category : #tests }
+MaplessMongoTest >> testDestroyById [
+
+	| guy |
+	self do: [
+		guy := SampleUser new
+			       userame: 'johnq';
+			       save ].
+	self do: [ self assert: (SampleUser existsId: guy id) ].
+	self
+		shouldnt: [ repository destroyOne: SampleUser atId: guy id ]
+		raise: Error.
+
+	self do: [ self deny: (SampleUser existsId: guy id) ]
+]
+
+{ #category : #tests }
 MaplessMongoTest >> testFindAll [
 	| found |
 	repository
@@ -783,6 +799,42 @@ MaplessMongoTest >> testUpsert [
 	repository
 		readOnlyDo: [ freshFound := SamplePerson findId: theId.
 			self assert: freshFound firstName equals: 'John' ]
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testWithClientDo [
+
+	self
+		shouldnt: [
+			repository withClientDo: [ :client |
+				SampleUser new
+					userame: 'johnq';
+					save ] ]
+		raise: Error
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testWithReadOnlyClientDo [
+
+	self
+		shouldnt: [
+			repository withReadOnlyClientDo: [ :client |
+				SampleUser new
+					userame: 'johnq';
+					save ] ]
+		raise: Error
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testWithReadWriteClientDo [
+
+	self
+		shouldnt: [
+			repository withReadWriteClientDo: [ :client |
+				SampleUser new
+					userame: 'johnq';
+					save ] ]
+		raise: Error
 ]
 
 { #category : #actions }
