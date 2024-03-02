@@ -68,6 +68,34 @@ MaplessMongoTest >> tearDown [
 ]
 
 { #category : #tests }
+MaplessMongoTest >> testAfterDestroyed [
+
+	| guy |
+	guy := SamplePerson new
+		       firstName: 'john';
+		       lastName: 'q';
+		       yourself.
+	self assert: guy recentlyDestroyed isNil.
+	self do: [ guy save ].
+	self assert: guy recentlySaved.
+	self do: [ guy destroy ].
+	self assert: guy recentlyDestroyed
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testAfterSaved [
+
+	| guy |
+	guy := SamplePerson new
+		       firstName: 'john';
+		       lastName: 'q';
+		       yourself.
+	self assert: guy recentlySaved isNil.
+	self do: [ guy save ].
+	self assert: guy recentlySaved
+]
+
+{ #category : #tests }
 MaplessMongoTest >> testComposedAccess [
 	"Test proxies and its on-demand-load and DNU mechanism"
 
@@ -368,6 +396,18 @@ MaplessMongoTest >> testFindAllSorted [
 ]
 
 { #category : #tests }
+MaplessMongoTest >> testFirst [
+
+	| found |
+	repository readWriteDo: [ (self newSamplePersonNamed: 'Peter') save ].
+	repository readOnlyDo: [
+		self waitABit.
+		found := SamplePerson first.
+		self assert: found notNil.
+		self assert: found firstName equals: 'Peter' ]
+]
+
+{ #category : #tests }
 MaplessMongoTest >> testIsUnsaved [
 	| guy |
 	guy := SamplePerson new
@@ -375,6 +415,28 @@ MaplessMongoTest >> testIsUnsaved [
 		lastName: 'q';
 		yourself.
 	self do: [ guy save ]
+]
+
+{ #category : #tests }
+MaplessMongoTest >> testMaplessClass [
+
+	| user guy reference |
+	self do: [
+		user := SampleUser new
+			        userame: 'johnq';
+			        yourself.
+		guy := SamplePerson new
+			       firstName: 'john';
+			       lastName: 'q';
+			       yourself.
+		user person: guy.
+
+		guy save.
+		user save.
+		self assert: SamplePerson maplessClass equals: SamplePerson.
+		reference := SampleUser first person.
+		self assert: reference class equals: MaplessReference.
+		self assert: reference maplessClass equals: SamplePerson ]
 ]
 
 { #category : #tests }
@@ -620,12 +682,16 @@ MaplessMongoTest >> testSaveSetsID [
 
 { #category : #tests }
 MaplessMongoTest >> testSimpleSave [
+
 	| guy |
 	guy := SamplePerson new
-		firstName: 'john';
-		lastName: 'q';
-		yourself.
-	self do: [ guy save ]
+		       firstName: 'john';
+		       lastName: 'q';
+		       yourself.
+	self do: [ guy save ].
+
+	self assert: guy isMapless.
+	self assert: guy recentlySaved
 ]
 
 { #category : #tests }

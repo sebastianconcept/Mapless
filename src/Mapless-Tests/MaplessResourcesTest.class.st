@@ -71,6 +71,27 @@ MaplessResourcesTest >> test30And70Chance [
 ]
 
 { #category : #tests }
+MaplessResourcesTest >> testAddNodes [
+
+	| wr n1 n2 |
+	wr := MaplessWeightedRandomPolicy new.
+	n1 := MaplessWeightedNode new
+		      weight: 30;
+		      value: 'url1';
+		      yourself.
+	n2 := MaplessWeightedNode new
+		      weight: 70;
+		      value: 'url2';
+		      yourself.
+	wr nodes: {
+			n1.
+			n2 }.
+
+	self assert: wr nodes first equals: n1.
+	self assert: wr nodes second equals: n2
+]
+
+{ #category : #tests }
 MaplessResourcesTest >> testChangeWeightedNodeWeight [
 
 	| n1 |
@@ -123,4 +144,45 @@ MaplessResourcesTest >> testPrintsWeightedNodeInAUsefulWay [
 		      yourself.
 
 	self assert: n1 asString equals: 'a MaplessWeightedNode(0.5@url1)'
+]
+
+{ #category : #tests }
+MaplessResourcesTest >> testRandom [
+
+	| wr n1 n2 thisOne |
+	wr := MaplessWeightedRandomPolicy seed: 1000.
+	n1 := MaplessWeightedNode new
+		      weight: 30;
+		      value: 'url1';
+		      yourself.
+	n2 := MaplessWeightedNode new
+		      weight: 70;
+		      value: 'url2';
+		      yourself.
+	wr nodes: {
+			n1.
+			n2 }.
+	wr recalculateWeight.
+	thisOne := wr next.
+	self assert: (thisOne = n1 or: [ thisOne = n2 ])
+]
+
+{ #category : #tests }
+MaplessResourcesTest >> testWeights [
+
+	| wr n1 n2 |
+	wr := MaplessWeightedRandomPolicy seed: 1000.
+	n1 := MaplessWeightedNode new
+		      weight: 30;
+		      value: 'url1';
+		      yourself.
+	n2 := MaplessWeightedNode new
+		      weight: 70;
+		      value: 'url2';
+		      yourself.
+	wr nodes: {
+			n1.
+			n2 }.
+	wr recalculateWeight.
+	self assert: wr totalWeight equals: 100
 ]

@@ -34,6 +34,25 @@ MaplessVoyageMongoModelTest >> tearDown [
 ]
 
 { #category : #tests }
+MaplessVoyageMongoModelTest >> testConditionForClass [
+
+	| guy |
+	repository := MaplessMongoRepository
+		              for: 'Mapless-Test'
+		              with: MaplessStandaloneMongoPool local.
+	repository resolver: (MaplessVoyageWithMaplessSuffixResolver new
+			 suffix: 'Interoperating';
+			 yourself).
+	guy := SamplePersonInteroperating new.
+
+	repository resolver.
+	self
+		assert: (repository resolver conditionForClass: guy class)
+		equals: { ('#instanceOf' -> 'SamplePerson') } asDictionary.
+	self assert: repository resolver suffix equals: 'Interoperating'
+]
+
+{ #category : #tests }
 MaplessVoyageMongoModelTest >> testReifyWithReferenceFromVoyageMetadata [
 
 	| serializedFromVoyage deserializedFromVoyage |

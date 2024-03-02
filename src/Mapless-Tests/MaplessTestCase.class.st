@@ -5,6 +5,19 @@ Class {
 }
 
 { #category : #tests }
+MaplessTestCase >> testAbstract [
+
+	self assert: Mapless isAbstract.
+	self deny: SamplePerson isAbstract
+]
+
+{ #category : #tests }
+MaplessTestCase >> testDeprecated [
+
+	self deny: SamplePerson isDeprecated
+]
+
+{ #category : #tests }
 MaplessTestCase >> testGetterReturn [
 	| guy |
 	guy := SamplePerson new.
@@ -15,11 +28,20 @@ MaplessTestCase >> testGetterReturn [
 ]
 
 { #category : #tests }
+MaplessTestCase >> testMaplessClass [
+
+	self assert: Mapless maplessClass equals: Mapless.
+	self assert: SamplePerson maplessClass equals: SamplePerson
+]
+
+{ #category : #tests }
 MaplessTestCase >> testMaplessErrorDefaultAction [
 
 	self
 		should: [ MaplessError signal: 'mmmmmmmmm...' ]
-		raise: MaplessError
+		raise: MaplessError.
+
+	self should: [ MaplessError new defaultAction ] raise: UnhandledError
 ]
 
 { #category : #tests }
@@ -45,6 +67,26 @@ MaplessTestCase >> testPoolBasics [
 	self shouldnt: [ pool logNewClient: 42 ] raise: Error.
 
 	self deny: pool hasHealthChecker
+]
+
+{ #category : #tests }
+MaplessTestCase >> testSanitizeProperties [
+
+	| guy |
+	guy := SamplePerson new.
+	self assert: guy firstName isNil.
+	guy
+		firstName: 'John';
+		lastName: 'Carpenter';
+		phone: '1234'.
+
+	self assert: guy firstName notNil.
+	self assert: guy firstName equals: 'John'.
+	self deny: guy phone isNil.
+	guy sanitize: { #phone }.
+	self deny: guy phone notNil.
+	self assert: guy firstName equals: 'John'.
+	
 ]
 
 { #category : #tests }

@@ -196,7 +196,7 @@ Mapless class >> isAbstract [
 	
 	^ self == AnAbstractModelClass"
 
-	^ false
+	^ self == Mapless
 ]
 
 { #category : #testing }
@@ -244,7 +244,7 @@ Mapless class >> pluralName [
 	Any subclass can override its own custom name.
 	The default plural name is the singular name 
 	in lower case plus an 's' so beware of irregular nouns."
-
+	self deprecated: 'Application responsibility'.
 	^ self singularName , 's'
 ]
 
@@ -253,7 +253,7 @@ Mapless class >> singularName [
 	"Answers the string expected in a nicely designed API.
 	Any subclass can override its own custom name.
 	The default name is the class name in lowercase."
-
+	self deprecated: 'Application responsibility'.
 	^ self name asLowercase
 ]
 
@@ -665,10 +665,11 @@ Mapless >> onBeforeUpsert [
 ]
 
 { #category : #actions }
-Mapless >> sanitize: someFields [
-	"Removes someFields from the receiver."
+Mapless >> sanitize: someProperties [
+	"Removes someProperties from the receiver."
 
-	someFields do: [ :key | self data removeKey: key ifAbsent: [ nil ] ]
+	someProperties do: [ :key |
+		self maplessData removeKey: key ifAbsent: [ nil ] ]
 ]
 
 { #category : #actions }
