@@ -54,21 +54,30 @@ MaplessRepository >> accessor: anObject [
 
 { #category : #actions }
 MaplessRepository >> asStorable: anObject [
+
 	^ anObject isCollection
-		ifTrue: [ anObject class = OrderedJsonObject
-				ifTrue: [ (JsonObject fromAssociations: anObject associations)
-						collect: [ :e | resolver maplessAsStorable: e in: self ] ]
-				ifFalse: [ anObject collect: [ :e | self asStorable: e ] ] ]
-		ifFalse: [ anObject class = MaplessReference
-				ifFalse: [ (anObject isKindOf: Mapless)
-						ifTrue: [ (resolver asMaplessReferenceIn: anObject in: self)
-								asJsonObjectIn: self ]
-						ifFalse: [ anObject ] ]
-				ifTrue: [ (anObject hasModel and: [ anObject data id isNil ])
-						ifFalse: [ resolver maplessReferenceAsJsonObject: anObject in: self ]
-						ifTrue: [ MaplessUnsavedSubmodel
-								signal:
-									'This sub model is unsaved. You need to save all sub models before saving a composed model' ] ] ]
+		  ifTrue: [
+			  anObject class = OrderedJsonObject
+				  ifTrue: [
+					  (JsonObject fromAssociations: anObject associations) collect: [
+						  :e | resolver maplessAsStorable: e in: self ] ]
+				  ifFalse: [ anObject collect: [ :e | self asStorable: e ] ] ]
+		  ifFalse: [
+			  anObject class = MaplessReference
+				  ifFalse: [
+					  ((anObject class isComposedBy: MaplessBehavior) or: [
+						   anObject isKindOf: Mapless ])
+						  ifTrue: [
+							  (resolver asMaplessReferenceIn: anObject in: self)
+								  asJsonObjectIn: self ]
+						  ifFalse: [ anObject ] ]
+				  ifTrue: [
+					  (anObject hasModel and: [ anObject data id isNil ])
+						  ifFalse: [
+						  resolver maplessReferenceAsJsonObject: anObject in: self ]
+						  ifTrue: [
+							  MaplessUnsavedSubmodel signal:
+								  'This sub model is unsaved. You need to save all sub models before saving a composed model' ] ] ]
 ]
 
 { #category : #testing }
