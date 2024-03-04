@@ -3,22 +3,25 @@ SmalltalkCISpec {
     SCIMetacelloLoadSpec {
       #baseline : 'Mapless',
       #directory : '../src',
-      #load : [ 'Core',
-        'Memory',
-        'SQLite',
-        'Postgres',
-        'Mongo',
-        'Redis' ],
+      #load : [
+        'Core',
+        'Tests',
+        'Memory-Tests',
+        'SQLite-Tests',
+        'Postgres-Tests',
+        'Mongo-Tests',
+        'Redis-Tests',
+        'Redis-Observer-Tests' ],
       #platforms : [  #pharo ]
     }
   ],
   #testing : {
     #coverage : {
       #packages : [ 
-        'Mapless-Base-Core', 
-        'Mapless-Memory-Core',
-        'Mapless-Postgres-Core',
-        'Mapless-Mongo-Core',
+        'Mapless-Base', 
+        'Mapless-Memory',
+        'Mapless-Postgres',
+        'Mapless-Mongo',
         'Mapless-SQLite',
         'Mapless-Redis',
         'Mapless-Redis-Observer'

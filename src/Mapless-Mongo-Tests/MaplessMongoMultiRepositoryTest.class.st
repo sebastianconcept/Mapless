@@ -48,21 +48,21 @@ MaplessMongoMultiRepositoryTest >> testSaveToAndReadFromTwoDatabases [
 	repositories at: 1 put: repo1.
 	repositories at: 2 put: repo2.
 	repo1
-		do: [ guy := DummyPerson new
+		do: [ guy := SamplePerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
 			guy save.
-			found := DummyPerson findId: guy id.
+			found := SamplePerson findId: guy id.
 			self assert: found notNil.
 			self assert: found firstName equals: guy firstName ].
 	repo2
-		do: [ guy := DummyPerson new
+		do: [ guy := SamplePerson new
 				firstName: 'peter';
 				lastName: 'e';
 				yourself.
 			guy save.
-			found := DummyPerson findId: guy id.
+			found := SamplePerson findId: guy id.
 			self assert: found notNil.
 			self assert: found firstName equals: guy firstName ]
 ]

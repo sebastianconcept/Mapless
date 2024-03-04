@@ -169,9 +169,10 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithOneLocalArgument 
 		with: 42.
 	self deny: valued.
 	self assert: receivedArguments isNil.
+	200 milliSeconds asDelay wait.
 	task2 := repository findOne: SampleTask atId: task1 id.
 	task2 publish: #doTheThing.
-	5 milliSeconds asDelay wait.
+	200 milliSeconds asDelay wait.
 	self assert: valued.
 	self assert: receivedArguments notNil.
 	self assert: receivedArguments equals: 42
