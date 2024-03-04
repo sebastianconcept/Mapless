@@ -171,7 +171,7 @@ MaplessSQLitePool >> quantityOfClients [
 
 { #category : #actions }
 MaplessSQLitePool >> remove: aMaplessDbClient [
-	aMaplessDbClient disconnect.
+	aMaplessDbClient close.
 	self idleClients remove: aMaplessDbClient ifAbsent: [ nil ].
 	self busyClients remove: aMaplessDbClient ifAbsent: [ nil ]
 ]
