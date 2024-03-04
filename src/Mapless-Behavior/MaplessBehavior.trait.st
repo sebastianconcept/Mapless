@@ -1,9 +1,12 @@
+"
+I'm a trait that adds Maplss behavior to a class
+"
 Trait {
 	#name : #MaplessBehavior,
 	#instVars : [
 		'data'
 	],
-	#category : #'Mapless-Base-Core-Models'
+	#category : #'Mapless-Behavior'
 }
 
 { #category : #accessing }
