@@ -349,6 +349,18 @@ MaplessSQLiteTest >> testDestroy [
 ]
 
 { #category : #tests }
+MaplessSQLiteTest >> testDisconnect [
+
+	repository withClientDo: [ :client |
+		self assert: client isValid.
+		client close.
+		self deny: client isValid ].
+
+	repository withClientDo: [ :client |
+		self assert: client getTableNames notEmpty ]
+]
+
+{ #category : #tests }
 MaplessSQLiteTest >> testExists [
 	| guy loaded |
 	guy := SamplePerson new
@@ -538,6 +550,16 @@ MaplessSQLiteTest >> testQueryUsers [
 				  findOne: SampleUser
 				  where: ('json_extract(maplessData,"$.username") = {1}' format:
 						   { char asString printString })) notNil ])
+]
+
+{ #category : #tests }
+MaplessSQLiteTest >> testRemoveClient [
+
+	repository withClientDo: [ :client |
+		repository accessor remove: client ].
+
+	repository withClientDo: [ :client |
+		self assert: client getTableNames notEmpty ]
 ]
 
 { #category : #tests }
