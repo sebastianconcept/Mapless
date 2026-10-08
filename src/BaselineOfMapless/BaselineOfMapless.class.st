@@ -32,6 +32,9 @@ BaselineOfMapless >> baseline: spec [
 		spec
 			group: 'Core' with: #( 'Mapless-Base' );
 			group: 'Tests' with: #( 'Mapless-Base' 'Mapless-Tests' );
+			group: 'Behavior' with: #( 'Mapless-Behavior' );
+			group: 'Behavior-Tests'
+			with: #( 'Mapless-Behavior' 'Mapless-Behavior-Tests' );
 			group: 'Memory' with: #( 'Mapless-Memory' );
 			group: 'Memory-Tests'
 			with: #( 'Mapless-Memory' 'Mapless-Memory-Tests' );
@@ -76,6 +79,12 @@ BaselineOfMapless >> setUpBasePackages: spec [
 	spec
 		package: 'Mapless-Tests'
 		with: [ spec requires: 'Mapless-Base' ].
+	spec
+		package: 'Mapless-Behavior'
+		with: [ spec requires: #('Mapless-Base') ].
+	spec
+		package: 'Mapless-Behavior-Tests'
+		with: [ spec requires: #('Mapless-Behavior' 'Mapless-SQLite' 'Mapless-Tests') ].
 	spec
 		package: 'Mapless-Memory'
 		with: [ spec requires: #('Mapless-Base') ].

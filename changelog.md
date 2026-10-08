@@ -1,3 +1,8 @@
+Oct 8, 2026
+===================================
+* Added `MaplessBehavior`, a trait that gives Mapless behavior to any class without having to subclass `Mapless` (#147). Contributed by Paul Wilke, with fixes and tests by Sebastian Sastre.
+* New packages `Mapless-Behavior` and `Mapless-Behavior-Tests` (SQLite backed), with the `Behavior` and `Behavior-Tests` baseline groups.
+
 Feb 15, 2024 | v0.7.0 | Blue Citadel
 ===================================
 * Pinned versions for all dependencies.
