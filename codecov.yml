@@ -1,0 +1,3 @@
+ignore:
+  - "**/Manifest*.st"
+  - "**/*ReplicaSet*.st"

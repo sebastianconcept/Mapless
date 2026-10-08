@@ -1,3 +1,8 @@
+Feb 15, 2024 | v0.7.0 | Blue Citadel
+===================================
+* Pinned versions for all dependencies.
+* Version Release.
+
 Feb 5, 2024 | 
 ===================================
 * Using PUBSUB Redis feature via `RediStick` to implement the observer pattern of specific `Mapless` instances and across images.

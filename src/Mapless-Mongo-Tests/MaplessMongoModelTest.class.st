@@ -36,7 +36,7 @@ MaplessMongoModelTest >> tearDown [
 { #category : #tests }
 MaplessMongoModelTest >> testDeleteHook [
 	| user |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
 	self assert: user beforeDelete isNil.
@@ -52,7 +52,7 @@ MaplessMongoModelTest >> testDeleteHook [
 { #category : #tests }
 MaplessMongoModelTest >> testDestroyHook [
 	| user |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
 	self assert: user beforeDestroy isNil.
@@ -66,7 +66,7 @@ MaplessMongoModelTest >> testDestroyHook [
 { #category : #tests }
 MaplessMongoModelTest >> testInsertHook [
 	| user |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
 	self assert: user beforeInsert isNil.
@@ -80,17 +80,17 @@ MaplessMongoModelTest >> testInsertHook [
 MaplessMongoModelTest >> testMergeComposed [
 	| user guy newerUser newerGuy |
 	self
-		do: [ user := DummyUser new
+		do: [ user := SampleUser new
 				username: 'johnq';
 				yourself.
-			guy := DummyPerson new
+			guy := SamplePerson new
 				firstName: 'John';
 				yourself.
 			user person: guy.
-			newerUser := DummyUser new
+			newerUser := SampleUser new
 				email: 'johnq@email';
 				yourself.
-			newerGuy := DummyPerson new
+			newerGuy := SamplePerson new
 				firstName: 'JohM';
 				lastName: 'Q';
 				yourself.
@@ -107,10 +107,10 @@ MaplessMongoModelTest >> testMergeComposed [
 { #category : #tests }
 MaplessMongoModelTest >> testMergeSimple [
 	| user newerUser |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
-	newerUser := DummyUser new
+	newerUser := SampleUser new
 		email: 'johnq@email';
 		yourself.
 	self assert: user email isNil.
@@ -124,7 +124,7 @@ MaplessMongoModelTest >> testMergeSimple [
 { #category : #tests }
 MaplessMongoModelTest >> testRaiseErrorWhenTryingToInsertADuplicatedUnique [
 	| user |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
 	self
@@ -141,17 +141,17 @@ MaplessMongoModelTest >> testRaiseErrorWhenTryingToSaveADuplicatedUnique [
 	repository
 		do: [ repository database
 				command:
-					{('createIndexes' -> DummyPerson collectionName).
+					{('createIndexes' -> SamplePerson collectionName).
 					('indexes'
 						->
 							{{('key' -> {('lastName' -> 1)} asDictionary).
 							('name' -> 'lastName_unique').
 							('unique' -> true)} asDictionary})} asOrderedDictionary ].
-	john := DummyPerson new
+	john := SamplePerson new
 		firstName: 'John';
 		lastName: 'Someson';
 		yourself.
-	peter := DummyPerson new
+	peter := SamplePerson new
 		firstName: 'Peter';
 		lastName: 'Someson';
 		yourself.
@@ -169,7 +169,7 @@ MaplessMongoModelTest >> testRaiseErrorWhenTryingToSaveADuplicatedUnique [
 { #category : #tests }
 MaplessMongoModelTest >> testSaveHook [
 	| user |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
 	self assert: user beforeSave isNil.
@@ -187,15 +187,15 @@ MaplessMongoModelTest >> testUnrefDestroy [
 	self
 		do: [ tagsCollection := OrderedCollection new
 				add:
-					(DummyTag new
+					(SampleTag new
 						isCustomer: true;
 						yourself);
 				add:
-					(DummyTag new
+					(SampleTag new
 						isComplicated: false;
 						yourself);
 				yourself.
-			person := DummyPerson new
+			person := SamplePerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
@@ -204,7 +204,7 @@ MaplessMongoModelTest >> testUnrefDestroy [
 			"save tagsCollection"
 			tagsCollection do: [ :e | e save ].
 			person save.
-			loaded := DummyPerson findId: person id.
+			loaded := SamplePerson findId: person id.
 			self assert: loaded notNil.
 			reified := loaded unreferenced.
 			self assert: reified maplessData tags class = OrderedCollection.
@@ -216,7 +216,7 @@ MaplessMongoModelTest >> testUnrefDestroy [
 			self assert: reified maplessData tags second isComplicated = false.
 			reified destroy.
 			"loaded destroy"
-			self assert: (reloaded := DummyPerson existsId: reified id) not ]
+			self assert: (reloaded := SamplePerson existsId: reified id) not ]
 ]
 
 { #category : #tests }
@@ -225,27 +225,27 @@ MaplessMongoModelTest >> testUnrefDestroy2 [
 	self
 		do: [ friends := OrderedCollection new
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: 'Frodo';
 						yourself);
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: 'Gandalf';
 						yourself);
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: 'Boromir';
 						yourself);
 				yourself.
 			stuff := #('Ice cream' 'waffles' 'french fries').
-			guy := DummyPerson new
+			guy := SamplePerson new
 				firstName: 'dude';
 				favorites: stuff;
 				friends: friends;
 				yourself.
 			self do: [ friends do: [ :e | e save ] ].
 			self do: [ guy save ].
-			self do: [ loaded := DummyPerson findId: guy id ].
+			self do: [ loaded := SamplePerson findId: guy id ].
 			self assert: loaded notNil.
 			self do: [ reified := loaded unreferenced ].
 			self assert: reified data friends class = OrderedCollection.
@@ -254,12 +254,12 @@ MaplessMongoModelTest >> testUnrefDestroy2 [
 			"By design, the destruction should be to the individual aggregate (and not its submodels).
 	It's programmers' responsability to decide when to destroy a sub aggregate"
 			self
-				assert: (self do: [ reloaded := DummyPerson existsId: loaded id ]) not.
+				assert: (self do: [ reloaded := SamplePerson existsId: loaded id ]) not.
 			self
 				do: [ self
 						assert:
 							((friends collect: [ :e | e id ])
-								allSatisfy: [ :guyId | DummyPerson existsId: guyId ]) ] ]
+								allSatisfy: [ :guyId | SamplePerson existsId: guyId ]) ] ]
 ]
 
 { #category : #tests }
@@ -270,15 +270,15 @@ MaplessMongoModelTest >> testUnreferenced [
 	self
 		do: [ tagsCollection := OrderedCollection new
 				add:
-					(DummyTag new
+					(SampleTag new
 						isCustomer: true;
 						yourself);
 				add:
-					(DummyTag new
+					(SampleTag new
 						isComplicated: false;
 						yourself);
 				yourself.
-			person := DummyPerson new
+			person := SamplePerson new
 				firstName: 'john';
 				lastName: 'q';
 				yourself.
@@ -288,7 +288,7 @@ MaplessMongoModelTest >> testUnreferenced [
 			"save tagsCollection"
 			tagsCollection do: [ :e | self do: [ e save ] ].
 			self do: [ person save ].
-			self do: [ loaded := DummyPerson findId: person id ].
+			self do: [ loaded := SamplePerson findId: person id ].
 			self assert: loaded notNil.
 			self do: [ reified := loaded unreferenced ].
 			self assert: reified data tags class = OrderedCollection.
@@ -305,28 +305,28 @@ MaplessMongoModelTest >> testUnreferenced2 [
 	self
 		do: [ friends := OrderedCollection new
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: 'Frodo';
 						yourself);
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: 'Gandalf';
 						yourself);
 				add:
-					(DummyPerson new
+					(SamplePerson new
 						firstName: 'Boromir';
 						yourself);
 				yourself.
 			stuff := #('Ice cream' 'waffles' 'french fries')
 				asOrderedCollection.
-			guy := DummyPerson new
+			guy := SamplePerson new
 				firstName: 'dude';
 				favorites: stuff;
 				friends: friends;
 				yourself.
 			friends do: [ :e | self do: [ e save ] ].
 			self do: [ guy save ].
-			self do: [ loaded := DummyPerson findId: guy id ].
+			self do: [ loaded := SamplePerson findId: guy id ].
 			self assert: loaded notNil.
 			self do: [ reified := loaded unreferenced ].
 			self assert: reified data friends class = OrderedCollection.
@@ -336,7 +336,7 @@ MaplessMongoModelTest >> testUnreferenced2 [
 { #category : #tests }
 MaplessMongoModelTest >> testUpdatetHook [
 	| user |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
 	self assert: user beforeUpdate isNil.
@@ -351,7 +351,7 @@ MaplessMongoModelTest >> testUpdatetHook [
 { #category : #tests }
 MaplessMongoModelTest >> testUpsertHook [
 	| user |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
 	self assert: user beforeUpsert isNil.
@@ -364,7 +364,7 @@ MaplessMongoModelTest >> testUpsertHook [
 { #category : #tests }
 MaplessMongoModelTest >> testUpsertHookOnSave [
 	| user |
-	user := DummyUser new
+	user := SampleUser new
 		username: 'johnq';
 		yourself.
 	self assert: user beforeUpsert isNil.
