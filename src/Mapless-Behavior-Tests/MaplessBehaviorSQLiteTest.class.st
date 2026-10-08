@@ -30,9 +30,9 @@ MaplessBehaviorSQLiteTest class >> lastStoredRun [
 
 { #category : #history }
 MaplessBehaviorSQLiteTest class >> maplessClasses [
-	^ {DummyPerson.
-	DummyUser.
-	DummyTag}
+	^ {ExamplePerson.
+	ExampleUser.
+	ExampleTag}
 ]
 
 { #category : #accessing }

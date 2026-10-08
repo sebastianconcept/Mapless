@@ -8,6 +8,7 @@ SmalltalkCISpec {
         'Tests',
         'Memory-Tests',
         'SQLite-Tests',
+        'Behavior-Tests',
         'Postgres-Tests',
         'Mongo-Tests',
         'Redis-Tests',
@@ -19,6 +20,7 @@ SmalltalkCISpec {
     #coverage : {
       #packages : [ 
         'Mapless-Base', 
+        'Mapless-Behavior',
         'Mapless-Memory',
         'Mapless-Postgres',
         'Mapless-Mongo',
