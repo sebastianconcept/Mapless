@@ -8,29 +8,9 @@ Class {
 }
 
 { #category : #history }
-MaplessBehaviorSQLiteTest class >> lastStoredRun [
-	^ Dictionary new
-		add:
-			#passed
-				->
-					(Set new
-						add: #testDefaultCategoryCleanUp;
-						add: #testPackageCleanUp;
-						add: #testSingleClassCreation;
-						add: #testClassCreationInDifferentCategories;
-						add: #testClassFastCreationInDifferentCategories;
-						add: #testMultipleClassCreation;
-						add: #testSingleClassFastCreation;
-						yourself);
-		add: #timeStamp -> '22 November 2008 10:11:35 pm';
-		add: #failures -> Set new;
-		add: #errors -> Set new;
-		yourself
-]
-
-{ #category : #history }
 MaplessBehaviorSQLiteTest class >> maplessClasses [
 	^ {ExamplePerson.
+	ExampleEmployee.
 	ExampleUser.
 	ExampleTag}
 ]
@@ -47,6 +27,7 @@ MaplessBehaviorSQLiteTest >> resetDatabase [
 
 	{
 		ExamplePerson.
+		ExampleEmployee.
 		ExampleTag.
 		ExampleUser } do: [ :each |
 		(repository hasTableFor: each)
@@ -87,7 +68,7 @@ MaplessBehaviorSQLiteTest >> testComposedAccess [
 
 	| user guy |
 	user := ExampleUser new
-		        userame: 'johnq';
+		        username: 'johnq';
 		        yourself.
 	guy := ExamplePerson new
 		       firstName: 'john';
@@ -125,7 +106,7 @@ MaplessBehaviorSQLiteTest >> testComposedDelete [
 			users
 				add:
 					(ExampleUser new
-						userame: char asString;
+						username: char asString;
 						person:
 							(ExamplePerson new
 								firstName: char asString;
@@ -151,7 +132,7 @@ MaplessBehaviorSQLiteTest >> testComposedDestroy [
 	users := OrderedCollection new.
 	Character alphabet do: [ :char |
 		users add: (ExampleUser new
-				 userame: char asString;
+				 username: char asString;
 				 person: (ExamplePerson new
 						  firstName: char asString;
 						  yourself);
@@ -175,7 +156,7 @@ MaplessBehaviorSQLiteTest >> testComposedSave [
 
 	| user guy |
 	user := ExampleUser new
-		        userame: 'johnq';
+		        username: 'johnq';
 		        yourself.
 	guy := ExamplePerson new
 		       firstName: 'john';
@@ -242,7 +223,7 @@ MaplessBehaviorSQLiteTest >> testComposition [
 
 	| user guy |
 	user := ExampleUser new
-		        userame: 'johnq';
+		        username: 'johnq';
 		        yourself.
 	guy := ExamplePerson new
 		       firstName: 'john';
@@ -585,7 +566,7 @@ MaplessBehaviorSQLiteTest >> testSubModelsFromReifiedJSON [
 
 	| user guy jsonString reified loaded |
 	user := ExampleUser new
-		        userame: 'johnq';
+		        username: 'johnq';
 		        yourself.
 	guy := ExamplePerson new
 		       firstName: 'john';
@@ -599,6 +580,28 @@ MaplessBehaviorSQLiteTest >> testSubModelsFromReifiedJSON [
 	reified := ExampleUser fromJSONString: jsonString in: repository.
 	self assert: reified person class equals: ExamplePerson.
 	self assert: reified completeName equals: 'john q'
+]
+
+{ #category : #tests }
+MaplessBehaviorSQLiteTest >> testSubclassOfTraitUserIsStoredAsReference [
+	"Given an ExampleEmployee, a subclass of a MaplessBehavior user
+	When that employee is saved as the person of an ExampleUser
+	Then the loaded user holds a reference to an ExampleEmployee"
+
+	| user employee loaded |
+	employee := ExampleEmployee new
+		            firstName: 'ann';
+		            lastName: 'e';
+		            yourself.
+	user := ExampleUser new
+		        username: 'anne';
+		        person: employee;
+		        yourself.
+	repository save: employee.
+	repository save: user.
+	loaded := repository findOne: ExampleUser atId: user id.
+	self assert: loaded person class equals: MaplessReference.
+	self assert: loaded person model class equals: ExampleEmployee
 ]
 
 { #category : #tests }

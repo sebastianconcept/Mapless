@@ -110,6 +110,13 @@ MaplessReference >> isKindOf: aClasss [
 	^ self model isKindOf: aClasss
 ]
 
+{ #category : #testing }
+MaplessReference >> isMapless [
+	"Answers whether the referenced model is a Mapless model."
+
+	^ self model isMapless
+]
+
 { #category : #actions }
 MaplessReference >> jsonWriteOn: aStream [
 	(self asJsonObjectIn: repository) jsonWriteOn: aStream

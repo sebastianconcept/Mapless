@@ -1,12 +1,14 @@
 "
-I'm a trait that adds Maplss behavior to a class
+MaplessBehavior is the persistence behavior of a Mapless model, held in the data slot.
+When a class already has a superclass, it uses this trait so that class keeps its superclass and can be saved and loaded like a Mapless.
+Mapless uses this trait. A subclass of Mapless keeps Mapless as its superclass.
 "
 Trait {
 	#name : #MaplessBehavior,
 	#instVars : [
 		'data'
 	],
-	#category : #'Mapless-Behavior'
+	#category : #'Mapless-Base-Models'
 }
 
 { #category : #accessing }
@@ -117,7 +119,7 @@ MaplessBehavior classSide >> findId: anId [
 
 { #category : #querying }
 MaplessBehavior classSide >> findOne: someConditions [
-	"Answer a collection of instances of the receiver that meet with someConditions from the repository."
+	"Answers one instance of the receiver that meets someConditions in the repository."
 
 	^ self getRepository findOne: self where: someConditions
 ]
@@ -181,13 +183,8 @@ MaplessBehavior classSide >> idPropertyName [
 
 { #category : #testing }
 MaplessBehavior classSide >> isAbstract [
-	"Answers true if the model class is abstract.
-	Very useful to subclassify a family of model classes 
-	of which wouldn't make sense to create instances.
-
-	You can (sub) implement where nessesary in an abstract model like this:
-	
-	^ self == AnAbstractModelClass"
+	"Answers whether this class is an abstract model.
+	A class that uses the trait answers false until it overrides this method. Mapless answers true for itself."
 
 	^ false
 ]
@@ -234,7 +231,7 @@ MaplessBehavior classSide >> modelClasses [
 { #category : #printing }
 MaplessBehavior classSide >> pluralName [
 	"Answers the string expected in a nicely designed API.
-	Any subclass can override its own custom name.
+	Any class that uses this trait can override its own custom name.
 	The default plural name is the singular name 
 	in lower case plus an 's' so beware of irregular nouns."
 
@@ -244,7 +241,7 @@ MaplessBehavior classSide >> pluralName [
 { #category : #printing }
 MaplessBehavior classSide >> singularName [
 	"Answers the string expected in a nicely designed API.
-	Any subclass can override its own custom name.
+	Any class that uses this trait can override its own custom name.
 	The default name is the class name in lowercase."
 
 	^ self name asLowercase
@@ -511,7 +508,7 @@ MaplessBehavior >> merge: aMapless [
 		do: [ :aKey | 
 			| part |
 			part := aMapless perform: aKey asSymbol.
-			(part isKindOf: Mapless)
+			part isMapless
 				ifTrue: [ | subMaplessOrNil |
 					subMaplessOrNil := self perform: aKey asSymbol.
 					subMaplessOrNil ifNotNil: [ subMaplessOrNil merge: part ] ].
@@ -538,7 +535,7 @@ MaplessBehavior >> onAfterDestroy [
 
 { #category : #hooks }
 MaplessBehavior >> onAfterDestroyed [
-	"This mapless was saved by the backend.
+	"This mapless was destroyed at the backend.
 	This is a convenience message sent by the backend 
 	for subclasses to take any (re)action of this interesting moment."
 
@@ -658,10 +655,11 @@ MaplessBehavior >> onBeforeUpsert [
 ]
 
 { #category : #actions }
-MaplessBehavior >> sanitize: someFields [
-	"Removes someFields from the receiver."
+MaplessBehavior >> sanitize: someProperties [
+	"Removes someProperties from the receiver."
 
-	someFields do: [ :key | self data removeKey: key ifAbsent: [ nil ] ]
+	someProperties do: [ :key |
+		self maplessData removeKey: key ifAbsent: [ nil ] ]
 ]
 
 { #category : #actions }
@@ -744,7 +742,7 @@ MaplessBehavior >> setSubModelsAt: aKey with: anObject in: aMaplessRepository [
 		ifTrue: [ | subMapless |
 			subMapless := anObject
 				collect: [ :each | 
-					className := anObject at: '_c'.
+					className := each at: '_c'.
 					maplessClass := Smalltalk
 						at: className asSymbol
 						ifAbsent: [ MaplessClassNotFound

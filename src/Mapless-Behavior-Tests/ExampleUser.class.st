@@ -1,12 +1,12 @@
 Class {
 	#name : #ExampleUser,
 	#superclass : #Object,
-	#traits : 'MaplessBehavior',
+	#traits : 'MaplessBehavior @ {#maplessBehaviorOnAfterDestroy -> #onAfterDestroy. #maplessBehaviorOnAfterInsert -> #onAfterInsert. #maplessBehaviorOnBeforeUpdate -> #onBeforeUpdate. #maplessBehaviorOnBeforeUpsert -> #onBeforeUpsert}',
 	#classTraits : 'MaplessBehavior classTrait',
 	#category : #'Mapless-Behavior-Tests'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #querying }
 ExampleUser class >> findUsername: anUsername [
 
 	^ self getRepository
@@ -23,23 +23,27 @@ ExampleUser >> completeName [
 { #category : #hooks }
 ExampleUser >> onAfterDestroy [
 
+	self maplessBehaviorOnAfterDestroy.
 	self afterDestroy: true
 ]
 
 { #category : #hooks }
 ExampleUser >> onAfterInsert [
 
+	self maplessBehaviorOnAfterInsert.
 	self afterInsert: true
 ]
 
 { #category : #hooks }
 ExampleUser >> onBeforeUpdate [
 
+	self maplessBehaviorOnBeforeUpdate.
 	self beforeUpdate: true
 ]
 
 { #category : #hooks }
 ExampleUser >> onBeforeUpsert [
-	super onBeforeUpsert.
+
+	self maplessBehaviorOnBeforeUpsert.
 	self beforeUpsert: true
 ]

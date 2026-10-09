@@ -21,7 +21,6 @@ SmalltalkCISpec {
     #coverage : {
       #packages : [ 
         'Mapless-Base', 
-        'Mapless-Behavior',
         'Mapless-Memory',
         'Mapless-Postgres',
         'Mapless-Mongo',
