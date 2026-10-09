@@ -8,6 +8,8 @@ SmalltalkCISpec {
         'Tests',
         'Memory-Tests',
         'SQLite-Tests',
+        'Behavior-Tests',
+        'Behavior-Mongo-Tests',
         'Postgres-Tests',
         'Mongo-Tests',
         'Redis-Tests',

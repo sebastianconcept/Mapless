@@ -59,11 +59,12 @@ MaplessMemoryRepositoryTest >> tearDown [
 
 { #category : #tests }
 MaplessMemoryRepositoryTest >> testAccessorCreation [
+
 	| repo |
-	repo := MaplessMongoRepository
-		for: 'Mapless-Test'
-		with: MaplessMemoryAccessor new
-		using: MaplessMemoryCollectionToClassNameResolver new
+	repo := MaplessMemoryRepository
+		        for: 'Mapless-Test'
+		        with: MaplessMemoryAccessor new
+		        using: MaplessMemoryCollectionToClassNameResolver new
 ]
 
 { #category : #tests }

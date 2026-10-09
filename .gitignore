@@ -3,6 +3,7 @@
 pharo-vm/
 pharo
 pharo-ui
+pharo-local/
 
 # Project specific temporaries / requisites / transient #
 #########################################################

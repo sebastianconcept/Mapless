@@ -4,6 +4,12 @@ Oct 9, 2026
 * Updated Pharo-SQLite3 to v2.2.8 (v2.2.7 doesn't support Pharo 13).
 * Postgres: `UUID` is not a `ByteArray` in Pharo 13. Added `UUID>>jsonWriteOn:` (same JSON as before) and made `MaplessPostgresRepository>>withNormalizedId:` build the UUID from bytes, strings or UUIDs.
 
+Oct 8, 2026
+===================================
+* Added `MaplessBehavior`, a trait in `Mapless-Base` that gives Mapless behavior to any class without having to subclass `Mapless` (#147). `Mapless` uses the trait, so existing subclasses stay subclasses. Contributed by Paul Wilke, with fixes and tests by Sebastian Sastre.
+* New packages `Mapless-Behavior-Tests` (SQLite and Memory) and `Mapless-Behavior-Mongo-Tests`, with the `Behavior`, `Behavior-Tests`, and `Behavior-Mongo-Tests` baseline groups.
+* New `Mapless-Behavior-Mongo-Tests` package: the same trait verified against MongoDB (host/port via `MAPLESS_MONGO_HOST` / `MAPLESS_MONGO_PORT`, default localhost:27017).
+
 Feb 15, 2024 | v0.7.0 | Blue Citadel
 ===================================
 * Pinned versions for all dependencies.
