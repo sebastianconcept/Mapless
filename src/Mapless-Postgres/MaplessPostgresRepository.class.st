@@ -304,5 +304,13 @@ MaplessPostgresRepository >> withClientDo: aBlock [
 
 { #category : #actions }
 MaplessPostgresRepository >> withNormalizedId: aValue [
-	^ UUID newFrom: aValue 
+
+	aValue isString ifTrue: [ ^ UUID fromString: aValue ].
+	(aValue isKindOf: UUID) ifTrue: [ ^ aValue ].
+	"Up to Pharo 12 UUID is a ByteArray and `newFrom:` builds it from bytes.
+	In Pharo 13 it isn't, so the bytes go into the instance."
+	(UUID inheritsFrom: Collection) ifTrue: [ ^ UUID newFrom: aValue ].
+	^ UUID new
+		  uuidData: aValue asByteArray;
+		  yourself
 ]

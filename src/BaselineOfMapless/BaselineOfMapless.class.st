@@ -183,7 +183,7 @@ BaselineOfMapless >> setUpSQLiteDependencies: spec [
 	spec
 		baseline: 'SQLite3'
 		with: [ spec
-				repository: 'github://pharo-rdbms/Pharo-SQLite3:v2.2.7/src';
+				repository: 'github://pharo-rdbms/Pharo-SQLite3:v2.2.8/src';
 				loads: #('Core') ]
 ]
 

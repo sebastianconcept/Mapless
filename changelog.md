@@ -1,3 +1,9 @@
+Oct 9, 2026
+===================================
+* Pharo 13 support: `Mapless-Base`, `Memory`, `SQLite`, `Postgres`, `Mongo`, `Redis` and `Redis-Observer` load and pass their tests on Pharo 13.1 (and still on Pharo 11).
+* Updated Pharo-SQLite3 to v2.2.8 (v2.2.7 doesn't support Pharo 13).
+* Postgres: `UUID` is not a `ByteArray` in Pharo 13. Added `UUID>>jsonWriteOn:` (same JSON as before) and made `MaplessPostgresRepository>>withNormalizedId:` build the UUID from bytes, strings or UUIDs.
+
 Feb 15, 2024 | v0.7.0 | Blue Citadel
 ===================================
 * Pinned versions for all dependencies.
