@@ -161,14 +161,18 @@ spec
 
 ## Development
 
-Repository commands are [`just`](https://github.com/casey/just) recipes in the `justfile`.
+Repository commands are [`just`](https://github.com/casey/just) recipes in the `justfile`:
 
-- `just build` downloads a fresh Pharo image and loads Mapless.
-- `just clean` removes that VM, the launchers, logs, and caches.
-- `just clean-caches` removes `package-cache` and `github-cache`.
-- `just clean-build` cleans, then builds.
-- `just services` starts Postgres, Redis, and MongoDB for local tests.
-- `just test` starts those services, then runs the unit tests.
+```
+Available recipes:
+    build        # Get a fresh Pharo image and load Mapless
+    clean        # Remove downloaded VMs, launchers, logs, and caches
+    clean-build  # Clean local build artifacts, then get a fresh Pharo image and load Mapless
+    clean-caches # Remove package and GitHub caches
+    services     # Start Postgres, Redis, and MongoDB for the unit tests
+    test         # Run the unit tests with SmalltalkCI; Postgres, Redis, and MongoDB must be up
+    test-image   # Run the same unit-test groups in the local Pharo image against the Docker backends
+```
 
 MongoDB replica-set sequence diagrams are Mermaid in [docs/replica-set.md](docs/replica-set.md). That document replaces `uml/`.
 
