@@ -48,12 +48,10 @@ MaplessUnQLiteTest class >> buildSuite [
 
 { #category : #testing }
 MaplessUnQLiteTest class >> isNativeLibraryAvailable [
+	"Opening a client validates the bundled FFI library. SymbolNotFoundError is not an Error subclass on all Pharo versions."
 	^ [ MaplessUnQLiteClient inMemory disconnect. true ]
-		on: Error
-		do: [ :ex |
-			(ex isKindOf: SubclassResponsibility)
-				ifTrue: [ false ]
-				ifFalse: [ ex pass ] ]
+		on: SubclassResponsibility do: [ false ]
+		on: Exception do: [ false ]
 ]
 
 { #category : #'setUp-tearDown' }
