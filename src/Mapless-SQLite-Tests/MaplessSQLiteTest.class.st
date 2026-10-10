@@ -37,8 +37,12 @@ MaplessSQLiteTest class >> maplessClasses [
 
 { #category : #accessing }
 MaplessSQLiteTest class >> testDatabasePathString [
+	"The database file for these tests, under the image's data directory."
 
-	^ (Smalltalk imageDirectory / 'MaplessSQLiteTest.db') pathString
+	| directory |
+	directory := Smalltalk imageDirectory / 'data'.
+	directory ensureCreateDirectory.
+	^ (directory / 'MaplessSQLiteTest.db') pathString
 ]
 
 { #category : #actions }

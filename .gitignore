@@ -47,6 +47,7 @@ github-cache/
 *.log
 *.sql
 *.sqlite
+/data/
 
 # OS generated files #
 ######################

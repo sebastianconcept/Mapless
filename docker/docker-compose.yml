@@ -1,0 +1,70 @@
+# Backends the Mapless unit tests reach over the network.
+# Embedded backends (Memory, SQLite, UnQLite) are not services.
+#
+# Postgres matches MaplessStandalonePostgresPool class>>local and CI:
+#   host localhost, port 5432, user postgres, empty password, trust auth.
+#   Tests create database "Mapless-Tests" via the maintenance database "postgres".
+# Redis matches MaplessRedisPool class>>local (sync://localhost, port 6379).
+#   No password. Tests select logical database 2.
+# MongoDB matches MaplessStandaloneMongoPool class>>local and CI:
+#   host localhost, port 27017, no user, replica set test-rs.
+#   Tests use databases Mapless-Test, Mapless-Test1, Mapless-Test2,
+#   and Mapless-Behavior-Test.
+
+name: mapless
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    # Published port traffic arrives from the compose network, not the
+    # container loopback. Accept it without adding a password.
+    command: ["redis-server", "--bind", "0.0.0.0", "--protected-mode", "no"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:7.0
+    command: ["mongod", "--replSet", "test-rs", "--bind_ip_all"]
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --port
+        - "27017"
+        - --eval
+        - |
+          try {
+            if (rs.status().ok !== 1) quit(1);
+          } catch (e) {
+            const result = rs.initiate({
+              _id: "test-rs",
+              members: [{ _id: 0, host: "localhost:27017" }]
+            });
+            if (!result.ok) quit(1);
+          }
+          quit(db.hello().isWritablePrimary ? 0 : 1);
+      interval: 5s
+      timeout: 20s
+      retries: 20
+      start_period: 10s

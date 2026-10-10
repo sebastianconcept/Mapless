@@ -64,8 +64,8 @@ MaplessRedisRepository >> existsId: anId of: aMaplessClass [
 { #category : #actions }
 MaplessRedisRepository >> expires: aMapless in: millisecondsValue [
 	^ accessor redis endpoint
-		expire: (self namespacedIdOf: aMapless)
-		at: DateAndTime now + (Duration milliSeconds: millisecondsValue)
+		pexpire: (self namespacedIdOf: aMapless)
+		milliseconds: millisecondsValue
 ]
 
 { #category : #accessing }

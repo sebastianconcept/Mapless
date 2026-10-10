@@ -14,6 +14,17 @@ Remove the existing timeout on key, turning the key from volatile (a key with an
 ]
 
 { #category : #'*Mapless-Redis' }
+RsRedisEndpoint >> pexpire: aKey milliseconds: milliseconds [
+	"PEXPIRE key milliseconds. Sets the key's time to live in milliseconds."
+
+	^ self
+		unifiedCommand:
+			{'PEXPIRE'.
+			aKey.
+			milliseconds}
+]
+
+{ #category : #'*Mapless-Redis' }
 RsRedisEndpoint >> pttl: aKey [
 	"Returns the remaining time to live of a key that has an expire set in milliseconds."
 

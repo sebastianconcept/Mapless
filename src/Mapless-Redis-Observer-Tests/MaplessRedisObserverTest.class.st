@@ -50,6 +50,17 @@ MaplessRedisObserverTest >> tearDown [
 			repository accessor stop ]
 ]
 
+{ #category : #utility }
+MaplessRedisObserverTest >> waitUntil: aBlock [
+	"Pub/sub delivery runs on another process. Wait until aBlock is true."
+
+	| deadline |
+	deadline := DateAndTime now + 2 seconds.
+	[ aBlock value or: [ DateAndTime now >= deadline ] ]
+		whileFalse: [ 10 milliSeconds asDelay wait ].
+	self assert: aBlock value description: 'Timed out waiting for the Redis pub/sub callback'
+]
+
 { #category : #tests }
 MaplessRedisObserverTest >> testCanSubscribeToSavedMapless [
 
@@ -114,7 +125,7 @@ MaplessRedisObserverTest >> testReactsToAnObservedInstanceAmongMany [
 	task1 := repository findOne: SampleTask atId: task1 id.
 	task1 publish: #doTheThing.
 
-	5 milliSeconds asDelay wait.
+	self waitUntil: [ valued includesKey: task1 id ].
 	self assert: (valued includesKey: task1 id).
 	self deny: (valued includesKey: task2 id).
 	self deny: (valued includesKey: task3 id)
@@ -143,7 +154,7 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithLocalArguments [
 	task2 := repository findOne: SampleTask atId: task1 id.
 
 	task2 publish: #doTheThing.
-	5 milliSeconds asDelay wait.
+	self waitUntil: [ valued ].
 	self assert: valued.
 	self assert: receivedOne equals: $a.
 	self assert: receivedTwo equals: 42
@@ -169,10 +180,9 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithOneLocalArgument 
 		with: 42.
 	self deny: valued.
 	self assert: receivedArguments isNil.
-	200 milliSeconds asDelay wait.
 	task2 := repository findOne: SampleTask atId: task1 id.
 	task2 publish: #doTheThing.
-	200 milliSeconds asDelay wait.
+	self waitUntil: [ valued ].
 	self assert: valued.
 	self assert: receivedArguments notNil.
 	self assert: receivedArguments equals: 42
@@ -200,7 +210,7 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithRemoteArgument [
 	task2 := repository findOne: SampleTask atId: task1 id.
 
 	task2 publish: #doTheThing with: 42.
-	5 milliSeconds asDelay wait.
+	self waitUntil: [ valued ].
 	self assert: valued.
 	self assert: received equals: 42
 ]
@@ -229,7 +239,7 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithRemoteArguments [
 	task2 := repository findOne: SampleTask atId: task1 id.
 
 	task2 publish: #doTheThing withArguments: { $a. 42 }.
-	5 milliSeconds asDelay wait.
+	self waitUntil: [ valued ].
 	self assert: valued.
 	self assert: receivedOne equals: $a.
 	self assert: receivedTwo equals: 42
@@ -251,7 +261,7 @@ MaplessRedisObserverTest >> testReactsToObservedPubsubEventWithoutArguments [
 	task2 := repository findOne: SampleTask atId: task1 id.
 
 	task2 publish: #doTheThing.
-	5 milliSeconds asDelay wait.
+	self waitUntil: [ valued ].
 	self assert: valued
 ]
 
@@ -280,7 +290,7 @@ MaplessRedisObserverTest >> testThreeRemoteArguments [
 	task2
 		publish: #doTheThing
 		withArguments: { $a. 42. #answer }.
-	5 milliSeconds asDelay wait.
+	self waitUntil: [ valued ].
 	self assert: valued.
 	self assert: receivedOne equals: $a.
 	self assert: receivedTwo equals: 42.
