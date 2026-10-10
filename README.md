@@ -11,6 +11,8 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 ![Tests](https://img.shields.io/badge/tests-193-green)
 
 
+[![Pharo 13](https://img.shields.io/badge/Pharo-13-%23383932.svg)](https://pharo.org/download)
+[![Pharo 12](https://img.shields.io/badge/Pharo-12-%23383932.svg)](https://pharo.org/download)
 [![Pharo 11](https://img.shields.io/badge/Pharo-11-%23383932.svg)](https://pharo.org/download)
 [![Pharo 10](https://img.shields.io/badge/Pharo-10-%23383932.svg)](https://pharo.org/download)
 

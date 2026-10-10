@@ -1,128 +1,152 @@
 # MongoDB replica set
 
-Sequence diagrams for a Mapless repository on a MongoDB replica set: startup, a write that has to find the primary, and primary discovery. MongoDB2 is the primary.
+Sequence diagrams for a Mapless MongoDB replica set. The repository's accessor is a `MaplessMongoReplicaSetPool`. The pool asks a `MaplessMongoReplicaSetResolver` which member is primary. In these examples MongoDB2 is the primary.
+
+`MaplessRepository>>startUp:` sends `start:` to the accessor. `MaplessMongoReplicaSetPool` implements `start`, so startup below is `start`.
 
 ## Replica set starts
 
+Pool construction has already registered `#primaryFound` to `onPrimaryFound:` and `#notPrimaryReadWriteAttempt` to `onNotPrimaryReadWriteAttempt:using:`. The resolver's `#rolesUpdated` is registered to `onResolverUpdated`.
+
 ```mermaid
 sequenceDiagram
     participant app as Application
-    participant repo as MaplessRepository
-    participant pool as MaplessReplicaSetPool
-    participant resolver as MaplessReplicaSetResolver
-    participant client as MongoDB client
+    participant pool as MaplessMongoReplicaSetPool
+    participant resolver as MaplessMongoReplicaSetResolver
+    participant client as MongoAPI
     participant MongoDB1
     participant MongoDB2
     participant MongoDB3
 
-    Note over app,MongoDB3: Starting the repository
-    app->>repo: start
-    Note right of repo: The application just instantiated the repo and wants it ready to use. The start method can be thought as part of the initialization of the repo.
-    repo->>repo: onPrimaryFound
-    Note right of repo: Setup a reaction for when a primary node is discovered.
-    repo->>repo: onPrimaryUnavailable
-    Note right of repo: Setup a reaction for when none of the nodes is a primary.
-    repo->>pool: start
-    pool->>pool: findPrimary
-    pool->>repo: aMaplessPool
-    repo->>app: aMaplessRepository
+    app->>pool: start
+    pool->>pool: replicaSetCongifurationHealthcheck
+    loop configured mongoUrls until one client opens
+        pool->>pool: makeClientWith: aMongoUrl
+        alt NetworkError
+            pool-->>pool: nil, try the next url
+        else socket opens
+            pool->>client: open
+            client->>MongoDB1: open socket
+        end
+    end
+    alt no configured member accepted a connection
+        pool->>pool: signal MaplessNoReplicaSetMemberCouldBeReached
+    else a member answered
+        pool->>client: replicaSetStatus
+        client->>MongoDB1: replSetGetStatus
+        MongoDB1-->>client: members
+        alt member urls differ from the configured urls
+            pool->>pool: signal MaplessReplicaSetInconsistentConfiguration
+        else the url sets match
+            pool->>resolver: findPrimaryFor:
+            Note right of resolver: See Primary discovery. Each success runs the primary-found reactions before the loop continues.
+            pool->>pool: startHealthChecker
+            Note right of pool: Forks a background loop. It waits healthCheckerInterval, then calls replicaSetAvailabilityHealthcheck.
+        end
+    end
+```
 
-    Note over repo,pool: onPrimaryFound
-    repo->>pool: primaryFound
+The configuration check leaves its status client open.
+
+## When a primary is recorded
+
+`findPrimaryFor:` does this once for every contacted member whose status names a primary. `updateStatusFromStatus:` runs first, then `#primaryFound`.
+
+```mermaid
+sequenceDiagram
+    participant pool as MaplessMongoReplicaSetPool
+    participant resolver as MaplessMongoReplicaSetResolver
+
+    resolver->>resolver: updateStatusFromStatus:
+    Note right of resolver: primaryUrl becomes the primary member's address. secondaryUrls becomes the secondary members' addresses.
+    resolver->>pool: trigger #rolesUpdated
+    pool->>pool: onResolverUpdated
+    pool->>pool: ensureClients
+    Note right of pool: ensurePrimaryClients closes read-write clients that are not on the primary, then tops up the minimum. ensureSecondaryClients does the same for read-only clients and the secondary urls.
+
+    pool->>pool: trigger #primaryFound with the contacted url
+    pool->>pool: onPrimaryFound:
     pool->>pool: removeInvalidClients
     pool->>pool: ensureMinimumQuantityOfReadOnlyClients
     pool->>pool: ensureMinimumQuantityOfReadWriteClients
-
-    Note over repo,pool: onPrimaryUnavailable
-    repo->>pool: primaryUnavailable
-    pool->>pool: removeInvalidClients
-    pool->>pool: ensureMinimumQuantityOfReadOnlyClients
+    pool->>pool: replicaSetAvailabilityHealthcheck
 ```
 
-## Write while finding the primary
+`replicaSetAvailabilityHealthcheck` calls `ensureTopology`, checks that the primary answers a query, checks each secondary, then calls `ensureClients` again. `removeInvalidClients` closes idle read-only clients connected to the primary and idle read-write clients connected anywhere else.
+
+## Write
 
 ```mermaid
 sequenceDiagram
     participant app as Application
-    participant repo as MaplessRepository
-    participant pool as MaplessReplicaSetPool
-    participant resolver as MaplessReplicaSetResolver
-    participant client as MongoDB client
-    participant MongoDB1
+    participant repo as MaplessMongoRepository
+    participant pool as MaplessMongoReplicaSetPool
+    participant resolver as MaplessMongoReplicaSetResolver
+    participant client as MongoAPI
     participant MongoDB2
-    participant MongoDB3
 
     app->>repo: readWriteDo:
     repo->>pool: readWriteDo:
-    pool->>pool: requestReadWriteIdleClient
-    pool->>resolver: requestClientFor: aMongoUrl
-    alt aMongoClient (read-write)
-        resolver->>pool: aMongoClient (read-write)
-        pool->>client: command:
-        client->>MongoDB2: command on socket
-        MongoDB2->>client: successful write operation
-        client->>pool: successful write operation
-        pool->>repo: successful write operation
-        repo->>app: successful write operation
-    else nil
-        resolver->>pool: nil
-        pool->>resolver: hasPrimary
-        Note right of pool: No client to the primary was returned. Need to create one if the primary address is known or find what's the address of the primary if it's unknown.
-        alt the address of the primary node is known
-            resolver->>pool: true
-            pool->>pool: makeReadWriteClient
-            pool->>resolver: getReadWriteMongoUrl
-            resolver->>pool: aMongoUrl
-            pool->>client: open
-            alt the client connection opens
-                pool->>pool: addReadWriteClientToBusy
-                pool->>pool: aMongoClient
-                pool->>client: command:
-                client->>MongoDB2: command on socket
-                MongoDB2->>client: successful write operation
-                client->>pool: successful write operation
-                pool->>repo: successful write operation
-                repo->>app: successful write operation
-            else there is a NetworkError
-                pool->>pool: onNetworError
-                pool->>pool: findPrimary
-                pool->>pool: aMongoClient (read-write)
-                pool->>client: command:
-                client->>MongoDB2: command on socket
-                MongoDB2->>client: successful write operation
-                client->>pool: successful write operation
-                pool->>repo: successful write operation
-                repo->>app: successful write operation
-            end
-        else the address of the primary node is unknown
-            resolver->>pool: false
-            pool->>pool: findPrimary
-            pool->>pool: aMongoClient (read-write)
-            pool->>client: command:
-            client->>MongoDB2: command on socket
-            MongoDB2->>client: successful write operation
-            client->>pool: successful write operation
-            pool->>repo: successful write operation
-            repo->>app: successful write operation
-        end
+    pool->>pool: requestReadWriteClient
+    alt primaryUrl is nil
+        pool->>resolver: findPrimaryFor:
+        Note right of resolver: See Primary discovery. A failure signals ReplicaSetPrimaryNotFound.
     end
+    alt an idle read-write client exists
+        pool->>pool: getIdleReadWriteClient
+    else busy plus idle equals maxReadWriteClients
+        pool->>app: signal MaplessMaximumReadWritePoolClientsReached
+    else below the maximum
+        pool->>pool: makeReadWriteClient
+        pool->>client: open to primaryUrl
+        client->>MongoDB2: open socket
+    end
+    alt the client is open and it is invalid or not primary
+        pool->>pool: removeReadWriteClient:
+        pool->>pool: makeReadWriteClient
+    end
+    alt the client is nil
+        pool->>resolver: resetRoles
+        pool->>pool: removeInvalidReadWriteClients
+        pool->>app: signal MaplessReadWriteOperationFailed
+    else the client is ready
+        pool->>pool: move the client from idle to busy
+        pool->>repo: run the block with MongoCurrentClient set
+        repo->>repo: set MaplessCurrentRepository
+        repo->>client: database command
+        client->>MongoDB2: command on socket
+        MongoDB2-->>client: result
+        pool->>pool: returnReadWriteClient: if the client is still valid
+        repo-->>app: block result
+    end
+```
 
-    pool->>pool: onReadWriteClientNeeded
-    pool->>pool: onReadOnlyClientRequested
-    pool->>pool: onPrimaryFound
-    pool->>pool: onPrimaryUnavailable
-    pool->>pool: findPrimary
-    loop every (valid) mongoUrl
-        pool->>client: command:
-        pool->>client: isPrimary
-        alt true
-            client->>MongoDB2: isPrimary
-            MongoDB2->>client: true
-            client->>pool: true
-            pool->>pool: signals PrimaryFound
-        else false
-            pool->>pool: signals PrimaryNotFound
-        end
+`makeClientWith:` returns nil on `NetworkError`, so a failed open becomes the nil branch above. A client that is already nil is not replaced a second time. Only a live client that fails `isValid` or `isPrimary` is discarded and opened once more.
+
+If the block raises, the pool does not retry the command.
+
+```mermaid
+sequenceDiagram
+    participant pool as MaplessMongoReplicaSetPool
+    participant resolver as MaplessMongoReplicaSetResolver
+    participant client as MongoAPI
+
+    alt NetworkError
+        pool->>client: reset
+        pool->>resolver: resetRoles
+        pool->>pool: removeInvalidReadWriteClients
+        pool->>pool: signal MaplessReadWriteOperationFailed
+    else MongoNotMaster
+        pool->>client: reset
+        pool->>pool: onNotPrimaryReadWriteAttempt:using:
+        Note right of pool: removeInvalidClients, then ensure the minimum read-only and read-write clients.
+        pool->>resolver: resetRoles
+        pool->>pool: removeInvalidReadWriteClients
+        pool->>pool: signal MaplessReadWriteOperationFailed
+    else another Error
+        pool->>pool: trigger #readWriteError:
+        pool->>client: reset
+        pool->>pool: pass the error
     end
 ```
 
@@ -130,26 +154,38 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant pool as MaplessReplicaSetPool
-    participant resolver as MaplessReplicaSetResolver
-    participant client as MongoDB client
-    participant MongoDB1
-    participant MongoDB2
-    participant MongoDB3
+    participant pool as MaplessMongoReplicaSetPool
+    participant resolver as MaplessMongoReplicaSetResolver
+    participant client as MongoAPI
+    participant node as Contacted member
 
-    Note over pool,MongoDB3: Primary discovery process
-    pool->>pool: findPrimary
-    loop every mongoUrl in the ReplicaSet config
-        pool->>resolver: requestClientFor: aMongoUrl
-        resolver->>pool: aMongoClient
-        pool->>client: isPrimary
-        alt true
-            client->>MongoDB2: isPrimary
-            MongoDB2->>client: true
-            client->>pool: true
-            pool->>pool: signals PrimaryFound
-        else false
-            pool->>pool: signals PrimaryNotFound
+    pool->>resolver: findPrimaryFor:
+    loop each configured mongoUrl
+        resolver->>pool: makeClientWith: mongoUrl
+        alt NetworkError
+            pool-->>resolver: nil
+            Note right of resolver: Skip this url.
+        else the client opened
+            resolver->>client: replicaSetStatus
+            client->>node: replSetGetStatus
+            node-->>client: members
+            alt no member is primary
+                resolver->>client: close
+                resolver->>resolver: signal ReplicaSetPrimaryNotFound
+                Note right of resolver: Remaining urls are not tried.
+            else a member is primary
+                resolver->>resolver: updateStatusFromStatus:
+                Note right of resolver: primaryUrl is that member's address. Contacting MongoDB1 can still record MongoDB2.
+                resolver->>pool: trigger #rolesUpdated
+                pool->>pool: trigger #primaryFound with the contacted url
+                Note right of pool: onPrimaryFound: runs before the next url.
+                resolver->>client: close
+            end
         end
     end
+    alt primaryUrl is still nil
+        resolver->>resolver: signal ReplicaSetPrimaryNotFound
+    end
 ```
+
+Discovery clients are closed. Later reads and writes open their own clients to the recorded primary and secondary urls.
