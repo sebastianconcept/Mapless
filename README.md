@@ -7,8 +7,8 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 [![Release](https://img.shields.io/github/v/tag/sebastianconcept/Mapless?label=release)](https://github.com/sebastianconcept/Mapless/releases)
 [![Unit Tests](https://github.com/sebastianconcept/Mapless/actions/workflows/build.yml/badge.svg)](https://github.com/sebastianconcept/Mapless/actions/workflows/build.yml)
 
-[![Coverage Status](https://codecov.io/github/sebastianconcept/Mapless/coverage.svg?branch=main)](https://codecov.io/gh/sebastianconcept/Mapless/branch/master)
-![Tests](https://img.shields.io/badge/tests-193-green)
+[![Coverage Status](https://codecov.io/gh/sebastianconcept/Mapless/branch/develop/graph/badge.svg)](https://codecov.io/gh/sebastianconcept/Mapless/branch/develop)
+![Tests](https://img.shields.io/badge/tests-237-green)
 
 
 [![Pharo 13](https://img.shields.io/badge/Pharo-13-%23383932.svg)](https://pharo.org/download)
