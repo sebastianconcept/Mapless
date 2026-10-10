@@ -623,3 +623,33 @@ MaplessPostgresTest >> testSubModelsFromReifiedJSON [
 	self assert: reified person class equals: SamplePerson.
 	self assert: reified completeName equals: 'john q'
 ]
+
+{ #category : #tests }
+MaplessPostgresTest >> testWithNormalizedIdFromString [
+	| repo id |
+	repo := MaplessPostgresRepository basicNew.
+	id := UUID new.
+	self assert: (repo withNormalizedId: id asString) equals: id
+]
+
+{ #category : #tests }
+MaplessPostgresTest >> testWithNormalizedIdPreservesUUID [
+	| repo id |
+	repo := MaplessPostgresRepository basicNew.
+	id := UUID new.
+	self assert: (repo withNormalizedId: id) equals: id
+]
+
+{ #category : #tests }
+MaplessPostgresTest >> testWithNormalizedIdFromByteArray [
+	| repo id normalized |
+	repo := MaplessPostgresRepository basicNew.
+	id := UUID new.
+	(UUID inheritsFrom: Collection)
+		ifTrue: [
+			normalized := repo withNormalizedId: id asByteArray.
+			self assert: normalized equals: id ]
+		ifFalse: [
+			normalized := repo withNormalizedId: id uuidData.
+			self assert: normalized asString equals: id asString ]
+]

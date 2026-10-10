@@ -8,7 +8,7 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 [![Unit Tests](https://github.com/sebastianconcept/Mapless/actions/workflows/build.yml/badge.svg)](https://github.com/sebastianconcept/Mapless/actions/workflows/build.yml)
 
 [![Coverage Status](https://codecov.io/gh/sebastianconcept/Mapless/branch/develop/graph/badge.svg)](https://codecov.io/gh/sebastianconcept/Mapless/branch/develop)
-![Tests](https://img.shields.io/badge/tests-237-green)
+![Tests](https://img.shields.io/badge/tests-263-green)
 
 
 [![Pharo 13](https://img.shields.io/badge/Pharo-13-%23383932.svg)](https://pharo.org/download)
@@ -182,7 +182,9 @@ MongoDB replica-set sequence diagrams are Mermaid in [docs/replica-set.md](docs/
 - Redis 7 on `localhost:6379`, no password
 - MongoDB 7.0 on `localhost:27017`, no user, replica set `test-rs`
 
-Memory, SQLite, and UnQLite need no server and have no container. `just test` runs `just services`, then `smalltalkci -s Pharo64-11 .smalltalkci/.unit-tests.ston`.
+Memory, SQLite, and UnQLite need no server and have no container. `just test` runs `just services`, then `smalltalkci -s Pharo64-11 .smalltalkci/.unit-tests.ston`. GitHub Actions runs the same spec on Pharo 11, 12, and 13 (including UnQLite; no multi-node Mongo replica-set tests in CI).
+
+Codecov measures the packages listed in `.smalltalkci/.unit-tests.ston` and ignores `*ReplicaSet*` sources (see `codecov.yml`); replica-set behavior is documented in [docs/replica-set.md](docs/replica-set.md) but not exercised in CI.
 
 ## Project Ambition
 

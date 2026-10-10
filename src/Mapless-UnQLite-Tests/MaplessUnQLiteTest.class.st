@@ -3,7 +3,7 @@ Cover basic functionality
 "
 Class {
 	#name : #MaplessUnQLiteTest,
-	#superclass : #AnObsoleteMaplessTestCase,
+	#superclass : #MaplessTestCase,
 	#instVars : [
 		'repository'
 	],
@@ -31,13 +31,36 @@ MaplessUnQLiteTest >> savePersonNamed: aString [
 				yourself)
 ]
 
+{ #category : #accessing }
+MaplessUnQLiteTest class >> testDatabasePathString [
+	| directory |
+	directory := Smalltalk imageDirectory / 'data'.
+	directory ensureCreateDirectory.
+	^ (directory / 'MaplessUnQLiteTest.db') pathString
+]
+
+{ #category : #testing }
+MaplessUnQLiteTest class >> buildSuite [
+	^ self isNativeLibraryAvailable
+		ifTrue: [ super buildSuite ]
+		ifFalse: [ TestSuite named: self name ]
+]
+
+{ #category : #testing }
+MaplessUnQLiteTest class >> isNativeLibraryAvailable [
+	^ [ MaplessUnQLiteClient inMemory disconnect. true ]
+		on: Error
+		do: [ :ex |
+			(ex isKindOf: SubclassResponsibility)
+				ifTrue: [ false ]
+				ifFalse: [ ex pass ] ]
+]
+
 { #category : #'setUp-tearDown' }
 MaplessUnQLiteTest >> setUp [
-	| dbFilename |
 	super setUp.
-	dbFilename := FileSystem workingDirectory / 'Mapless-Tests.db'.
-	self dropDatabase: dbFilename.
-	repository := MaplessUnQLiteRepository for: dbFilename pathString
+	self dropDatabase: self class testDatabasePathString.
+	repository := MaplessUnQLiteRepository for: self class testDatabasePathString
 ]
 
 { #category : #'setUp-tearDown' }

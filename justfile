@@ -74,7 +74,7 @@ test-image: services
     groups := #(
       'Core' 'Tests' 'Memory-Tests' 'SQLite-Tests' 'Behavior-Tests'
       'Behavior-Mongo-Tests' 'Postgres-Tests' 'Mongo-Tests'
-      'Redis-Tests' 'Redis-Observer-Tests' ).
+      'Redis-Tests' 'Redis-Observer-Tests' 'UnQLite-Tests' ).
     Metacello new
       baseline: 'Mapless';
       repository: repository;

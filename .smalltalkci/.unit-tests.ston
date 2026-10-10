@@ -13,7 +13,8 @@ SmalltalkCISpec {
         'Postgres-Tests',
         'Mongo-Tests',
         'Redis-Tests',
-        'Redis-Observer-Tests' ],
+        'Redis-Observer-Tests',
+        'UnQLite-Tests' ],
       #platforms : [  #pharo ]
     }
   ],
@@ -26,7 +27,8 @@ SmalltalkCISpec {
         'Mapless-Mongo',
         'Mapless-SQLite',
         'Mapless-Redis',
-        'Mapless-Redis-Observer'
+        'Mapless-Redis-Observer',
+        'Mapless-UnQLite'
          ],
       #format: #lcov
     }

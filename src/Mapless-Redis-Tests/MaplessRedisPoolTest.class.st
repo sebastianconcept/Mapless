@@ -4,6 +4,15 @@ Class {
 	#category : #'Mapless-Redis-Tests'
 }
 
+{ #category : #support }
+MaplessRedisPoolTest >> waitUntil: aBlock [
+	| deadline |
+	deadline := DateAndTime now + 2 seconds.
+	[ aBlock value or: [ DateAndTime now >= deadline ] ]
+		whileFalse: [ 10 milliSeconds asDelay wait ].
+	self assert: aBlock value
+]
+
 { #category : #tests }
 MaplessRedisPoolTest >> testNewClient [
 
@@ -33,8 +42,7 @@ MaplessRedisPoolTest >> testSubscribe [
 	120 milliSeconds asDelay wait.
 	self deny: valued.
 	pool publish: #testing message: 'answer'.
-	120 milliSeconds asDelay wait.
-	self assert: valued
+	self waitUntil: [ valued ]
 ]
 
 { #category : #tests }
@@ -49,14 +57,13 @@ MaplessRedisPoolTest >> testUnsubscribe [
 		raise: Error.
 	self deny: valued.
 	pool publish: #testing message: 'answer'.
-	30 milliSeconds asDelay wait.
-	self assert: valued.
+	self waitUntil: [ valued ].
 	valued := false.
 
 	pool unsubscribe: #testing.
-	200 milliSeconds asDelay wait.
+	50 milliSeconds asDelay wait.
 	pool publish: #testing message: 'answer'.
-	200 milliSeconds asDelay wait.
+	50 milliSeconds asDelay wait.
 	self deny: valued.
 	
 ]
