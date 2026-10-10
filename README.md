@@ -28,6 +28,7 @@ Schema-less persistence for Smalltalk with support for multiple backends.
 ### [Mapless GitHub Page](https://sebastianconcept.github.io/Mapless/)
 
 - [How to Install](#how-to-install)
+- [Development](#development)
 - [Guides](https://sebastianconcept.github.io/Mapless#guides)
 
 ---
@@ -155,6 +156,28 @@ spec
     repository: 'github://sebastianconcept/Mapless:latest/src';
     load: #('Core' 'SQLite' 'Postgres' 'Mongo' 'Redis' 'Memory') ]
 ```
+
+## Development
+
+Repository commands are [`just`](https://github.com/casey/just) recipes in the `justfile`.
+
+- `just build` downloads a fresh Pharo image and loads Mapless.
+- `just clean` removes that VM, the launchers, logs, and caches.
+- `just clean-caches` removes `package-cache` and `github-cache`.
+- `just clean-build` cleans, then builds.
+- `just services` starts Postgres, Redis, and MongoDB for local tests.
+- `just test` starts those services, then runs the unit tests.
+
+MongoDB replica-set sequence diagrams are Mermaid in [docs/replica-set.md](docs/replica-set.md). That document replaces `uml/`.
+
+`just services` runs `docker compose -f docker/docker-compose.yml up -d --wait`. The Compose file starts the external backends the unit tests already expect:
+
+- PostgreSQL 15 on `localhost:5432`, user `postgres`, trust authentication, database `postgres`
+- Redis 7 on `localhost:6379`, no password
+- MongoDB 7.0 on `localhost:27017`, no user, replica set `test-rs`
+
+Memory, SQLite, and UnQLite need no server and have no container. `just test` runs `just services`, then `smalltalkci -s Pharo64-11 .smalltalkci/.unit-tests.ston`.
+
 ## Project Ambition
 
 To deliver a high-performance solution that preserves arbitrary application state (data) with a focus on flexibility, availability, and capacity. It aims to strategically aid in scaling without causing vendor lock-in, across various persistence backends, and by neutralizing the costs associated with object-mapping impedance mismatch.
