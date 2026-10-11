@@ -10,6 +10,8 @@ SmalltalkCISpec {
         'SQLite-Tests',
         'Behavior-Tests',
         'Behavior-Mongo-Tests',
+        'Behavior-Postgres-Tests',
+        'Behavior-Redis-Tests',
         'Postgres-Tests',
         'Mongo-Tests',
         'Redis-Tests',

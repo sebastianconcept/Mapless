@@ -73,7 +73,8 @@ test-image: services
         baseline package removeFromSystem ] ].
     groups := #(
       'Core' 'Tests' 'Memory-Tests' 'SQLite-Tests' 'Behavior-Tests'
-      'Behavior-Mongo-Tests' 'Postgres-Tests' 'Mongo-Tests'
+      'Behavior-Mongo-Tests' 'Behavior-Postgres-Tests' 'Behavior-Redis-Tests'
+      'Postgres-Tests' 'Mongo-Tests'
       'Redis-Tests' 'Redis-Observer-Tests' 'UnQLite-Tests' ).
     Metacello new
       baseline: 'Mapless';
