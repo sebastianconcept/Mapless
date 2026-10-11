@@ -549,16 +549,18 @@ MaplessBehaviorRedisTest >> testSubclassOfTraitUserIsStoredAsReference [
 
 { #category : #tests }
 MaplessBehaviorRedisTest >> testOverriddenHooksKeepTraitBehavior [
-	"Given an ExampleUser that overrides the update and upsert hooks
-	When the user is saved through the redis repository
-	Then those overrides run without a missing-hook error and the user is marked modified"
+	"Given an ExampleUser that overrides the update hook
+	When the user is saved and then updated through the redis repository
+	Then save marks the user modified and update runs the override, without a missing-hook error.
+
+	Redis save does not send the update or upsert hooks. update: is what sends onBeforeUpdate."
 
 	| user |
 	user := ExampleUser new
 		        username: 'hook';
 		        yourself.
 	self shouldnt: [ repository save: user ] raise: MessageNotUnderstood.
-	self assert: user beforeUpdate.
-	self assert: user beforeUpsert.
-	self assert: user modifiedOn notNil
+	self assert: user modifiedOn notNil.
+	self shouldnt: [ repository update: user ] raise: MessageNotUnderstood.
+	self assert: user beforeUpdate
 ]

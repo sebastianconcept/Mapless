@@ -606,16 +606,19 @@ MaplessBehaviorPostgresTest >> testSubclassOfTraitUserIsStoredAsReference [
 
 { #category : #tests }
 MaplessBehaviorPostgresTest >> testOverriddenHooksKeepTraitBehavior [
-	"Given an ExampleUser that overrides the update and upsert hooks
-	When the user is saved through the postgres repository
-	Then those overrides run without a missing-hook error and the user is marked modified"
+	"Given an ExampleUser that overrides the insert and update hooks
+	When the user is saved, and then saved again, through the postgres repository
+	Then the insert path runs the insert override, the second save runs the update override, and the user is marked modified.
+
+	Postgres save inserts a new model and updates an existing one. It does not send the upsert hook that the memory repository sends."
 
 	| user |
 	user := ExampleUser new
 		        username: 'hook';
 		        yourself.
 	self shouldnt: [ repository save: user ] raise: MessageNotUnderstood.
-	self assert: user beforeUpdate.
-	self assert: user beforeUpsert.
-	self assert: user modifiedOn notNil
+	self assert: user afterInsert.
+	self assert: user modifiedOn notNil.
+	self shouldnt: [ repository save: user ] raise: MessageNotUnderstood.
+	self assert: user beforeUpdate
 ]
