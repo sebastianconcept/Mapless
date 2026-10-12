@@ -37,6 +37,10 @@ BaselineOfMapless >> baseline: spec [
 			with: #( 'Mapless-Behavior-Tests' );
 			group: 'Behavior-Mongo-Tests'
 			with: #( 'Mapless-Behavior-Mongo-Tests' );
+			group: 'Behavior-Postgres-Tests'
+			with: #( 'Mapless-Behavior-Postgres-Tests' );
+			group: 'Behavior-Redis-Tests'
+			with: #( 'Mapless-Behavior-Redis-Tests' );
 			group: 'Memory' with: #( 'Mapless-Memory' );
 			group: 'Memory-Tests'
 			with: #( 'Mapless-Memory' 'Mapless-Memory-Tests' );
@@ -157,7 +161,10 @@ BaselineOfMapless >> setUpPostgresPackages: spec [
 		with: [ spec requires: #('Mapless-Base' 'P3') ].
 	spec
 		package: 'Mapless-Postgres-Tests'
-		with: [ spec requires: #('Mapless-Postgres' 'Mapless-Tests') ]
+		with: [ spec requires: #('Mapless-Postgres' 'Mapless-Tests') ].
+	spec
+		package: 'Mapless-Behavior-Postgres-Tests'
+		with: [ spec requires: #( 'Mapless-Behavior-Tests' 'Mapless-Postgres' ) ]
 ]
 
 { #category : #dependencies }
@@ -186,7 +193,11 @@ BaselineOfMapless >> setUpRedisPackages: spec [
 
 	spec
 		package: 'Mapless-Redis-Tests'
-		with: [ spec requires: #( 'Mapless-Redis' 'Mapless-Tests' ) ]
+		with: [ spec requires: #( 'Mapless-Redis' 'Mapless-Tests' ) ].
+
+	spec
+		package: 'Mapless-Behavior-Redis-Tests'
+		with: [ spec requires: #( 'Mapless-Behavior-Tests' 'Mapless-Redis' ) ]
 ]
 
 { #category : #dependencies }
